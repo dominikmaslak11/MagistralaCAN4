@@ -7,10 +7,14 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QTimer>
+#include <QMap>
 #include <QHash>
 #include <deque>
 #include <vector>
 #include <utility>
+#include <QtCharts/QChartView>
+#include <QtCharts/QScatterSeries>
+#include <QtCharts/QChart>
 #include "CanFrame.h"
 #include "CandidateModel.h"
 #include "GpuCorrelator.h"
@@ -35,6 +39,8 @@ public slots:
     void processFrame(const CanFrame &frame);
     void markEvent();
     void resetLearning();
+    void addVariable(const QString &name);
+    QVector<ValueObservation> currentObservations() const;
     void addObservation();
     void saveSession();
     void loadSession();
@@ -42,7 +48,6 @@ public slots:
     void trainPrediction();
     void updatePredictionDisplay();
 
-    // Anomalie
     void startAnomalyMonitoring();
     void stopAnomalyMonitoring();
     void checkAnomaly();
@@ -50,11 +55,16 @@ public slots:
 signals:
     void eventMarked(int iteration);
 
+private slots:
+    void onVariableChanged(int idx);
+    void addNewVariable();
+
 private:
     void updateCandidates();
     void updateCorrelationTable();
     void updateSequenceTable();
     void updateCrossByteTable();
+    void updateChart();
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
 
@@ -68,28 +78,29 @@ private:
     int64_t m_adaptiveBefore = DEFAULT_BEFORE;
     int64_t m_adaptiveAfter  = DEFAULT_AFTER;
 
+    // UI
     QPushButton *m_markEventBtn;
     QPushButton *m_resetBtn;
     QLabel      *m_iterationLabel;
     QTableView  *m_candidatesView;
 
-    QLineEdit    *m_valueInput;
-    QPushButton  *m_addObsBtn;
-    QTableWidget *m_correlationTable;
+    // Zarządzanie zmiennymi
+    QComboBox   *m_variableCombo;
+    QLineEdit   *m_newVariableName;
+    QPushButton *m_addVariableBtn;
+    QLineEdit   *m_valueInput;
+    QPushButton *m_addObsBtn;
 
+    QTableWidget *m_correlationTable;
     QComboBox    *m_ngramCombo;
     QTableWidget *m_sequenceTable;
-
     QTableWidget *m_crossByteTable;
-
     QPushButton  *m_clusterBtn;
     QTableWidget *m_clusterTable;
-
     QPushButton  *m_trainPredictionBtn;
     QTableWidget *m_predictionTable;
     QTimer       *m_predictionTimer;
 
-    // --- Anomalie ---
     QPushButton  *m_anomalyToggleBtn;
     QLineEdit    *m_anomalyThreshold;
     QTableWidget *m_anomalyTable;
@@ -98,10 +109,14 @@ private:
 
     QVector<float> m_normalMean;
     QVector<float> m_normalStd;
-    double         m_anomalyThresholdValue = 10.0;
 
     QPushButton  *m_saveBtn;
     QPushButton  *m_loadBtn;
+
+    // Wykres
+    QChartView   *m_chartView;
+    QChart       *m_chart;
+    QScatterSeries *m_scatterSeries;
 
     CandidateModel *m_candidateModel;
     GpuCorrelator   m_correlator;
@@ -110,8 +125,11 @@ private:
     static constexpr int HISTORY_MAX = 20000;
 
     QVector<EventRecord> m_events;
-    QVector<ValueObservation> m_observations;
     int m_iteration = 0;
+
+    // Mapowanie zmiennych
+    QMap<QString, QVector<ValueObservation>> m_observationsMap;
+    QString m_currentVariable;
 
     QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
 };

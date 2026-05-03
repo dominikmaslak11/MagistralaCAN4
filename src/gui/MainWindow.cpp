@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QScrollBar>
+#include <QFileDialog>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("MagistralaCAN4 - Sniffer CAN");
@@ -52,8 +54,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_interfaceCombo->setCurrentIndex(0);
 
     connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
-
-    // Podłączenie suwaka – wykrywanie, czy użytkownik nie jest na dole
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &MainWindow::onUserScroll);
 }
@@ -95,11 +95,8 @@ void MainWindow::updateTableBatch() {
     if (m_frameBuffer.isEmpty()) return;
     m_model->processIncomingFrames(m_frameBuffer);
     m_frameBuffer.clear();
-
-    // Przewijaj automatycznie tylko, gdy użytkownik jest na dole
-    if (m_autoScroll) {
+    if (m_autoScroll)
         m_tableView->scrollToBottom();
-    }
 }
 
 void MainWindow::refreshInterfaces() {
@@ -121,8 +118,40 @@ void MainWindow::applyOverwriteMode(bool enabled) {
 void MainWindow::onUserScroll(int value) {
     QScrollBar *vbar = m_tableView->verticalScrollBar();
     if (!vbar) return;
-    // Sprawdzamy, czy użytkownik jest przy samym dole (z tolerancją 1 piksel)
     m_autoScroll = (value >= vbar->maximum() - 1);
+}
+
+void MainWindow::exportToCandump() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Eksportuj do candump", "", "Pliki candump (*.log *.txt);;Wszystkie pliki (*)");
+    if (fileName.isEmpty()) return;
+
+    QVector<CanFrame> frames = m_model->allFrames();
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Błąd", "Nie można zapisać pliku.");
+        return;
+    }
+
+    QTextStream out(&file);
+    QString iface = m_interfaceCombo->currentText().trimmed();
+    if (iface.isEmpty()) iface = "vcan0";
+
+    for (const auto &frame : frames) {
+        // Format: (timestamp) interfejs ID#DLC dane
+        QString line = QString("(%1) %2 %3#%4")
+                .arg(frame.timestamp)
+                .arg(iface)
+                .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0'))
+                .arg(frame.dlc < 8 ? QString::number(frame.dlc) : "8");  // candump używa 8 dla CAN FD? Uprośćmy: pokaż dlc jako hex jeśli >8
+        // Dla CAN FD (dlc>8) candump zapisuje inaczej, ale na razie piszemy klasycznie
+        for (int i = 0; i < frame.dlc && i < 8; ++i) {
+            line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+        }
+        out << line << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Eksport", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
 }
 
 void MainWindow::setupToolBar() {
@@ -165,10 +194,12 @@ void MainWindow::setupToolBar() {
             m_model->clear();
         });
         QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction));
-        if (clearBtn) {
-            clearBtn->setObjectName("clearButton");
-        }
+        if (clearBtn) clearBtn->setObjectName("clearButton");
     }
+
+    // NOWY PRZYCISK EKSPORTU
+    QAction *exportAction = toolbar->addAction("📥 Eksportuj candump");
+    connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
 }
 
 void MainWindow::setupCentralWidget() {

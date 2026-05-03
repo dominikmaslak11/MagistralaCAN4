@@ -8,7 +8,6 @@
 
 #include "../../../src/core/CanFrameModel.h"
 #include <QtCore/qmetatype.h>
-#include <QtCore/QList>
 
 #include <QtCore/qtmochelpers.h>
 
@@ -43,13 +42,7 @@ template <> constexpr inline auto CanFrameModel::qt_create_metaobjectdata<qt_met
         "frameUpdated",
         "",
         "CanFrame",
-        "frame",
-        "processIncomingFrames",
-        "QList<CanFrame>",
-        "newFrames",
-        "setOverwriteMode",
-        "enabled",
-        "clear"
+        "frame"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -57,16 +50,6 @@ template <> constexpr inline auto CanFrameModel::qt_create_metaobjectdata<qt_met
         QtMocHelpers::SignalData<void(const CanFrame &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { 0x80000000 | 3, 4 },
         }}),
-        // Slot 'processIncomingFrames'
-        QtMocHelpers::SlotData<void(const QVector<CanFrame> &)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { 0x80000000 | 6, 7 },
-        }}),
-        // Slot 'setOverwriteMode'
-        QtMocHelpers::SlotData<void(bool)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Bool, 9 },
-        }}),
-        // Slot 'clear'
-        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -91,9 +74,6 @@ void CanFrameModel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->frameUpdated((*reinterpret_cast<std::add_pointer_t<CanFrame>>(_a[1]))); break;
-        case 1: _t->processIncomingFrames((*reinterpret_cast<std::add_pointer_t<QList<CanFrame>>>(_a[1]))); break;
-        case 2: _t->setOverwriteMode((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 3: _t->clear(); break;
         default: ;
         }
     }
@@ -105,13 +85,6 @@ void CanFrameModel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
                 *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< CanFrame >(); break;
-            }
-            break;
-        case 1:
-            switch (*reinterpret_cast<int*>(_a[1])) {
-            default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-            case 0:
-                *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< QList<CanFrame> >(); break;
             }
             break;
         }
@@ -141,14 +114,14 @@ int CanFrameModel::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 1)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 1;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 1)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 1;
     }
     return _id;
 }

@@ -23,7 +23,8 @@ private slots:
     void updateTableBatch();
     void refreshInterfaces();
     void applyOverwriteMode(bool enabled);
-    void onUserScroll(int value);           // nowe: obsługa przewijania
+    void onUserScroll(int value);
+    void exportToCandump();   // NOWE
 
 private:
     void setupStyle();
@@ -42,7 +43,5 @@ private:
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;
     bool m_sniffing = false;
-
-    // Nowe: do poprawnego przewijania
-    bool m_autoScroll = true;                // czy automatycznie przewijać
+    bool m_autoScroll = true;
 };
