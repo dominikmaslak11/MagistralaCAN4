@@ -5949,3 +5949,304 @@ events:
       CMAKE_SYSTEM_LIBRARY_PATH:
         - "/usr/lib/X11"
 ...
+
+---
+events:
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindDependencyMacro.cmake:93 (find_package)"
+      - "/usr/share/cmake-4.2/Modules/CMakeFindDependencyMacro.cmake:125 (__find_dependency_common)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicDependencyHelpers.cmake:142 (find_dependency)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsDependencies.cmake:50 (_qt_internal_find_qt_dependencies)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsConfig.cmake:50 (include)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6/Qt6Config.cmake:251 (find_package)"
+      - "CMakeLists.txt:8 (find_package)"
+    name: "Qt6OpenGL"
+    configs:
+      -
+        filename: "Qt6OpenGLConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "qt6opengl-config.cmake"
+        kind: "cmake"
+    version_request:
+      version: "6.10.2"
+      version_complete: "6.10.2"
+      exact: false
+    settings:
+      required: "optional"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "Qt6OpenGL"
+      search_paths:
+        - "/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/.."
+        - "/usr/lib/x86_64-linux-gnu/cmake"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: false
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/pkgRedirects/Qt6OpenGLConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/pkgRedirects/qt6opengl-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/qt6opengl-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLWidgets/Qt6OpenGLConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLWidgets/qt6opengl-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLPrivate/Qt6OpenGLConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLPrivate/qt6opengl-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGL/Qt6OpenGLConfig.cmake"
+      mode: "config"
+      version: "6.10.2"
+    search_context:
+      ENV{PATH}:
+        - "/home/nz2xzhkzfeewkgbu/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/sbin"
+        - "/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/bin"
+        - "/usr/local/games"
+        - "/usr/games"
+        - "/snap/bin"
+        - "/home/nz2xzhkzfeewkgbu/.dotnet/tools"
+        - "/home/nz2xzhkzfeewkgbu/.local/share/JetBrains/Toolbox/scripts"
+        - "/home/nz2xzhkzfeewkgbu/.local/share/JetBrains/Toolbox/scripts"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindDependencyMacro.cmake:93 (find_package)"
+      - "/usr/share/cmake-4.2/Modules/CMakeFindDependencyMacro.cmake:125 (__find_dependency_common)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicDependencyHelpers.cmake:142 (find_dependency)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsDependencies.cmake:50 (_qt_internal_find_qt_dependencies)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsConfig.cmake:50 (include)"
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6/Qt6Config.cmake:251 (find_package)"
+      - "CMakeLists.txt:8 (find_package)"
+    name: "Qt6OpenGLWidgets"
+    configs:
+      -
+        filename: "Qt6OpenGLWidgetsConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "qt6openglwidgets-config.cmake"
+        kind: "cmake"
+    version_request:
+      version: "6.10.2"
+      version_complete: "6.10.2"
+      exact: false
+    settings:
+      required: "optional"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "Qt6OpenGLWidgets"
+      search_paths:
+        - "/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/.."
+        - "/usr/lib/x86_64-linux-gnu/cmake"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: false
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/pkgRedirects/Qt6OpenGLWidgetsConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/pkgRedirects/qt6openglwidgets-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLWidgetsConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/qt6openglwidgets-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLWidgets/Qt6OpenGLWidgetsConfig.cmake"
+      mode: "config"
+      version: "6.10.2"
+    search_context:
+      ENV{PATH}:
+        - "/home/nz2xzhkzfeewkgbu/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/sbin"
+        - "/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/bin"
+        - "/usr/local/games"
+        - "/usr/games"
+        - "/snap/bin"
+        - "/home/nz2xzhkzfeewkgbu/.dotnet/tools"
+        - "/home/nz2xzhkzfeewkgbu/.local/share/JetBrains/Toolbox/scripts"
+        - "/home/nz2xzhkzfeewkgbu/.local/share/JetBrains/Toolbox/scripts"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "/usr/lib/x86_64-linux-gnu/cmake/Qt6/Qt6Config.cmake:251 (find_package)"
+      - "CMakeLists.txt:8 (find_package)"
+    name: "Qt6Charts"
+    configs:
+      -
+        filename: "Qt6ChartsConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "qt6charts-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "optional"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "Qt6Charts"
+      search_paths:
+        - "/usr/lib/x86_64-linux-gnu/cmake"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: false
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/pkgRedirects/Qt6ChartsConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/pkgRedirects/qt6charts-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6ChartsConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/qt6charts-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6ChartsQml/Qt6ChartsConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6ChartsQml/qt6charts-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6ChartsPrivate/Qt6ChartsConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6ChartsPrivate/qt6charts-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsConfig.cmake"
+      mode: "config"
+      version: "6.10.2"
+    search_context:
+      ENV{PATH}:
+        - "/home/nz2xzhkzfeewkgbu/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/sbin"
+        - "/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/bin"
+        - "/usr/local/games"
+        - "/usr/games"
+        - "/snap/bin"
+        - "/home/nz2xzhkzfeewkgbu/.dotnet/tools"
+        - "/home/nz2xzhkzfeewkgbu/.local/share/JetBrains/Toolbox/scripts"
+        - "/home/nz2xzhkzfeewkgbu/.local/share/JetBrains/Toolbox/scripts"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+...

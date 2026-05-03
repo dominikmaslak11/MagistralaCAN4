@@ -14,10 +14,13 @@ MagistralaCAN4: \
   CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o \
-  /usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.10.2 \
   /usr/lib/x86_64-linux-gnu/libQt6Concurrent.so.6.10.2 \
+  /usr/lib/x86_64-linux-gnu/libQt6Charts.so.6.10.2 \
   /usr/lib/x86_64-linux-gnu/liblua5.3.so \
   /usr/lib/x86_64-linux-gnu/libOpenCL.so \
+  /usr/lib/x86_64-linux-gnu/libQt6OpenGLWidgets.so.6.10.2 \
+  /usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.10.2 \
+  /usr/lib/x86_64-linux-gnu/libQt6OpenGL.so.6.10.2 \
   /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.10.2 \
   /usr/lib/x86_64-linux-gnu/libGLX.so \
   /usr/lib/x86_64-linux-gnu/libOpenGL.so \
@@ -48,6 +51,8 @@ MagistralaCAN4: \
   /usr/lib/gcc/x86_64-linux-gnu/15/libgcc.a \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o \
+  /usr/lib/x86_64-linux-gnu/libQt6OpenGLWidgets.so.6.10.2 \
+  /usr/lib/x86_64-linux-gnu/libQt6OpenGL.so.6.10.2 \
   /lib64/ld-linux-x86-64.so.2 \
   /usr/lib/i386-linux-gnu/libEGL.so.1 \
   /usr/lib/x86_64-linux-gnu/libEGL.so.1 \
@@ -138,13 +143,19 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o:
 
 CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o:
 
-/usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.10.2:
-
 /usr/lib/x86_64-linux-gnu/libQt6Concurrent.so.6.10.2:
+
+/usr/lib/x86_64-linux-gnu/libQt6Charts.so.6.10.2:
 
 /usr/lib/x86_64-linux-gnu/liblua5.3.so:
 
 /usr/lib/x86_64-linux-gnu/libOpenCL.so:
+
+/usr/lib/x86_64-linux-gnu/libQt6OpenGLWidgets.so.6.10.2:
+
+/usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.10.2:
+
+/usr/lib/x86_64-linux-gnu/libQt6OpenGL.so.6.10.2:
 
 /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.10.2:
 
@@ -205,6 +216,10 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o:
 /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o:
+
+/usr/lib/x86_64-linux-gnu/libQt6OpenGLWidgets.so.6.10.2:
+
+/usr/lib/x86_64-linux-gnu/libQt6OpenGL.so.6.10.2:
 
 /lib64/ld-linux-x86-64.so.2:
 

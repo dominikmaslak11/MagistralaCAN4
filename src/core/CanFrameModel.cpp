@@ -28,9 +28,8 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::DLC:       return frame.dlc;
         case Column::DATA: {
             QString dataHex;
-            for (int i = 0; i < frame.dlc; ++i) {
+            for (int i = 0; i < frame.dlc; ++i)
                 dataHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
-            }
             return dataHex.trimmed();
         }
         case Column::TIMESTAMP: return QString("%1 µs").arg(frame.timestamp);
@@ -142,4 +141,9 @@ void CanFrameModel::clear() {
         m_idToRow.clear();
     }
     endResetModel();
+}
+
+QVector<CanFrame> CanFrameModel::allFrames() const {
+    QMutexLocker lock(&m_mutex);
+    return m_frames;
 }

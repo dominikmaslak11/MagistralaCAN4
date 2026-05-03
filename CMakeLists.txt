@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts)
 find_package(Lua REQUIRED)
 find_package(OpenCL REQUIRED)
 
@@ -49,6 +49,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Widgets
     Qt6::Core
     Qt6::Concurrent
+    Qt6::Charts
     ${LUA_LIBRARIES}
     ${OpenCL_LIBRARIES}
 )

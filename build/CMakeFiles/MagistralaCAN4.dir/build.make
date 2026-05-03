@@ -278,11 +278,14 @@ MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/build.make
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.10.2
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Concurrent.so.6.10.2
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Charts.so.6.10.2
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/liblua5.3.so
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libm.so
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libOpenCL.so
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6OpenGLWidgets.so.6.10.2
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.10.2
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6OpenGL.so.6.10.2
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.10.2
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libGLX.so
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libOpenGL.so
