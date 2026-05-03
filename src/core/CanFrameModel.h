@@ -3,6 +3,7 @@
 #include <QVector>
 #include <QMutex>
 #include <QTimer>
+#include <QHash>
 #include "CanFrame.h"
 
 class CanFrameModel : public QAbstractTableModel {
@@ -20,10 +21,17 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 public slots:
-    void appendFrames(const QVector<CanFrame> &newFrames);
+    // Odbiera batch ramek z wątku GUI
+    void processIncomingFrames(const QVector<CanFrame> &newFrames);
+    void setOverwriteMode(bool enabled);
+    void clear();
+
+signals:
+    void frameUpdated(const CanFrame &frame);   // dla szczegółów ramki (później)
 
 private:
     mutable QMutex m_mutex;
-    QVector<CanFrame> m_frames;
-    QVector<CanFrame> m_pendingFrames;
+    QVector<CanFrame> m_frames;          // aktualny bufor ramek w modelu
+    QHash<uint32_t, int> m_idToRow;      // mapowanie CAN ID -> indeks w m_frames (tylko gdy overwrite)
+    bool m_overwrite = true;             // domyślnie nadpisuj
 };

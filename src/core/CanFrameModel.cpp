@@ -1,9 +1,7 @@
 #include "CanFrameModel.h"
 #include <QColor>
 
-CanFrameModel::CanFrameModel(QObject *parent) : QAbstractTableModel(parent) {
-    m_pendingFrames.reserve(500);
-}
+CanFrameModel::CanFrameModel(QObject *parent) : QAbstractTableModel(parent) {}
 
 int CanFrameModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) return 0;
@@ -68,22 +66,82 @@ QVariant CanFrameModel::headerData(int section, Qt::Orientation orientation, int
     return {};
 }
 
-void CanFrameModel::appendFrames(const QVector<CanFrame> &newFrames) {
+void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
     if (newFrames.isEmpty()) return;
 
     QMutexLocker lock(&m_mutex);
-    m_pendingFrames.append(newFrames);
+    QVector<int> changedRows;
+    int oldSize = m_frames.size();
+
+    for (const CanFrame &frame : newFrames) {
+        if (m_overwrite) {
+            auto it = m_idToRow.find(frame.id);
+            if (it != m_idToRow.end()) {
+                int row = it.value();
+                m_frames[row] = frame;
+                changedRows.append(row);
+                continue;
+            }
+        }
+        int newRow = m_frames.size();
+        m_frames.append(frame);
+        if (m_overwrite)
+            m_idToRow.insert(frame.id, newRow);
+    }
     lock.unlock();
 
-    if (!m_pendingFrames.isEmpty()) {
-        int start = m_frames.size();
-        int count = m_pendingFrames.size();
-        beginInsertRows(QModelIndex(), start, start + count - 1);
-        {
-            QMutexLocker relock(&m_mutex);
-            m_frames.append(m_pendingFrames);
-            m_pendingFrames.clear();
-        }
+    int totalInserted = m_frames.size() - oldSize;
+    if (totalInserted > 0) {
+        beginInsertRows(QModelIndex(), oldSize, oldSize + totalInserted - 1);
         endInsertRows();
     }
+
+    if (!changedRows.isEmpty()) {
+        std::sort(changedRows.begin(), changedRows.end());
+        changedRows.erase(std::unique(changedRows.begin(), changedRows.end()), changedRows.end());
+        QVector<QPair<int,int>> ranges;
+        int start = changedRows.first();
+        int end = start;
+        for (int i = 1; i < changedRows.size(); ++i) {
+            if (changedRows[i] == end + 1) {
+                end = changedRows[i];
+            } else {
+                ranges.append({start, end});
+                start = changedRows[i];
+                end = start;
+            }
+        }
+        ranges.append({start, end});
+        for (const auto &r : ranges) {
+            emit dataChanged(index(r.first, 0), index(r.second, Column::_COUNT - 1));
+        }
+    }
+}
+
+void CanFrameModel::setOverwriteMode(bool enabled) {
+    // Blokada tylko na czas zmiany flagi i ewentualnego czyszczenia danych
+    {
+        QMutexLocker lock(&m_mutex);
+        if (m_overwrite == enabled) return;
+        m_overwrite = enabled;
+    }
+    // beginResetModel/endResetModel wywołujemy BEZ muteksu, aby uniknąć zakleszczenia
+    beginResetModel();
+    {
+        QMutexLocker lock(&m_mutex);
+        m_frames.clear();
+        m_idToRow.clear();
+    }
+    endResetModel();
+}
+
+void CanFrameModel::clear() {
+    // Najpierw sygnalizujemy reset (bez blokady), potem czyścimy dane
+    beginResetModel();
+    {
+        QMutexLocker lock(&m_mutex);
+        m_frames.clear();
+        m_idToRow.clear();
+    }
+    endResetModel();
 }
