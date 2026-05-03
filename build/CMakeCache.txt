@@ -543,7 +543,7 @@ CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Lua
 FIND_PACKAGE_MESSAGE_DETAILS_Lua:INTERNAL=[/usr/lib/x86_64-linux-gnu/liblua5.3.so;/usr/lib/x86_64-linux-gnu/libm.so][/usr/include/lua5.3][v5.3.6()]
 //Details about finding OpenCL
-FIND_PACKAGE_MESSAGE_DETAILS_OpenCL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenCL.so][/usr/include][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenCL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenCL.so][/usr/include][v3.0()]
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenGL.so][/usr/lib/x86_64-linux-gnu/libGLX.so][/usr/include][ ][v()]
 //Details about finding Threads
@@ -562,20 +562,8 @@ LUA_INCLUDE_DIR-ADVANCED:INTERNAL=1
 LUA_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: LUA_MATH_LIBRARY
 LUA_MATH_LIBRARY-ADVANCED:INTERNAL=1
-//Have symbol CL_VERSION_1_0
-OPENCL_VERSION_1_0:INTERNAL=
-//Have symbol CL_VERSION_1_1
-OPENCL_VERSION_1_1:INTERNAL=
-//Have symbol CL_VERSION_1_2
-OPENCL_VERSION_1_2:INTERNAL=
-//Have symbol CL_VERSION_2_0
-OPENCL_VERSION_2_0:INTERNAL=
-//Have symbol CL_VERSION_2_1
-OPENCL_VERSION_2_1:INTERNAL=
-//Have symbol CL_VERSION_2_2
-OPENCL_VERSION_2_2:INTERNAL=
 //Have symbol CL_VERSION_3_0
-OPENCL_VERSION_3_0:INTERNAL=
+OPENCL_VERSION_3_0:INTERNAL=1
 //ADVANCED property for variable: OPENGL_EGL_INCLUDE_DIR
 OPENGL_EGL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_GLES2_INCLUDE_DIR
