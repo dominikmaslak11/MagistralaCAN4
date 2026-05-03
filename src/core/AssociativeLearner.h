@@ -37,6 +37,7 @@ public slots:
     void addObservation();
     void saveSession();
     void loadSession();
+    void clusterWindows();   // nowa funkcja
 
 signals:
     void eventMarked(int iteration);
@@ -48,6 +49,10 @@ private:
     void updateCrossByteTable();
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
+
+    // Pomocnicze do klastrowania
+    QVector<float> buildWindowFeatures(const QVector<CanFrame> &window);
+    int kMeans(const QVector<QVector<float>> &data, int K, QVector<int> &assignments);
 
     static constexpr int64_t DEFAULT_BEFORE = 500000;
     static constexpr int64_t DEFAULT_AFTER  = 200000;
@@ -67,8 +72,11 @@ private:
     QComboBox    *m_ngramCombo;
     QTableWidget *m_sequenceTable;
 
-    // Nowy widget dla korelacji międzybajtowej
     QTableWidget *m_crossByteTable;
+
+    // Klastrowanie
+    QPushButton  *m_clusterBtn;
+    QTableWidget *m_clusterTable;
 
     QPushButton  *m_saveBtn;
     QPushButton  *m_loadBtn;
