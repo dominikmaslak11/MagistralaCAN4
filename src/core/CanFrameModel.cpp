@@ -28,8 +28,9 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::DLC:       return frame.dlc;
         case Column::DATA: {
             QString dataHex;
-            for (int i = 0; i < frame.dlc; ++i)
+            for (int i = 0; i < frame.dlc; ++i) {
                 dataHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+            }
             return dataHex.trimmed();
         }
         case Column::TIMESTAMP: return QString("%1 µs").arg(frame.timestamp);
@@ -119,13 +120,11 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
 }
 
 void CanFrameModel::setOverwriteMode(bool enabled) {
-    // Blokada tylko na czas zmiany flagi i ewentualnego czyszczenia danych
     {
         QMutexLocker lock(&m_mutex);
         if (m_overwrite == enabled) return;
         m_overwrite = enabled;
     }
-    // beginResetModel/endResetModel wywołujemy BEZ muteksu, aby uniknąć zakleszczenia
     beginResetModel();
     {
         QMutexLocker lock(&m_mutex);
@@ -136,7 +135,6 @@ void CanFrameModel::setOverwriteMode(bool enabled) {
 }
 
 void CanFrameModel::clear() {
-    // Najpierw sygnalizujemy reset (bez blokady), potem czyścimy dane
     beginResetModel();
     {
         QMutexLocker lock(&m_mutex);

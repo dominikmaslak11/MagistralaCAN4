@@ -33,7 +33,9 @@ public slots:
     void processFrame(const CanFrame &frame);
     void markEvent();
     void resetLearning();
-    void addObservation();   // dodaje obserwację z polem wartości
+    void addObservation();
+    void saveSession();       // zapis
+    void loadSession();       // odczyt
 
 signals:
     void eventMarked(int iteration);
@@ -46,16 +48,17 @@ private:
     static constexpr int64_t WINDOW_BEFORE = 500000;
     static constexpr int64_t WINDOW_AFTER  = 200000;
 
-    // UI
     QPushButton *m_markEventBtn;
     QPushButton *m_resetBtn;
     QLabel      *m_iterationLabel;
     QTableView  *m_candidatesView;
 
-    // Nowe: korelacja wartości
     QLineEdit    *m_valueInput;
     QPushButton  *m_addObsBtn;
     QTableWidget *m_correlationTable;
+
+    QPushButton  *m_saveBtn;
+    QPushButton  *m_loadBtn;
 
     CandidateModel *m_candidateModel;
     GpuCorrelator   m_correlator;

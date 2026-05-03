@@ -7500,6 +7500,7 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/M
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMessageBox \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollBar \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTabWidget \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget \
@@ -7530,6 +7531,7 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/M
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmessagebox.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollbar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsizepolicy.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h \
@@ -9228,6 +9230,12 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Core/Qt6CoreVersionlessAliasTargets.cmake:
 
+/usr/lib/x86_64-linux-gnu/crtn.o:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qfunctionpointer.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake:
+
 /usr/lib/x86_64-linux-gnu/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake:
 
 /usr/lib/x86_64-linux-gnu/Scrt1.o:
@@ -9542,6 +9550,8 @@ MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanSniffer.cpp:
 
 /usr/include/x86_64-linux-gnu/c++/15/bits/opt_random.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollbar.h:
+
 /usr/include/c++/15/tuple:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusAdditionalTargetInfo.cmake:
@@ -9717,12 +9727,6 @@ MagistralaCAN4_autogen/mocs_compilation.cpp:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qlockfile.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qmimedata.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qfunctionpointer.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake:
-
-/usr/lib/x86_64-linux-gnu/crtn.o:
 
 /usr/share/cmake-4.2/Modules/CMakeCommonLanguageInclude.cmake:
 
@@ -10039,6 +10043,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o:
 /usr/lib/linux/uapi/x86/asm/socket.h:
 
 /usr/include/CL/cl_version.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollBar:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicTestHelpers.cmake:
 
