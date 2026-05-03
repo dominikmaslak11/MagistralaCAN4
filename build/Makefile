@@ -275,6 +275,30 @@ src/core/CanFrameModel.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.s
 .PHONY : src/core/CanFrameModel.cpp.s
 
+src/core/CanInterfaceEnumerator.o: src/core/CanInterfaceEnumerator.cpp.o
+.PHONY : src/core/CanInterfaceEnumerator.o
+
+# target to build an object file
+src/core/CanInterfaceEnumerator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o
+.PHONY : src/core/CanInterfaceEnumerator.cpp.o
+
+src/core/CanInterfaceEnumerator.i: src/core/CanInterfaceEnumerator.cpp.i
+.PHONY : src/core/CanInterfaceEnumerator.i
+
+# target to preprocess a source file
+src/core/CanInterfaceEnumerator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.i
+.PHONY : src/core/CanInterfaceEnumerator.cpp.i
+
+src/core/CanInterfaceEnumerator.s: src/core/CanInterfaceEnumerator.cpp.s
+.PHONY : src/core/CanInterfaceEnumerator.s
+
+# target to generate assembly for a file
+src/core/CanInterfaceEnumerator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.s
+.PHONY : src/core/CanInterfaceEnumerator.cpp.s
+
 src/core/CanSniffer.o: src/core/CanSniffer.cpp.o
 .PHONY : src/core/CanSniffer.o
 
@@ -299,6 +323,30 @@ src/core/CanSniffer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.s
 .PHONY : src/core/CanSniffer.cpp.s
 
+src/core/CandidateModel.o: src/core/CandidateModel.cpp.o
+.PHONY : src/core/CandidateModel.o
+
+# target to build an object file
+src/core/CandidateModel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o
+.PHONY : src/core/CandidateModel.cpp.o
+
+src/core/CandidateModel.i: src/core/CandidateModel.cpp.i
+.PHONY : src/core/CandidateModel.i
+
+# target to preprocess a source file
+src/core/CandidateModel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.i
+.PHONY : src/core/CandidateModel.cpp.i
+
+src/core/CandidateModel.s: src/core/CandidateModel.cpp.s
+.PHONY : src/core/CandidateModel.s
+
+# target to generate assembly for a file
+src/core/CandidateModel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.s
+.PHONY : src/core/CandidateModel.cpp.s
+
 src/core/FrameDetailWidget.o: src/core/FrameDetailWidget.cpp.o
 .PHONY : src/core/FrameDetailWidget.o
 
@@ -322,6 +370,30 @@ src/core/FrameDetailWidget.s: src/core/FrameDetailWidget.cpp.s
 src/core/FrameDetailWidget.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.s
 .PHONY : src/core/FrameDetailWidget.cpp.s
+
+src/core/GpuCorrelator.o: src/core/GpuCorrelator.cpp.o
+.PHONY : src/core/GpuCorrelator.o
+
+# target to build an object file
+src/core/GpuCorrelator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o
+.PHONY : src/core/GpuCorrelator.cpp.o
+
+src/core/GpuCorrelator.i: src/core/GpuCorrelator.cpp.i
+.PHONY : src/core/GpuCorrelator.i
+
+# target to preprocess a source file
+src/core/GpuCorrelator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.i
+.PHONY : src/core/GpuCorrelator.cpp.i
+
+src/core/GpuCorrelator.s: src/core/GpuCorrelator.cpp.s
+.PHONY : src/core/GpuCorrelator.s
+
+# target to generate assembly for a file
+src/core/GpuCorrelator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.s
+.PHONY : src/core/GpuCorrelator.cpp.s
 
 src/core/LuaScriptEngine.o: src/core/LuaScriptEngine.cpp.o
 .PHONY : src/core/LuaScriptEngine.o
@@ -397,12 +469,21 @@ help:
 	@echo "... src/core/CanFrameModel.o"
 	@echo "... src/core/CanFrameModel.i"
 	@echo "... src/core/CanFrameModel.s"
+	@echo "... src/core/CanInterfaceEnumerator.o"
+	@echo "... src/core/CanInterfaceEnumerator.i"
+	@echo "... src/core/CanInterfaceEnumerator.s"
 	@echo "... src/core/CanSniffer.o"
 	@echo "... src/core/CanSniffer.i"
 	@echo "... src/core/CanSniffer.s"
+	@echo "... src/core/CandidateModel.o"
+	@echo "... src/core/CandidateModel.i"
+	@echo "... src/core/CandidateModel.s"
 	@echo "... src/core/FrameDetailWidget.o"
 	@echo "... src/core/FrameDetailWidget.i"
 	@echo "... src/core/FrameDetailWidget.s"
+	@echo "... src/core/GpuCorrelator.o"
+	@echo "... src/core/GpuCorrelator.i"
+	@echo "... src/core/GpuCorrelator.s"
 	@echo "... src/core/LuaScriptEngine.o"
 	@echo "... src/core/LuaScriptEngine.i"
 	@echo "... src/core/LuaScriptEngine.s"

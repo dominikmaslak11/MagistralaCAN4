@@ -1,18 +1,20 @@
 #include <QApplication>
+#include <QSurfaceFormat>
 #include "gui/MainWindow.h"
 
 int main(int argc, char *argv[])
 {
+    // Wymuś akcelerację GPU (OpenGL/Vulkan) - Qt6 domyślnie używa RHI
     QApplication app(argc, argv);
     app.setApplicationName("MagistralaCAN4");
-    app.setApplicationVersion("1.0.0");
+    app.setApplicationVersion("2.0.0");
     app.setOrganizationName("CustomLabs");
 
-    // Styl Fusion dla spójnego wyglądu
+    // Styl Fusion dla spójnego wyglądu z akceleracją sprzętową
     app.setStyle("Fusion");
 
     MainWindow mainWindow;
-    mainWindow.setWindowTitle("MagistralaCAN4 - Sniffer CAN");
+    mainWindow.setWindowTitle("MagistralaCAN4 - Sniffer CAN (GPU accelerated)");
     mainWindow.resize(1280, 800);
     mainWindow.show();
 

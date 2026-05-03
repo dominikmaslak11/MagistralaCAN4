@@ -179,10 +179,10 @@ CMAKE_PROJECT_NAME:STATIC=MagistralaCAN4
 CMAKE_PROJECT_SPDX_LICENSE:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION:STATIC=1.0.0
+CMAKE_PROJECT_VERSION:STATIC=2.0.0
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION_MAJOR:STATIC=1
+CMAKE_PROJECT_VERSION_MAJOR:STATIC=2
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION_MINOR:STATIC=0
@@ -314,6 +314,12 @@ OPENGL_opengl_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libOpenGL.so
 
 //Path to a file.
 OPENGL_xmesa_INCLUDE_DIR:PATH=OPENGL_xmesa_INCLUDE_DIR-NOTFOUND
+
+//Path to a file.
+OpenCL_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+OpenCL_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libOpenCL.so
 
 //Additional directories where find(Qt6 ...) host Qt components
 // are searched
@@ -536,6 +542,8 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Lua
 FIND_PACKAGE_MESSAGE_DETAILS_Lua:INTERNAL=[/usr/lib/x86_64-linux-gnu/liblua5.3.so;/usr/lib/x86_64-linux-gnu/libm.so][/usr/include/lua5.3][v5.3.6()]
+//Details about finding OpenCL
+FIND_PACKAGE_MESSAGE_DETAILS_OpenCL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenCL.so][/usr/include][v()]
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenGL.so][/usr/lib/x86_64-linux-gnu/libGLX.so][/usr/include][ ][v()]
 //Details about finding Threads
@@ -554,6 +562,20 @@ LUA_INCLUDE_DIR-ADVANCED:INTERNAL=1
 LUA_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: LUA_MATH_LIBRARY
 LUA_MATH_LIBRARY-ADVANCED:INTERNAL=1
+//Have symbol CL_VERSION_1_0
+OPENCL_VERSION_1_0:INTERNAL=
+//Have symbol CL_VERSION_1_1
+OPENCL_VERSION_1_1:INTERNAL=
+//Have symbol CL_VERSION_1_2
+OPENCL_VERSION_1_2:INTERNAL=
+//Have symbol CL_VERSION_2_0
+OPENCL_VERSION_2_0:INTERNAL=
+//Have symbol CL_VERSION_2_1
+OPENCL_VERSION_2_1:INTERNAL=
+//Have symbol CL_VERSION_2_2
+OPENCL_VERSION_2_2:INTERNAL=
+//Have symbol CL_VERSION_3_0
+OPENCL_VERSION_3_0:INTERNAL=
 //ADVANCED property for variable: OPENGL_EGL_INCLUDE_DIR
 OPENGL_EGL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_GLES2_INCLUDE_DIR
@@ -580,6 +602,12 @@ OPENGL_glx_LIBRARY-ADVANCED:INTERNAL=1
 OPENGL_opengl_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_xmesa_INCLUDE_DIR
 OPENGL_xmesa_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//Have includes OpenCL/cl.h
+OpenCL_HAVE_OPENCL_CL_H:INTERNAL=
+//ADVANCED property for variable: OpenCL_INCLUDE_DIR
+OpenCL_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OpenCL_LIBRARY
+OpenCL_LIBRARY-ADVANCED:INTERNAL=1
 //Qt feature: abstractbutton (from target Qt6::Widgets)
 QT_FEATURE_abstractbutton:INTERNAL=ON
 //Qt feature: abstractslider (from target Qt6::Widgets)

@@ -11,10 +11,16 @@ MagistralaCAN4_autogen/timestamp: \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.h \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.cpp \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.cpp \
@@ -50,6 +56,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/c++/15/bits/cpp_type_traits.h \
 	/usr/include/c++/15/bits/cxxabi_forced.h \
 	/usr/include/c++/15/bits/cxxabi_init_exception.h \
+	/usr/include/c++/15/bits/deque.tcc \
 	/usr/include/c++/15/bits/enable_special_members.h \
 	/usr/include/c++/15/bits/erase_if.h \
 	/usr/include/c++/15/bits/exception.h \
@@ -92,6 +99,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/c++/15/bits/stl_algobase.h \
 	/usr/include/c++/15/bits/stl_bvector.h \
 	/usr/include/c++/15/bits/stl_construct.h \
+	/usr/include/c++/15/bits/stl_deque.h \
 	/usr/include/c++/15/bits/stl_function.h \
 	/usr/include/c++/15/bits/stl_heap.h \
 	/usr/include/c++/15/bits/stl_iterator.h \
@@ -144,6 +152,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/c++/15/cwchar \
 	/usr/include/c++/15/debug/assertions.h \
 	/usr/include/c++/15/debug/debug.h \
+	/usr/include/c++/15/deque \
 	/usr/include/c++/15/exception \
 	/usr/include/c++/15/ext/aligned_buffer.h \
 	/usr/include/c++/15/ext/alloc_traits.h \
@@ -299,6 +308,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
 	/usr/include/x86_64-linux-gnu/gnu/stubs.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
+	/usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QMetaType \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QMutex \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
@@ -361,6 +371,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qglobalstatic.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qhash.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qhashfunctions.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtCore/qiodevice.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qiodevicebase.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qitemselectionmodel.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qiterable.h \
@@ -439,6 +450,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qtversionchecks.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qtypeinfo.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qtypes.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtCore/qurl.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qutf8stringview.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qvariant.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qvarlengtharray.h \
@@ -460,28 +472,37 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qpalette.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtGui/qpicture.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixelformat.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixmap.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qpolygon.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qregion.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qrgb.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qrgba64.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextdocument.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiglobal.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtransform.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qvalidator.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qwindowdefs.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QCheckBox \
+	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QComboBox \
+	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView \
+	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QWidget \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractbutton.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractitemdelegate.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractitemview.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractscrollarea.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcheckbox.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcombobox.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qframe.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlabel.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h \
@@ -631,82 +652,27 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/lib/x86_64-linux-gnu/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets-none.cmake \
 	/usr/lib/x86_64-linux-gnu/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets.cmake \
 	/usr/lib/x86_64-linux-gnu/cmake/Qt6WidgetsTools/Qt6WidgetsToolsVersionlessTargets.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeCXXCompiler.cmake.in \
-	/usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp \
 	/usr/share/cmake-4.2/Modules/CMakeCXXInformation.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeCommonLanguageInclude.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeCompilerIdDetection.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeDetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerSupport.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeDetermineSystem.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeFindDependencyMacro.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeGenericSystem.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeInitializeConfigs.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeLanguageInformation.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeParseImplicitIncludeInfo.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeParseImplicitLinkInfo.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeParseLibraryArchitecture.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeSystem.cmake.in \
+	/usr/share/cmake-4.2/Modules/CMakePushCheckState.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeSystemSpecificInformation.cmake \
 	/usr/share/cmake-4.2/Modules/CMakeSystemSpecificInitialize.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeTestCompilerCommon.cmake \
-	/usr/share/cmake-4.2/Modules/CMakeUnixFindMake.cmake \
 	/usr/share/cmake-4.2/Modules/CheckCXXCompilerFlag.cmake \
 	/usr/share/cmake-4.2/Modules/CheckCXXSourceCompiles.cmake \
 	/usr/share/cmake-4.2/Modules/CheckIncludeFileCXX.cmake \
+	/usr/share/cmake-4.2/Modules/CheckIncludeFiles.cmake \
 	/usr/share/cmake-4.2/Modules/CheckLibraryExists.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/ADSP-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/ARMCC-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/ARMClang-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/AppleClang-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Borland-DetermineCompiler.cmake \
+	/usr/share/cmake-4.2/Modules/CheckSymbolExists.cmake \
 	/usr/share/cmake-4.2/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Clang-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Clang-DetermineCompilerInternal.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Compaq-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Cray-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/CrayClang-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Diab-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Embarcadero-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Fujitsu-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/GHS-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/GNU-CXX-DetermineCompiler.cmake \
 	/usr/share/cmake-4.2/Modules/Compiler/GNU-CXX.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/GNU-FindBinUtils.cmake \
 	/usr/share/cmake-4.2/Modules/Compiler/GNU.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/HP-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/IAR-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/IBMClang-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Intel-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/LCC-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/MSVC-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/NVHPC-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/NVIDIA-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/OrangeC-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/PGI-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/PathScale-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Renesas-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/SCO-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/SunPro-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/TI-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/TIClang-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Tasking-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/VisualAge-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/Watcom-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/XL-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/XLClang-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-4.2/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake \
 	/usr/share/cmake-4.2/Modules/FindLua.cmake \
+	/usr/share/cmake-4.2/Modules/FindOpenCL.cmake \
 	/usr/share/cmake-4.2/Modules/FindOpenGL.cmake \
 	/usr/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake \
 	/usr/share/cmake-4.2/Modules/FindPackageMessage.cmake \
@@ -715,19 +681,15 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/share/cmake-4.2/Modules/GNUInstallDirs.cmake \
 	/usr/share/cmake-4.2/Modules/Internal/CMakeCXXLinkerInformation.cmake \
 	/usr/share/cmake-4.2/Modules/Internal/CMakeCommonLinkerInformation.cmake \
-	/usr/share/cmake-4.2/Modules/Internal/CMakeDetermineLinkerId.cmake \
-	/usr/share/cmake-4.2/Modules/Internal/CMakeInspectCXXLinker.cmake \
 	/usr/share/cmake-4.2/Modules/Internal/CheckCompilerFlag.cmake \
 	/usr/share/cmake-4.2/Modules/Internal/CheckFlagCommonConfig.cmake \
 	/usr/share/cmake-4.2/Modules/Internal/CheckSourceCompiles.cmake \
-	/usr/share/cmake-4.2/Modules/Internal/FeatureTesting.cmake \
 	/usr/share/cmake-4.2/Modules/Linker/GNU-CXX.cmake \
 	/usr/share/cmake-4.2/Modules/Linker/GNU.cmake \
 	/usr/share/cmake-4.2/Modules/MacroAddFileDependencies.cmake \
 	/usr/share/cmake-4.2/Modules/Platform/Linker/GNU.cmake \
 	/usr/share/cmake-4.2/Modules/Platform/Linker/Linux-GNU-CXX.cmake \
 	/usr/share/cmake-4.2/Modules/Platform/Linker/Linux-GNU.cmake \
-	/usr/share/cmake-4.2/Modules/Platform/Linux-Determine-CXX.cmake \
 	/usr/share/cmake-4.2/Modules/Platform/Linux-GNU-CXX.cmake \
 	/usr/share/cmake-4.2/Modules/Platform/Linux-GNU.cmake \
 	/usr/share/cmake-4.2/Modules/Platform/Linux-Initialize.cmake \

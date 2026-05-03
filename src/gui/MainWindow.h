@@ -2,10 +2,14 @@
 #include <QMainWindow>
 #include <QTableView>
 #include <QPushButton>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLabel>
 #include <QTimer>
 #include <QVector>
 #include "core/CanSniffer.h"
 #include "core/CanFrameModel.h"
+#include "core/AssociativeLearner.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -17,6 +21,8 @@ private slots:
     void toggleSniffing();
     void onNewFrame(const CanFrame &frame);
     void updateTableBatch();
+    void refreshInterfaces();
+    void applyOverwriteMode(bool enabled);
 
 private:
     void setupStyle();
@@ -25,8 +31,12 @@ private:
 
     CanSniffer m_sniffer;
     CanFrameModel *m_model;
+    AssociativeLearner *m_learner;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
+    QComboBox *m_interfaceCombo;
+    QCheckBox *m_overwriteCheck;
+    QLabel *m_statusLabel;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;
