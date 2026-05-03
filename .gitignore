@@ -1,0 +1,4 @@
+build/
+*.o
+*.pro.user
+*.autosave
