@@ -2492,6 +2492,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtransform.h
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qvalidator.h
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qwindowdefs.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QComboBox
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QFileDialog
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHBoxLayout
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHeaderView
@@ -2510,6 +2511,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcombobox.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qdialog.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qdialogbuttonbox.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qfiledialog.h

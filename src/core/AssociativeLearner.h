@@ -45,6 +45,7 @@ private:
     void updateCandidates();
     void updateCorrelationTable();
     void updateSequenceTable();
+    void updateCrossByteTable();
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
 
@@ -63,9 +64,11 @@ private:
     QPushButton  *m_addObsBtn;
     QTableWidget *m_correlationTable;
 
-    // Nowe: sekwencje
-    QComboBox    *m_ngramCombo;          // wybór 2 (bigram) lub 3 (trigram)
+    QComboBox    *m_ngramCombo;
     QTableWidget *m_sequenceTable;
+
+    // Nowy widget dla korelacji międzybajtowej
+    QTableWidget *m_crossByteTable;
 
     QPushButton  *m_saveBtn;
     QPushButton  *m_loadBtn;
