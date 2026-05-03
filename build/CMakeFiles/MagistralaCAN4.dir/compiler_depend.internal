@@ -2181,6 +2181,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QString
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QVariant
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QVector
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QtCore
@@ -2500,6 +2501,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMessageBox
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QVBoxLayout
@@ -2525,6 +2527,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmessagebox.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsizepolicy.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h
