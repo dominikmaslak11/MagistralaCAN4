@@ -1,0 +1,33 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/MagistralaCAN4.dir/link.d"
+  "CMakeFiles/MagistralaCAN4_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/MagistralaCAN4_autogen.dir/ParseCache.txt"
+  "MagistralaCAN4_autogen"
+  "CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/main.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/main.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o.d"
+  "MagistralaCAN4"
+  "MagistralaCAN4.pdb"
+  "MagistralaCAN4_autogen/mocs_compilation.cpp"
+  "MagistralaCAN4_autogen/timestamp"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/MagistralaCAN4.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
