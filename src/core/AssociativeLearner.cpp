@@ -34,10 +34,10 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_candidatesView->setSelectionBehavior(QAbstractItemView::SelectRows);
     mainLayout->addWidget(m_candidatesView);
 
-    auto *separator = new QFrame;
-    separator->setFrameShape(QFrame::HLine);
-    separator->setStyleSheet("background-color: #e94560;");
-    mainLayout->addWidget(separator);
+    auto *separator1 = new QFrame;
+    separator1->setFrameShape(QFrame::HLine);
+    separator1->setStyleSheet("background-color: #e94560;");
+    mainLayout->addWidget(separator1);
 
     auto *valueLayout = new QHBoxLayout;
     valueLayout->addWidget(new QLabel("Wartość (np. temperatura):"));
@@ -58,6 +58,31 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_correlationTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     mainLayout->addWidget(m_correlationTable);
 
+    auto *separator2 = new QFrame;
+    separator2->setFrameShape(QFrame::HLine);
+    separator2->setStyleSheet("background-color: #e94560;");
+    mainLayout->addWidget(separator2);
+
+    // --- Sekcja analizy sekwencji ---
+    auto *seqLayout = new QHBoxLayout;
+    seqLayout->addWidget(new QLabel("Długość sekwencji:"));
+    m_ngramCombo = new QComboBox;
+    m_ngramCombo->addItems({"Bigram (2)", "Trigram (3)"});
+    seqLayout->addWidget(m_ngramCombo);
+    seqLayout->addStretch();
+    mainLayout->addLayout(seqLayout);
+
+    m_sequenceTable = new QTableWidget(0, 3);
+    m_sequenceTable->setHorizontalHeaderLabels({"Sekwencja ID", "Wystąpienia w zdarzeniach", "Pewność"});
+    m_sequenceTable->verticalHeader()->hide();
+    m_sequenceTable->horizontalHeader()->setStretchLastSection(true);
+    m_sequenceTable->setShowGrid(false);
+    m_sequenceTable->setAlternatingRowColors(false);
+    m_sequenceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_sequenceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    mainLayout->addWidget(m_sequenceTable);
+
+    // Przyciski serializacji
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję");
     m_loadBtn = new QPushButton("📂 Wczytaj sesję");
@@ -70,6 +95,8 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     connect(m_addObsBtn, &QPushButton::clicked, this, &AssociativeLearner::addObservation);
     connect(m_saveBtn, &QPushButton::clicked, this, &AssociativeLearner::saveSession);
     connect(m_loadBtn, &QPushButton::clicked, this, &AssociativeLearner::loadSession);
+    connect(m_ngramCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &AssociativeLearner::updateSequenceTable);
 
     setStyleSheet(R"(
         QPushButton {
@@ -77,7 +104,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
             border-radius: 4px; padding: 6px 15px; font-weight: bold;
         }
         QPushButton:hover { background: #e94560; color: #0a0e17; }
-        QLineEdit {
+        QLineEdit, QComboBox {
             background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560;
             border-radius: 4px; padding: 4px 8px;
         }
@@ -94,7 +121,6 @@ void AssociativeLearner::processFrame(const CanFrame &frame) {
 
 void AssociativeLearner::markEvent() {
     if (m_frameHistory.empty()) return;
-
     uint64_t latestTs = m_frameHistory.back().timestamp;
     QVector<CanFrame> window;
     for (const auto &f : m_frameHistory) {
@@ -103,7 +129,6 @@ void AssociativeLearner::markEvent() {
             window.append(f);
     }
     if (window.size() < 3) return;
-
     EventRecord record;
     record.windowFrames = window;
     record.idFeatures = buildFeatureVectors(window);
@@ -111,13 +136,13 @@ void AssociativeLearner::markEvent() {
     m_iteration++;
     m_iterationLabel->setText(QString("Liczba iteracji: %1").arg(m_iteration));
 
-    // Po pierwszym zdarzeniu oblicz nowe okno
     if (m_iteration == 1) {
         recalcAdaptiveWindow();
     }
 
     emit eventMarked(m_iteration);
     updateCandidates();
+    updateSequenceTable();
 }
 
 void AssociativeLearner::resetLearning() {
@@ -127,6 +152,7 @@ void AssociativeLearner::resetLearning() {
     m_iterationLabel->setText("Liczba iteracji: 0");
     m_candidateModel->clear();
     m_correlationTable->setRowCount(0);
+    m_sequenceTable->setRowCount(0);
 }
 
 void AssociativeLearner::addObservation() {
@@ -166,7 +192,6 @@ void AssociativeLearner::addObservation() {
 }
 
 void AssociativeLearner::recalcAdaptiveWindow() {
-    // Prosta heurystyka: analizujemy odstępy między ramkami w oknie pierwszego zdarzenia
     if (m_events.isEmpty()) return;
     const auto &window = m_events.first().windowFrames;
     if (window.size() < 2) return;
@@ -181,10 +206,9 @@ void AssociativeLearner::recalcAdaptiveWindow() {
         sq_sum += (d - mean) * (d - mean);
     double stddev = std::sqrt(sq_sum / deltas.size());
 
-    // Okno "przed" i "po" ustawiamy na 3*średni odstęp, minimum 100ms, maksimum 2s
     int64_t newHalfWindow = std::max<int64_t>(100000, std::min<int64_t>(2000000, static_cast<int64_t>(3.0 * mean)));
     m_adaptiveBefore = newHalfWindow;
-    m_adaptiveAfter  = newHalfWindow / 3;  // krócej po zdarzeniu
+    m_adaptiveAfter  = newHalfWindow / 3;
 
     qDebug() << "Adaptacyjne okno: przed =" << m_adaptiveBefore/1000 << "ms, po =" << m_adaptiveAfter/1000 << "ms";
 }
@@ -331,6 +355,65 @@ void AssociativeLearner::updateCorrelationTable() {
     }
 }
 
+void AssociativeLearner::updateSequenceTable() {
+    if (m_events.size() < 2) {
+        m_sequenceTable->setRowCount(0);
+        return;
+    }
+
+    int n = m_ngramCombo->currentIndex() + 2;  // 2 lub 3
+
+    // Zlicz n-gramy we wszystkich oknach zdarzeń
+    QHash<QString, int> eventCounts;   // klucz: "ID1->ID2->..."
+    for (const auto &ev : m_events) {
+        const auto &frames = ev.windowFrames;
+        if (frames.size() < n) continue;
+        // Aby uniknąć wielokrotnego zliczania tych samych n-gramów w jednym zdarzeniu, użyjemy set
+        QSet<QString> localSet;
+        for (int i = 0; i <= frames.size() - n; ++i) {
+            QStringList ids;
+            for (int j = 0; j < n; ++j) {
+                ids.append(QString::number(frames[i+j].id));
+            }
+            localSet.insert(ids.join("→"));
+        }
+        for (const auto &key : localSet) {
+            eventCounts[key]++;
+        }
+    }
+
+    // Oblicz łączną liczbę zdarzeń (wszystkie okna)
+    int totalEvents = m_events.size();
+
+    // Posortuj po malejącej liczbie wystąpień i wyświetl top 20
+    QVector<QPair<QString, int>> sorted;
+    for (auto it = eventCounts.begin(); it != eventCounts.end(); ++it) {
+        sorted.append({it.key(), it.value()});
+    }
+    std::sort(sorted.begin(), sorted.end(),
+              [](const QPair<QString,int> &a, const QPair<QString,int> &b) {
+                  return a.second > b.second;
+              });
+    if (sorted.size() > 20) sorted.resize(20);
+
+    m_sequenceTable->setRowCount(sorted.size());
+    for (int i = 0; i < sorted.size(); ++i) {
+        const QString &key = sorted[i].first;
+        int count = sorted[i].second;
+        double prob = (double)count / totalEvents;
+
+        m_sequenceTable->setItem(i, 0, new QTableWidgetItem(key));
+        m_sequenceTable->setItem(i, 1, new QTableWidgetItem(QString::number(count)));
+        m_sequenceTable->setItem(i, 2, new QTableWidgetItem(QString("%1%").arg(prob * 100.0, 0, 'f', 1)));
+
+        QColor color = (prob > 0.7) ? QColor("#00ffaa") :
+                       (prob > 0.4) ? QColor("#ffaa00") : QColor("#ff66cc");
+        m_sequenceTable->item(i, 0)->setForeground(QColor("#c0c0c0"));
+        m_sequenceTable->item(i, 1)->setForeground(QColor("#c0c0c0"));
+        m_sequenceTable->item(i, 2)->setForeground(color);
+    }
+}
+
 // --- Serializacja ---
 void AssociativeLearner::saveSession() {
     QString path = QFileDialog::getSaveFileName(this, "Zapisz sesję", "", "JSON (*.json)");
@@ -441,4 +524,5 @@ void AssociativeLearner::loadSession() {
     m_iterationLabel->setText(QString("Liczba iteracji: %1").arg(m_iteration));
     updateCandidates();
     updateCorrelationTable();
+    updateSequenceTable();
 }
