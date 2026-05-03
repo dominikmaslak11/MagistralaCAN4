@@ -1,245 +1,325 @@
 #!/usr/bin/env bash
-# MagistralaCAN4 – ustawienie OpenCL jako obowiązkowego oraz naprawa GpuCorrelator
+# fix_suwak.sh – naprawia przewijanie + gotowość do push
 set -e
 
-echo "=== Aktualizacja CMake i GpuCorrelator (OpenCL wymagane) ==="
+echo "=== Naprawa suwaka (auto-scroll tylko gdy na dole) ==="
 
-# 1. CMakeLists.txt z REQUIRED dla OpenCL
-cat > CMakeLists.txt << 'EOF'
-cmake_minimum_required(VERSION 3.16)
-project(MagistralaCAN4 VERSION 2.0.0 LANGUAGES CXX)
+# 1. MainWindow.h – dodajemy flagę i slot
+cat > src/gui/MainWindow.h << 'EOF'
+#pragma once
+#include <QMainWindow>
+#include <QTableView>
+#include <QPushButton>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLabel>
+#include <QTimer>
+#include <QVector>
+#include "core/CanSniffer.h"
+#include "core/CanFrameModel.h"
+#include "core/AssociativeLearner.h"
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_AUTOMOC ON)
+class MainWindow : public QMainWindow {
+    Q_OBJECT
+public:
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent)
-find_package(Lua REQUIRED)
-find_package(OpenCL REQUIRED)
+private slots:
+    void toggleSniffing();
+    void onNewFrame(const CanFrame &frame);
+    void updateTableBatch();
+    void refreshInterfaces();
+    void applyOverwriteMode(bool enabled);
+    void onUserScroll(int value);           // nowe: obsługa przewijania
 
-set(SOURCES
-    main.cpp
-    src/core/CanSniffer.cpp
-    src/core/CanFrameModel.cpp
-    src/core/FrameDetailWidget.cpp
-    src/core/AssociativeLearner.cpp
-    src/core/LuaScriptEngine.cpp
-    src/core/CanExporter.cpp
-    src/core/CanInterfaceEnumerator.cpp
-    src/core/GpuCorrelator.cpp
-    src/core/CandidateModel.cpp
-    src/gui/MainWindow.cpp
-)
+private:
+    void setupStyle();
+    void setupToolBar();
+    void setupCentralWidget();
 
-set(HEADERS
-    src/core/CanFrame.h
-    src/core/CanSniffer.h
-    src/core/CanFrameModel.h
-    src/core/FrameDetailWidget.h
-    src/core/AssociativeLearner.h
-    src/core/LuaScriptEngine.h
-    src/core/CanExporter.h
-    src/core/CanInterfaceEnumerator.h
-    src/core/GpuCorrelator.h
-    src/core/CandidateModel.h
-    src/gui/MainWindow.h
-)
+    CanSniffer m_sniffer;
+    CanFrameModel *m_model;
+    AssociativeLearner *m_learner;
+    QTableView *m_tableView;
+    QPushButton *m_btnStartStop;
+    QComboBox *m_interfaceCombo;
+    QCheckBox *m_overwriteCheck;
+    QLabel *m_statusLabel;
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+    QTimer m_batchTimer;
+    QVector<CanFrame> m_frameBuffer;
+    bool m_sniffing = false;
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
-    ${LUA_INCLUDE_DIR}
-    ${OpenCL_INCLUDE_DIRS}
-)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    Qt6::Widgets
-    Qt6::Core
-    Qt6::Concurrent
-    ${LUA_LIBRARIES}
-    ${OpenCL_LIBRARIES}
-)
-
-if(UNIX AND NOT APPLE)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE LINUX_SOCKETCAN)
-endif()
+    // Nowe: do poprawnego przewijania
+    bool m_autoScroll = true;                // czy automatycznie przewijać
+};
 EOF
 
-# 2. GpuCorrelator.cpp – używamy tylko <CL/cl.h> (poprawne dla systemu)
-cat > src/core/GpuCorrelator.cpp << 'EOF'
-#include "GpuCorrelator.h"
-#include <QDebug>
-#include <QtConcurrent>
-#include <algorithm>
-#include <cmath>
-#include <CL/cl.h>
+# 2. MainWindow.cpp – dodajemy logikę przewijania
+cat > src/gui/MainWindow.cpp << 'EOF'
+#include "MainWindow.h"
+#include "core/CanInterfaceEnumerator.h"
+#include <QToolBar>
+#include <QToolButton>
+#include <QTabWidget>
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QApplication>
+#include <QScrollBar>
 
-GpuCorrelator::GpuCorrelator() {
-    initialize();
-}
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    setWindowTitle("MagistralaCAN4 - Sniffer CAN");
+    resize(1280, 800);
 
-GpuCorrelator::~GpuCorrelator() {
-    if (m_kernel) clReleaseKernel(static_cast<cl_kernel>(m_kernel));
-    if (m_program) clReleaseProgram(static_cast<cl_program>(m_program));
-    if (m_queue) clReleaseCommandQueue(static_cast<cl_command_queue>(m_queue));
-    if (m_context) clReleaseContext(static_cast<cl_context>(m_context));
-}
+    m_model = new CanFrameModel(this);
+    m_tableView = new QTableView;
+    m_tableView->setModel(m_model);
+    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_tableView->verticalHeader()->hide();
+    m_tableView->horizontalHeader()->setStretchLastSection(true);
+    m_tableView->setShowGrid(false);
+    m_tableView->setAlternatingRowColors(false);
 
-bool GpuCorrelator::initialize() {
-    cl_int err;
-    cl_platform_id platform = nullptr;
-    cl_device_id device = nullptr;
+    m_learner = new AssociativeLearner;
 
-    err = clGetPlatformIDs(1, &platform, nullptr);
-    if (err != CL_SUCCESS) {
-        qWarning("GpuCorrelator: brak platformy OpenCL.");
-        return false;
-    }
+    m_batchTimer.setInterval(33);
+    connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
 
-    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, nullptr);
-    if (err != CL_SUCCESS) {
-        qWarning("GpuCorrelator: brak urządzenia GPU, spróbuję CPU.");
-        err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_CPU, 1, &device, nullptr);
-        if (err != CL_SUCCESS) {
-            qWarning("GpuCorrelator: brak jakiegokolwiek urządzenia OpenCL.");
-            return false;
-        }
-    }
-
-    cl_context_properties props[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platform, 0 };
-    cl_context ctx = clCreateContext(props, 1, &device, nullptr, nullptr, &err);
-    if (err != CL_SUCCESS) return false;
-    m_context = ctx;
-
-    cl_command_queue queue = clCreateCommandQueueWithProperties(ctx, device, nullptr, &err);
-    if (err != CL_SUCCESS) { clReleaseContext(ctx); return false; }
-    m_queue = queue;
-
-    const char *kernelSource = R"CLC(
-        __kernel void correlation(__global const float *features,
-                                  __global float *result,
-                                  const int N,
-                                  const int vecLen) {
-            int row = get_global_id(0);
-            int col = get_global_id(1);
-            if (row >= N || col >= N) return;
-
-            float dot = 0.0f, normA = 0.0f, normB = 0.0f;
-            for (int i = 0; i < vecLen; i++) {
-                float a = features[row * vecLen + i];
-                float b = features[col * vecLen + i];
-                dot += a * b;
-                normA += a * a;
-                normB += b * b;
-            }
-            result[row * N + col] = dot / (sqrt(normA) * sqrt(normB) + 1e-6f);
-        }
-    )CLC";
-
-    cl_program program = clCreateProgramWithSource(ctx, 1, &kernelSource, nullptr, &err);
-    if (err != CL_SUCCESS) {
-        clReleaseCommandQueue(queue); clReleaseContext(ctx); return false;
-    }
-    err = clBuildProgram(program, 1, &device, nullptr, nullptr, nullptr);
-    if (err != CL_SUCCESS) {
-        size_t len;
-        char buffer[2048];
-        clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
-        qWarning() << "Błąd budowania kernela OpenCL:" << buffer;
-        clReleaseProgram(program);
-        clReleaseCommandQueue(queue);
-        clReleaseContext(ctx);
-        return false;
-    }
-    m_program = program;
-
-    cl_kernel kernel = clCreateKernel(program, "correlation", &err);
-    if (err != CL_SUCCESS) {
-        clReleaseProgram(program);
-        clReleaseCommandQueue(queue);
-        clReleaseContext(ctx);
-        return false;
-    }
-    m_kernel = kernel;
-    m_gpuAvailable = true;
-    qDebug("GpuCorrelator: OpenCL gotowy.");
-    return true;
-}
-
-QVector<QVector<float>> GpuCorrelator::computeCorrelationMatrix(const QVector<QVector<float>> &features) {
-    if (m_gpuAvailable && !features.isEmpty())
-        return computeOnGpu(features);
-    else
-        return computeOnCpu(features);
-}
-
-QVector<QVector<float>> GpuCorrelator::computeOnCpu(const QVector<QVector<float>> &features) {
-    int N = features.size();
-    QVector<QVector<float>> result(N, QVector<float>(N, 0.0f));
-    if (N == 0) return result;
-    int vecLen = features[0].size();
-
-    QVector<int> rows(N);
-    std::iota(rows.begin(), rows.end(), 0);
-    QtConcurrent::blockingMap(rows, [&](int i) {
-        for (int j = 0; j < N; ++j) {
-            float dot = 0.0f, normA = 0.0f, normB = 0.0f;
-            for (int k = 0; k < vecLen; ++k) {
-                float a = features[i][k];
-                float b = features[j][k];
-                dot += a * b;
-                normA += a * a;
-                normB += b * b;
-            }
-            result[i][j] = dot / (std::sqrt(normA) * std::sqrt(normB) + 1e-6f);
-        }
+    connect(&m_sniffer, &CanSniffer::newFrame, this, &MainWindow::onNewFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::errorOccurred, this, [this](const QString &msg) {
+        QMessageBox::warning(this, "Błąd CAN", msg);
+        m_sniffer.stop();
+        m_sniffing = false;
+        m_btnStartStop->setText("▶ Start");
+        m_batchTimer.stop();
+        m_statusLabel->setText("Rozłączony");
+        m_statusLabel->setStyleSheet("color: #ff4444;");
     });
-    return result;
+    connect(&m_sniffer, &CanSniffer::statusChanged, this, [this](bool running) {
+        m_statusLabel->setText(running ? "Nasłuchuje..." : "Rozłączony");
+        m_statusLabel->setStyleSheet(running ? "color: #00ffaa;" : "color: #ff4444;");
+    });
+
+    setupToolBar();
+    setupCentralWidget();
+    setupStyle();
+
+    refreshInterfaces();
+    if (m_interfaceCombo->count() > 0)
+        m_interfaceCombo->setCurrentIndex(0);
+
+    connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
+
+    // Podłączenie suwaka – wykrywanie, czy użytkownik nie jest na dole
+    connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged,
+            this, &MainWindow::onUserScroll);
 }
 
-QVector<QVector<float>> GpuCorrelator::computeOnGpu(const QVector<QVector<float>> &features) {
-    int N = features.size();
-    if (N == 0) return {};
-    int vecLen = features[0].size();
+MainWindow::~MainWindow() {
+    if (m_sniffing) {
+        m_sniffer.stop();
+        m_batchTimer.stop();
+    }
+}
 
-    QVector<float> flatFeatures(N * vecLen);
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < vecLen; ++j)
-            flatFeatures[i * vecLen + j] = features[i][j];
+void MainWindow::toggleSniffing() {
+    if (!m_sniffing) {
+        QString iface = m_interfaceCombo->currentText().trimmed();
+        if (iface.isEmpty()) {
+            QMessageBox::warning(this, "Brak interfejsu", "Wybierz interfejs CAN.");
+            return;
+        }
+        m_sniffer.start(iface);
+        m_sniffing = true;
+        m_btnStartStop->setText("■ Stop");
+        m_interfaceCombo->setEnabled(false);
+        m_batchTimer.start();
+    } else {
+        m_sniffer.stop();
+        m_sniffing = false;
+        m_btnStartStop->setText("▶ Start");
+        m_interfaceCombo->setEnabled(true);
+        m_batchTimer.stop();
+        m_frameBuffer.clear();
+    }
+}
 
-    cl_int err;
-    cl_context ctx = static_cast<cl_context>(m_context);
-    cl_command_queue queue = static_cast<cl_command_queue>(m_queue);
-    cl_kernel kernel = static_cast<cl_kernel>(m_kernel);
+void MainWindow::onNewFrame(const CanFrame &frame) {
+    m_frameBuffer.append(frame);
+}
 
-    cl_mem bufFeatures = clCreateBuffer(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                        flatFeatures.size() * sizeof(float),
-                                        const_cast<float*>(flatFeatures.data()), &err);
-    cl_mem bufResult = clCreateBuffer(ctx, CL_MEM_WRITE_ONLY,
-                                      N * N * sizeof(float), nullptr, &err);
+void MainWindow::updateTableBatch() {
+    if (m_frameBuffer.isEmpty()) return;
+    m_model->processIncomingFrames(m_frameBuffer);
+    m_frameBuffer.clear();
 
-    clSetKernelArg(kernel, 0, sizeof(cl_mem), &bufFeatures);
-    clSetKernelArg(kernel, 1, sizeof(cl_mem), &bufResult);
-    clSetKernelArg(kernel, 2, sizeof(int), &N);
-    clSetKernelArg(kernel, 3, sizeof(int), &vecLen);
+    // Przewijaj automatycznie tylko, gdy użytkownik jest na dole
+    if (m_autoScroll) {
+        m_tableView->scrollToBottom();
+    }
+}
 
-    size_t global[2] = { static_cast<size_t>(N), static_cast<size_t>(N) };
-    clEnqueueNDRangeKernel(queue, kernel, 2, nullptr, global, nullptr, 0, nullptr, nullptr);
-    clFinish(queue);
+void MainWindow::refreshInterfaces() {
+    QString current = m_interfaceCombo->currentText();
+    m_interfaceCombo->clear();
+    QStringList ifaces = CanInterfaceEnumerator::availableCanInterfaces();
+    m_interfaceCombo->addItems(ifaces);
+    int idx = m_interfaceCombo->findText(current);
+    if (idx >= 0)
+        m_interfaceCombo->setCurrentIndex(idx);
+    else if (!current.isEmpty())
+        m_interfaceCombo->setCurrentText(current);
+}
 
-    QVector<float> resultFlat(N * N);
-    clEnqueueReadBuffer(queue, bufResult, CL_TRUE, 0, N * N * sizeof(float), resultFlat.data(), 0, nullptr, nullptr);
+void MainWindow::applyOverwriteMode(bool enabled) {
+    m_model->setOverwriteMode(enabled);
+}
 
-    clReleaseMemObject(bufFeatures);
-    clReleaseMemObject(bufResult);
+void MainWindow::onUserScroll(int value) {
+    QScrollBar *vbar = m_tableView->verticalScrollBar();
+    if (!vbar) return;
+    // Sprawdzamy, czy użytkownik jest przy samym dole (z tolerancją 1 piksel)
+    m_autoScroll = (value >= vbar->maximum() - 1);
+}
 
-    QVector<QVector<float>> result(N, QVector<float>(N));
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j)
-            result[i][j] = resultFlat[i * N + j];
-    return result;
+void MainWindow::setupToolBar() {
+    auto *toolbar = addToolBar("Główne");
+    toolbar->setMovable(false);
+
+    m_interfaceCombo = new QComboBox;
+    m_interfaceCombo->setEditable(true);
+    m_interfaceCombo->setMinimumWidth(120);
+    m_interfaceCombo->setToolTip("Wybierz interfejs CAN (np. vcan0, can0)");
+    toolbar->addWidget(m_interfaceCombo);
+
+    auto *refreshBtn = new QPushButton("↻");
+    refreshBtn->setToolTip("Odśwież listę interfejsów");
+    connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
+    toolbar->addWidget(refreshBtn);
+
+    toolbar->addSeparator();
+
+    m_btnStartStop = new QPushButton("▶ Start");
+    connect(m_btnStartStop, &QPushButton::clicked, this, &MainWindow::toggleSniffing);
+    toolbar->addWidget(m_btnStartStop);
+
+    m_overwriteCheck = new QCheckBox("Nadpisywanie");
+    m_overwriteCheck->setChecked(true);
+    connect(m_overwriteCheck, &QCheckBox::toggled, this, &MainWindow::applyOverwriteMode);
+    toolbar->addWidget(m_overwriteCheck);
+
+    toolbar->addSeparator();
+
+    m_statusLabel = new QLabel("Rozłączony");
+    m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
+    toolbar->addWidget(m_statusLabel);
+
+    toolbar->addSeparator();
+
+    QAction *clearAction = toolbar->addAction("🗙 Wyczyść");
+    if (clearAction) {
+        connect(clearAction, &QAction::triggered, this, [this]() {
+            m_model->clear();
+        });
+        QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction));
+        if (clearBtn) {
+            clearBtn->setObjectName("clearButton");
+        }
+    }
+}
+
+void MainWindow::setupCentralWidget() {
+    auto *tabs = new QTabWidget;
+    tabs->addTab(m_tableView, "Ruch CAN");
+    tabs->addTab(m_learner, "Uczenie asocjacyjne");
+    setCentralWidget(tabs);
+}
+
+void MainWindow::setupStyle() {
+    qApp->setStyleSheet(R"(
+        QMainWindow {
+            background-color: #0a0e17;
+        }
+        QToolBar {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #1a1a2e, stop:1 #16213e);
+            border-bottom: 2px solid #e94560;
+            spacing: 8px;
+            padding: 4px;
+        }
+        QPushButton {
+            background: #1a1a2e;
+            color: #00ffaa;
+            border: 1px solid #e94560;
+            border-radius: 4px;
+            padding: 5px 15px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background: #e94560;
+            color: #0a0e17;
+        }
+        QComboBox {
+            background: #1a1a2e;
+            color: #00ffaa;
+            border: 1px solid #e94560;
+            border-radius: 4px;
+            padding: 3px 8px;
+            min-width: 100px;
+        }
+        QComboBox::drop-down { border: none; }
+        QComboBox QAbstractItemView {
+            background: #1a1a2e;
+            color: #00ffaa;
+            selection-background-color: #e94560;
+        }
+        QCheckBox {
+            color: #ff66cc; font-weight: bold;
+        }
+        QCheckBox::indicator { width: 16px; height: 16px; }
+        QLabel { color: #c0c0c0; }
+        QTableView, QTableWidget {
+            background-color: #0a0e17;
+            alternate-background-color: #161b22;
+            color: #c0c0c0;
+            gridline-color: #2a2a3c;
+            selection-background-color: #e94560;
+            selection-color: #ffffff;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12px;
+        }
+        QHeaderView::section {
+            background-color: #1a1a2e;
+            color: #ff66cc;
+            font-weight: bold;
+            padding: 4px;
+            border: none;
+            border-bottom: 2px solid #e94560;
+        }
+        QToolButton#clearButton {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #1a1a2e, stop:0.5 #2c0735, stop:1 #e94560);
+            color: #00ffaa;
+            border: 1px solid #e94560;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-weight: bold;
+        }
+        QToolButton#clearButton:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #e94560, stop:0.5 #2c0735, stop:1 #1a1a2e);
+            color: #0a0e17;
+            border: 1px solid #ff66cc;
+        }
+        QToolButton#clearButton:pressed {
+            background: #2c0735;
+            border: 1px solid #ff00ff;
+        }
+    )");
 }
 EOF
 
-echo "=== Konfiguracja zakończona. Teraz możesz budować. ==="
+echo "=== Naprawa zakończona. Kompiluj: cd build && make -j$(nproc) ==="

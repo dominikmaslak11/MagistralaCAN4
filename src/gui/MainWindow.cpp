@@ -7,6 +7,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QApplication>
+#include <QScrollBar>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("MagistralaCAN4 - Sniffer CAN");
@@ -50,8 +51,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     if (m_interfaceCombo->count() > 0)
         m_interfaceCombo->setCurrentIndex(0);
 
-    // Przekazuj ramki do uczenia asocjacyjnego
     connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
+
+    // Podłączenie suwaka – wykrywanie, czy użytkownik nie jest na dole
+    connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged,
+            this, &MainWindow::onUserScroll);
 }
 
 MainWindow::~MainWindow() {
@@ -91,7 +95,11 @@ void MainWindow::updateTableBatch() {
     if (m_frameBuffer.isEmpty()) return;
     m_model->processIncomingFrames(m_frameBuffer);
     m_frameBuffer.clear();
-    m_tableView->scrollToBottom();
+
+    // Przewijaj automatycznie tylko, gdy użytkownik jest na dole
+    if (m_autoScroll) {
+        m_tableView->scrollToBottom();
+    }
 }
 
 void MainWindow::refreshInterfaces() {
@@ -108,6 +116,13 @@ void MainWindow::refreshInterfaces() {
 
 void MainWindow::applyOverwriteMode(bool enabled) {
     m_model->setOverwriteMode(enabled);
+}
+
+void MainWindow::onUserScroll(int value) {
+    QScrollBar *vbar = m_tableView->verticalScrollBar();
+    if (!vbar) return;
+    // Sprawdzamy, czy użytkownik jest przy samym dole (z tolerancją 1 piksel)
+    m_autoScroll = (value >= vbar->maximum() - 1);
 }
 
 void MainWindow::setupToolBar() {
@@ -206,7 +221,7 @@ void MainWindow::setupStyle() {
         }
         QCheckBox::indicator { width: 16px; height: 16px; }
         QLabel { color: #c0c0c0; }
-        QTableView {
+        QTableView, QTableWidget {
             background-color: #0a0e17;
             alternate-background-color: #161b22;
             color: #c0c0c0;
