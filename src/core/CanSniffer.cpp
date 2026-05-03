@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <cstring>
+#include <linux/can/raw.h>
 
 CanSniffer::CanSniffer(QObject *parent) : QObject(parent) {}
 
@@ -35,8 +36,9 @@ void CanSniffer::stop() {
 
 void CanSniffer::doWork() {
     while (m_running) {
-        struct can_frame frame;
-        ssize_t nbytes = read(m_socket, &frame, sizeof(struct can_frame));
+        // Bufor na maksymalną ramkę CAN FD (72 bajty nagłówek + 64 dane)
+        uint8_t buf[CANFD_MTU];
+        ssize_t nbytes = read(m_socket, buf, sizeof(buf));
         if (nbytes < 0) {
             if (m_running) {
                 emit errorOccurred("Błąd odczytu z CAN: " + QString::fromLocal8Bit(strerror(errno)));
@@ -46,17 +48,44 @@ void CanSniffer::doWork() {
         if (nbytes == 0) continue;
 
         uint64_t ts = systemTimestamp();
-        CanFrame canFrame = parseFrame(frame, ts);
+        CanFrame canFrame;
+        if (nbytes == CAN_MTU) {
+            // Klasyczna ramka
+            struct can_frame *frame = (struct can_frame*)buf;
+            canFrame = parseFrame(*frame, ts);
+        } else if (nbytes == CANFD_MTU) {
+            // CAN FD
+            struct canfd_frame *frame = (struct canfd_frame*)buf;
+            canFrame.id = frame->can_id & CAN_EFF_MASK;
+            canFrame.extended = frame->can_id & CAN_EFF_FLAG;
+            canFrame.rtr = false; // FD ramki nie mają RTR
+            canFrame.error = frame->can_id & CAN_ERR_FLAG;
+            canFrame.fd = true;
+            canFrame.dlc = frame->len > 64 ? 64 : frame->len;
+            for (int i = 0; i < canFrame.dlc; ++i)
+                canFrame.data[i] = frame->data[i];
+            canFrame.timestamp = ts;
+        } else {
+            continue; // nieznany rozmiar
+        }
         emit newFrame(canFrame);
     }
     closeSocket();
 }
 
 bool CanSniffer::openSocket(const QString &ifname) {
+    // Próba otwarcia z CAN_RAW i FD
     m_socket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
     if (m_socket < 0) {
         emit errorOccurred("socket() nie powiódł się");
         return false;
+    }
+
+    // Włącz obsługę CAN FD
+    int enable = 1;
+    if (setsockopt(m_socket, SOL_CAN_RAW, CAN_RAW_FD_FRAMES, &enable, sizeof(enable)) < 0) {
+        // Jeśli nie udało się, to tylko klasyczne ramki – nie krytyczne
+        qDebug("CAN FD nie jest obsługiwane przez sterownik, tylko CAN 2.0");
     }
 
     struct ifreq ifr;
@@ -95,10 +124,10 @@ CanFrame CanSniffer::parseFrame(const struct can_frame &rawFrame, uint64_t times
     frame.extended = rawFrame.can_id & CAN_EFF_FLAG;
     frame.rtr = rawFrame.can_id & CAN_RTR_FLAG;
     frame.error = rawFrame.can_id & CAN_ERR_FLAG;
+    frame.fd = false;
     frame.dlc = rawFrame.len;
-    for (int i = 0; i < rawFrame.len && i < 8; ++i) {
+    for (int i = 0; i < rawFrame.len && i < 8; ++i)
         frame.data[i] = rawFrame.data[i];
-    }
     frame.timestamp = timestamp;
     return frame;
 }

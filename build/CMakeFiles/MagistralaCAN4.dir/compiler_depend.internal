@@ -7513,6 +7513,7 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMessageBox
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollBar
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTabWidget
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget
@@ -7543,6 +7544,7 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmessagebox.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollbar.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsizepolicy.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h
