@@ -6,6 +6,7 @@
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -202,6 +203,10 @@
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
+  /usr/include/lua5.3/lauxlib.h \
+  /usr/include/lua5.3/lua.h \
+  /usr/include/lua5.3/luaconf.h \
+  /usr/include/lua5.3/lualib.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
   /usr/include/stdc-predef.h \
@@ -288,6 +293,7 @@
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/lua5.3-deb-multiarch.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractAxis \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChart \
