@@ -469,6 +469,15 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QWidget \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qwidget.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtablewidget.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtableview.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlineedit.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextcursor.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextformat.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qpen.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h \
  /usr/include/c++/15/deque /usr/include/c++/15/bits/stl_deque.h \
  /usr/include/c++/15/bits/deque.tcc \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
@@ -534,4 +543,6 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication_platform.h \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qguiapplication.h \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qguiapplication_platform.h
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qguiapplication_platform.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollBar \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollbar.h

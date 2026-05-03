@@ -1,22 +1,26 @@
 #include "AssociativeLearner.h"
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QHeaderView>
+#include <QtConcurrent>
 #include <numeric>
 #include <cmath>
 #include <set>
 
 AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
-    auto *layout = new QVBoxLayout(this);
+    auto *mainLayout = new QVBoxLayout(this);
 
+    // --- Sekcja zdarzeń ---
     m_markEventBtn = new QPushButton("🔴 Zarejestruj zdarzenie");
     m_resetBtn = new QPushButton("Resetuj uczenie");
     m_iterationLabel = new QLabel("Liczba iteracji: 0");
     m_iterationLabel->setStyleSheet("color: #00ffaa; font-weight: bold;");
 
-    layout->addWidget(m_markEventBtn);
-    layout->addWidget(m_resetBtn);
-    layout->addWidget(m_iterationLabel);
+    mainLayout->addWidget(m_markEventBtn);
+    mainLayout->addWidget(m_resetBtn);
+    mainLayout->addWidget(m_iterationLabel);
 
+    // Tabela kandydatów
     m_candidateModel = new CandidateModel(this);
     m_candidatesView = new QTableView;
     m_candidatesView->setModel(m_candidateModel);
@@ -25,10 +29,38 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_candidatesView->setShowGrid(false);
     m_candidatesView->setAlternatingRowColors(false);
     m_candidatesView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    layout->addWidget(m_candidatesView);
+    mainLayout->addWidget(m_candidatesView);
 
+    // Separator
+    auto *separator = new QFrame;
+    separator->setFrameShape(QFrame::HLine);
+    separator->setStyleSheet("background-color: #e94560;");
+    mainLayout->addWidget(separator);
+
+    // --- Sekcja korelacji wartości ---
+    auto *valueLayout = new QHBoxLayout;
+    valueLayout->addWidget(new QLabel("Wartość (np. temperatura):"));
+    m_valueInput = new QLineEdit;
+    m_valueInput->setPlaceholderText("0.0");
+    m_addObsBtn = new QPushButton("Dodaj obserwację");
+    valueLayout->addWidget(m_valueInput);
+    valueLayout->addWidget(m_addObsBtn);
+    mainLayout->addLayout(valueLayout);
+
+    m_correlationTable = new QTableWidget(0, 4);
+    m_correlationTable->setHorizontalHeaderLabels({"CAN ID", "Bajt", "Korelacja", ""});
+    m_correlationTable->verticalHeader()->hide();
+    m_correlationTable->horizontalHeader()->setStretchLastSection(true);
+    m_correlationTable->setShowGrid(false);
+    m_correlationTable->setAlternatingRowColors(false);
+    m_correlationTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_correlationTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    mainLayout->addWidget(m_correlationTable);
+
+    // Sygnały
     connect(m_markEventBtn, &QPushButton::clicked, this, &AssociativeLearner::markEvent);
     connect(m_resetBtn, &QPushButton::clicked, this, &AssociativeLearner::resetLearning);
+    connect(m_addObsBtn, &QPushButton::clicked, this, &AssociativeLearner::addObservation);
 
     setStyleSheet(R"(
         QPushButton {
@@ -36,6 +68,10 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
             border-radius: 4px; padding: 6px 15px; font-weight: bold;
         }
         QPushButton:hover { background: #e94560; color: #0a0e17; }
+        QLineEdit {
+            background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560;
+            border-radius: 4px; padding: 4px 8px;
+        }
     )");
 }
 
@@ -72,9 +108,48 @@ void AssociativeLearner::markEvent() {
 
 void AssociativeLearner::resetLearning() {
     m_events.clear();
+    m_observations.clear();
     m_iteration = 0;
     m_iterationLabel->setText("Liczba iteracji: 0");
     m_candidateModel->clear();
+    m_correlationTable->setRowCount(0);
+}
+
+void AssociativeLearner::addObservation() {
+    bool ok;
+    double value = m_valueInput->text().toDouble(&ok);
+    if (!ok) return;
+
+    if (m_frameHistory.empty()) return;
+    uint64_t latestTs = m_frameHistory.back().timestamp;
+    QVector<CanFrame> window;
+    for (const auto &f : m_frameHistory) {
+        int64_t t = f.timestamp;
+        if (t >= latestTs - WINDOW_BEFORE && t <= latestTs + WINDOW_AFTER)
+            window.append(f);
+    }
+    if (window.empty()) return;
+
+    // Grupuj ramki wg ID, oblicz średnie bajty
+    QHash<uint32_t, QVector<CanFrame>> grouped;
+    for (const auto &f : window)
+        grouped[f.id].append(f);
+
+    ValueObservation obs;
+    obs.value = value;
+    for (auto it = grouped.begin(); it != grouped.end(); ++it) {
+        uint32_t id = it.key();
+        const auto &frames = it.value();
+        std::vector<uint8_t> avgBytes(8, 0);
+        for (const auto &f : frames) {
+            for (int i = 0; i < 8; ++i)
+                avgBytes[i] += f.data[i] / frames.size();  // celowo uproszczone – średnia w locie
+        }
+        obs.idAverageBytes[id] = avgBytes;
+    }
+    m_observations.append(obs);
+    m_valueInput->clear();
+    updateCorrelationTable();
 }
 
 QHash<uint32_t, QVector<float>> AssociativeLearner::buildFeatureVectors(const QVector<CanFrame> &window) {
@@ -127,7 +202,6 @@ void AssociativeLearner::updateCandidates() {
         return;
     }
 
-    // Zbierz ID, które występują we wszystkich zdarzeniach
     QSet<uint32_t> commonIds;
     bool first = true;
     for (const auto &ev : m_events) {
@@ -140,13 +214,10 @@ void AssociativeLearner::updateCandidates() {
 
     QVector<Candidate> candidates;
     for (uint32_t id : commonIds) {
-        // Oblicz średnie podobieństwo kosinusowe między wszystkimi parami zdarzeń dla tego ID
         QVector<QVector<float>> vectors;
         for (const auto &ev : m_events)
             vectors.append(ev.idFeatures[id]);
 
-        // Jeśli mamy GPU, użyj go do korelacji (mała liczba wektorów – CPU wystarczy)
-        // Użyjemy prostego CPU, bo to tylko kilka wektorów.
         int N = vectors.size();
         float totalSim = 0.0f;
         int pairs = 0;
@@ -165,9 +236,80 @@ void AssociativeLearner::updateCandidates() {
         candidates.append({id, QString("ID 0x%1").arg(id,3,16,QChar('0')).toUpper(),
                            confidence, (int)vectors.size()});
     }
-
-    // Sortuj malejąco według pewności
     std::sort(candidates.begin(), candidates.end(),
               [](const Candidate &a, const Candidate &b) { return a.score > b.score; });
     m_candidateModel->setCandidates(candidates);
+}
+
+void AssociativeLearner::updateCorrelationTable() {
+    if (m_observations.size() < 3) {
+        m_correlationTable->setRowCount(0);
+        return;
+    }
+
+    // Zbierz wszystkie kombinacje (ID, bajt) występujące we wszystkich obserwacjach
+    QSet<uint32_t> commonIds;
+    bool first = true;
+    for (const auto &obs : m_observations) {
+        QSet<uint32_t> ids;
+        for (auto it = obs.idAverageBytes.begin(); it != obs.idAverageBytes.end(); ++it)
+            ids.insert(it.key());
+        if (first) { commonIds = ids; first = false; }
+        else commonIds &= ids;
+    }
+
+    struct CorrEntry {
+        uint32_t id;
+        int byte;
+        double correlation;
+    };
+    QVector<CorrEntry> entries;
+
+    for (uint32_t id : commonIds) {
+        for (int byte = 0; byte < 8; ++byte) {
+            QVector<double> vals, bytes;
+            for (const auto &obs : m_observations) {
+                auto it = obs.idAverageBytes.find(id);
+                if (it != obs.idAverageBytes.end()) {
+                    vals.append(obs.value);
+                    bytes.append(static_cast<double>(it.value()[byte]));
+                }
+            }
+            int N = vals.size();
+            if (N < 3) continue;
+
+            // Równoległe obliczanie korelacji Pearsona (użyjemy QtConcurrent dla wielu kombinacji)
+            // Dla uproszczenia tutaj pętla sekwencyjna (jest mało danych). Można zrównoleglić na zewnątrz.
+            double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+            for (int i = 0; i < N; ++i) {
+                double x = vals[i], y = bytes[i];
+                sumX += x; sumY += y;
+                sumXY += x * y;
+                sumX2 += x * x;
+                sumY2 += y * y;
+            }
+            double denom = sqrt((N * sumX2 - sumX * sumX) * (N * sumY2 - sumY * sumY));
+            double corr = (denom != 0) ? (N * sumXY - sumX * sumY) / denom : 0.0;
+            entries.append({id, byte, corr});
+        }
+    }
+
+    // Posortuj malejąco według |korelacji|
+    std::sort(entries.begin(), entries.end(), [](const CorrEntry &a, const CorrEntry &b) {
+        return fabs(a.correlation) > fabs(b.correlation);
+    });
+
+    m_correlationTable->setRowCount(entries.size());
+    for (int i = 0; i < entries.size(); ++i) {
+        const auto &e = entries[i];
+        m_correlationTable->setItem(i, 0, new QTableWidgetItem(QString("0x%1").arg(e.id, 3, 16, QChar('0')).toUpper()));
+        m_correlationTable->setItem(i, 1, new QTableWidgetItem(QString::number(e.byte)));
+        m_correlationTable->setItem(i, 2, new QTableWidgetItem(QString::number(e.correlation, 'f', 3)));
+        // Kolorowanie
+        QColor color = (fabs(e.correlation) > 0.7) ? QColor("#00ffaa") :
+                        (fabs(e.correlation) > 0.4) ? QColor("#ffaa00") : QColor("#ff66cc");
+        m_correlationTable->item(i, 0)->setForeground(QColor("#c0c0c0"));
+        m_correlationTable->item(i, 1)->setForeground(QColor("#c0c0c0"));
+        m_correlationTable->item(i, 2)->setForeground(color);
+    }
 }
