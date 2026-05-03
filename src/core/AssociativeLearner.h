@@ -5,6 +5,7 @@
 #include <QTableView>
 #include <QTableWidget>
 #include <QLineEdit>
+#include <QComboBox>
 #include <QHash>
 #include <deque>
 #include <vector>
@@ -43,14 +44,13 @@ signals:
 private:
     void updateCandidates();
     void updateCorrelationTable();
+    void updateSequenceTable();
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
 
-    // Początkowe stałe (używane przed pierwszym przeliczeniem)
     static constexpr int64_t DEFAULT_BEFORE = 500000;
     static constexpr int64_t DEFAULT_AFTER  = 200000;
 
-    // Aktualne adaptacyjne granice (zmieniają się po pierwszym zdarzeniu)
     int64_t m_adaptiveBefore = DEFAULT_BEFORE;
     int64_t m_adaptiveAfter  = DEFAULT_AFTER;
 
@@ -62,6 +62,10 @@ private:
     QLineEdit    *m_valueInput;
     QPushButton  *m_addObsBtn;
     QTableWidget *m_correlationTable;
+
+    // Nowe: sekwencje
+    QComboBox    *m_ngramCombo;          // wybór 2 (bigram) lub 3 (trigram)
+    QTableWidget *m_sequenceTable;
 
     QPushButton  *m_saveBtn;
     QPushButton  *m_loadBtn;
