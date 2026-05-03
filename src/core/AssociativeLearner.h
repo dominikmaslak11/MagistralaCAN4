@@ -34,8 +34,8 @@ public slots:
     void markEvent();
     void resetLearning();
     void addObservation();
-    void saveSession();       // zapis
-    void loadSession();       // odczyt
+    void saveSession();
+    void loadSession();
 
 signals:
     void eventMarked(int iteration);
@@ -43,10 +43,16 @@ signals:
 private:
     void updateCandidates();
     void updateCorrelationTable();
+    void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
 
-    static constexpr int64_t WINDOW_BEFORE = 500000;
-    static constexpr int64_t WINDOW_AFTER  = 200000;
+    // Początkowe stałe (używane przed pierwszym przeliczeniem)
+    static constexpr int64_t DEFAULT_BEFORE = 500000;
+    static constexpr int64_t DEFAULT_AFTER  = 200000;
+
+    // Aktualne adaptacyjne granice (zmieniają się po pierwszym zdarzeniu)
+    int64_t m_adaptiveBefore = DEFAULT_BEFORE;
+    int64_t m_adaptiveAfter  = DEFAULT_AFTER;
 
     QPushButton *m_markEventBtn;
     QPushButton *m_resetBtn;
