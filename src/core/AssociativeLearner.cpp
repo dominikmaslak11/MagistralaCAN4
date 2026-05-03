@@ -58,7 +58,6 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_correlationTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     mainLayout->addWidget(m_correlationTable);
 
-    // Przyciski serializacji
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję");
     m_loadBtn = new QPushButton("📂 Wczytaj sesję");
@@ -95,20 +94,28 @@ void AssociativeLearner::processFrame(const CanFrame &frame) {
 
 void AssociativeLearner::markEvent() {
     if (m_frameHistory.empty()) return;
+
     uint64_t latestTs = m_frameHistory.back().timestamp;
     QVector<CanFrame> window;
     for (const auto &f : m_frameHistory) {
         int64_t t = f.timestamp;
-        if (t >= latestTs - WINDOW_BEFORE && t <= latestTs + WINDOW_AFTER)
+        if (t >= latestTs - m_adaptiveBefore && t <= latestTs + m_adaptiveAfter)
             window.append(f);
     }
     if (window.size() < 3) return;
+
     EventRecord record;
     record.windowFrames = window;
     record.idFeatures = buildFeatureVectors(window);
     m_events.push_back(record);
     m_iteration++;
     m_iterationLabel->setText(QString("Liczba iteracji: %1").arg(m_iteration));
+
+    // Po pierwszym zdarzeniu oblicz nowe okno
+    if (m_iteration == 1) {
+        recalcAdaptiveWindow();
+    }
+
     emit eventMarked(m_iteration);
     updateCandidates();
 }
@@ -127,17 +134,20 @@ void AssociativeLearner::addObservation() {
     double value = m_valueInput->text().toDouble(&ok);
     if (!ok) return;
     if (m_frameHistory.empty()) return;
+
     uint64_t latestTs = m_frameHistory.back().timestamp;
     QVector<CanFrame> window;
     for (const auto &f : m_frameHistory) {
         int64_t t = f.timestamp;
-        if (t >= latestTs - WINDOW_BEFORE && t <= latestTs + WINDOW_AFTER)
+        if (t >= latestTs - m_adaptiveBefore && t <= latestTs + m_adaptiveAfter)
             window.append(f);
     }
     if (window.empty()) return;
+
     QHash<uint32_t, QVector<CanFrame>> grouped;
     for (const auto &f : window)
         grouped[f.id].append(f);
+
     ValueObservation obs;
     obs.value = value;
     for (auto it = grouped.begin(); it != grouped.end(); ++it) {
@@ -155,16 +165,42 @@ void AssociativeLearner::addObservation() {
     updateCorrelationTable();
 }
 
+void AssociativeLearner::recalcAdaptiveWindow() {
+    // Prosta heurystyka: analizujemy odstępy między ramkami w oknie pierwszego zdarzenia
+    if (m_events.isEmpty()) return;
+    const auto &window = m_events.first().windowFrames;
+    if (window.size() < 2) return;
+
+    QVector<int64_t> deltas;
+    for (int i = 1; i < window.size(); ++i)
+        deltas.push_back(window[i].timestamp - window[i-1].timestamp);
+
+    double mean = std::accumulate(deltas.begin(), deltas.end(), 0) / (double)deltas.size();
+    double sq_sum = 0;
+    for (int64_t d : deltas)
+        sq_sum += (d - mean) * (d - mean);
+    double stddev = std::sqrt(sq_sum / deltas.size());
+
+    // Okno "przed" i "po" ustawiamy na 3*średni odstęp, minimum 100ms, maksimum 2s
+    int64_t newHalfWindow = std::max<int64_t>(100000, std::min<int64_t>(2000000, static_cast<int64_t>(3.0 * mean)));
+    m_adaptiveBefore = newHalfWindow;
+    m_adaptiveAfter  = newHalfWindow / 3;  // krócej po zdarzeniu
+
+    qDebug() << "Adaptacyjne okno: przed =" << m_adaptiveBefore/1000 << "ms, po =" << m_adaptiveAfter/1000 << "ms";
+}
+
 QHash<uint32_t, QVector<float>> AssociativeLearner::buildFeatureVectors(const QVector<CanFrame> &window) {
     QHash<uint32_t, QVector<CanFrame>> grouped;
     for (const auto &f : window)
         grouped[f.id].append(f);
+
     QHash<uint32_t, QVector<float>> result;
     for (auto it = grouped.begin(); it != grouped.end(); ++it) {
         uint32_t id = it.key();
         const auto &frames = it.value();
         QVector<float> feats(67);
         feats[0] = static_cast<float>(frames.size());
+
         QVector<int64_t> deltas;
         for (int i = 1; i < frames.size(); ++i)
             deltas.push_back(frames[i].timestamp - frames[i-1].timestamp);
@@ -302,6 +338,8 @@ void AssociativeLearner::saveSession() {
 
     QJsonObject root;
     root["iteration"] = m_iteration;
+    root["adaptiveBefore"] = (qint64)m_adaptiveBefore;
+    root["adaptiveAfter"] = (qint64)m_adaptiveAfter;
 
     QJsonArray eventsArr;
     for (const auto &ev : m_events) {
@@ -318,7 +356,6 @@ void AssociativeLearner::saveSession() {
             framesArr.append(fObj);
         }
         evObj["windowFrames"] = framesArr;
-        // cechy pomijamy – można odbudować
         eventsArr.append(evObj);
     }
     root["events"] = eventsArr;
@@ -342,8 +379,6 @@ void AssociativeLearner::saveSession() {
     if (file.open(QIODevice::WriteOnly)) {
         file.write(QJsonDocument(root).toJson());
         file.close();
-    } else {
-        QMessageBox::warning(this, "Błąd", "Nie można zapisać pliku.");
     }
 }
 
@@ -363,6 +398,8 @@ void AssociativeLearner::loadSession() {
     m_events.clear();
     m_observations.clear();
     m_iteration = root["iteration"].toInt();
+    m_adaptiveBefore = root["adaptiveBefore"].toVariant().toLongLong();
+    m_adaptiveAfter = root["adaptiveAfter"].toVariant().toLongLong();
 
     QJsonArray eventsArr = root["events"].toArray();
     for (const auto &evVal : eventsArr) {
