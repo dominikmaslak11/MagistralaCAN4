@@ -42,6 +42,11 @@ public slots:
     void trainPrediction();
     void updatePredictionDisplay();
 
+    // Anomalie
+    void startAnomalyMonitoring();
+    void stopAnomalyMonitoring();
+    void checkAnomaly();
+
 signals:
     void eventMarked(int iteration);
 
@@ -55,6 +60,7 @@ private:
 
     QVector<float> buildWindowFeatures(const QVector<CanFrame> &window);
     int kMeans(const QVector<QVector<float>> &data, int K, QVector<int> &assignments);
+    void buildNormalModel();
 
     static constexpr int64_t DEFAULT_BEFORE = 500000;
     static constexpr int64_t DEFAULT_AFTER  = 200000;
@@ -79,10 +85,20 @@ private:
     QPushButton  *m_clusterBtn;
     QTableWidget *m_clusterTable;
 
-    // Predykcja
     QPushButton  *m_trainPredictionBtn;
-    QTableWidget *m_predictionTable;   // kolumny: ID, Bajt, Wsp.kier.(a), Wyraz wolny(b), Bieżąca prognoza
+    QTableWidget *m_predictionTable;
     QTimer       *m_predictionTimer;
+
+    // --- Anomalie ---
+    QPushButton  *m_anomalyToggleBtn;
+    QLineEdit    *m_anomalyThreshold;
+    QTableWidget *m_anomalyTable;
+    QTimer       *m_anomalyTimer;
+    bool          m_monitoring = false;
+
+    QVector<float> m_normalMean;
+    QVector<float> m_normalStd;
+    double         m_anomalyThresholdValue = 10.0;
 
     QPushButton  *m_saveBtn;
     QPushButton  *m_loadBtn;
@@ -97,6 +113,5 @@ private:
     QVector<ValueObservation> m_observations;
     int m_iteration = 0;
 
-    // Model predykcji: mapping (ID, bajt) -> (slope, intercept)
     QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
 };
