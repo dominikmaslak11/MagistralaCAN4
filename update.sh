@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# add_prediction.sh – Krok 7: Predykcja wartości (regresja liniowa)
+# add_anomaly_detection_v2.sh – Detekcja anomalii (kompletna aktualizacja .h i .cpp)
 set -e
 
-echo "=== Krok 7: Predykcja wartości ==="
+echo "=== Krok 8: Detekcja anomalii (pełna integracja) ==="
 
 # --- 1. Nagłówek AssociativeLearner.h z nowymi elementami ---
 cat > src/core/AssociativeLearner.h << 'EOF'
@@ -50,6 +50,11 @@ public slots:
     void trainPrediction();
     void updatePredictionDisplay();
 
+    // Anomalie
+    void startAnomalyMonitoring();
+    void stopAnomalyMonitoring();
+    void checkAnomaly();
+
 signals:
     void eventMarked(int iteration);
 
@@ -63,6 +68,7 @@ private:
 
     QVector<float> buildWindowFeatures(const QVector<CanFrame> &window);
     int kMeans(const QVector<QVector<float>> &data, int K, QVector<int> &assignments);
+    void buildNormalModel();
 
     static constexpr int64_t DEFAULT_BEFORE = 500000;
     static constexpr int64_t DEFAULT_AFTER  = 200000;
@@ -87,10 +93,20 @@ private:
     QPushButton  *m_clusterBtn;
     QTableWidget *m_clusterTable;
 
-    // Predykcja
     QPushButton  *m_trainPredictionBtn;
-    QTableWidget *m_predictionTable;   // kolumny: ID, Bajt, Wsp.kier.(a), Wyraz wolny(b), Bieżąca prognoza
+    QTableWidget *m_predictionTable;
     QTimer       *m_predictionTimer;
+
+    // --- Anomalie ---
+    QPushButton  *m_anomalyToggleBtn;
+    QLineEdit    *m_anomalyThreshold;
+    QTableWidget *m_anomalyTable;
+    QTimer       *m_anomalyTimer;
+    bool          m_monitoring = false;
+
+    QVector<float> m_normalMean;
+    QVector<float> m_normalStd;
+    double         m_anomalyThresholdValue = 10.0;
 
     QPushButton  *m_saveBtn;
     QPushButton  *m_loadBtn;
@@ -105,12 +121,11 @@ private:
     QVector<ValueObservation> m_observations;
     int m_iteration = 0;
 
-    // Model predykcji: mapping (ID, bajt) -> (slope, intercept)
     QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
 };
 EOF
 
-# --- 2. Pełna implementacja AssociativeLearner.cpp z QScrollArea i predykcją ---
+# --- 2. Pełny plik .cpp z dodanymi metodami anomalii ---
 cat > src/core/AssociativeLearner.cpp << 'EOF'
 #include "AssociativeLearner.h"
 #include <QScrollArea>
@@ -221,7 +236,6 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     auto *sep5 = new QFrame; sep5->setFrameShape(QFrame::HLine); sep5->setStyleSheet("background-color: #e94560;");
     mainLayout->addWidget(sep5);
 
-    // --- Predykcja ---
     auto *predLayout = new QHBoxLayout;
     predLayout->addWidget(new QLabel("Predykcja wartości"));
     m_trainPredictionBtn = new QPushButton("Trenuj predykcję");
@@ -237,6 +251,32 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
 
     m_predictionTimer = new QTimer(this);
     connect(m_predictionTimer, &QTimer::timeout, this, &AssociativeLearner::updatePredictionDisplay);
+
+    auto *sep6 = new QFrame; sep6->setFrameShape(QFrame::HLine); sep6->setStyleSheet("background-color: #e94560;");
+    mainLayout->addWidget(sep6);
+
+    // --- Anomalie ---
+    auto *anomalyLayout = new QHBoxLayout;
+    m_anomalyToggleBtn = new QPushButton("▶ Rozpocznij monitorowanie anomalii");
+    m_anomalyThreshold = new QLineEdit; m_anomalyThreshold->setText("10.0");
+    m_anomalyThreshold->setMaximumWidth(60);
+    anomalyLayout->addWidget(m_anomalyToggleBtn);
+    anomalyLayout->addWidget(new QLabel("Próg:"));
+    anomalyLayout->addWidget(m_anomalyThreshold);
+    mainLayout->addLayout(anomalyLayout);
+
+    m_anomalyTable = new QTableWidget(0,3);
+    m_anomalyTable->setHorizontalHeaderLabels({"Czas (s)", "Wynik", "Opis"});
+    m_anomalyTable->verticalHeader()->hide(); m_anomalyTable->horizontalHeader()->setStretchLastSection(true);
+    m_anomalyTable->setShowGrid(false); m_anomalyTable->setAlternatingRowColors(false);
+    m_anomalyTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    mainLayout->addWidget(m_anomalyTable);
+
+    m_anomalyTimer = new QTimer(this);
+    connect(m_anomalyTimer, &QTimer::timeout, this, &AssociativeLearner::checkAnomaly);
+    connect(m_anomalyToggleBtn, &QPushButton::clicked, this, [this]() {
+        if (m_monitoring) stopAnomalyMonitoring(); else startAnomalyMonitoring();
+    });
 
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję"); m_loadBtn = new QPushButton("📂 Wczytaj sesję");
@@ -259,6 +299,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_crossByteTable->setMinimumHeight(400);
     m_clusterTable->setMinimumHeight(400);
     m_predictionTable->setMinimumHeight(400);
+    m_anomalyTable->setMinimumHeight(400);
 
     setStyleSheet(R"(
         QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 6px 15px; font-weight: bold; }
@@ -267,7 +308,10 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     )");
 }
 
-AssociativeLearner::~AssociativeLearner() { m_predictionTimer->stop(); }
+AssociativeLearner::~AssociativeLearner() {
+    m_predictionTimer->stop();
+    m_anomalyTimer->stop();
+}
 
 void AssociativeLearner::processFrame(const CanFrame &frame) {
     m_frameHistory.push_back(frame);
@@ -299,6 +343,10 @@ void AssociativeLearner::resetLearning() {
     m_linearModels.clear();
     m_predictionTable->setRowCount(0);
     m_predictionTimer->stop();
+    stopAnomalyMonitoring();
+    m_anomalyTable->setRowCount(0);
+    m_normalMean.clear();
+    m_normalStd.clear();
 }
 
 void AssociativeLearner::addObservation() {
@@ -553,14 +601,6 @@ void AssociativeLearner::trainPrediction() {
     }
 
     m_linearModels.clear();
-    // Dla każdej pary (ID, bajt) o wysokiej korelacji (|r| > 0.8) obliczamy regresję liniową y = a*x + b
-    QSet<QPair<uint32_t,int>> trainedPairs;
-    for (uint32_t id : QSet<uint32_t>()) { // placeholder, przeszukamy obserwacje
-    }
-    // Podejdziemy inaczej: przeiterujemy po wszystkich parach obecnych w updateCorrelationTable (możemy ponownie przeliczyć)
-    // Aby nie duplikować kodu, użyjemy tych samych danych co w updateCorrelation.
-    if (m_observations.isEmpty()) return;
-
     QSet<QPair<uint32_t,int>> allPairs;
     for (const auto &obs : m_observations)
         for (auto it = obs.idAverageBytes.begin(); it != obs.idAverageBytes.end(); ++it)
@@ -593,16 +633,14 @@ void AssociativeLearner::trainPrediction() {
         double a = (N * sumXY - sumX * sumY) / denom;
         double b = (sumY - a * sumX) / N;
 
-        // Oblicz korelację
         double sumY2 = 0;
         for (double y : Y) sumY2 += y * y;
         double corr = (N * sumXY - sumX * sumY) / sqrt((N*sumX2 - sumX*sumX)*(N*sumY2 - sumY*sumY) + 1e-9);
-        if (fabs(corr) < 0.8) continue; // próg
+        if (fabs(corr) < 0.8) continue;
 
         m_linearModels[pair] = {a, b};
     }
 
-    // Wyświetl modele w tabeli predykcji
     m_predictionTable->setRowCount(m_linearModels.size());
     int row = 0;
     for (auto it = m_linearModels.begin(); it != m_linearModels.end(); ++it, ++row) {
@@ -615,18 +653,17 @@ void AssociativeLearner::trainPrediction() {
         m_predictionTable->setItem(row, 1, new QTableWidgetItem(QString::number(byte)));
         m_predictionTable->setItem(row, 2, new QTableWidgetItem(QString::number(a, 'f', 4)));
         m_predictionTable->setItem(row, 3, new QTableWidgetItem(QString::number(b_, 'f', 4)));
-        m_predictionTable->setItem(row, 4, new QTableWidgetItem("—")); // zostanie uzupełnione przez timer
+        m_predictionTable->setItem(row, 4, new QTableWidgetItem("—"));
     }
 
     if (!m_linearModels.isEmpty() && !m_predictionTimer->isActive()) {
-        m_predictionTimer->start(500); // odświeżaj prognozę co 500 ms
+        m_predictionTimer->start(500);
     }
 }
 
 void AssociativeLearner::updatePredictionDisplay() {
     if (m_linearModels.isEmpty() || m_frameHistory.empty()) return;
 
-    // Dla każdego modelu znajdź ostatnią ramkę danego ID i oblicz prognozę
     int row = 0;
     for (auto it = m_linearModels.begin(); it != m_linearModels.end(); ++it, ++row) {
         uint32_t id = it.key().first;
@@ -634,7 +671,6 @@ void AssociativeLearner::updatePredictionDisplay() {
         double a = it.value().first;
         double b_ = it.value().second;
 
-        // Znajdź ostatnią ramkę o danym ID (przeglądamy historię od tyłu)
         CanFrame lastFrame;
         bool found = false;
         for (auto frameIter = m_frameHistory.rbegin(); frameIter != m_frameHistory.rend(); ++frameIter) {
@@ -651,6 +687,91 @@ void AssociativeLearner::updatePredictionDisplay() {
                 m_predictionTable->item(row, 4)->setText(QString::number(prediction, 'f', 2));
             }
         }
+    }
+}
+
+// ---------- Anomalie ----------
+void AssociativeLearner::startAnomalyMonitoring() {
+    if (m_frameHistory.size() < 100) {
+        QMessageBox::warning(this, "Monitorowanie", "Zbyt mało danych w historii (minimum 100 ramek).");
+        return;
+    }
+    buildNormalModel();
+    m_monitoring = true;
+    m_anomalyToggleBtn->setText("■ Zatrzymaj monitorowanie anomalii");
+    m_anomalyTimer->start(1000);
+}
+
+void AssociativeLearner::stopAnomalyMonitoring() {
+    m_monitoring = false;
+    m_anomalyToggleBtn->setText("▶ Rozpocznij monitorowanie anomalii");
+    m_anomalyTimer->stop();
+}
+
+void AssociativeLearner::buildNormalModel() {
+    QVector<QVector<float>> windowFeatures;
+    int64_t windowSize = 1000000; // 1 s
+    if (m_frameHistory.size() < 50) return;
+    int64_t start = m_frameHistory.front().timestamp;
+    int64_t end = m_frameHistory.back().timestamp;
+    for (int64_t t = start; t < end - windowSize; t += 500000) {
+        QVector<CanFrame> win;
+        for (const auto &f : m_frameHistory) {
+            if (f.timestamp >= t && f.timestamp < t + windowSize)
+                win.append(f);
+        }
+        if (win.size() >= 3)
+            windowFeatures.append(buildWindowFeatures(win));
+    }
+    if (windowFeatures.size() < 10) return;
+
+    int dim = windowFeatures[0].size();
+    m_normalMean.resize(dim, 0.0f);
+    m_normalStd.resize(dim, 0.0f);
+    for (int d = 0; d < dim; ++d) {
+        double sum = 0, sq_sum = 0;
+        for (const auto &feat : windowFeatures) {
+            sum += feat[d];
+            sq_sum += feat[d] * feat[d];
+        }
+        m_normalMean[d] = sum / windowFeatures.size();
+        m_normalStd[d] = std::sqrt(sq_sum / windowFeatures.size() - m_normalMean[d] * m_normalMean[d]);
+        if (m_normalStd[d] < 1e-6) m_normalStd[d] = 1.0f;
+    }
+}
+
+void AssociativeLearner::checkAnomaly() {
+    if (!m_monitoring || m_frameHistory.empty()) return;
+
+    uint64_t now = m_frameHistory.back().timestamp;
+    int64_t windowSize = 1000000;
+    QVector<CanFrame> currentWindow;
+    for (auto it = m_frameHistory.rbegin(); it != m_frameHistory.rend(); ++it) {
+        if (it->timestamp >= now - windowSize) currentWindow.prepend(*it);
+        else break;
+    }
+    if (currentWindow.size() < 3) return;
+
+    QVector<float> feat = buildWindowFeatures(currentWindow);
+    if (m_normalMean.empty()) {
+        buildNormalModel();
+        if (m_normalMean.empty()) return;
+    }
+
+    double score = 0.0;
+    for (int d = 0; d < feat.size(); ++d) {
+        double z = (feat[d] - m_normalMean[d]) / m_normalStd[d];
+        score += z * z;
+    }
+
+    double threshold = m_anomalyThreshold->text().toDouble();
+    if (score > threshold) {
+        int row = m_anomalyTable->rowCount();
+        m_anomalyTable->insertRow(row);
+        m_anomalyTable->setItem(row, 0, new QTableWidgetItem(QString::number(now / 1000000.0, 'f', 2)));
+        m_anomalyTable->setItem(row, 1, new QTableWidgetItem(QString::number(score, 'f', 2)));
+        m_anomalyTable->setItem(row, 2, new QTableWidgetItem("Anomalia wykryta"));
+        m_anomalyTable->scrollToBottom();
     }
 }
 
@@ -677,4 +798,4 @@ void AssociativeLearner::loadSession() {
 }
 EOF
 
-echo "=== Predykcja wartości wdrożona. Kompiluj: cd build && make -j\$(nproc) ==="
+echo "=== Detekcja anomalii wdrożona pomyślnie. Kompiluj: cd build && make -j\$(nproc) ==="
