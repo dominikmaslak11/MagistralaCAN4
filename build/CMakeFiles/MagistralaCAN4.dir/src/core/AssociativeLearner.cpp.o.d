@@ -439,6 +439,12 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QComboBox \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcombobox.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qhash.h \
  /usr/include/c++/15/deque /usr/include/c++/15/bits/stl_deque.h \
@@ -454,6 +460,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QVector \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qvector.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QVBoxLayout \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h \
@@ -485,8 +493,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/q26numeric.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractanimation.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractproxymodel.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qalgorithms.h \
@@ -500,8 +506,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtsan_impl.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qnativeinterface.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication_platform.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qarraydata.h \
@@ -881,7 +885,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qthreadpool.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qthreadstorage.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimeline.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtipccommon.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \

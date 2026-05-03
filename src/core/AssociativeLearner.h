@@ -6,6 +6,7 @@
 #include <QTableWidget>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QTimer>
 #include <QHash>
 #include <deque>
 #include <vector>
@@ -37,7 +38,9 @@ public slots:
     void addObservation();
     void saveSession();
     void loadSession();
-    void clusterWindows();   // nowa funkcja
+    void clusterWindows();
+    void trainPrediction();
+    void updatePredictionDisplay();
 
 signals:
     void eventMarked(int iteration);
@@ -50,7 +53,6 @@ private:
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
 
-    // Pomocnicze do klastrowania
     QVector<float> buildWindowFeatures(const QVector<CanFrame> &window);
     int kMeans(const QVector<QVector<float>> &data, int K, QVector<int> &assignments);
 
@@ -74,9 +76,13 @@ private:
 
     QTableWidget *m_crossByteTable;
 
-    // Klastrowanie
     QPushButton  *m_clusterBtn;
     QTableWidget *m_clusterTable;
+
+    // Predykcja
+    QPushButton  *m_trainPredictionBtn;
+    QTableWidget *m_predictionTable;   // kolumny: ID, Bajt, Wsp.kier.(a), Wyraz wolny(b), Bieżąca prognoza
+    QTimer       *m_predictionTimer;
 
     QPushButton  *m_saveBtn;
     QPushButton  *m_loadBtn;
@@ -90,4 +96,7 @@ private:
     QVector<EventRecord> m_events;
     QVector<ValueObservation> m_observations;
     int m_iteration = 0;
+
+    // Model predykcji: mapping (ID, bajt) -> (slope, intercept)
+    QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
 };

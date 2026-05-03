@@ -2177,6 +2177,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzf
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QVariant \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QVector \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QtCore \
@@ -2496,6 +2497,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzf
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMessageBox \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QVBoxLayout \
@@ -2521,6 +2523,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzf
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmessagebox.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsizepolicy.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h \
@@ -7779,6 +7782,10 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtoolbar.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollbar.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QToolButton:
+
 /usr/include/ctype.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsAdditionalTargetInfo.cmake:
@@ -8038,6 +8045,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o:
 /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qiterator.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qcheckedint_impl.h:
 
@@ -8861,6 +8870,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o:
 
 /usr/include/c++/15/bits/hashtable_policy.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h:
+
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicSbomCpeHelpers.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qdialogbuttonbox.h:
@@ -9563,8 +9574,6 @@ MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanSniffer.cpp:
 
 /usr/include/x86_64-linux-gnu/c++/15/bits/opt_random.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollbar.h:
-
 /usr/include/c++/15/tuple:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusAdditionalTargetInfo.cmake:
@@ -10064,8 +10073,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtsymbolmacros.h:
 
 /usr/lib/linux/uapi/x86/asm/ioctl.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QToolButton:
 
 /usr/lib/linux/uapi/x86/asm/socket.h:
 

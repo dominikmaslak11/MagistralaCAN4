@@ -1,4 +1,5 @@
 #include "AssociativeLearner.h"
+#include <QScrollArea>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -14,7 +15,15 @@
 #include <random>
 
 AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
-    auto *mainLayout = new QVBoxLayout(this);
+    auto *scrollArea = new QScrollArea;
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setStyleSheet("QScrollArea { border: none; }");
+    auto *scrollWidget = new QWidget;
+    auto *mainLayout = new QVBoxLayout(scrollWidget);
+    auto *outerLayout = new QVBoxLayout(this);
+    outerLayout->setContentsMargins(0,0,0,0);
+    outerLayout->addWidget(scrollArea);
+    scrollArea->setWidget(scrollWidget);
 
     m_markEventBtn = new QPushButton("🔴 Zarejestruj zdarzenie");
     m_resetBtn = new QPushButton("Resetuj uczenie");
@@ -82,7 +91,6 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     auto *sep4 = new QFrame; sep4->setFrameShape(QFrame::HLine); sep4->setStyleSheet("background-color: #e94560;");
     mainLayout->addWidget(sep4);
 
-    // Klastrowanie
     auto *clusterLayout = new QHBoxLayout;
     clusterLayout->addWidget(new QLabel("Klastrowanie okien"));
     m_clusterBtn = new QPushButton("Uruchom k-means");
@@ -96,6 +104,26 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_clusterTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     mainLayout->addWidget(m_clusterTable);
 
+    auto *sep5 = new QFrame; sep5->setFrameShape(QFrame::HLine); sep5->setStyleSheet("background-color: #e94560;");
+    mainLayout->addWidget(sep5);
+
+    // --- Predykcja ---
+    auto *predLayout = new QHBoxLayout;
+    predLayout->addWidget(new QLabel("Predykcja wartości"));
+    m_trainPredictionBtn = new QPushButton("Trenuj predykcję");
+    predLayout->addWidget(m_trainPredictionBtn); predLayout->addStretch();
+    mainLayout->addLayout(predLayout);
+
+    m_predictionTable = new QTableWidget(0,5);
+    m_predictionTable->setHorizontalHeaderLabels({"CAN ID","Bajt","Wsp. kier. (a)","Wyraz wolny (b)","Bieżąca prognoza"});
+    m_predictionTable->verticalHeader()->hide(); m_predictionTable->horizontalHeader()->setStretchLastSection(true);
+    m_predictionTable->setShowGrid(false); m_predictionTable->setAlternatingRowColors(false);
+    m_predictionTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    mainLayout->addWidget(m_predictionTable);
+
+    m_predictionTimer = new QTimer(this);
+    connect(m_predictionTimer, &QTimer::timeout, this, &AssociativeLearner::updatePredictionDisplay);
+
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję"); m_loadBtn = new QPushButton("📂 Wczytaj sesję");
     serLayout->addWidget(m_saveBtn); serLayout->addWidget(m_loadBtn);
@@ -108,6 +136,15 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     connect(m_loadBtn, &QPushButton::clicked, this, &AssociativeLearner::loadSession);
     connect(m_ngramCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssociativeLearner::updateSequenceTable);
     connect(m_clusterBtn, &QPushButton::clicked, this, &AssociativeLearner::clusterWindows);
+    connect(m_trainPredictionBtn, &QPushButton::clicked, this, &AssociativeLearner::trainPrediction);
+
+    // Minimalne wysokości tabel
+    m_candidatesView->setMinimumHeight(400);
+    m_correlationTable->setMinimumHeight(400);
+    m_sequenceTable->setMinimumHeight(400);
+    m_crossByteTable->setMinimumHeight(400);
+    m_clusterTable->setMinimumHeight(400);
+    m_predictionTable->setMinimumHeight(400);
 
     setStyleSheet(R"(
         QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 6px 15px; font-weight: bold; }
@@ -116,7 +153,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     )");
 }
 
-AssociativeLearner::~AssociativeLearner() = default;
+AssociativeLearner::~AssociativeLearner() { m_predictionTimer->stop(); }
 
 void AssociativeLearner::processFrame(const CanFrame &frame) {
     m_frameHistory.push_back(frame);
@@ -145,6 +182,9 @@ void AssociativeLearner::resetLearning() {
     m_candidateModel->clear(); m_correlationTable->setRowCount(0);
     m_sequenceTable->setRowCount(0); m_crossByteTable->setRowCount(0);
     m_clusterTable->setRowCount(0);
+    m_linearModels.clear();
+    m_predictionTable->setRowCount(0);
+    m_predictionTimer->stop();
 }
 
 void AssociativeLearner::addObservation() {
@@ -275,18 +315,15 @@ void AssociativeLearner::updateSequenceTable() {
 
 void AssociativeLearner::updateCrossByteTable() {
     if(m_observations.size()<3){ m_crossByteTable->setRowCount(0); return; }
-    QSet<QPair<uint32_t,int>> allPairs;
-    bool first=true;
+    QSet<QPair<uint32_t,int>> allPairs; bool first=true;
     for(const auto &obs : m_observations){
         QSet<QPair<uint32_t,int>> s; for(auto it=obs.idAverageBytes.begin(); it!=obs.idAverageBytes.end(); ++it) for(int b=0;b<64;++b) s.insert({it.key(),b});
         if(first){allPairs=s; first=false;} else allPairs&=s;
     }
     QVector<QPair<uint32_t,int>> ap = allPairs.values();
-    struct CE{uint32_t id1; int b1; uint32_t id2; int b2; double corr;};
-    QVector<CE> entries;
+    struct CE{uint32_t id1; int b1; uint32_t id2; int b2; double corr;}; QVector<CE> entries;
     for(int i=0;i<ap.size();++i) for(int j=i+1;j<ap.size();++j){
-        auto p1=ap[i], p2=ap[j];
-        QVector<double> x,y;
+        auto p1=ap[i], p2=ap[j]; QVector<double> x,y;
         for(const auto &obs : m_observations){
             auto it1=obs.idAverageBytes.find(p1.first), it2=obs.idAverageBytes.find(p2.first);
             if(it1!=obs.idAverageBytes.end() && it2!=obs.idAverageBytes.end()){ x.append((double)it1.value()[p1.second]); y.append((double)it2.value()[p2.second]); }
@@ -324,8 +361,8 @@ QVector<float> AssociativeLearner::buildWindowFeatures(const QVector<CanFrame> &
     for(auto it=freq.begin(); it!=freq.end(); ++it){ double p = (double)it.value()/window.size(); entropy -= p*log2(p+1e-9); }
     feat.append((float)entropy);
     int64_t dur = window.back().timestamp - window.front().timestamp;
-    feat.append((float)dur/1000.0f); // ms
-    feat.append(0.0f); // placeholder
+    feat.append((float)dur/1000.0f);
+    feat.append(0.0f);
     return feat;
 }
 
@@ -333,62 +370,48 @@ int AssociativeLearner::kMeans(const QVector<QVector<float>> &data, int K, QVect
     int N = data.size(); if(N==0) return 0; int dim = data[0].size();
     assignments.resize(N);
     QVector<QVector<float>> centroids(K, QVector<float>(dim));
-    std::mt19937 rng(42);
-    std::uniform_int_distribution<int> dist(0,N-1);
+    std::mt19937 rng(42); std::uniform_int_distribution<int> dist(0,N-1);
     for(int k=0;k<K;++k) centroids[k] = data[dist(rng)];
     int iter=0, maxIter=50;
     while(iter++ < maxIter){
-        QVector<int> counts(K,0);
-        QVector<QVector<float>> newCentroids(K, QVector<float>(dim,0.0f));
-        // Przypisz najbliższy centroid (równolegle w QtConcurrent)
+        QVector<int> counts(K,0); QVector<QVector<float>> newCentroids(K, QVector<float>(dim,0.0f));
         QMutex mutex;
         QtConcurrent::blockingMap(data, [&](const QVector<float> &point){
             int idx = 0; double best = std::numeric_limits<double>::max();
             for(int k=0;k<K;++k){
-                double dist = 0.0; for(int d=0;d<dim;++d) dist += (point[d]-centroids[k][d])*(point[d]-centroids[k][d]);
-                if(dist < best){ best = dist; idx = k; }
+                double d = 0.0; for(int i=0;i<dim;++i) d += (point[i]-centroids[k][i])*(point[i]-centroids[k][i]);
+                if(d < best){ best = d; idx = k; }
             }
             QMutexLocker lock(&mutex);
-            assignments[&point - &data[0]] = idx;
-            counts[idx]++; for(int d=0;d<dim;++d) newCentroids[idx][d] += point[d];
+            assignments[&point - &data[0]] = idx; counts[idx]++;
+            for(int i=0;i<dim;++i) newCentroids[idx][i] += point[i];
         });
         bool changed = false;
         for(int k=0;k<K;++k){
-            if(counts[k]>0) for(int d=0;d<dim;++d) newCentroids[k][d]/=counts[k];
-            double diff = 0.0; for(int d=0;d<dim;++d) diff += (centroids[k][d]-newCentroids[k][d])*(centroids[k][d]-newCentroids[k][d]);
+            if(counts[k]>0) for(int i=0;i<dim;++i) newCentroids[k][i]/=counts[k];
+            double diff = 0.0; for(int i=0;i<dim;++i) diff += (centroids[k][i]-newCentroids[k][i])*(centroids[k][i]-newCentroids[k][i]);
             if(diff > 0.001) changed = true;
             centroids[k] = newCentroids[k];
         }
         if(!changed) break;
     }
-    // Oblicz WCSS
     double wcss = 0.0; for(int i=0;i<N;++i) for(int d=0;d<dim;++d) wcss += (data[i][d]-centroids[assignments[i]][d])*(data[i][d]-centroids[assignments[i]][d]);
     return wcss;
 }
 
 void AssociativeLearner::clusterWindows() {
     if(m_frameHistory.empty()) return;
-    // Podziel historię na okna o długości 500 ms
     QVector<QVector<CanFrame>> windows;
-    int64_t windowSize = 500000; // µs
+    int64_t windowSize = 500000;
     if(m_frameHistory.size() < 10) return;
-    int64_t start = m_frameHistory.front().timestamp;
-    int64_t end = m_frameHistory.back().timestamp;
-    for(int64_t t = start; t < end; t += windowSize/2){ // 50% overlap
-        QVector<CanFrame> win;
-        for(const auto &f : m_frameHistory) if(f.timestamp >= t && f.timestamp < t+windowSize) win.append(f);
+    int64_t start = m_frameHistory.front().timestamp, end = m_frameHistory.back().timestamp;
+    for(int64_t t = start; t < end; t += windowSize/2){
+        QVector<CanFrame> win; for(const auto &f : m_frameHistory) if(f.timestamp >= t && f.timestamp < t+windowSize) win.append(f);
         if(win.size()>=3) windows.append(win);
     }
     if(windows.size()<5) return;
-
-    QVector<QVector<float>> features;
-    for(const auto &w : windows) features.append(buildWindowFeatures(w));
-
-    int K = 3; // liczba klastrów (można zrobić wybór)
-    QVector<int> assignments;
-    kMeans(features, K, assignments);
-
-    // Zagreguj statystyki klastrów
+    QVector<QVector<float>> features; for(const auto &w : windows) features.append(buildWindowFeatures(w));
+    int K = 3; QVector<int> assignments; kMeans(features, K, assignments);
     struct ClusterStats { int count=0; double avgFrames=0; QHash<uint32_t,int> idFreq; };
     QVector<ClusterStats> stats(K);
     for(int i=0;i<assignments.size();++i){
@@ -396,22 +419,128 @@ void AssociativeLearner::clusterWindows() {
         for(const auto &f : windows[i]) stats[c].idFreq[f.id]++;
     }
     for(int c=0;c<K;++c) if(stats[c].count>0) stats[c].avgFrames /= stats[c].count;
-
-    // Wypełnij tabelę
     m_clusterTable->setRowCount(K);
     for(int c=0;c<K;++c){
         m_clusterTable->setItem(c,0,new QTableWidgetItem(QString("Klaster %1").arg(c+1)));
         m_clusterTable->setItem(c,1,new QTableWidgetItem(QString::number(stats[c].avgFrames,'f',1)));
-        // dominujące ID (top 3)
-        QStringList topIds;
         QList<QPair<uint32_t,int>> sorted; for(auto it=stats[c].idFreq.begin(); it!=stats[c].idFreq.end(); ++it) sorted.append({it.key(),it.value()});
         std::sort(sorted.begin(), sorted.end(), [](const QPair<uint32_t,int> &a, const QPair<uint32_t,int> &b){ return a.second>b.second; });
-        for(int i=0; i<3 && i<sorted.size(); ++i) topIds.append(QString("0x%1").arg(sorted[i].first,3,16,QChar('0')).toUpper());
+        QStringList topIds; for(int i=0; i<3 && i<sorted.size(); ++i) topIds.append(QString("0x%1").arg(sorted[i].first,3,16,QChar('0')).toUpper());
         m_clusterTable->setItem(c,2,new QTableWidgetItem(topIds.join(", ")));
         m_clusterTable->setItem(c,3,new QTableWidgetItem(QString::number(stats[c].count)));
     }
 }
 
+// ---------- Predykcja ----------
+void AssociativeLearner::trainPrediction() {
+    if (m_observations.size() < 3) {
+        QMessageBox::information(this, "Predykcja", "Zbyt mało obserwacji.");
+        return;
+    }
+
+    m_linearModels.clear();
+    // Dla każdej pary (ID, bajt) o wysokiej korelacji (|r| > 0.8) obliczamy regresję liniową y = a*x + b
+    QSet<QPair<uint32_t,int>> trainedPairs;
+    for (uint32_t id : QSet<uint32_t>()) { // placeholder, przeszukamy obserwacje
+    }
+    // Podejdziemy inaczej: przeiterujemy po wszystkich parach obecnych w updateCorrelationTable (możemy ponownie przeliczyć)
+    // Aby nie duplikować kodu, użyjemy tych samych danych co w updateCorrelation.
+    if (m_observations.isEmpty()) return;
+
+    QSet<QPair<uint32_t,int>> allPairs;
+    for (const auto &obs : m_observations)
+        for (auto it = obs.idAverageBytes.begin(); it != obs.idAverageBytes.end(); ++it)
+            for (int b = 0; b < 64; ++b)
+                allPairs.insert({it.key(), b});
+
+    for (const auto &pair : allPairs) {
+        uint32_t id = pair.first;
+        int byte = pair.second;
+        QVector<double> X, Y;
+        for (const auto &obs : m_observations) {
+            auto it = obs.idAverageBytes.find(id);
+            if (it != obs.idAverageBytes.end()) {
+                X.append((double)it.value()[byte]);
+                Y.append(obs.value);
+            }
+        }
+        if (X.size() < 3) continue;
+
+        double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+        int N = X.size();
+        for (int i = 0; i < N; ++i) {
+            double x = X[i], y = Y[i];
+            sumX += x; sumY += y;
+            sumXY += x * y;
+            sumX2 += x * x;
+        }
+        double denom = N * sumX2 - sumX * sumX;
+        if (fabs(denom) < 1e-9) continue;
+        double a = (N * sumXY - sumX * sumY) / denom;
+        double b = (sumY - a * sumX) / N;
+
+        // Oblicz korelację
+        double sumY2 = 0;
+        for (double y : Y) sumY2 += y * y;
+        double corr = (N * sumXY - sumX * sumY) / sqrt((N*sumX2 - sumX*sumX)*(N*sumY2 - sumY*sumY) + 1e-9);
+        if (fabs(corr) < 0.8) continue; // próg
+
+        m_linearModels[pair] = {a, b};
+    }
+
+    // Wyświetl modele w tabeli predykcji
+    m_predictionTable->setRowCount(m_linearModels.size());
+    int row = 0;
+    for (auto it = m_linearModels.begin(); it != m_linearModels.end(); ++it, ++row) {
+        uint32_t id = it.key().first;
+        int byte = it.key().second;
+        double a = it.value().first;
+        double b_ = it.value().second;
+
+        m_predictionTable->setItem(row, 0, new QTableWidgetItem(QString("0x%1").arg(id,3,16,QChar('0')).toUpper()));
+        m_predictionTable->setItem(row, 1, new QTableWidgetItem(QString::number(byte)));
+        m_predictionTable->setItem(row, 2, new QTableWidgetItem(QString::number(a, 'f', 4)));
+        m_predictionTable->setItem(row, 3, new QTableWidgetItem(QString::number(b_, 'f', 4)));
+        m_predictionTable->setItem(row, 4, new QTableWidgetItem("—")); // zostanie uzupełnione przez timer
+    }
+
+    if (!m_linearModels.isEmpty() && !m_predictionTimer->isActive()) {
+        m_predictionTimer->start(500); // odświeżaj prognozę co 500 ms
+    }
+}
+
+void AssociativeLearner::updatePredictionDisplay() {
+    if (m_linearModels.isEmpty() || m_frameHistory.empty()) return;
+
+    // Dla każdego modelu znajdź ostatnią ramkę danego ID i oblicz prognozę
+    int row = 0;
+    for (auto it = m_linearModels.begin(); it != m_linearModels.end(); ++it, ++row) {
+        uint32_t id = it.key().first;
+        int byte = it.key().second;
+        double a = it.value().first;
+        double b_ = it.value().second;
+
+        // Znajdź ostatnią ramkę o danym ID (przeglądamy historię od tyłu)
+        CanFrame lastFrame;
+        bool found = false;
+        for (auto frameIter = m_frameHistory.rbegin(); frameIter != m_frameHistory.rend(); ++frameIter) {
+            if (frameIter->id == id) {
+                lastFrame = *frameIter;
+                found = true;
+                break;
+            }
+        }
+        if (found && byte < lastFrame.dlc) {
+            double x = lastFrame.data[byte];
+            double prediction = a * x + b_;
+            if (row < m_predictionTable->rowCount()) {
+                m_predictionTable->item(row, 4)->setText(QString::number(prediction, 'f', 2));
+            }
+        }
+    }
+}
+
+// --- Serializacja ---
 void AssociativeLearner::saveSession() {
     QString path = QFileDialog::getSaveFileName(this, "Zapisz sesję", "", "JSON (*.json)");
     if(path.isEmpty()) return;
