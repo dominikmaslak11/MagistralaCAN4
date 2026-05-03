@@ -551,4 +551,9 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/QImage \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qimage.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
- /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
+ /usr/include/lua5.3/lua.h /usr/include/lua5.3/luaconf.h \
+ /usr/include/x86_64-linux-gnu/lua5.3-deb-multiarch.h \
+ /usr/include/lua5.3/lauxlib.h /usr/include/lua5.3/lua.h \
+ /usr/include/lua5.3/lualib.h
