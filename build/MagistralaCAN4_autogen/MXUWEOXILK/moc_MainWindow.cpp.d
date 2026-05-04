@@ -1,6 +1,7 @@
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/MXUWEOXILK/moc_MainWindow.cpp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/moc_predefs.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \

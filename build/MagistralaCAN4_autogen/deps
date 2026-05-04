@@ -6,6 +6,8 @@ MagistralaCAN4_autogen/timestamp: \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/main.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.h \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.cpp \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \

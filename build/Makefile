@@ -227,6 +227,30 @@ src/core/AssociativeLearner.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.s
 .PHONY : src/core/AssociativeLearner.cpp.s
 
+src/core/CanDashboard.o: src/core/CanDashboard.cpp.o
+.PHONY : src/core/CanDashboard.o
+
+# target to build an object file
+src/core/CanDashboard.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.o
+.PHONY : src/core/CanDashboard.cpp.o
+
+src/core/CanDashboard.i: src/core/CanDashboard.cpp.i
+.PHONY : src/core/CanDashboard.i
+
+# target to preprocess a source file
+src/core/CanDashboard.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.i
+.PHONY : src/core/CanDashboard.cpp.i
+
+src/core/CanDashboard.s: src/core/CanDashboard.cpp.s
+.PHONY : src/core/CanDashboard.s
+
+# target to generate assembly for a file
+src/core/CanDashboard.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.s
+.PHONY : src/core/CanDashboard.cpp.s
+
 src/core/CanExporter.o: src/core/CanExporter.cpp.o
 .PHONY : src/core/CanExporter.o
 
@@ -535,6 +559,9 @@ help:
 	@echo "... src/core/AssociativeLearner.o"
 	@echo "... src/core/AssociativeLearner.i"
 	@echo "... src/core/AssociativeLearner.s"
+	@echo "... src/core/CanDashboard.o"
+	@echo "... src/core/CanDashboard.i"
+	@echo "... src/core/CanDashboard.s"
 	@echo "... src/core/CanExporter.o"
 	@echo "... src/core/CanExporter.i"
 	@echo "... src/core/CanExporter.s"

@@ -1,43 +1,3 @@
-#!/usr/bin/env bash
-# add_live_dashboard.sh – Dashboard CAN z value panelami (na podstawie DBC)
-set -e
-
-echo "=== Dodawanie Dashboardu CAN ==="
-
-# 1. Nowy plik nagłówkowy: src/core/CanDashboard.h
-cat > src/core/CanDashboard.h << 'EOF'
-#pragma once
-#include <QWidget>
-#include <QLabel>
-#include <QGridLayout>
-#include <QHash>
-#include <QTimer>
-#include "CanFrame.h"
-#include "DbcParser.h"
-
-class CanDashboard : public QWidget {
-    Q_OBJECT
-public:
-    explicit CanDashboard(QWidget *parent = nullptr);
-
-    void setDbcParser(const DbcParser *parser);
-    void updateSignal(const CanFrame &frame);
-
-private:
-    void buildPanels();
-
-    QGridLayout *m_grid;
-    const DbcParser *m_dbcParser = nullptr;
-
-    // mapa: "EngineSpeed" -> QLabel
-    QHash<QString, QLabel*> m_valueLabels;
-    // mapa: CAN ID -> lista nazw sygnałów
-    QHash<uint32_t, QStringList> m_idToSignals;
-};
-EOF
-
-# 2. Nowy plik źródłowy: src/core/CanDashboard.cpp
-cat > src/core/CanDashboard.cpp << 'EOF'
 #include "CanDashboard.h"
 #include <QVBoxLayout>
 #include <QScrollArea>
@@ -159,24 +119,3 @@ void CanDashboard::updateSignal(const CanFrame &frame) {
         }
     }
 }
-EOF
-
-# 3. CMakeLists.txt – dodajemy nowe pliki
-sed -i '/set(SOURCES/a\    src/core/CanDashboard.cpp' CMakeLists.txt
-sed -i '/set(HEADERS/a\    src/core/CanDashboard.h' CMakeLists.txt
-
-# 4. MainWindow.h – dodajemy CanDashboard
-sed -i '/#include "core\/OfflineAnalyzer.h"/a #include "core/CanDashboard.h"' src/gui/MainWindow.h
-sed -i '/OfflineAnalyzer \*m_offlineAnalyzer;/a\    CanDashboard *m_canDashboard;' src/gui/MainWindow.h
-
-# 5. MainWindow.cpp – tworzenie instancji i zakładki
-sed -i '/m_frameDetail->setSniffer(&m_sniffer);/a\    m_canDashboard = new CanDashboard;' src/gui/MainWindow.cpp
-sed -i '/tabs->addTab(m_offlineAnalyzer, "Analiza offline");/a\    tabs->addTab(m_canDashboard, "Dashboard CAN");' src/gui/MainWindow.cpp
-
-# Podłączenie ramek do dashboardu
-sed -i '/connect(&m_sniffer, &CanSniffer::newFrame, m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);/a\    connect(\&m_sniffer, \&CanSniffer::newFrame, m_canDashboard, \&CanDashboard::updateSignal, Qt::QueuedConnection);' src/gui/MainWindow.cpp
-
-# Po załadowaniu DBC przekaż parser do dashboardu
-sed -i '/m_frameDetail->setDbcParser(\&m_dbcParser);/a\        m_canDashboard->setDbcParser(\&m_dbcParser);' src/gui/MainWindow.cpp
-
-echo "=== Dashboard CAN dodany. Kompiluj: cd build && cmake .. && make -j\$(nproc) ==="

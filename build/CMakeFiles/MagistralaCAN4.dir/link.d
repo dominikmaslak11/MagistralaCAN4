@@ -3,6 +3,7 @@ MagistralaCAN4: \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o \
   CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o \
+  CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o \
@@ -126,6 +127,8 @@ MagistralaCAN4: \
 /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o:
 
 CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o:
+
+CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.o:
 
 CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o:
 
