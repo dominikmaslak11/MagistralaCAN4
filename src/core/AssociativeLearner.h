@@ -55,6 +55,7 @@ public slots:
     void checkAutoEvent();
     void trainMarkovModel();
     void predictNextFrames();
+    void updateCrossVariableMatrix();
 
 signals:
     void eventMarked(int iteration);
@@ -140,6 +141,9 @@ private:
     QString m_currentVariable;
 
     QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
+    // Macierz korelacji zmiennych
+    QPushButton  *m_crossVarBtn;
+    QTableWidget *m_crossVarTable;
     // Predykcja sekwencji (Markov)
     QPushButton  *m_trainMarkovBtn;
     QTableWidget *m_markovTable;
