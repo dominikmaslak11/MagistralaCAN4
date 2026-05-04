@@ -193,8 +193,21 @@ void MainWindow::setupStyle() {
         QLabel { color: #c0c0c0; }
         QTableView, QTableWidget { background-color: #0a0e17; alternate-background-color: #161b22; color: #c0c0c0; gridline-color: #2a2a3c; selection-background-color: #e94560; selection-color: #ffffff; font-family: "Consolas", "Courier New", monospace; font-size: 12px; }
         QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-        QToolButton#clearButton { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #1a1a2e, stop:0.5 #2c0735, stop:1 #e94560); color: #00ffaa; border: 1px solid #e94560; border-radius: 6px; padding: 6px 14px; font-weight: bold; }
-        QToolButton#clearButton:hover { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #e94560, stop:0.5 #2c0735, stop:1 #1a1a2e); color: #0a0e17; border: 1px solid #ff66cc; }
-        QToolButton#clearButton:pressed { background: #2c0735; border: 1px solid #ff00ff; }
+        QToolButton#clearButton {
+            background: #1a1a2e;
+            color: #00ffaa;
+            border: 1px solid #e94560;
+            border-radius: 4px;
+            padding: 5px 15px;
+            font-weight: bold;
+        }
+        QToolButton#clearButton:hover {
+            background: #e94560;
+            color: #0a0e17;
+        }
+        QToolButton#clearButton:pressed {
+            background: #2c0735;
+            border: 1px solid #ff00ff;
+        }
     )");
 }

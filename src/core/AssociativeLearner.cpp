@@ -108,6 +108,22 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
 
     auto *anomalyLayout = new QHBoxLayout;
     m_anomalyToggleBtn = new QPushButton("▶ Rozpocznij monitorowanie anomalii");
+    // Auto-detekcja zdarzeń
+    m_autoEventCheck = new QCheckBox("Auto-wykrywanie zdarzeń");
+    m_autoEventThreshold = new QLineEdit("0.1");
+    m_autoEventThreshold->setMaximumWidth(60);
+    m_autoEventLabel = new QLabel("Próg gradientu:");
+    auto *autoLayout = new QHBoxLayout;
+    autoLayout->addWidget(m_autoEventCheck);
+    autoLayout->addWidget(m_autoEventLabel);
+    autoLayout->addWidget(m_autoEventThreshold);
+    mainLayout->addLayout(autoLayout);
+    m_autoEventTimer = new QTimer(this);
+    connect(m_autoEventCheck, &QCheckBox::toggled, this, [this](bool checked) {
+        if (checked) m_autoEventTimer->start(500);
+        else m_autoEventTimer->stop();
+    });
+    connect(m_autoEventTimer, &QTimer::timeout, this, &AssociativeLearner::checkAutoEvent);
     m_anomalyThreshold = new QLineEdit("10.0"); m_anomalyThreshold->setMaximumWidth(60);
     anomalyLayout->addWidget(m_anomalyToggleBtn);
     anomalyLayout->addWidget(new QLabel("Próg:")); anomalyLayout->addWidget(m_anomalyThreshold);
@@ -169,6 +185,7 @@ void AssociativeLearner::addNewVariable() {
 
 void AssociativeLearner::onVariableChanged(int idx) {
     if (idx >= 0) { m_currentVariable = m_variableCombo->itemData(idx).toString(); updateCorrelationTable(); updateCrossByteTable(); updateChart(); }
+    if (m_autoEventCheck->isChecked()) checkAutoEvent();
 }
 
 QVector<ValueObservation> AssociativeLearner::currentObservations() const {
@@ -225,6 +242,7 @@ void AssociativeLearner::addObservation() {
     }
     m_observationsMap[m_currentVariable].append(obs); m_valueInput->clear();
     updateCorrelationTable(); updateCrossByteTable(); updateChart();
+    if (m_autoEventCheck->isChecked()) checkAutoEvent();
 }
 
 void AssociativeLearner::recalcAdaptiveWindow() {
@@ -546,4 +564,51 @@ void AssociativeLearner::loadSession() {
     if(!m_observationsMap.isEmpty()){ m_variableCombo->setCurrentIndex(0); m_currentVariable=m_observationsMap.firstKey(); }
     m_iterationLabel->setText(QString("Liczba iteracji: %1").arg(m_iteration));
     updateCandidates(); updateCorrelationTable(); updateSequenceTable(); updateCrossByteTable(); updateChart();
+}
+
+// ---------- Automatyczne wykrywanie zdarzeń ----------
+void AssociativeLearner::checkAutoEvent() {
+    if (m_currentVariable.isEmpty()) return;
+    QVector<ValueObservation> obs = currentObservations();
+    if (obs.size() < 2) return;
+
+    // Oblicz gradient ostatniej wartości
+    double lastVal = obs.last().value;
+    double prevVal = obs.at(obs.size()-2).value;
+    double threshold = m_autoEventThreshold->text().toDouble();
+    if (fabs(lastVal - prevVal) < threshold) return;  // za mała zmiana
+
+    // Sprawdź, czy w bieżącym oknie czasowym (ostatnie 500ms) pojawiły się skorelowane ramki
+    uint64_t now = m_frameHistory.empty() ? 0 : m_frameHistory.back().timestamp;
+    QVector<CanFrame> recentFrames;
+    for (auto it = m_frameHistory.rbegin(); it != m_frameHistory.rend(); ++it) {
+        if (it->timestamp >= now - 500000) recentFrames.prepend(*it);
+        else break;
+    }
+    if (recentFrames.size() < 2) return;
+
+    // Znajdź ID, które wcześniej miały wysoką korelację z tą zmienną
+    QSet<uint32_t> candidateIds;
+    for (auto it = m_linearModels.begin(); it != m_linearModels.end(); ++it) {
+        if (fabs(it.value().second) > 0.8)  // sprawdzamy współczynnik korelacji?
+            candidateIds.insert(it.key().first);
+    }
+    // Również z tabeli korelacji (pierwsze 5 wpisów)
+    for (int i = 0; i < 5 && i < m_correlationTable->rowCount(); ++i) {
+        QTableWidgetItem *item = m_correlationTable->item(i, 0);
+        if (item) {
+            bool ok;
+            uint32_t id = item->text().toUInt(&ok, 16);
+            if (ok) candidateIds.insert(id);
+        }
+    }
+
+    bool found = false;
+    for (const auto &f : recentFrames) {
+        if (candidateIds.contains(f.id)) { found = true; break; }
+    }
+    if (found) {
+        markEvent();  // Automatycznie zarejestruj zdarzenie
+        m_autoEventLabel->setText("Ostatnie auto-zdarzenie: OK");
+    }
 }
