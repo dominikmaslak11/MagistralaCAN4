@@ -1081,6 +1081,7 @@
  mdp:/usr/lib/linux/uapi/x86/asm/posix_types_64.h
  mdp:/usr/lib/linux/uapi/x86/asm/types.h
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h
  mmc:Q_OBJECT
  mdp:/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/moc_predefs.h
@@ -1471,7 +1472,6 @@
  mdp:/usr/lib/linux/uapi/x86/asm/posix_types_64.h
  mdp:/usr/lib/linux/uapi/x86/asm/types.h
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.cpp
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h
