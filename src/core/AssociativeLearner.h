@@ -6,6 +6,7 @@
 #include <QTableWidget>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QTimer>
 #include <QMap>
 #include <QHash>
@@ -51,6 +52,7 @@ public slots:
     void startAnomalyMonitoring();
     void stopAnomalyMonitoring();
     void checkAnomaly();
+    void checkAutoEvent();
 
 signals:
     void eventMarked(int iteration);
@@ -105,6 +107,10 @@ private:
     QLineEdit    *m_anomalyThreshold;
     QTableWidget *m_anomalyTable;
     QTimer       *m_anomalyTimer;
+    QTimer       *m_autoEventTimer;
+    QCheckBox   *m_autoEventCheck;
+    QLineEdit   *m_autoEventThreshold;
+    QLabel      *m_autoEventLabel;
     bool          m_monitoring = false;
 
     QVector<float> m_normalMean;
