@@ -347,6 +347,30 @@ src/core/CandidateModel.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.s
 .PHONY : src/core/CandidateModel.cpp.s
 
+src/core/DbcParser.o: src/core/DbcParser.cpp.o
+.PHONY : src/core/DbcParser.o
+
+# target to build an object file
+src/core/DbcParser.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o
+.PHONY : src/core/DbcParser.cpp.o
+
+src/core/DbcParser.i: src/core/DbcParser.cpp.i
+.PHONY : src/core/DbcParser.i
+
+# target to preprocess a source file
+src/core/DbcParser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.i
+.PHONY : src/core/DbcParser.cpp.i
+
+src/core/DbcParser.s: src/core/DbcParser.cpp.s
+.PHONY : src/core/DbcParser.s
+
+# target to generate assembly for a file
+src/core/DbcParser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.s
+.PHONY : src/core/DbcParser.cpp.s
+
 src/core/FrameDetailWidget.o: src/core/FrameDetailWidget.cpp.o
 .PHONY : src/core/FrameDetailWidget.o
 
@@ -478,6 +502,9 @@ help:
 	@echo "... src/core/CandidateModel.o"
 	@echo "... src/core/CandidateModel.i"
 	@echo "... src/core/CandidateModel.s"
+	@echo "... src/core/DbcParser.o"
+	@echo "... src/core/DbcParser.i"
+	@echo "... src/core/DbcParser.s"
 	@echo "... src/core/FrameDetailWidget.o"
 	@echo "... src/core/FrameDetailWidget.i"
 	@echo "... src/core/FrameDetailWidget.s"

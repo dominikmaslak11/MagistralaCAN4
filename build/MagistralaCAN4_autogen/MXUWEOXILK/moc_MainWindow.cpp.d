@@ -5,6 +5,7 @@
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \

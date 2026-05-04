@@ -321,6 +321,12 @@
 			null
 		],
 		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h",
+			"Mu",
+			"PRMOGMWJPH/moc_DbcParser.cpp",
+			null
+		],
+		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h",
 			"Mu",
 			"PRMOGMWJPH/moc_FrameDetailWidget.cpp",
@@ -449,6 +455,11 @@
 		],
 		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.cpp",
 			"Mu",
 			null
 		],
