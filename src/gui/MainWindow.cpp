@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_luaEngine = new LuaScriptEngine(this);
     m_luaEngine->setSniffer(&m_sniffer);
     m_frameDetail = new FrameDetailWidget;
+    m_frameDetail->setSniffer(&m_sniffer);
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     // --- System tray ---
     m_trayIcon = new QSystemTrayIcon(this);

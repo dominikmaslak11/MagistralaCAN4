@@ -567,6 +567,8 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/DbcParser.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_LuaScriptEngine.cpp \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/LuaScriptEngine.h \

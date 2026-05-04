@@ -342,6 +342,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+	/usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QList \

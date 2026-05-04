@@ -568,6 +568,8 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QProgressBar \
