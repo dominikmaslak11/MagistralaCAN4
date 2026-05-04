@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# add_offline_analysis.sh – analiza offline z plików candump
+# add_realtime_playback.sh – odtwarzanie z oryginalnymi timestampami
 set -e
 
-echo "=== Wdrażanie analizy offline ==="
+echo "=== Dodawanie odtwarzania z oryginalnymi timestampami ==="
 
-# 1. Nowy moduł: OfflineAnalyzer
+# 1. OfflineAnalyzer.h – dodajemy checkbox i tryb
 cat > src/core/OfflineAnalyzer.h << 'EOF'
 #pragma once
 #include <QWidget>
@@ -12,6 +12,7 @@ cat > src/core/OfflineAnalyzer.h << 'EOF'
 #include <QLabel>
 #include <QProgressBar>
 #include <QSlider>
+#include <QCheckBox>
 #include <QTimer>
 #include <QVector>
 #include "CanFrame.h"
@@ -44,6 +45,7 @@ private:
     QPushButton *m_playPauseBtn;
     QPushButton *m_stopBtn;
     QSlider *m_speedSlider;
+    QCheckBox *m_originalTimestampsCheck;   // NOWE
     QLabel *m_statusLabel;
     QProgressBar *m_progressBar;
     QTimer m_timer;
@@ -53,6 +55,7 @@ private:
 };
 EOF
 
+# 2. OfflineAnalyzer.cpp – implementacja trybu z timestampami
 cat > src/core/OfflineAnalyzer.cpp << 'EOF'
 #include "OfflineAnalyzer.h"
 #include "AssociativeLearner.h"
@@ -90,6 +93,11 @@ OfflineAnalyzer::OfflineAnalyzer(AssociativeLearner *learner,
     m_speedSlider->setValue(50);
     speedLayout->addWidget(m_speedSlider);
     layout->addLayout(speedLayout);
+
+    m_originalTimestampsCheck = new QCheckBox("Oryginalne znaczniki czasu");
+    m_originalTimestampsCheck->setChecked(true);
+    m_originalTimestampsCheck->setStyleSheet("color: #ff66cc; font-weight: bold;");
+    layout->addWidget(m_originalTimestampsCheck);
 
     m_progressBar = new QProgressBar;
     m_progressBar->setMinimum(0);
@@ -162,8 +170,27 @@ void OfflineAnalyzer::playPause() {
         if (m_currentIndex >= m_frames.size()) m_currentIndex = 0;
         m_playing = true;
         m_playPauseBtn->setText("⏸ Pauza");
-        int speed = m_speedSlider->value();
-        m_timer.start(qMax(1, 100 - speed));  // 1..100 ms
+
+        if (m_originalTimestampsCheck->isChecked() && m_frames.size() > 1 && m_currentIndex < m_frames.size()) {
+            // Tryb z oryginalnymi timestampami: oblicz odstęp do następnej ramki
+            uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
+            uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
+                               ? m_frames.at(m_currentIndex + 1).timestamp
+                               : currentTs;
+            int64_t diff = static_cast<int64_t>(nextTs - currentTs);
+            if (diff < 0) diff = 0;
+
+            // Skaluj przez prędkość (odwrotnie: suwak 1 → 100x wolniej, 100 → normalnie)
+            double speedFactor = m_speedSlider->value() / 100.0;
+            int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);  // diff w µs → ms
+            if (intervalMs < 1) intervalMs = 1;
+
+            m_timer.start(intervalMs);
+        } else {
+            // Stały interwał (jak poprzednio)
+            int speed = m_speedSlider->value();
+            m_timer.start(qMax(1, 100 - speed));
+        }
     }
 }
 
@@ -177,9 +204,25 @@ void OfflineAnalyzer::stop() {
 }
 
 void OfflineAnalyzer::setSpeed(int value) {
+    Q_UNUSED(value);
     if (m_playing) {
+        // Restart timera z nową prędkością
         m_timer.stop();
-        m_timer.start(qMax(1, 100 - value));
+        if (m_originalTimestampsCheck->isChecked() && m_currentIndex > 0 && m_currentIndex < m_frames.size()) {
+            uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
+            uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
+                               ? m_frames.at(m_currentIndex + 1).timestamp
+                               : currentTs;
+            int64_t diff = static_cast<int64_t>(nextTs - currentTs);
+            if (diff < 0) diff = 0;
+            double speedFactor = m_speedSlider->value() / 100.0;
+            int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);
+            if (intervalMs < 1) intervalMs = 1;
+            m_timer.start(intervalMs);
+        } else {
+            int speed = m_speedSlider->value();
+            m_timer.start(qMax(1, 100 - speed));
+        }
     }
 }
 
@@ -190,25 +233,32 @@ void OfflineAnalyzer::playNextFrame() {
         return;
     }
 
-    const CanFrame &frame = m_frames.at(m_currentIndex++);
+    const CanFrame &frame = m_frames.at(m_currentIndex);
     if (m_learner) m_learner->processFrame(frame);
     if (m_luaEngine) m_luaEngine->onNewFrame(frame);
 
+    m_currentIndex++;
     m_progressBar->setValue(m_currentIndex);
     m_statusLabel->setText(QString("Ramka %1 / %2").arg(m_currentIndex).arg(m_frames.size()));
+
+    // Przygotuj timer na następną ramkę, jeśli gra i używa oryginalnych timestampów
+    if (m_playing && m_currentIndex < m_frames.size() && m_originalTimestampsCheck->isChecked()) {
+        m_timer.stop();  // zatrzymaj obecny timer
+
+        uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
+        uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
+                           ? m_frames.at(m_currentIndex + 1).timestamp
+                           : currentTs;
+        int64_t diff = static_cast<int64_t>(nextTs - currentTs);
+        if (diff < 0) diff = 0;
+        double speedFactor = m_speedSlider->value() / 100.0;
+        int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);
+        if (intervalMs < 1) intervalMs = 1;
+
+        m_timer.start(intervalMs);
+    }
+    // Jeśli nie używa oryginalnych timestampów, timer już leci ze stałym interwałem
 }
 EOF
 
-# 2. MainWindow.h – dodanie OfflineAnalyzer
-sed -i '/#include "core\/DbcParser.h"/a #include "core/OfflineAnalyzer.h"' src/gui/MainWindow.h
-sed -i '/DbcParser m_dbcParser;/a\    OfflineAnalyzer *m_offlineAnalyzer;' src/gui/MainWindow.h
-
-# 3. MainWindow.cpp – utworzenie instancji i zakładki
-sed -i '/m_frameDetail = new FrameDetailWidget;/a\    m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);' src/gui/MainWindow.cpp
-sed -i '/tabs->addTab(m_frameDetail, "Szczegóły ramki");/a\    tabs->addTab(m_offlineAnalyzer, "Analiza offline");' src/gui/MainWindow.cpp
-
-# 4. CMakeLists.txt – dodanie OfflineAnalyzer
-sed -i '/set(SOURCES/a\    src/core/OfflineAnalyzer.cpp' CMakeLists.txt
-sed -i '/set(HEADERS/a\    src/core/OfflineAnalyzer.h' CMakeLists.txt
-
-echo "=== Analiza offline dodana. Kompiluj: cd build && cmake .. && make -j\$(nproc) ==="
+echo "=== Oryginalne znaczniki czasu dodane. Kompiluj: cd build && cmake .. && make -j\$(nproc) ==="

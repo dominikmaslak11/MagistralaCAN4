@@ -35,6 +35,11 @@ OfflineAnalyzer::OfflineAnalyzer(AssociativeLearner *learner,
     speedLayout->addWidget(m_speedSlider);
     layout->addLayout(speedLayout);
 
+    m_originalTimestampsCheck = new QCheckBox("Oryginalne znaczniki czasu");
+    m_originalTimestampsCheck->setChecked(true);
+    m_originalTimestampsCheck->setStyleSheet("color: #ff66cc; font-weight: bold;");
+    layout->addWidget(m_originalTimestampsCheck);
+
     m_progressBar = new QProgressBar;
     m_progressBar->setMinimum(0);
     layout->addWidget(m_progressBar);
@@ -106,8 +111,27 @@ void OfflineAnalyzer::playPause() {
         if (m_currentIndex >= m_frames.size()) m_currentIndex = 0;
         m_playing = true;
         m_playPauseBtn->setText("⏸ Pauza");
-        int speed = m_speedSlider->value();
-        m_timer.start(qMax(1, 100 - speed));  // 1..100 ms
+
+        if (m_originalTimestampsCheck->isChecked() && m_frames.size() > 1 && m_currentIndex < m_frames.size()) {
+            // Tryb z oryginalnymi timestampami: oblicz odstęp do następnej ramki
+            uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
+            uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
+                               ? m_frames.at(m_currentIndex + 1).timestamp
+                               : currentTs;
+            int64_t diff = static_cast<int64_t>(nextTs - currentTs);
+            if (diff < 0) diff = 0;
+
+            // Skaluj przez prędkość (odwrotnie: suwak 1 → 100x wolniej, 100 → normalnie)
+            double speedFactor = m_speedSlider->value() / 100.0;
+            int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);  // diff w µs → ms
+            if (intervalMs < 1) intervalMs = 1;
+
+            m_timer.start(intervalMs);
+        } else {
+            // Stały interwał (jak poprzednio)
+            int speed = m_speedSlider->value();
+            m_timer.start(qMax(1, 100 - speed));
+        }
     }
 }
 
@@ -121,9 +145,25 @@ void OfflineAnalyzer::stop() {
 }
 
 void OfflineAnalyzer::setSpeed(int value) {
+    Q_UNUSED(value);
     if (m_playing) {
+        // Restart timera z nową prędkością
         m_timer.stop();
-        m_timer.start(qMax(1, 100 - value));
+        if (m_originalTimestampsCheck->isChecked() && m_currentIndex > 0 && m_currentIndex < m_frames.size()) {
+            uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
+            uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
+                               ? m_frames.at(m_currentIndex + 1).timestamp
+                               : currentTs;
+            int64_t diff = static_cast<int64_t>(nextTs - currentTs);
+            if (diff < 0) diff = 0;
+            double speedFactor = m_speedSlider->value() / 100.0;
+            int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);
+            if (intervalMs < 1) intervalMs = 1;
+            m_timer.start(intervalMs);
+        } else {
+            int speed = m_speedSlider->value();
+            m_timer.start(qMax(1, 100 - speed));
+        }
     }
 }
 
@@ -134,10 +174,29 @@ void OfflineAnalyzer::playNextFrame() {
         return;
     }
 
-    const CanFrame &frame = m_frames.at(m_currentIndex++);
+    const CanFrame &frame = m_frames.at(m_currentIndex);
     if (m_learner) m_learner->processFrame(frame);
     if (m_luaEngine) m_luaEngine->onNewFrame(frame);
 
+    m_currentIndex++;
     m_progressBar->setValue(m_currentIndex);
     m_statusLabel->setText(QString("Ramka %1 / %2").arg(m_currentIndex).arg(m_frames.size()));
+
+    // Przygotuj timer na następną ramkę, jeśli gra i używa oryginalnych timestampów
+    if (m_playing && m_currentIndex < m_frames.size() && m_originalTimestampsCheck->isChecked()) {
+        m_timer.stop();  // zatrzymaj obecny timer
+
+        uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
+        uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
+                           ? m_frames.at(m_currentIndex + 1).timestamp
+                           : currentTs;
+        int64_t diff = static_cast<int64_t>(nextTs - currentTs);
+        if (diff < 0) diff = 0;
+        double speedFactor = m_speedSlider->value() / 100.0;
+        int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);
+        if (intervalMs < 1) intervalMs = 1;
+
+        m_timer.start(intervalMs);
+    }
+    // Jeśli nie używa oryginalnych timestampów, timer już leci ze stałym interwałem
 }
