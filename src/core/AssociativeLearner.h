@@ -53,6 +53,8 @@ public slots:
     void stopAnomalyMonitoring();
     void checkAnomaly();
     void checkAutoEvent();
+    void trainMarkovModel();
+    void predictNextFrames();
 
 signals:
     void eventMarked(int iteration);
@@ -138,4 +140,11 @@ private:
     QString m_currentVariable;
 
     QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
+    // Predykcja sekwencji (Markov)
+    QPushButton  *m_trainMarkovBtn;
+    QTableWidget *m_markovTable;
+    QTimer       *m_markovTimer;
+    QHash<uint32_t, QHash<uint32_t, int>> m_transitions; // fromId -> toId -> count
+    QHash<uint32_t, uint32_t> m_markovBestNext;        // fromId -> best next id
+    QHash<uint32_t, double>   m_markovProb;            // fromId -> probability
 };
