@@ -17,6 +17,8 @@ MagistralaCAN4_autogen/timestamp: \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.cpp \
+	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp \
