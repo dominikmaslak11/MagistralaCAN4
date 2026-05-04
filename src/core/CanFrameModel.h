@@ -21,6 +21,7 @@ public:
     void processIncomingFrames(const QVector<CanFrame> &newFrames);
     void setOverwriteMode(bool enabled);
     void clear();
+    CanFrame frameAt(int row) const;
 
     // NOWE: dostęp do wszystkich ramek (dla eksportu)
     QVector<CanFrame> allFrames() const;

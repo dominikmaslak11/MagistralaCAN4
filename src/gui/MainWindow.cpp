@@ -26,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_tableView->setAlternatingRowColors(false);
 
     m_learner = new AssociativeLearner;
+    m_luaEngine = new LuaScriptEngine(this);
+    m_luaEngine->setSniffer(&m_sniffer);
+    m_frameDetail = new FrameDetailWidget;
 
     m_batchTimer.setInterval(33);
     connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
@@ -54,8 +57,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_interfaceCombo->setCurrentIndex(0);
 
     connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &MainWindow::onUserScroll);
+
+    connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) {
+        qDebug() << "[Lua]" << msg;
+    });
+    connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) {
+        qWarning() << "[Lua ERROR]" << err;
+    });
+
+    // Podłączenie kliknięcia w tabeli -> widok szczegółów
+    connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
 }
 
 MainWindow::~MainWindow() {
@@ -137,13 +151,11 @@ void MainWindow::exportToCandump() {
     if (iface.isEmpty()) iface = "vcan0";
 
     for (const auto &frame : frames) {
-        // Format: (timestamp) interfejs ID#DLC dane
         QString line = QString("(%1) %2 %3#%4")
                 .arg(frame.timestamp)
                 .arg(iface)
                 .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0'))
-                .arg(frame.dlc < 8 ? QString::number(frame.dlc) : "8");  // candump używa 8 dla CAN FD? Uprośćmy: pokaż dlc jako hex jeśli >8
-        // Dla CAN FD (dlc>8) candump zapisuje inaczej, ale na razie piszemy klasycznie
+                .arg(frame.dlc < 8 ? QString::number(frame.dlc) : "8");
         for (int i = 0; i < frame.dlc && i < 8; ++i) {
             line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
         }
@@ -152,6 +164,18 @@ void MainWindow::exportToCandump() {
 
     file.close();
     QMessageBox::information(this, "Eksport", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
+}
+
+void MainWindow::loadLuaScript() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Wczytaj skrypt Lua", "", "Skrypty Lua (*.lua);;Wszystkie pliki (*)");
+    if (fileName.isEmpty()) return;
+    m_luaEngine->loadScript(fileName);
+}
+
+void MainWindow::onFrameSelected(const QModelIndex &index) {
+    if (!index.isValid()) return;
+    CanFrame frame = m_model->frameAt(index.row()); // wymaga metody frameAt w modelu
+    m_frameDetail->loadFrame(frame);
 }
 
 void MainWindow::setupToolBar() {
@@ -197,15 +221,18 @@ void MainWindow::setupToolBar() {
         if (clearBtn) clearBtn->setObjectName("clearButton");
     }
 
-    // NOWY PRZYCISK EKSPORTU
     QAction *exportAction = toolbar->addAction("📥 Eksportuj candump");
     connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
+
+    QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua");
+    connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
 }
 
 void MainWindow::setupCentralWidget() {
     auto *tabs = new QTabWidget;
     tabs->addTab(m_tableView, "Ruch CAN");
     tabs->addTab(m_learner, "Uczenie asocjacyjne");
+    tabs->addTab(m_frameDetail, "Szczegóły ramki");   // NOWA ZAKŁADKA
     setCentralWidget(tabs);
 }
 

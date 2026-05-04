@@ -1,559 +1,594 @@
 #!/usr/bin/env bash
-# fix_complete_learner.sh – pełny, działający AssociativeLearner.cpp
+# add_frame_detail.sh – widok szczegółów ramki z podświetlaniem bitów
 set -e
 
-echo "=== Nadpisywanie AssociativeLearner.cpp kompletną implementacją ==="
+echo "=== Wdrażanie widoku szczegółów ramki ==="
 
-cat > src/core/AssociativeLearner.cpp << 'ENDCPP'
-#include "AssociativeLearner.h"
+# 1. FrameDetailWidget.h
+cat > src/core/FrameDetailWidget.h << 'EOF'
+#pragma once
+#include <QWidget>
+#include <QLabel>
+#include <QGridLayout>
 #include <QScrollArea>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QHeaderView>
-#include <QtConcurrent>
-#include <QFileDialog>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QMessageBox>
-#include <numeric>
-#include <cmath>
-#include <set>
-#include <random>
+#include <QHash>
+#include "CanFrame.h"
 
-AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
-    auto *scrollArea = new QScrollArea;
-    scrollArea->setWidgetResizable(true);
-    auto *scrollWidget = new QWidget;
-    auto *mainLayout = new QVBoxLayout(scrollWidget);
+class FrameDetailWidget : public QWidget {
+    Q_OBJECT
+public:
+    explicit FrameDetailWidget(QWidget *parent = nullptr);
+    void loadFrame(const CanFrame &frame);
+
+private:
+    void buildGrid();
+    QLabel* createByteLabel(int byteIndex);
+    QString byteToBinary(uint8_t value) const;
+    void highlightChangedBits(const CanFrame &frame);
+
+    QGridLayout *m_grid;
+    QLabel *m_idLabel;
+    QLabel *m_dlcLabel;
+    QLabel *m_timestampLabel;
+    QVector<QLabel*> m_byteLabels;      // etykiety bajtów (hex)
+    QVector<QVector<QLabel*>> m_bitLabels;  // etykiety bitów (8 bajtów × 8 bitów)
+    QHash<uint32_t, CanFrame> m_lastFrameMap; // ostatnia ramka dla każdego ID
+    uint32_t m_currentId = 0xFFFFFFFF;
+};
+EOF
+
+# 2. FrameDetailWidget.cpp – pełna implementacja
+cat > src/core/FrameDetailWidget.cpp << 'EOF'
+#include "FrameDetailWidget.h"
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include <QFont>
+#include <QDebug>
+
+FrameDetailWidget::FrameDetailWidget(QWidget *parent) : QWidget(parent) {
     auto *outerLayout = new QVBoxLayout(this);
     outerLayout->setContentsMargins(0,0,0,0);
-    outerLayout->addWidget(scrollArea);
+
+    auto *scrollArea = new QScrollArea;
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setStyleSheet("QScrollArea { border: none; }");
+    auto *scrollWidget = new QWidget;
+    auto *layout = new QVBoxLayout(scrollWidget);
+
+    // Sekcja identyfikatora
+    m_idLabel = new QLabel("ID: —");
+    m_idLabel->setStyleSheet("font-size: 18px; font-weight: bold; color: #00ffaa;");
+    m_dlcLabel = new QLabel("DLC: —");
+    m_dlcLabel->setStyleSheet("font-size: 14px; color: #ff66cc;");
+    m_timestampLabel = new QLabel("Czas: —");
+    m_timestampLabel->setStyleSheet("font-size: 14px; color: #c0c0c0;");
+
+    layout->addWidget(m_idLabel);
+    layout->addWidget(m_dlcLabel);
+    layout->addWidget(m_timestampLabel);
+
+    // Siatka bitów – przewijalna
+    m_grid = new QGridLayout;
+    m_grid->setSpacing(2);
+
+    // Nagłówki kolumn (bity 7..0)
+    for (int bit = 7; bit >= 0; --bit) {
+        auto *header = new QLabel(QString("Bit %1").arg(bit));
+        header->setAlignment(Qt::AlignCenter);
+        header->setStyleSheet("font-weight: bold; color: #ffaa00; background-color: #1a1a2e;");
+        m_grid->addWidget(header, 0, 8 - bit); // wiersz 0
+    }
+
+    buildGrid();
+
+    layout->addLayout(m_grid);
+    layout->addStretch();
+
     scrollArea->setWidget(scrollWidget);
-
-    m_markEventBtn = new QPushButton("🔴 Zarejestruj zdarzenie");
-    m_resetBtn = new QPushButton("Resetuj uczenie");
-    m_iterationLabel = new QLabel("Liczba iteracji: 0");
-    m_iterationLabel->setStyleSheet("color: #00ffaa; font-weight: bold;");
-    mainLayout->addWidget(m_markEventBtn);
-    mainLayout->addWidget(m_resetBtn);
-    mainLayout->addWidget(m_iterationLabel);
-
-    m_candidateModel = new CandidateModel(this);
-    m_candidatesView = new QTableView;
-    m_candidatesView->setModel(m_candidateModel);
-    m_candidatesView->verticalHeader()->hide();
-    m_candidatesView->horizontalHeader()->setStretchLastSection(true);
-    m_candidatesView->setShowGrid(false);
-    m_candidatesView->setAlternatingRowColors(false);
-    m_candidatesView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    mainLayout->addWidget(m_candidatesView);
-
-    auto addHLine = [&]() { auto *f = new QFrame; f->setFrameShape(QFrame::HLine); f->setStyleSheet("background-color: #e94560;"); mainLayout->addWidget(f); };
-    addHLine();
-
-    auto *varLayout = new QHBoxLayout;
-    varLayout->addWidget(new QLabel("Zmienna:"));
-    m_variableCombo = new QComboBox; m_variableCombo->setMinimumWidth(140);
-    varLayout->addWidget(m_variableCombo);
-    varLayout->addWidget(new QLabel("Nazwa:"));
-    m_newVariableName = new QLineEdit; m_newVariableName->setPlaceholderText("np. temperatura");
-    m_addVariableBtn = new QPushButton("Nowa");
-    varLayout->addWidget(m_newVariableName); varLayout->addWidget(m_addVariableBtn);
-    mainLayout->addLayout(varLayout);
-
-    auto *valLayout = new QHBoxLayout;
-    valLayout->addWidget(new QLabel("Wartość:"));
-    m_valueInput = new QLineEdit; m_valueInput->setPlaceholderText("0.0");
-    m_addObsBtn = new QPushButton("Dodaj obserwację");
-    valLayout->addWidget(m_valueInput); valLayout->addWidget(m_addObsBtn);
-    mainLayout->addLayout(valLayout);
-
-    auto makeTable = [&](QTableWidget *&tbl, const QStringList &headers) {
-        tbl = new QTableWidget(0, headers.size());
-        tbl->setHorizontalHeaderLabels(headers);
-        tbl->verticalHeader()->hide(); tbl->horizontalHeader()->setStretchLastSection(true);
-        tbl->setShowGrid(false); tbl->setAlternatingRowColors(false);
-        tbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        tbl->setMinimumHeight(400);
-        mainLayout->addWidget(tbl);
-    };
-
-    makeTable(m_correlationTable, {"CAN ID","Bajt","Korelacja",""});
-    addHLine();
-
-    auto *seqLayout = new QHBoxLayout;
-    seqLayout->addWidget(new QLabel("Długość sekwencji:"));
-    m_ngramCombo = new QComboBox; m_ngramCombo->addItems({"Bigram (2)","Trigram (3)"});
-    seqLayout->addWidget(m_ngramCombo); seqLayout->addStretch();
-    mainLayout->addLayout(seqLayout);
-    makeTable(m_sequenceTable, {"Sekwencja ID","Wystąpienia","Pewność"});
-    addHLine();
-
-    mainLayout->addWidget(new QLabel("Korelacja międzybajtowa"));
-    makeTable(m_crossByteTable, {"ID1","Bajt1","ID2","Bajt2","Korelacja"});
-    addHLine();
-
-    auto *clusterLayout = new QHBoxLayout;
-    clusterLayout->addWidget(new QLabel("Klastrowanie okien"));
-    m_clusterBtn = new QPushButton("Uruchom k-means");
-    clusterLayout->addWidget(m_clusterBtn); clusterLayout->addStretch();
-    mainLayout->addLayout(clusterLayout);
-    makeTable(m_clusterTable, {"Klaster","Śr. liczba ramek","Dominujące ID","Liczba okien"});
-    addHLine();
-
-    auto *predLayout = new QHBoxLayout;
-    predLayout->addWidget(new QLabel("Predykcja wartości"));
-    m_trainPredictionBtn = new QPushButton("Trenuj predykcję");
-    predLayout->addWidget(m_trainPredictionBtn); predLayout->addStretch();
-    mainLayout->addLayout(predLayout);
-    makeTable(m_predictionTable, {"CAN ID","Bajt","Wsp. kier. (a)","Wyraz wolny (b)","Bieżąca prognoza"});
-
-    m_predictionTimer = new QTimer(this);
-    connect(m_predictionTimer, &QTimer::timeout, this, &AssociativeLearner::updatePredictionDisplay);
-    addHLine();
-
-    auto *anomalyLayout = new QHBoxLayout;
-    m_anomalyToggleBtn = new QPushButton("▶ Rozpocznij monitorowanie anomalii");
-    m_anomalyThreshold = new QLineEdit("10.0"); m_anomalyThreshold->setMaximumWidth(60);
-    anomalyLayout->addWidget(m_anomalyToggleBtn);
-    anomalyLayout->addWidget(new QLabel("Próg:")); anomalyLayout->addWidget(m_anomalyThreshold);
-    mainLayout->addLayout(anomalyLayout);
-    makeTable(m_anomalyTable, {"Czas (s)", "Wynik", "Opis"});
-
-    m_anomalyTimer = new QTimer(this);
-    connect(m_anomalyTimer, &QTimer::timeout, this, &AssociativeLearner::checkAnomaly);
-    connect(m_anomalyToggleBtn, &QPushButton::clicked, this, [this]() {
-        if (m_monitoring) stopAnomalyMonitoring(); else startAnomalyMonitoring();
-    });
-
-    m_chart = new QChart(); m_chart->setTitle("Wartość od bajtu");
-    m_scatterSeries = new QScatterSeries(); m_scatterSeries->setMarkerSize(8.0); m_scatterSeries->setColor(QColor("#00ffaa"));
-    m_chart->addSeries(m_scatterSeries); m_chart->createDefaultAxes();
-    m_chartView = new QChartView(m_chart); m_chartView->setRenderHint(QPainter::Antialiasing);
-    m_chartView->setMinimumHeight(300);
-    mainLayout->addWidget(m_chartView);
-
-    auto *serLayout = new QHBoxLayout;
-    m_saveBtn = new QPushButton("💾 Zapisz sesję"); m_loadBtn = new QPushButton("📂 Wczytaj sesję");
-    serLayout->addWidget(m_saveBtn); serLayout->addWidget(m_loadBtn);
-    mainLayout->addLayout(serLayout);
-
-    connect(m_markEventBtn, &QPushButton::clicked, this, &AssociativeLearner::markEvent);
-    connect(m_resetBtn, &QPushButton::clicked, this, &AssociativeLearner::resetLearning);
-    connect(m_addObsBtn, &QPushButton::clicked, this, &AssociativeLearner::addObservation);
-    connect(m_saveBtn, &QPushButton::clicked, this, &AssociativeLearner::saveSession);
-    connect(m_loadBtn, &QPushButton::clicked, this, &AssociativeLearner::loadSession);
-    connect(m_ngramCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int) { updateSequenceTable(); });
-    connect(m_clusterBtn, &QPushButton::clicked, this, &AssociativeLearner::clusterWindows);
-    connect(m_trainPredictionBtn, &QPushButton::clicked, this, &AssociativeLearner::trainPrediction);
-    connect(m_addVariableBtn, &QPushButton::clicked, this, &AssociativeLearner::addNewVariable);
-    connect(m_variableCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssociativeLearner::onVariableChanged);
+    outerLayout->addWidget(scrollArea);
 
     setStyleSheet(R"(
-        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 6px 15px; font-weight: bold; }
-        QPushButton:hover { background: #e94560; color: #0a0e17; }
-        QLineEdit, QComboBox { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 4px 8px; }
+        QLabel {
+            font-family: "Consolas", "Courier New", monospace;
+            padding: 2px 4px;
+        }
     )");
-
-    addVariable("temperatura");
 }
 
-AssociativeLearner::~AssociativeLearner() { m_predictionTimer->stop(); m_anomalyTimer->stop(); }
+void FrameDetailWidget::buildGrid() {
+    // Czyścimy stare etykiety (jeśli istnieją)
+    for (auto *lbl : m_byteLabels) delete lbl;
+    for (auto &row : m_bitLabels) for (auto *lbl : row) delete lbl;
+    m_byteLabels.clear();
+    m_bitLabels.clear();
 
-void AssociativeLearner::addVariable(const QString &name) {
-    QString key = name.toLower().trimmed();
-    if (key.isEmpty() || m_observationsMap.contains(key)) return;
-    m_observationsMap[key] = {};
-    m_variableCombo->addItem(name, key);
-    if (m_variableCombo->count() == 1) { m_variableCombo->setCurrentIndex(0); m_currentVariable = key; }
-}
+    // Tworzymy 8 wierszy dla bajtów 0..7 (klasyczny CAN)
+    for (int byte = 0; byte < 8; ++byte) {
+        int row = byte + 1; // wiersz 1..8
 
-void AssociativeLearner::addNewVariable() {
-    QString name = m_newVariableName->text().trimmed();
-    if (!name.isEmpty()) { addVariable(name); m_newVariableName->clear(); }
-}
+        // Etykieta bajtu
+        auto *byteLabel = new QLabel("00");
+        byteLabel->setAlignment(Qt::AlignCenter);
+        byteLabel->setStyleSheet("background-color: #161b22; color: #00ffaa; font-weight: bold;");
+        m_grid->addWidget(byteLabel, row, 0);
+        m_byteLabels.append(byteLabel);
 
-void AssociativeLearner::onVariableChanged(int idx) {
-    if (idx >= 0) { m_currentVariable = m_variableCombo->itemData(idx).toString(); updateCorrelationTable(); updateCrossByteTable(); updateChart(); }
-}
-
-QVector<ValueObservation> AssociativeLearner::currentObservations() const {
-    return m_observationsMap.value(m_currentVariable);
-}
-
-void AssociativeLearner::processFrame(const CanFrame &frame) {
-    m_frameHistory.push_back(frame);
-    if (m_frameHistory.size() > HISTORY_MAX) m_frameHistory.pop_front();
-}
-
-void AssociativeLearner::markEvent() {
-    if (m_frameHistory.empty()) return;
-    uint64_t latestTs = m_frameHistory.back().timestamp;
-    QVector<CanFrame> window;
-    for (const auto &f : m_frameHistory) if (f.timestamp >= latestTs - m_adaptiveBefore && f.timestamp <= latestTs + m_adaptiveAfter) window.append(f);
-    if (window.size() < 3) return;
-    EventRecord rec; rec.windowFrames = window; rec.idFeatures = buildFeatureVectors(window);
-    m_events.push_back(rec); m_iteration++;
-    m_iterationLabel->setText(QString("Liczba iteracji: %1").arg(m_iteration));
-    if (m_iteration == 1) recalcAdaptiveWindow();
-    emit eventMarked(m_iteration);
-    updateCandidates(); updateSequenceTable();
-}
-
-void AssociativeLearner::resetLearning() {
-    m_events.clear(); m_observationsMap.clear(); m_iteration = 0;
-    m_iterationLabel->setText("Liczba iteracji: 0");
-    m_candidateModel->clear(); m_correlationTable->setRowCount(0);
-    m_sequenceTable->setRowCount(0); m_crossByteTable->setRowCount(0);
-    m_clusterTable->setRowCount(0); m_linearModels.clear(); m_predictionTable->setRowCount(0);
-    m_predictionTimer->stop(); stopAnomalyMonitoring(); m_anomalyTable->setRowCount(0);
-    m_normalMean.clear(); m_normalStd.clear();
-    m_variableCombo->clear(); m_currentVariable.clear();
-    m_scatterSeries->clear();
-    addVariable("temperatura");
-}
-
-void AssociativeLearner::addObservation() {
-    if (m_currentVariable.isEmpty()) return;
-    bool ok; double v = m_valueInput->text().toDouble(&ok); if(!ok) return;
-    if(m_frameHistory.empty()) return;
-    uint64_t latestTs = m_frameHistory.back().timestamp;
-    QVector<CanFrame> window;
-    for(const auto &f : m_frameHistory) if(f.timestamp >= latestTs - m_adaptiveBefore && f.timestamp <= latestTs + m_adaptiveAfter) window.append(f);
-    if(window.empty()) return;
-    QHash<uint32_t, QVector<CanFrame>> grouped;
-    for(const auto &f : window) grouped[f.id].append(f);
-    ValueObservation obs; obs.value = v;
-    for(auto it=grouped.begin(); it!=grouped.end(); ++it) {
-        std::vector<uint8_t> avg(64,0); const auto &frames = it.value();
-        for(const auto &f : frames) for(int i=0;i<f.dlc;++i) avg[i] += f.data[i]/frames.size();
-        obs.idAverageBytes[it.key()] = avg;
-    }
-    m_observationsMap[m_currentVariable].append(obs); m_valueInput->clear();
-    updateCorrelationTable(); updateCrossByteTable(); updateChart();
-}
-
-void AssociativeLearner::recalcAdaptiveWindow() {
-    if(m_events.isEmpty()) return;
-    const auto &win = m_events.first().windowFrames;
-    if(win.size()<2) return;
-    QVector<int64_t> deltas; for(int i=1;i<win.size();++i) deltas.push_back(win[i].timestamp - win[i-1].timestamp);
-    double mean = std::accumulate(deltas.begin(), deltas.end(),0)/(double)deltas.size();
-    m_adaptiveBefore = std::max<int64_t>(100000, std::min<int64_t>(2000000, (int64_t)(3*mean)));
-    m_adaptiveAfter = m_adaptiveBefore/3;
-}
-
-QHash<uint32_t, QVector<float>> AssociativeLearner::buildFeatureVectors(const QVector<CanFrame> &window) {
-    QHash<uint32_t, QVector<CanFrame>> grouped;
-    for(const auto &f : window) grouped[f.id].append(f);
-    QHash<uint32_t, QVector<float>> res;
-    for(auto it=grouped.begin(); it!=grouped.end(); ++it) {
-        const auto &frames = it.value();
-        QVector<float> feats(67); feats[0] = frames.size();
-        QVector<int64_t> deltas; for(int i=1;i<frames.size();++i) deltas.push_back(frames[i].timestamp - frames[i-1].timestamp);
-        if(deltas.isEmpty()){ feats[1]=0; feats[2]=0; }
-        else {
-            double sum = std::accumulate(deltas.begin(), deltas.end(),0);
-            feats[1] = (float)(sum/deltas.size())/1000.0f;
-            double sq=0; for(int64_t d : deltas) sq+=(d-feats[1])*(d-feats[1]);
-            feats[2] = (float)std::sqrt(sq/deltas.size())/1000.0f;
+        // Etykiety bitów
+        QVector<QLabel*> bitRow;
+        for (int bit = 7; bit >= 0; --bit) {
+            auto *bitLabel = new QLabel("0");
+            bitLabel->setAlignment(Qt::AlignCenter);
+            bitLabel->setStyleSheet("background-color: #0d1117; color: #c0c0c0;");
+            m_grid->addWidget(bitLabel, row, 8 - bit); // kolumny 1..8
+            bitRow.append(bitLabel);
         }
-        for(int b=0; b<64; ++b){
-            float avg=0; for(const auto &f : frames) if(b<f.dlc) avg+=f.data[b]; avg/=frames.size();
-            feats[3+b] = avg/255.0f;
+        m_bitLabels.append(bitRow);
+    }
+}
+
+QLabel* FrameDetailWidget::createByteLabel(int byteIndex) {
+    auto *lbl = new QLabel("00");
+    lbl->setAlignment(Qt::AlignCenter);
+    lbl->setStyleSheet("background-color: #161b22; color: #00ffaa; font-weight: bold;");
+    return lbl;
+}
+
+QString FrameDetailWidget::byteToBinary(uint8_t value) const {
+    QString bin;
+    for (int i = 7; i >= 0; --i) {
+        bin += (value & (1 << i)) ? '1' : '0';
+    }
+    return bin;
+}
+
+void FrameDetailWidget::highlightChangedBits(const CanFrame &frame) {
+    // Pobierz poprzednią ramkę dla tego ID
+    auto it = m_lastFrameMap.find(frame.id);
+    if (it != m_lastFrameMap.end()) {
+        const CanFrame &prev = it.value();
+        for (int byte = 0; byte < 8; ++byte) {
+            uint8_t currVal = (byte < frame.dlc) ? frame.data[byte] : 0;
+            uint8_t prevVal = (byte < prev.dlc) ? prev.data[byte] : 0;
+
+            // Podświetl bajt, jeśli się zmienił
+            if (currVal != prevVal) {
+                m_byteLabels[byte]->setStyleSheet("background-color: #e94560; color: #ffffff; font-weight: bold;");
+            }
+
+            // Podświetl pojedyncze bity
+            for (int bit = 0; bit < 8; ++bit) {
+                bool currBit = (currVal >> (7 - bit)) & 1;
+                bool prevBit = (prevVal >> (7 - bit)) & 1;
+                if (currBit != prevBit) {
+                    m_bitLabels[byte][bit]->setStyleSheet("background-color: #ff66cc; color: #ffffff; font-weight: bold;");
+                }
+            }
         }
-        res[it.key()] = feats;
     }
-    return res;
+
+    // Zapamiętaj bieżącą ramkę
+    m_lastFrameMap[frame.id] = frame;
 }
 
-void AssociativeLearner::updateCandidates() {
-    if(m_events.isEmpty()) return;
-    if(m_events.size()==1){
-        const auto &feats = m_events.first().idFeatures;
-        QVector<Candidate> cands; for(auto it=feats.begin(); it!=feats.end(); ++it) cands.append({it.key(),"Pierwsze zdarzenie",0.0f,1});
-        m_candidateModel->setCandidates(cands); return;
-    }
-    QSet<uint32_t> common; bool first=true;
-    for(const auto &ev : m_events){
-        QSet<uint32_t> ids; for(auto it=ev.idFeatures.begin(); it!=ev.idFeatures.end(); ++it) ids.insert(it.key());
-        if(first){common=ids; first=false;} else common&=ids;
-    }
-    QVector<Candidate> cands;
-    for(uint32_t id : common){
-        QVector<QVector<float>> vecs; for(const auto &ev : m_events) vecs.append(ev.idFeatures[id]);
-        int N=vecs.size(); float sim=0; int pairs=0;
-        for(int i=0;i<N;++i) for(int j=i+1;j<N;++j){
-            float dot=0,nA=0,nB=0; for(int k=0;k<vecs[i].size();++k){ float a=vecs[i][k],b=vecs[j][k]; dot+=a*b; nA+=a*a; nB+=b*b; }
-            sim += dot/(std::sqrt(nA)*std::sqrt(nB)+1e-6f); pairs++;
+void FrameDetailWidget::loadFrame(const CanFrame &frame) {
+    // Aktualizuj nagłówek
+    m_idLabel->setText(QString("ID: 0x%1").arg(frame.id, 3, 16, QChar('0')).toUpper());
+    m_dlcLabel->setText(QString("DLC: %1").arg(frame.dlc));
+    m_timestampLabel->setText(QString("Czas: %1 µs").arg(frame.timestamp));
+
+    // Resetuj style przed aktualizacją
+    for (int byte = 0; byte < 8; ++byte) {
+        m_byteLabels[byte]->setStyleSheet("background-color: #161b22; color: #00ffaa; font-weight: bold;");
+        for (int bit = 0; bit < 8; ++bit) {
+            m_bitLabels[byte][bit]->setStyleSheet("background-color: #0d1117; color: #c0c0c0;");
         }
-        cands.append({id, QString("ID 0x%1").arg(id,3,16,QChar('0')).toUpper(), (pairs>0?sim/pairs:0.0f), (int)vecs.size()});
     }
-    std::sort(cands.begin(), cands.end(), [](const Candidate &a, const Candidate &b){ return a.score>b.score; });
-    m_candidateModel->setCandidates(cands);
-}
 
-void AssociativeLearner::updateCorrelationTable() {
-    QVector<ValueObservation> obs = currentObservations();
-    if(obs.size()<3){ m_correlationTable->setRowCount(0); return; }
-    QSet<uint32_t> common; bool first=true;
-    for(const auto &o : obs){
-        QSet<uint32_t> ids; for(auto it=o.idAverageBytes.begin(); it!=o.idAverageBytes.end(); ++it) ids.insert(it.key());
-        if(first){common=ids; first=false;} else common&=ids;
-    }
-    struct E{uint32_t id; int b; double corr;}; QVector<E> entries;
-    for(uint32_t id : common) for(int b=0;b<64;++b){
-        QVector<double> vx,vy;
-        for(const auto &o : obs){ auto it=o.idAverageBytes.find(id); if(it!=o.idAverageBytes.end()){ vx.append(o.value); vy.append((double)it.value()[b]); } }
-        int N=vx.size(); if(N<3) continue;
-        double sx=0,sy=0,sxy=0,sx2=0,sy2=0; for(int i=0;i<N;++i){ double x=vx[i],y=vy[i]; sx+=x; sy+=y; sxy+=x*y; sx2+=x*x; sy2+=y*y; }
-        double den=std::sqrt((N*sx2-sx*sx)*(N*sy2-sy*sy)); double corr=(den!=0)?(N*sxy-sx*sy)/den:0.0;
-        entries.append({id,b,corr});
-    }
-    std::sort(entries.begin(), entries.end(), [](const E &a, const E &b){ return fabs(a.corr)>fabs(b.corr); });
-    m_correlationTable->setRowCount(entries.size());
-    for(int i=0;i<entries.size();++i){
-        auto &e=entries[i]; m_correlationTable->setItem(i,0,new QTableWidgetItem(QString("0x%1").arg(e.id,3,16,QChar('0')).toUpper()));
-        m_correlationTable->setItem(i,1,new QTableWidgetItem(QString::number(e.b)));
-        m_correlationTable->setItem(i,2,new QTableWidgetItem(QString::number(e.corr,'f',3)));
-        QColor col = (fabs(e.corr)>0.7)?QColor("#00ffaa"):(fabs(e.corr)>0.4)?QColor("#ffaa00"):QColor("#ff66cc");
-        m_correlationTable->item(i,0)->setForeground(QColor("#c0c0c0")); m_correlationTable->item(i,1)->setForeground(QColor("#c0c0c0")); m_correlationTable->item(i,2)->setForeground(col);
-    }
-}
+    // Podświetl zmiany (robi to przed zapisaniem nowej ramki!)
+    highlightChangedBits(frame);
 
-void AssociativeLearner::updateSequenceTable() {
-    if(m_events.size()<2){ m_sequenceTable->setRowCount(0); return; }
-    int n = m_ngramCombo->currentIndex()+2;
-    QHash<QString,int> cnt; for(const auto &ev : m_events){ const auto &frm=ev.windowFrames; if(frm.size()<n) continue; QSet<QString> s; for(int i=0;i<=frm.size()-n;++i){ QStringList ids; for(int j=0;j<n;++j) ids.append(QString::number(frm[i+j].id)); s.insert(ids.join("→")); } for(const auto &k : s) cnt[k]++; }
-    int tot=m_events.size(); QVector<QPair<QString,int>> srt; for(auto it=cnt.begin(); it!=cnt.end(); ++it) srt.append({it.key(),it.value()});
-    std::sort(srt.begin(), srt.end(), [](const QPair<QString,int> &a, const QPair<QString,int> &b){ return a.second>b.second; });
-    if(srt.size()>20) srt.resize(20);
-    m_sequenceTable->setRowCount(srt.size());
-    for(int i=0;i<srt.size();++i){
-        auto &p=srt[i]; double prob=(double)p.second/tot;
-        m_sequenceTable->setItem(i,0,new QTableWidgetItem(p.first)); m_sequenceTable->setItem(i,1,new QTableWidgetItem(QString::number(p.second)));
-        m_sequenceTable->setItem(i,2,new QTableWidgetItem(QString("%1%").arg(prob*100.0,0,'f',1)));
-        QColor col = (prob>0.7)?QColor("#00ffaa"):(prob>0.4)?QColor("#ffaa00"):QColor("#ff66cc");
-        m_sequenceTable->item(i,0)->setForeground(QColor("#c0c0c0")); m_sequenceTable->item(i,1)->setForeground(QColor("#c0c0c0")); m_sequenceTable->item(i,2)->setForeground(col);
-    }
-}
+    // Wypełnij bajty i bity
+    for (int byte = 0; byte < 8; ++byte) {
+        uint8_t value = (byte < frame.dlc) ? frame.data[byte] : 0;
+        m_byteLabels[byte]->setText(QString("%1").arg(value, 2, 16, QChar('0')).toUpper());
 
-void AssociativeLearner::updateCrossByteTable() {
-    QVector<ValueObservation> obs = currentObservations();
-    if(obs.size()<3){ m_crossByteTable->setRowCount(0); return; }
-    QSet<QPair<uint32_t,int>> allPairs; bool first=true;
-    for(const auto &o : obs){
-        QSet<QPair<uint32_t,int>> s; for(auto it=o.idAverageBytes.begin(); it!=o.idAverageBytes.end(); ++it) for(int b=0;b<64;++b) s.insert({it.key(),b});
-        if(first){allPairs=s; first=false;} else allPairs&=s;
-    }
-    QVector<QPair<uint32_t,int>> ap = allPairs.values();
-    struct CE{uint32_t id1; int b1; uint32_t id2; int b2; double corr;}; QVector<CE> entries;
-    for(int i=0;i<ap.size();++i) for(int j=i+1;j<ap.size();++j){
-        auto p1=ap[i], p2=ap[j]; QVector<double> x,y;
-        for(const auto &o : obs){
-            auto it1=o.idAverageBytes.find(p1.first), it2=o.idAverageBytes.find(p2.first);
-            if(it1!=o.idAverageBytes.end() && it2!=o.idAverageBytes.end()){ x.append((double)it1.value()[p1.second]); y.append((double)it2.value()[p2.second]); }
+        QString bin = byteToBinary(value);
+        for (int bit = 7; bit >= 0; --bit) {
+            m_bitLabels[byte][7 - bit]->setText(QString(bin[7 - bit]));
         }
-        int N=x.size(); if(N<3) continue;
-        double sx=0,sy=0,sxy=0,sx2=0,sy2=0; for(int k=0;k<N;++k){ double xv=x[k], yv=y[k]; sx+=xv; sy+=yv; sxy+=xv*yv; sx2+=xv*xv; sy2+=yv*yv; }
-        double den=std::sqrt((N*sx2-sx*sx)*(N*sy2-sy*sy)); double corr=(den!=0)?(N*sxy-sx*sy)/den:0.0;
-        entries.append({p1.first, p1.second, p2.first, p2.second, corr});
     }
-    std::sort(entries.begin(), entries.end(), [](const CE &a, const CE &b){ return fabs(a.corr)>fabs(b.corr); });
-    m_crossByteTable->setRowCount(entries.size());
-    for(int i=0;i<entries.size();++i){
-        auto &e=entries[i];
-        m_crossByteTable->setItem(i,0,new QTableWidgetItem(QString("0x%1").arg(e.id1,3,16,QChar('0')).toUpper()));
-        m_crossByteTable->setItem(i,1,new QTableWidgetItem(QString::number(e.b1)));
-        m_crossByteTable->setItem(i,2,new QTableWidgetItem(QString("0x%1").arg(e.id2,3,16,QChar('0')).toUpper()));
-        m_crossByteTable->setItem(i,3,new QTableWidgetItem(QString::number(e.b2)));
-        m_crossByteTable->setItem(i,4,new QTableWidgetItem(QString::number(e.corr,'f',3)));
-        QColor col = (fabs(e.corr)>0.7)?QColor("#00ffaa"):(fabs(e.corr)>0.4)?QColor("#ffaa00"):QColor("#ff66cc");
-        m_crossByteTable->item(i,0)->setForeground(QColor("#c0c0c0")); m_crossByteTable->item(i,1)->setForeground(QColor("#c0c0c0"));
-        m_crossByteTable->item(i,2)->setForeground(QColor("#c0c0c0")); m_crossByteTable->item(i,3)->setForeground(QColor("#c0c0c0"));
-        m_crossByteTable->item(i,4)->setForeground(col);
+}
+EOF
+
+# 3. MainWindow.h – dodanie FrameDetailWidget i slotu
+cat > src/gui/MainWindow.h << 'EOF'
+#pragma once
+#include <QMainWindow>
+#include <QTableView>
+#include <QPushButton>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLabel>
+#include <QTimer>
+#include <QVector>
+#include "core/CanSniffer.h"
+#include "core/CanFrameModel.h"
+#include "core/AssociativeLearner.h"
+#include "core/LuaScriptEngine.h"
+#include "core/FrameDetailWidget.h"
+
+class MainWindow : public QMainWindow {
+    Q_OBJECT
+public:
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
+
+private slots:
+    void toggleSniffing();
+    void onNewFrame(const CanFrame &frame);
+    void updateTableBatch();
+    void refreshInterfaces();
+    void applyOverwriteMode(bool enabled);
+    void onUserScroll(int value);
+    void exportToCandump();
+    void loadLuaScript();
+    void onFrameSelected(const QModelIndex &index);   // NOWE
+
+private:
+    void setupStyle();
+    void setupToolBar();
+    void setupCentralWidget();
+
+    CanSniffer m_sniffer;
+    CanFrameModel *m_model;
+    AssociativeLearner *m_learner;
+    LuaScriptEngine *m_luaEngine;
+    FrameDetailWidget *m_frameDetail;  // NOWE
+    QTableView *m_tableView;
+    QPushButton *m_btnStartStop;
+    QComboBox *m_interfaceCombo;
+    QCheckBox *m_overwriteCheck;
+    QLabel *m_statusLabel;
+
+    QTimer m_batchTimer;
+    QVector<CanFrame> m_frameBuffer;
+    bool m_sniffing = false;
+    bool m_autoScroll = true;
+};
+EOF
+
+# 4. MainWindow.cpp – podłączenie widoku
+cat > src/gui/MainWindow.cpp << 'EOF'
+#include "MainWindow.h"
+#include "core/CanInterfaceEnumerator.h"
+#include <QToolBar>
+#include <QToolButton>
+#include <QTabWidget>
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QApplication>
+#include <QScrollBar>
+#include <QFileDialog>
+#include <QTextStream>
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    setWindowTitle("MagistralaCAN4 - Sniffer CAN");
+    resize(1280, 800);
+
+    m_model = new CanFrameModel(this);
+    m_tableView = new QTableView;
+    m_tableView->setModel(m_model);
+    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_tableView->verticalHeader()->hide();
+    m_tableView->horizontalHeader()->setStretchLastSection(true);
+    m_tableView->setShowGrid(false);
+    m_tableView->setAlternatingRowColors(false);
+
+    m_learner = new AssociativeLearner;
+    m_luaEngine = new LuaScriptEngine(this);
+    m_luaEngine->setSniffer(&m_sniffer);
+    m_frameDetail = new FrameDetailWidget;
+
+    m_batchTimer.setInterval(33);
+    connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
+
+    connect(&m_sniffer, &CanSniffer::newFrame, this, &MainWindow::onNewFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::errorOccurred, this, [this](const QString &msg) {
+        QMessageBox::warning(this, "Błąd CAN", msg);
+        m_sniffer.stop();
+        m_sniffing = false;
+        m_btnStartStop->setText("▶ Start");
+        m_batchTimer.stop();
+        m_statusLabel->setText("Rozłączony");
+        m_statusLabel->setStyleSheet("color: #ff4444;");
+    });
+    connect(&m_sniffer, &CanSniffer::statusChanged, this, [this](bool running) {
+        m_statusLabel->setText(running ? "Nasłuchuje..." : "Rozłączony");
+        m_statusLabel->setStyleSheet(running ? "color: #00ffaa;" : "color: #ff4444;");
+    });
+
+    setupToolBar();
+    setupCentralWidget();
+    setupStyle();
+
+    refreshInterfaces();
+    if (m_interfaceCombo->count() > 0)
+        m_interfaceCombo->setCurrentIndex(0);
+
+    connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
+    connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged,
+            this, &MainWindow::onUserScroll);
+
+    connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) {
+        qDebug() << "[Lua]" << msg;
+    });
+    connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) {
+        qWarning() << "[Lua ERROR]" << err;
+    });
+
+    // Podłączenie kliknięcia w tabeli -> widok szczegółów
+    connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
+}
+
+MainWindow::~MainWindow() {
+    if (m_sniffing) {
+        m_sniffer.stop();
+        m_batchTimer.stop();
     }
 }
 
-// ---------- Klastrowanie ----------
-QVector<float> AssociativeLearner::buildWindowFeatures(const QVector<CanFrame> &window) {
-    QVector<float> feat(5,0); if(window.isEmpty()) return feat;
-    feat[0]=(float)window.size(); QSet<uint32_t> ids; for(auto &f:window) ids.insert(f.id); feat[1]=(float)ids.size();
-    double entropy=0.0; QHash<uint32_t,int> freq; for(auto &f:window) freq[f.id]++;
-    for(auto it=freq.begin(); it!=freq.end(); ++it){ double p=(double)it.value()/window.size(); entropy -= p*log2(p+1e-9); } feat[2]=(float)entropy;
-    int64_t dur = window.back().timestamp - window.front().timestamp; feat[3]=(float)dur/1000.0f;
-    return feat;
+void MainWindow::toggleSniffing() {
+    if (!m_sniffing) {
+        QString iface = m_interfaceCombo->currentText().trimmed();
+        if (iface.isEmpty()) {
+            QMessageBox::warning(this, "Brak interfejsu", "Wybierz interfejs CAN.");
+            return;
+        }
+        m_sniffer.start(iface);
+        m_sniffing = true;
+        m_btnStartStop->setText("■ Stop");
+        m_interfaceCombo->setEnabled(false);
+        m_batchTimer.start();
+    } else {
+        m_sniffer.stop();
+        m_sniffing = false;
+        m_btnStartStop->setText("▶ Start");
+        m_interfaceCombo->setEnabled(true);
+        m_batchTimer.stop();
+        m_frameBuffer.clear();
+    }
 }
 
-int AssociativeLearner::kMeans(const QVector<QVector<float>> &data, int K, QVector<int> &assignments) {
-    int N=data.size(); if(N==0) return 0; int dim=data[0].size(); assignments.resize(N);
-    QVector<QVector<float>> centroids(K, QVector<float>(dim));
-    std::mt19937 rng(42); std::uniform_int_distribution<int> dist(0,N-1);
-    for(int k=0;k<K;++k) centroids[k]=data[dist(rng)];
-    int iter=0, maxIter=50;
-    while(iter++ < maxIter){
-        QVector<int> counts(K,0); QVector<QVector<float>> newCtr(K, QVector<float>(dim,0.0f));
-        QMutex mutex;
-        QtConcurrent::blockingMap(data, [&](const QVector<float> &point){
-            int idx=0; double best=std::numeric_limits<double>::max();
-            for(int k=0;k<K;++k){ double d=0.0; for(int i=0;i<dim;++i) d+=(point[i]-centroids[k][i])*(point[i]-centroids[k][i]); if(d<best){ best=d; idx=k; } }
-            QMutexLocker lock(&mutex); assignments[&point - &data[0]]=idx; counts[idx]++; for(int i=0;i<dim;++i) newCtr[idx][i]+=point[i];
+void MainWindow::onNewFrame(const CanFrame &frame) {
+    m_frameBuffer.append(frame);
+}
+
+void MainWindow::updateTableBatch() {
+    if (m_frameBuffer.isEmpty()) return;
+    m_model->processIncomingFrames(m_frameBuffer);
+    m_frameBuffer.clear();
+    if (m_autoScroll)
+        m_tableView->scrollToBottom();
+}
+
+void MainWindow::refreshInterfaces() {
+    QString current = m_interfaceCombo->currentText();
+    m_interfaceCombo->clear();
+    QStringList ifaces = CanInterfaceEnumerator::availableCanInterfaces();
+    m_interfaceCombo->addItems(ifaces);
+    int idx = m_interfaceCombo->findText(current);
+    if (idx >= 0)
+        m_interfaceCombo->setCurrentIndex(idx);
+    else if (!current.isEmpty())
+        m_interfaceCombo->setCurrentText(current);
+}
+
+void MainWindow::applyOverwriteMode(bool enabled) {
+    m_model->setOverwriteMode(enabled);
+}
+
+void MainWindow::onUserScroll(int value) {
+    QScrollBar *vbar = m_tableView->verticalScrollBar();
+    if (!vbar) return;
+    m_autoScroll = (value >= vbar->maximum() - 1);
+}
+
+void MainWindow::exportToCandump() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Eksportuj do candump", "", "Pliki candump (*.log *.txt);;Wszystkie pliki (*)");
+    if (fileName.isEmpty()) return;
+
+    QVector<CanFrame> frames = m_model->allFrames();
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Błąd", "Nie można zapisać pliku.");
+        return;
+    }
+
+    QTextStream out(&file);
+    QString iface = m_interfaceCombo->currentText().trimmed();
+    if (iface.isEmpty()) iface = "vcan0";
+
+    for (const auto &frame : frames) {
+        QString line = QString("(%1) %2 %3#%4")
+                .arg(frame.timestamp)
+                .arg(iface)
+                .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0'))
+                .arg(frame.dlc < 8 ? QString::number(frame.dlc) : "8");
+        for (int i = 0; i < frame.dlc && i < 8; ++i) {
+            line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+        }
+        out << line << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Eksport", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
+}
+
+void MainWindow::loadLuaScript() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Wczytaj skrypt Lua", "", "Skrypty Lua (*.lua);;Wszystkie pliki (*)");
+    if (fileName.isEmpty()) return;
+    m_luaEngine->loadScript(fileName);
+}
+
+void MainWindow::onFrameSelected(const QModelIndex &index) {
+    if (!index.isValid()) return;
+    CanFrame frame = m_model->frameAt(index.row()); // wymaga metody frameAt w modelu
+    m_frameDetail->loadFrame(frame);
+}
+
+void MainWindow::setupToolBar() {
+    auto *toolbar = addToolBar("Główne");
+    toolbar->setMovable(false);
+
+    m_interfaceCombo = new QComboBox;
+    m_interfaceCombo->setEditable(true);
+    m_interfaceCombo->setMinimumWidth(120);
+    m_interfaceCombo->setToolTip("Wybierz interfejs CAN (np. vcan0, can0)");
+    toolbar->addWidget(m_interfaceCombo);
+
+    auto *refreshBtn = new QPushButton("↻");
+    refreshBtn->setToolTip("Odśwież listę interfejsów");
+    connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
+    toolbar->addWidget(refreshBtn);
+
+    toolbar->addSeparator();
+
+    m_btnStartStop = new QPushButton("▶ Start");
+    connect(m_btnStartStop, &QPushButton::clicked, this, &MainWindow::toggleSniffing);
+    toolbar->addWidget(m_btnStartStop);
+
+    m_overwriteCheck = new QCheckBox("Nadpisywanie");
+    m_overwriteCheck->setChecked(true);
+    connect(m_overwriteCheck, &QCheckBox::toggled, this, &MainWindow::applyOverwriteMode);
+    toolbar->addWidget(m_overwriteCheck);
+
+    toolbar->addSeparator();
+
+    m_statusLabel = new QLabel("Rozłączony");
+    m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
+    toolbar->addWidget(m_statusLabel);
+
+    toolbar->addSeparator();
+
+    QAction *clearAction = toolbar->addAction("🗙 Wyczyść");
+    if (clearAction) {
+        connect(clearAction, &QAction::triggered, this, [this]() {
+            m_model->clear();
         });
-        bool changed=false;
-        for(int k=0;k<K;++k){ if(counts[k]>0) for(int i=0;i<dim;++i) newCtr[k][i]/=counts[k]; double diff=0.0; for(int i=0;i<dim;++i) diff+=(centroids[k][i]-newCtr[k][i])*(centroids[k][i]-newCtr[k][i]); if(diff>0.001) changed=true; centroids[k]=newCtr[k]; }
-        if(!changed) break;
+        QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction));
+        if (clearBtn) clearBtn->setObjectName("clearButton");
     }
-    return 0;
+
+    QAction *exportAction = toolbar->addAction("📥 Eksportuj candump");
+    connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
+
+    QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua");
+    connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
 }
 
-void AssociativeLearner::clusterWindows() {
-    if(m_frameHistory.empty()) return;
-    QVector<QVector<CanFrame>> windows; int64_t winSize=500000;
-    int64_t start=m_frameHistory.front().timestamp, end=m_frameHistory.back().timestamp;
-    for(int64_t t=start; t<end; t+=winSize/2){
-        QVector<CanFrame> win; for(const auto &f : m_frameHistory) if(f.timestamp>=t && f.timestamp<t+winSize) win.append(f);
-        if(win.size()>=3) windows.append(win);
-    }
-    if(windows.size()<5) return;
-    QVector<QVector<float>> features; for(const auto &w : windows) features.append(buildWindowFeatures(w));
-    int K=3; QVector<int> assignments; kMeans(features, K, assignments);
-    struct { int cnt=0; double avg=0; QHash<uint32_t,int> freq; } stats[K];
-    for(int i=0;i<assignments.size();++i){ int c=assignments[i]; stats[c].cnt++; stats[c].avg+=windows[i].size(); for(auto &f : windows[i]) stats[c].freq[f.id]++; }
-    for(int c=0;c<K;++c) if(stats[c].cnt) stats[c].avg/=stats[c].cnt;
-    m_clusterTable->setRowCount(K);
-    for(int c=0;c<K;++c){
-        m_clusterTable->setItem(c,0,new QTableWidgetItem(QString("Klaster %1").arg(c+1)));
-        m_clusterTable->setItem(c,1,new QTableWidgetItem(QString::number(stats[c].avg,'f',1)));
-        QList<QPair<uint32_t,int>> srt; for(auto it=stats[c].freq.begin(); it!=stats[c].freq.end(); ++it) srt.append({it.key(),it.value()});
-        std::sort(srt.begin(), srt.end(), [](auto &a, auto &b){ return a.second>b.second; });
-        QStringList top; for(int i=0;i<3 && i<srt.size();++i) top.append(QString("0x%1").arg(srt[i].first,3,16,QChar('0')).toUpper());
-        m_clusterTable->setItem(c,2,new QTableWidgetItem(top.join(", ")));
-        m_clusterTable->setItem(c,3,new QTableWidgetItem(QString::number(stats[c].cnt)));
-    }
+void MainWindow::setupCentralWidget() {
+    auto *tabs = new QTabWidget;
+    tabs->addTab(m_tableView, "Ruch CAN");
+    tabs->addTab(m_learner, "Uczenie asocjacyjne");
+    tabs->addTab(m_frameDetail, "Szczegóły ramki");   // NOWA ZAKŁADKA
+    setCentralWidget(tabs);
 }
 
-// ---------- Predykcja ----------
-void AssociativeLearner::trainPrediction() {
-    QVector<ValueObservation> obs = currentObservations();
-    if(obs.size()<3) return;
-    m_linearModels.clear();
-    QSet<QPair<uint32_t,int>> allPairs;
-    for(const auto &o : obs) for(auto it=o.idAverageBytes.begin(); it!=o.idAverageBytes.end(); ++it) for(int b=0;b<64;++b) allPairs.insert({it.key(),b});
-    for(const auto &pair : allPairs){
-        uint32_t id=pair.first; int byte=pair.second;
-        QVector<double> X,Y;
-        for(const auto &o : obs){ auto it=o.idAverageBytes.find(id); if(it!=o.idAverageBytes.end()){ X.append((double)it.value()[byte]); Y.append(o.value); } }
-        int N=X.size(); if(N<3) continue;
-        double sx=0,sy=0,sxy=0,sx2=0; for(int i=0;i<N;++i){ double x=X[i],y=Y[i]; sx+=x; sy+=y; sxy+=x*y; sx2+=x*x; }
-        double denom=N*sx2 - sx*sx; if(fabs(denom)<1e-9) continue;
-        double a=(N*sxy - sx*sy)/denom; double b=(sy - a*sx)/N;
-        double sy2=0; for(double y:Y) sy2+=y*y;
-        double corr = (N*sxy - sx*sy)/sqrt((N*sx2-sx*sx)*(N*sy2-sy*sy)+1e-9);
-        if(fabs(corr)<0.8) continue;
-        m_linearModels[pair]={a,b};
-    }
-    m_predictionTable->setRowCount(m_linearModels.size());
-    int row=0;
-    for(auto it=m_linearModels.begin(); it!=m_linearModels.end(); ++it, ++row){
-        uint32_t id=it.key().first; int byte=it.key().second; double a=it.value().first, b_=it.value().second;
-        m_predictionTable->setItem(row,0,new QTableWidgetItem(QString("0x%1").arg(id,3,16,QChar('0')).toUpper()));
-        m_predictionTable->setItem(row,1,new QTableWidgetItem(QString::number(byte)));
-        m_predictionTable->setItem(row,2,new QTableWidgetItem(QString::number(a,'f',4)));
-        m_predictionTable->setItem(row,3,new QTableWidgetItem(QString::number(b_,'f',4)));
-        m_predictionTable->setItem(row,4,new QTableWidgetItem("—"));
-    }
-    if(!m_linearModels.isEmpty()) m_predictionTimer->start(500);
+void MainWindow::setupStyle() {
+    qApp->setStyleSheet(R"(
+        QMainWindow {
+            background-color: #0a0e17;
+        }
+        QToolBar {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #1a1a2e, stop:1 #16213e);
+            border-bottom: 2px solid #e94560;
+            spacing: 8px;
+            padding: 4px;
+        }
+        QPushButton {
+            background: #1a1a2e;
+            color: #00ffaa;
+            border: 1px solid #e94560;
+            border-radius: 4px;
+            padding: 5px 15px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background: #e94560;
+            color: #0a0e17;
+        }
+        QComboBox {
+            background: #1a1a2e;
+            color: #00ffaa;
+            border: 1px solid #e94560;
+            border-radius: 4px;
+            padding: 3px 8px;
+            min-width: 100px;
+        }
+        QComboBox::drop-down { border: none; }
+        QComboBox QAbstractItemView {
+            background: #1a1a2e;
+            color: #00ffaa;
+            selection-background-color: #e94560;
+        }
+        QCheckBox {
+            color: #ff66cc; font-weight: bold;
+        }
+        QCheckBox::indicator { width: 16px; height: 16px; }
+        QLabel { color: #c0c0c0; }
+        QTableView, QTableWidget {
+            background-color: #0a0e17;
+            alternate-background-color: #161b22;
+            color: #c0c0c0;
+            gridline-color: #2a2a3c;
+            selection-background-color: #e94560;
+            selection-color: #ffffff;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12px;
+        }
+        QHeaderView::section {
+            background-color: #1a1a2e;
+            color: #ff66cc;
+            font-weight: bold;
+            padding: 4px;
+            border: none;
+            border-bottom: 2px solid #e94560;
+        }
+        QToolButton#clearButton {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #1a1a2e, stop:0.5 #2c0735, stop:1 #e94560);
+            color: #00ffaa;
+            border: 1px solid #e94560;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-weight: bold;
+        }
+        QToolButton#clearButton:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #e94560, stop:0.5 #2c0735, stop:1 #1a1a2e);
+            color: #0a0e17;
+            border: 1px solid #ff66cc;
+        }
+        QToolButton#clearButton:pressed {
+            background: #2c0735;
+            border: 1px solid #ff00ff;
+        }
+    )");
 }
+EOF
 
-void AssociativeLearner::updatePredictionDisplay() {
-    if(m_linearModels.isEmpty() || m_frameHistory.empty()) return;
-    int row=0;
-    for(auto it=m_linearModels.begin(); it!=m_linearModels.end(); ++it, ++row){
-        uint32_t id=it.key().first; int byte=it.key().second; double a=it.value().first, b_=it.value().second;
-        CanFrame lastFrame; bool found=false;
-        for(auto ri=m_frameHistory.rbegin(); ri!=m_frameHistory.rend(); ++ri) if(ri->id==id){ lastFrame=*ri; found=true; break; }
-        if(found && byte<lastFrame.dlc) { double pred=a*lastFrame.data[byte]+b_; if(row<m_predictionTable->rowCount()) m_predictionTable->item(row,4)->setText(QString::number(pred,'f',2)); }
-    }
-}
+# 5. CanFrameModel – potrzebujemy metody frameAt()
+sed -i '/void clear();/a\    CanFrame frameAt(int row) const;' src/core/CanFrameModel.h
+sed -i '/^void CanFrameModel::clear()/i\
+CanFrame CanFrameModel::frameAt(int row) const {\
+    QMutexLocker lock(&m_mutex);\
+    if (row >= 0 && row < m_frames.size())\
+        return m_frames.at(row);\
+    return CanFrame();\
+}\n' src/core/CanFrameModel.cpp
 
-// ---------- Anomalie ----------
-void AssociativeLearner::startAnomalyMonitoring() {
-    if(m_frameHistory.size()<100) return;
-    buildNormalModel(); m_monitoring=true; m_anomalyToggleBtn->setText("■ Zatrzymaj monitorowanie anomalii"); m_anomalyTimer->start(1000);
-}
-void AssociativeLearner::stopAnomalyMonitoring() { m_monitoring=false; m_anomalyToggleBtn->setText("▶ Rozpocznij monitorowanie anomalii"); m_anomalyTimer->stop(); }
-void AssociativeLearner::buildNormalModel() {
-    QVector<QVector<float>> feats;
-    int64_t winSize=1000000; int64_t start=m_frameHistory.front().timestamp, end=m_frameHistory.back().timestamp;
-    for(int64_t t=start; t<end-winSize; t+=500000){
-        QVector<CanFrame> win; for(const auto &f : m_frameHistory) if(f.timestamp>=t && f.timestamp<t+winSize) win.append(f);
-        if(win.size()>=3) feats.append(buildWindowFeatures(win));
-    }
-    if(feats.size()<10) return;
-    int dim=feats[0].size(); m_normalMean.resize(dim,0); m_normalStd.resize(dim,0);
-    for(int d=0;d<dim;++d){ double sum=0,sq=0; for(auto &f:feats){ sum+=f[d]; sq+=f[d]*f[d]; } m_normalMean[d]=sum/feats.size(); m_normalStd[d]=std::sqrt(sq/feats.size() - m_normalMean[d]*m_normalMean[d]); if(m_normalStd[d]<1e-6) m_normalStd[d]=1.0f; }
-}
-void AssociativeLearner::checkAnomaly() {
-    if(!m_monitoring || m_frameHistory.empty()) return;
-    uint64_t now=m_frameHistory.back().timestamp; QVector<CanFrame> win;
-    for(auto ri=m_frameHistory.rbegin(); ri!=m_frameHistory.rend(); ++ri){ if(ri->timestamp>=now-1000000) win.prepend(*ri); else break; }
-    if(win.size()<3) return;
-    QVector<float> feat=buildWindowFeatures(win);
-    if(m_normalMean.empty()){ buildNormalModel(); if(m_normalMean.empty()) return; }
-    double score=0.0; for(int d=0;d<feat.size();++d){ double z=(feat[d]-m_normalMean[d])/m_normalStd[d]; score+=z*z; }
-    double thresh=m_anomalyThreshold->text().toDouble();
-    if(score>thresh){ int row=m_anomalyTable->rowCount(); m_anomalyTable->insertRow(row);
-        m_anomalyTable->setItem(row,0,new QTableWidgetItem(QString::number(now/1000000.0,'f',2)));
-        m_anomalyTable->setItem(row,1,new QTableWidgetItem(QString::number(score,'f',2)));
-        m_anomalyTable->setItem(row,2,new QTableWidgetItem("Anomalia wykryta")); m_anomalyTable->scrollToBottom(); }
-}
-
-// ---------- Wykres ----------
-void AssociativeLearner::updateChart() {
-    m_scatterSeries->clear();
-    QVector<ValueObservation> obs = currentObservations();
-    if(obs.size()<2) return;
-    // Wybierz pierwszy dostępny bajt z pierwszego ID
-    uint32_t anyId=0; int anyByte=0; bool found=false;
-    for(const auto &o : obs) { for(auto it=o.idAverageBytes.begin(); it!=o.idAverageBytes.end(); ++it) { anyId=it.key(); anyByte=0; found=true; break; } if(found) break; }
-    if(!found) return;
-    for(const auto &o : obs) {
-        auto it = o.idAverageBytes.find(anyId);
-        if(it!=o.idAverageBytes.end()) m_scatterSeries->append((double)it.value()[anyByte], o.value);
-    }
-}
-
-// ---------- Serializacja ----------
-void AssociativeLearner::saveSession() {
-    QString path = QFileDialog::getSaveFileName(this, "Zapisz sesję", "", "JSON (*.json)");
-    if(path.isEmpty()) return;
-    QJsonObject root; root["iteration"]=m_iteration; root["adaptiveBefore"]=(qint64)m_adaptiveBefore; root["adaptiveAfter"]=(qint64)m_adaptiveAfter;
-    QJsonArray eventsArr; for(const auto &ev : m_events){ QJsonObject evObj; QJsonArray framesArr; for(const auto &f : ev.windowFrames){ QJsonObject fObj; fObj["id"]=(int)f.id; fObj["dlc"]=f.dlc; QJsonArray dataArr; for(int i=0;i<f.dlc;++i) dataArr.append(f.data[i]); fObj["data"]=dataArr; fObj["timestamp"]=(qint64)f.timestamp; framesArr.append(fObj); } evObj["windowFrames"]=framesArr; eventsArr.append(evObj); } root["events"]=eventsArr;
-    QJsonArray obsMap;
-    for(auto it=m_observationsMap.begin(); it!=m_observationsMap.end(); ++it){
-        QJsonObject varObj; varObj["name"]=it.key(); QJsonArray obsArr;
-        for(const auto &obs : it.value()){ QJsonObject o; o["value"]=obs.value; QJsonObject bytesObj; for(auto bit=obs.idAverageBytes.begin(); bit!=obs.idAverageBytes.end(); ++it){ QJsonArray byteArr; for(uint8_t b : bit.value()) byteArr.append((int)b); bytesObj[QString::number(bit.key())]=byteArr; } o["idAverageBytes"]=bytesObj; obsArr.append(o); }
-        varObj["observations"]=obsArr; obsMap.append(varObj);
-    }
-    root["observationsMap"]=obsMap;
-    QFile file(path); if(file.open(QIODevice::WriteOnly)) file.write(QJsonDocument(root).toJson());
-}
-
-void AssociativeLearner::loadSession() {
-    QString path = QFileDialog::getOpenFileName(this, "Wczytaj sesję", "", "JSON (*.json)");
-    if(path.isEmpty()) return;
-    QFile file(path); if(!file.open(QIODevice::ReadOnly)) return;
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll()); file.close(); QJsonObject root = doc.object();
-    m_events.clear(); m_observationsMap.clear(); m_iteration=root["iteration"].toInt(); m_adaptiveBefore=root["adaptiveBefore"].toVariant().toLongLong(); m_adaptiveAfter=root["adaptiveAfter"].toVariant().toLongLong();
-    QJsonArray eventsArr = root["events"].toArray(); for(const auto &evVal : eventsArr){ EventRecord rec; QJsonObject evObj=evVal.toObject(); QJsonArray framesArr=evObj["windowFrames"].toArray(); for(const auto &fVal : framesArr){ QJsonObject fObj=fVal.toObject(); CanFrame f; f.id=fObj["id"].toInt(); f.dlc=fObj["dlc"].toInt(); QJsonArray dataArr=fObj["data"].toArray(); for(int i=0;i<dataArr.size();++i) f.data[i]=(uint8_t)dataArr[i].toInt(); f.timestamp=fObj["timestamp"].toVariant().toLongLong(); rec.windowFrames.append(f); } rec.idFeatures=buildFeatureVectors(rec.windowFrames); m_events.append(rec); }
-    QJsonArray obsMap = root["observationsMap"].toArray();
-    for(const auto &varVal : obsMap){ QJsonObject varObj=varVal.toObject(); QString name=varObj["name"].toString(); QJsonArray obsArr=varObj["observations"].toArray(); QVector<ValueObservation> observations; for(const auto &obsVal : obsArr){ ValueObservation obs; QJsonObject o=obsVal.toObject(); obs.value=o["value"].toDouble(); QJsonObject bytesObj=o["idAverageBytes"].toObject(); for(auto it=bytesObj.begin(); it!=bytesObj.end(); ++it){ uint32_t id=it.key().toUInt(); std::vector<uint8_t> vec(64,0); QJsonArray byteArr=it.value().toArray(); for(int i=0;i<byteArr.size();++i) vec[i]=(uint8_t)byteArr[i].toInt(); obs.idAverageBytes[id]=vec; } observations.append(obs); } m_observationsMap[name]=observations; }
-    m_variableCombo->clear(); for(const auto &key : m_observationsMap.keys()) m_variableCombo->addItem(key, key);
-    if(!m_observationsMap.isEmpty()){ m_variableCombo->setCurrentIndex(0); m_currentVariable=m_observationsMap.firstKey(); }
-    m_iterationLabel->setText(QString("Liczba iteracji: %1").arg(m_iteration));
-    updateCandidates(); updateCorrelationTable(); updateSequenceTable(); updateCrossByteTable(); updateChart();
-}
-ENDCPP
-
-echo "=== Pełny plik zapisany. Kompiluj: cd build && make -j\$(nproc) ==="
+echo "=== Widok szczegółów ramki dodany. Kompiluj: cd build && make -j\$(nproc) ==="
