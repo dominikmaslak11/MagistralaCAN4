@@ -345,6 +345,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
@@ -1191,6 +1192,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qpicture.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpainter.h:
+
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h:
@@ -1558,10 +1561,6 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qline.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/QRect:
-
-/usr/include/c++/15/version:
 
 /usr/include/c++/15/climits:
 
@@ -2161,6 +2160,14 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QRect:
+
+/usr/include/c++/15/version:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h:
+
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile:
@@ -2276,8 +2283,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qwindowdefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qendian.h:
 
@@ -2484,5 +2489,3 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qicon.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qinputdevice.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpainter.h:

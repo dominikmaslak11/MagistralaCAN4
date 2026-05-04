@@ -1210,6 +1210,7 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: Mag
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
@@ -1877,6 +1878,7 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
@@ -6460,6 +6462,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: /home/nz2xzhkzfe
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QMetaType \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
@@ -6474,6 +6477,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: /home/nz2xzhkzfe
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q20utility.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q23type_traits.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalloc.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qanystringview.h \
@@ -6484,6 +6488,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: /home/nz2xzhkzfe
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic_cxx11.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasicatomic.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbindingstorage.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearray.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
@@ -6501,11 +6506,13 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: /home/nz2xzhkzfe
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcontainerinfo.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcontainertools_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcontiguouscache.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdarwinhelpers.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatastream.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdebug.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qendian.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qexceptionhandling.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qflags.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qfloat16.h \
@@ -9426,6 +9433,7 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/M
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
