@@ -262,6 +262,15 @@
 		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsTargets-none.cmake",
 		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsAdditionalTargetInfo.cmake",
 		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Charts/Qt6ChartsVersionlessAliasTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/FindXCB.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/ECMFindModuleHelpersStub.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/modules/ECMFindModuleHelpers.cmake",
+		"/usr/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake",
+		"/usr/share/cmake-4.2/Modules/FindPackageMessage.cmake",
+		"/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake",
+		"/usr/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake",
+		"/usr/share/cmake-4.2/Modules/FindPackageMessage.cmake",
+		"/usr/share/cmake-4.2/Modules/FeatureSummary.cmake",
 		"/usr/share/cmake-4.2/Modules/FindLua.cmake",
 		"/usr/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake",
 		"/usr/share/cmake-4.2/Modules/FindPackageMessage.cmake",
@@ -333,9 +342,21 @@
 			null
 		],
 		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h",
+			"Mu",
+			"PRMOGMWJPH/moc_GlobalHotkey.cpp",
+			null
+		],
+		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h",
 			"Mu",
 			"PRMOGMWJPH/moc_GpuCorrelator.cpp",
+			null
+		],
+		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h",
+			"Mu",
+			"PRMOGMWJPH/moc_Logger.cpp",
 			null
 		],
 		[
@@ -475,7 +496,17 @@
 			null
 		],
 		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp",
+			"Mu",
+			null
+		],
+		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp",
 			"Mu",
 			null
 		],

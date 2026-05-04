@@ -23,8 +23,12 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp \
@@ -168,6 +172,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/c++/15/ext/numeric_traits.h \
   /usr/include/c++/15/ext/string_conversions.h \
   /usr/include/c++/15/ext/type_traits.h \
+  /usr/include/c++/15/filesystem \
   /usr/include/c++/15/functional \
   /usr/include/c++/15/future \
   /usr/include/c++/15/initializer_list \
@@ -291,6 +296,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
@@ -301,6 +307,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/uio-ext.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
@@ -339,7 +346,11 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractNativeEventFilter \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QMap \
@@ -351,6 +362,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QSize \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QSizeF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QThread \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QVariant \
@@ -365,6 +377,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalloc.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qanystringview.h \
@@ -381,6 +394,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearraylist.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayview.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qchar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcheckedint_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h \
@@ -398,11 +412,17 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdarwinhelpers.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatastream.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdebug.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qendian.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qexceptionhandling.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfiledevice.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfileinfo.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qflags.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qfloat16.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qforeach.h \
@@ -482,6 +502,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtformat_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtnoop.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtpreprocessorsupport.h \
@@ -504,6 +525,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QBrush \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QFont \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QImage \
+  /usr/include/x86_64-linux-gnu/qt6/QtGui/QKeySequence \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QPen \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QTransform \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/qaction.h \
@@ -609,6 +631,10 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/x86_64-linux-gnu/sys/uio.h \
+  /usr/include/xcb/xcb.h \
+  /usr/include/xcb/xcb_keysyms.h \
+  /usr/include/xcb/xproto.h \
   /usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/15/include/stdbool.h \
   /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
@@ -617,6 +643,9 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/lib/linux/uapi/x86/asm/posix_types.h \
   /usr/lib/linux/uapi/x86/asm/posix_types_64.h \
   /usr/lib/linux/uapi/x86/asm/types.h \
+  /usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/ECMFindModuleHelpersStub.cmake \
+  /usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/FindXCB.cmake \
+  /usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/modules/ECMFindModuleHelpers.cmake \
   /usr/lib/x86_64-linux-gnu/cmake/Qt6/FindWrapAtomic.cmake \
   /usr/lib/x86_64-linux-gnu/cmake/Qt6/FindWrapOpenGL.cmake \
   /usr/lib/x86_64-linux-gnu/cmake/Qt6/FindWrapVulkanHeaders.cmake \
@@ -783,11 +812,13 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/share/cmake-4.2/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
   /usr/share/cmake-4.2/Modules/Compiler/GNU-CXX.cmake \
   /usr/share/cmake-4.2/Modules/Compiler/GNU.cmake \
+  /usr/share/cmake-4.2/Modules/FeatureSummary.cmake \
   /usr/share/cmake-4.2/Modules/FindLua.cmake \
   /usr/share/cmake-4.2/Modules/FindOpenCL.cmake \
   /usr/share/cmake-4.2/Modules/FindOpenGL.cmake \
   /usr/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake \
   /usr/share/cmake-4.2/Modules/FindPackageMessage.cmake \
+  /usr/share/cmake-4.2/Modules/FindPkgConfig.cmake \
   /usr/share/cmake-4.2/Modules/FindThreads.cmake \
   /usr/share/cmake-4.2/Modules/FindVulkan.cmake \
   /usr/share/cmake-4.2/Modules/GNUInstallDirs.cmake \
@@ -822,6 +853,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 /usr/share/cmake-4.2/Modules/FindVulkan.cmake:
 
 /usr/share/cmake-4.2/Modules/FindThreads.cmake:
+
+/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:
 
 /usr/share/cmake-4.2/Modules/Platform/Linker/Linux-GNU.cmake:
 
@@ -859,6 +892,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6WidgetsTools/Qt6WidgetsToolsAdditionalTargetInfo.cmake:
 
+/usr/share/cmake-4.2/Modules/FeatureSummary.cmake:
+
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsMacros.cmake:
@@ -895,15 +930,11 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsAdditionalTargetInfo.cmake:
 
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiTargets.cmake:
-
 /usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGL/Qt6OpenGLConfigVersionImpl.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiConfigVersionImpl.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiConfig.cmake:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiAdditionalTargetInfo.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBusTools/Qt6DBusToolsVersionlessTargets.cmake:
 
@@ -1023,19 +1054,23 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/FindWrapAtomic.cmake:
 
-/usr/lib/linux/uapi/x86/asm/posix_types_64.h:
+/usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/modules/ECMFindModuleHelpers.cmake:
 
-/usr/lib/linux/uapi/x86/asm/posix_types.h:
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiTargets.cmake:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/FindXCB.cmake:
+
+/usr/lib/linux/uapi/x86/asm/posix_types_64.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/include/stdbool.h:
 
+/usr/include/xcb/xcb.h:
+
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
 /usr/include/x86_64-linux-gnu/sys/single_threaded.h:
-
-/usr/include/x86_64-linux-gnu/sys/select.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentTargets.cmake:
 
@@ -1115,10 +1150,6 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QCheckBox:
 
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentConfigVersion.cmake:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qwindowdefs.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qvectornd.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Core/Qt6CoreConfigExtras.cmake:
@@ -1133,15 +1164,55 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiglobal.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h:
-
 /usr/share/cmake-4.2/Modules/FindPackageMessage.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextformat.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextdocument.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qscreen_platform.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qscreen.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qrgba64.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qrgb.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpolygon.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicToolHelpers.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpointingdevice.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLWidgets/Qt6OpenGLWidgetsConfigVersionImpl.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixmap.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixelformat.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpicture.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpainter.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputdevice.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qimage.h:
+
 /usr/include/x86_64-linux-gnu/bits/endian.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
@@ -1209,6 +1280,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBusTools/Qt6DBusToolsAdditionalTargetInfo.cmake:
 
+/usr/include/xcb/xproto.h:
+
 /usr/include/c++/15/tr1/special_function_util.h:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
@@ -1216,10 +1289,6 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qgenericatomic.h:
 
 /usr/include/c++/15/tr1/poly_hermite.tcc:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
 
 /usr/include/stdint.h:
 
@@ -1229,19 +1298,15 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h:
 
-/usr/include/c++/15/tr1/modified_bessel_func.tcc:
-
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasicatomic.h:
 
 /usr/include/c++/15/tr1/legendre_function.tcc:
 
-/usr/include/time.h:
-
-/usr/include/c++/15/tr1/hypergeometric.tcc:
-
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Core/Qt6CoreConfig.cmake:
 
 /usr/include/c++/15/tr1/bessel_function.tcc:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Core/Qt6CoreTargets-none.cmake:
 
@@ -1256,6 +1321,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 /usr/include/c++/15/bits/stl_map.h:
 
 /usr/include/c++/15/ratio:
+
+/usr/include/xcb/xcb_keysyms.h:
 
 /usr/include/c++/15/atomic:
 
@@ -1325,6 +1392,10 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtcore-config.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextcursor.h:
+
+/usr/include/c++/15/debug/assertions.h:
+
 /usr/include/c++/15/deque:
 
 /usr/include/c++/15/ctime:
@@ -1332,10 +1403,6 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qstringview.h:
 
 /usr/include/c++/15/cmath:
-
-/usr/include/c++/15/debug/assertions.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextcursor.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSlider:
 
@@ -1351,6 +1418,26 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/bits/string_view.tcc:
 
+/usr/share/cmake-4.2/Modules/CheckIncludeFileCXX.cmake:
+
+/usr/include/c++/15/tr1/exp_integral.tcc:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiVersionlessAliasTargets.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qtversion.h:
+
+/usr/include/c++/15/cassert:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit:
+
+/usr/include/c++/15/bits/streambuf.tcc:
+
+/usr/include/c++/15/bits/basic_string.tcc:
+
+/usr/include/c++/15/bits/stream_iterator.h:
+
 /usr/include/c++/15/unordered_set:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qwidget.h:
@@ -1361,6 +1448,10 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/bits/functexcept.h:
 
+/usr/include/c++/15/bits/streambuf_iterator.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject_impl.h:
 
 /usr/include/linux/can.h:
@@ -1368,6 +1459,8 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/include/c++/15/bits/specfun.h:
 
 /usr/include/c++/15/bits/version.h:
+
+/usr/include/x86_64-linux-gnu/sys/uio.h:
 
 /usr/include/c++/15/bits/concept_check.h:
 
@@ -1417,8 +1510,6 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/bits/requires_hosted.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/QImage:
-
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsConfigVersionImpl.cmake:
 
 /usr/include/asm-generic/bitsperlong.h:
@@ -1437,15 +1528,37 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/string:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qimage.h:
-
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qvector.h:
 
-/usr/include/c++/15/bits/stringfwd.h:
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h:
 
-/usr/include/c++/15/bits/shared_ptr.h:
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp:
+
+/usr/include/c++/15/algorithm:
+
+/usr/include/c++/15/bits/hash_bytes.h:
+
+/usr/include/c++/15/filesystem:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qxptype_traits.h:
+
+/usr/include/c++/15/bits/range_access.h:
+
+/usr/share/cmake-4.2/Modules/CheckCXXCompilerFlag.cmake:
+
+/usr/share/cmake-4.2/Modules/CMakeFindDependencyMacro.cmake:
+
+/usr/include/c++/15/bits/stl_multiset.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qregion.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpainterpath.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qline.h:
 
 /usr/lib/linux/uapi/x86/asm/bitsperlong.h:
 
@@ -1459,22 +1572,6 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/bits/atomic_base.h:
 
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp:
-
-/usr/include/c++/15/algorithm:
-
-/usr/include/c++/15/bits/hash_bytes.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qxptype_traits.h:
-
-/usr/include/c++/15/bits/range_access.h:
-
-/usr/share/cmake-4.2/Modules/CheckCXXCompilerFlag.cmake:
-
-/usr/share/cmake-4.2/Modules/CMakeFindDependencyMacro.cmake:
-
-/usr/include/c++/15/bits/stl_multiset.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QRect:
 
 /usr/include/c++/15/version:
@@ -1486,6 +1583,8 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/include/locale.h:
 
 /usr/include/c++/15/bits/allocated_ptr.h:
+
+/usr/include/c++/15/bits/stringfwd.h:
 
 /usr/include/c++/15/bits/ios_base.h:
 
@@ -1505,15 +1604,9 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QVector:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qsysinfo.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtGui/QFont:
 
 /usr/include/asm-generic/int-ll64.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/locale.h:
 
 /usr/include/c++/15/bits/nested_exception.h:
 
@@ -1529,6 +1622,10 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/bits/stl_set.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/QKeySequence:
+
 /usr/include/c++/15/tr1/riemann_zeta.tcc:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h:
@@ -1536,6 +1633,16 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtdeprecationmarkers.h:
 
 /usr/include/x86_64-linux-gnu/c++/15/bits/gthr.h:
+
+/usr/include/c++/15/tr1/hypergeometric.tcc:
+
+/usr/include/time.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qsysinfo.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp:
+
+/usr/include/c++/15/bits/stl_numeric.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qttypetraits.h:
 
@@ -1547,121 +1654,17 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextdocument.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtypeinfo.h:
 
 /usr/include/c++/15/bits/charconv.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h:
-
-/usr/include/c++/15/tr1/gamma.tcc:
-
-/usr/include/limits.h:
-
-/usr/include/c++/15/bits/enable_special_members.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets-none.cmake:
-
-/usr/include/c++/15/bits/algorithmfwd.h:
-
-/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
-
-/usr/include/c++/15/bits/basic_string.tcc:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit:
-
-/usr/include/c++/15/bits/streambuf.tcc:
-
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsscene.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q20functional.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qregularexpression.h:
-
-CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
-
-/usr/include/c++/15/bits/char_traits.h:
-
-/usr/include/c++/15/cctype:
-
-/usr/share/cmake-4.2/Modules/Platform/Linux-GNU.cmake:
-
-/usr/include/c++/15/cstdint:
-
-/usr/include/c++/15/bits/stl_pair.h:
-
-/usr/include/c++/15/bits/stl_bvector.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractscrollarea.h:
-
-/usr/include/c++/15/tuple:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextformat.h:
-
-/usr/include/c++/15/array:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h:
-
-/usr/share/cmake-4.2/Modules/CMakeLanguageInformation.cmake:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h:
-
-/usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend:
-
-/usr/include/assert.h:
-
-/usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/QBrush:
-
-/usr/include/c++/15/bits/stl_raw_storage_iter.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qyieldcpu.h:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h:
-
-/usr/include/c++/15/cassert:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake:
-
-/usr/include/asm-generic/errno-base.h:
-
-/usr/include/c++/15/bits/unordered_map.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qtformat_impl.h:
-
-/usr/include/c++/15/bits/align.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qtypes.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h:
-
-/usr/share/cmake-4.2/Modules/CheckIncludeFileCXX.cmake:
-
-/usr/include/c++/15/tr1/exp_integral.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
-
-/usr/include/c++/15/bits/streambuf_iterator.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiVersionlessAliasTargets.cmake:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qtversion.h:
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp:
 
@@ -1681,7 +1684,65 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15/bits/cxxabi_init_exception.h:
 
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h:
+/usr/share/cmake-4.2/Modules/Platform/Linux-GNU.cmake:
+
+/usr/include/c++/15/cstdint:
+
+/usr/include/c++/15/bits/stl_pair.h:
+
+/usr/include/c++/15/bits/stl_bvector.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractscrollarea.h:
+
+/usr/include/c++/15/tuple:
+
+/usr/include/c++/15/array:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h:
+
+/usr/share/cmake-4.2/Modules/CMakeLanguageInformation.cmake:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend:
+
+/usr/include/assert.h:
+
+/usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/QBrush:
+
+/usr/include/c++/15/bits/stl_raw_storage_iter.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qyieldcpu.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp:
+
+/usr/include/c++/15/bits/unordered_map.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qtformat_impl.h:
+
+/usr/include/c++/15/bits/align.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qtypes.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qsystemdetection.h:
 
 /usr/include/pthread.h:
 
@@ -1705,13 +1766,13 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qarraydataops.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qscreen.h:
-
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.cpp:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qmetacontainer.h:
+
+/usr/include/c++/15/bits/enable_special_members.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h:
 
@@ -1725,12 +1786,6 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15/bits/stl_algo.h:
 
-/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicGitHelpers.cmake:
-
-/usr/include/c++/15/bits/chrono.h:
-
-/usr/include/c++/15/bits/uses_allocator_args.h:
-
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
 /usr/include/x86_64-linux-gnu/c++/15/bits/cpu_defines.h:
@@ -1743,7 +1798,31 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/c++/15/bits/parse_numbers.h:
 
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h:
+CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
+
+/usr/include/c++/15/cctype:
+
+/usr/include/c++/15/bits/char_traits.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qregularexpression.h:
+
+/usr/include/c++/15/tr1/gamma.tcc:
+
+/usr/include/limits.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets-none.cmake:
+
+/usr/include/c++/15/bits/algorithmfwd.h:
+
+/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicGitHelpers.cmake:
+
+/usr/include/c++/15/bits/uses_allocator_args.h:
+
+/usr/include/c++/15/bits/chrono.h:
+
+/usr/include/c++/15/bits/shared_ptr.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp:
 
@@ -1764,8 +1843,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.h:
 
 /usr/include/c++/15/bits/hashtable.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
 /usr/include/c++/15/bits/invoke.h:
 
@@ -1821,8 +1898,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/c++/15/bits/ostream_insert.h:
 
-/usr/include/c++/15/bits/stream_iterator.h:
-
 /usr/include/c++/15/bits/postypes.h:
 
 /usr/include/c++/15/type_traits:
@@ -1837,21 +1912,15 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/c++/15/bits/refwrap.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h:
-
 /usr/include/c++/15/concepts:
-
-/usr/include/c++/15/ext/alloc_traits.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qpalette.h:
 
+/usr/include/c++/15/ext/alloc_traits.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
-/usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfigVersion.cmake:
-
-/usr/include/c++/15/pstl/glue_numeric_defs.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qrgba64.h:
+/usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/ECMFindModuleHelpersStub.cmake:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h:
 
@@ -1860,8 +1929,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicFindPackageHelpers.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qminmax.h:
-
-/usr/include/c++/15/bits/stl_numeric.h:
 
 /usr/include/c++/15/bits/stl_deque.h:
 
@@ -1894,6 +1961,22 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtconfiginclude.h:
 
 /usr/include/stdio.h:
+
+/usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/QImage:
+
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 
 /usr/include/x86_64-linux-gnu/bits/select.h:
 
@@ -1957,6 +2040,10 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpen.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
+
 /usr/lib/x86_64-linux-gnu/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfigVersion.cmake:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
@@ -1979,6 +2066,10 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
+
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicSbomDocumentNamespaceHelpers.cmake:
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
@@ -1997,7 +2088,9 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
-/usr/include/x86_64-linux-gnu/bits/uio_lim.h:
+/usr/include/c++/15/tr1/modified_bessel_func.tcc:
+
+/usr/include/x86_64-linux-gnu/bits/uio-ext.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsDependencies.cmake:
 
@@ -2083,7 +2176,23 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h:
 
+/usr/lib/linux/uapi/x86/asm/posix_types.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractNativeEventFilter:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfigVersion.cmake:
+
+/usr/include/c++/15/pstl/glue_numeric_defs.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QDir:
+
+/usr/include/x86_64-linux-gnu/bits/uio_lim.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QFile:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/q20utility.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QMap:
 
@@ -2113,11 +2222,9 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q20iterator.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/q20utility.h:
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiAdditionalTargetInfo.cmake:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h:
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h:
 
 /usr/include/c++/15/tr1/beta_function.tcc:
 
@@ -2153,6 +2260,8 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h:
+
 /usr/include/c++/15/bits/stl_iterator_base_types.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qchar.h:
@@ -2160,6 +2269,8 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qcheckedint_impl.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qiterator.h:
 
@@ -2187,11 +2298,25 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qdarwinhelpers.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h:
+
 /usr/include/c++/15/variant:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h:
 
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentConfigVersion.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qwindowdefs.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qendian.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qfiledevice.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qfileinfo.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qflags.h:
 
@@ -2210,14 +2335,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/asm-generic/errno.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qiodevice.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qline.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qregion.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpainterpath.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qitemselectionmodel.h:
 
@@ -2267,8 +2384,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qcursor.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qrgb.h:
-
 /usr/include/c++/15/bits/unique_lock.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qscopedpointer.h:
@@ -2313,17 +2428,9 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtconfigmacros.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpicture.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGLWidgets/Qt6OpenGLWidgetsConfigVersionImpl.cmake:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixmap.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qstringmatcher.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qstringtokenizer.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qsystemdetection.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qglobalstatic.h:
 
@@ -2335,6 +2442,8 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtcoreglobal.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtdeprecationdefinitions.h:
 
 /usr/include/c++/15/bits/stl_iterator_base_funcs.h:
@@ -2344,6 +2453,10 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qfontinfo.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel:
 
@@ -2400,23 +2513,3 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/share/cmake-4.2/Modules/Platform/Linker/GNU.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qicon.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputdevice.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpainter.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpen.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixelformat.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicToolHelpers.cmake:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpointingdevice.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpolygon.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qscreen_platform.h:
