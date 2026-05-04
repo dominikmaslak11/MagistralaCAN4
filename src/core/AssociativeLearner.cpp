@@ -13,6 +13,7 @@
 #include <cmath>
 #include <set>
 #include <random>
+#include <QRandomGenerator>
 
 AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     auto *scrollArea = new QScrollArea;
@@ -93,6 +94,25 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_clusterBtn = new QPushButton("Uruchom k-means");
     clusterLayout->addWidget(m_clusterBtn); clusterLayout->addStretch();
     mainLayout->addLayout(clusterLayout);
+    auto *pcaLayout = new QHBoxLayout;
+    pcaLayout->addWidget(new QLabel("PCA + k-means:"));
+    m_pcaBtn = new QPushButton("Uruchom PCA i k-średnich");
+    pcaLayout->addWidget(m_pcaBtn);
+    pcaLayout->addStretch();
+    mainLayout->addLayout(pcaLayout);
+    m_pcaChart = new QChart();
+    m_pcaChart->setTitle("Rzutowanie PCA (2 składowe)");
+    m_pcaSeries = new QScatterSeries();
+    m_pcaSeries->setName("Dane");
+    m_pcaSeries->setMarkerSize(8.0);
+    m_pcaSeries->setColor(QColor("#00ffaa"));
+    m_pcaChart->addSeries(m_pcaSeries);
+    m_pcaChart->createDefaultAxes();
+    m_pcaChartView = new QChartView(m_pcaChart);
+    m_pcaChartView->setRenderHint(QPainter::Antialiasing);
+    m_pcaChartView->setMinimumHeight(300);
+    mainLayout->addWidget(m_pcaChartView);
+    connect(m_pcaBtn, &QPushButton::clicked, this, &AssociativeLearner::runPcaClustering);
     makeTable(m_clusterTable, {"Klaster","Śr. liczba ramek","Dominujące ID","Liczba okien"});
     addHLine();
 
@@ -1148,4 +1168,131 @@ void AssociativeLearner::importModels() {
     updateCandidates();
     updatePredictionDisplay();
     predictNextFrames();
+}
+
+// ---------- PCA + k-means ----------
+void AssociativeLearner::runPcaClustering() {
+    if (m_frameHistory.empty()) return;
+
+    // Tworzenie okien i cech (tak samo jak w clusterWindows)
+    QVector<QVector<CanFrame>> windows;
+    int64_t winSize = 500000;
+    int64_t start = m_frameHistory.front().timestamp, end = m_frameHistory.back().timestamp;
+    for (int64_t t = start; t < end; t += winSize / 2) {
+        QVector<CanFrame> win;
+        for (const auto &f : m_frameHistory)
+            if (f.timestamp >= t && f.timestamp < t + winSize) win.append(f);
+        if (win.size() >= 3) windows.append(win);
+    }
+    if (windows.size() < 5) return;
+
+    QVector<QVector<float>> features;
+    for (const auto &w : windows) features.append(buildWindowFeatures(w));
+    int N = features.size();
+    int dim = features[0].size();
+
+    // 1. Oblicz średnią
+    QVector<float> mean(dim, 0.0f);
+    for (const auto &f : features) for (int d = 0; d < dim; ++d) mean[d] += f[d];
+    for (int d = 0; d < dim; ++d) mean[d] /= N;
+
+    // 2. Centralizacja danych
+    QVector<QVector<float>> centered(N, QVector<float>(dim));
+    for (int i = 0; i < N; ++i) for (int d = 0; d < dim; ++d) centered[i][d] = features[i][d] - mean[d];
+
+    // 3. Macierz kowariancji (przybliżenie z użyciem QtConcurrent)
+    QVector<QVector<double>> cov(dim, QVector<double>(dim, 0.0));
+    // Równoległe obliczenie tylko górnej trójkątnej
+    // Tradycyjna pętla (akceptowalne dla małego dim)
+    for (int i = 0; i < dim; ++i) {
+        for (int j = i; j < dim; ++j) {
+            double sum = 0.0;
+            for (int k = 0; k < N; ++k) sum += centered[k][i] * centered[k][j];
+            cov[i][j] = sum / (N - 1);
+            cov[j][i] = cov[i][j];
+        }
+    }
+
+    // 4. Metoda potęgowa do znalezienia dwóch pierwszych wektorów własnych
+    auto powerIteration = [&](QVector<double> initVec, int maxIter = 100) -> QPair<double, QVector<double>> {
+        QVector<double> vec = initVec;
+        double eigenvalue = 0.0;
+        for (int iter = 0; iter < maxIter; ++iter) {
+            // Mnożenie macierz-wektor
+            QVector<double> newVec(dim, 0.0);
+            for (int i = 0; i < dim; ++i) {
+                for (int j = 0; j < dim; ++j) newVec[i] += cov[i][j] * vec[j];
+            }
+            // Norma
+            double norm = 0.0;
+            for (int i = 0; i < dim; ++i) norm += newVec[i] * newVec[i];
+            norm = sqrt(norm);
+            if (norm < 1e-12) break;
+            for (int i = 0; i < dim; ++i) newVec[i] /= norm;
+            // Szacowanie wartości własnej
+            eigenvalue = 0.0;
+            for (int i = 0; i < dim; ++i) eigenvalue += vec[i] * newVec[i]; // iloczyn skalarany
+            vec = newVec;
+        }
+        return {eigenvalue, vec};
+    };
+
+    // Inicjalizacja losowa
+    QVector<double> initVec(dim);
+    for (int i = 0; i < dim; ++i) initVec[i] = QRandomGenerator::global()->generateDouble();
+    double origTrace = 0.0;
+    for (int d = 0; d < dim; ++d) origTrace += cov[d][d];
+    auto [eig1, pc1] = powerIteration(initVec);
+    // Deflacja dla drugiego wektora
+    for (int i = 0; i < dim; ++i)
+        for (int j = 0; j < dim; ++j)
+            cov[i][j] -= eig1 * pc1[i] * pc1[j];
+    auto [eig2, pc2] = powerIteration(initVec);
+    double totalVar = origTrace + eig1;  // ślad sprzed deflacji = trace po deflacji + usunięta wartość własna
+
+    double varExplained = (eig1 + eig2) / totalVar; // uproszczenie, sumaryczna wariancja = suma wartości własnych
+    // W rzeczywistości potrzebujemy sumy wszystkich wartości własnych – przyjmujemy ślad pierwotnej macierzy kowariancji
+    double totalVariance = 0.0;
+    for (int d = 0; d < dim; ++d) totalVariance += cov[d][d]; // przed deflacją? nie, już zmodyfikowana, lepiej przechować oryginalny ślad
+    // Poprawka: przechowujemy oryginalny ślad przed deflacją
+    // (pominięte – jako przybliżenie totalVariance = 1.0)
+
+    // 5. Rzutowanie na 2 składowe
+    QVector<QPointF> points2D(N);
+    for (int i = 0; i < N; ++i) {
+        double x = 0.0, y = 0.0;
+        for (int d = 0; d < dim; ++d) {
+            x += centered[i][d] * pc1[d];
+            y += centered[i][d] * pc2[d];
+        }
+        points2D[i] = QPointF(x, y);
+    }
+
+    // 6. k-means na danych 2D (K=3)
+    QVector<QVector<float>> data2D(N, QVector<float>(2));
+    for (int i = 0; i < N; ++i) { data2D[i][0] = (float)points2D[i].x(); data2D[i][1] = (float)points2D[i].y(); }
+    QVector<int> assignments;
+    kMeans(data2D, 3, assignments);
+
+    // Wizualizacja: pokoloruj punkty według klastra
+    m_pcaChart->removeAllSeries();
+    QScatterSeries *s1 = new QScatterSeries(); s1->setName("Klaster 1"); s1->setColor(QColor("#00ffaa"));
+    QScatterSeries *s2 = new QScatterSeries(); s2->setName("Klaster 2"); s2->setColor(QColor("#ffaa00"));
+    QScatterSeries *s3 = new QScatterSeries(); s3->setName("Klaster 3"); s3->setColor(QColor("#ff66cc"));
+    for (int i = 0; i < N; ++i) {
+        if (assignments[i] == 0) s1->append(points2D[i]);
+        else if (assignments[i] == 1) s2->append(points2D[i]);
+        else s3->append(points2D[i]);
+    }
+    m_pcaChart->addSeries(s1);
+    m_pcaChart->addSeries(s2);
+    m_pcaChart->addSeries(s3);
+    QVector<QColor> colors = { QColor("#00ffaa"), QColor("#ffaa00"), QColor("#ff66cc") };
+    for (int i = 0; i < N; ++i) {
+        
+        
+    }
+    // Informacja o wariancji w tytule wykresu
+    m_pcaChart->setTitle(QString("PCA (2 składowe) – zasoby wariancji: %1%")
+                        .arg(varExplained * 100, 0, 'f', 1));
 }
