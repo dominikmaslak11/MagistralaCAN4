@@ -799,10 +799,12 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: Mag
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
   MagistralaCAN4_autogen/PRMOGMWJPH/moc_AssociativeLearner.cpp \
   MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanFrameModel.cpp \
   MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanSniffer.cpp \
   MagistralaCAN4_autogen/PRMOGMWJPH/moc_CandidateModel.cpp \
+  MagistralaCAN4_autogen/PRMOGMWJPH/moc_LuaScriptEngine.cpp \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -1003,6 +1005,10 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: Mag
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
+  /usr/include/lua5.3/lauxlib.h \
+  /usr/include/lua5.3/lua.h \
+  /usr/include/lua5.3/luaconf.h \
+  /usr/include/lua5.3/lualib.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
@@ -1100,6 +1106,7 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: Mag
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/lua5.3-deb-multiarch.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractAxis \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChart \
@@ -1398,6 +1405,7 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
@@ -1599,6 +1607,10 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
+  /usr/include/lua5.3/lauxlib.h \
+  /usr/include/lua5.3/lua.h \
+  /usr/include/lua5.3/luaconf.h \
+  /usr/include/lua5.3/lualib.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
@@ -1696,6 +1708,7 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/lua5.3-deb-multiarch.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractAxis \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChart \
@@ -6729,6 +6742,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o: /home/nz2xzhkzfeewkg
   /usr/lib/linux/uapi/x86/asm/types.h
 
 CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
@@ -6750,12 +6765,16 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/bits/allocated_ptr.h \
   /usr/include/c++/15/bits/allocator.h \
   /usr/include/c++/15/bits/atomic_base.h \
+  /usr/include/c++/15/bits/atomic_futex.h \
   /usr/include/c++/15/bits/atomic_lockfree_defines.h \
+  /usr/include/c++/15/bits/basic_ios.h \
+  /usr/include/c++/15/bits/basic_ios.tcc \
   /usr/include/c++/15/bits/basic_string.h \
   /usr/include/c++/15/bits/basic_string.tcc \
   /usr/include/c++/15/bits/char_traits.h \
   /usr/include/c++/15/bits/charconv.h \
   /usr/include/c++/15/bits/chrono.h \
+  /usr/include/c++/15/bits/codecvt.h \
   /usr/include/c++/15/bits/concept_check.h \
   /usr/include/c++/15/bits/cpp_type_traits.h \
   /usr/include/c++/15/bits/cxxabi_forced.h \
@@ -6765,6 +6784,10 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/bits/exception.h \
   /usr/include/c++/15/bits/exception_defines.h \
   /usr/include/c++/15/bits/exception_ptr.h \
+  /usr/include/c++/15/bits/fs_dir.h \
+  /usr/include/c++/15/bits/fs_fwd.h \
+  /usr/include/c++/15/bits/fs_ops.h \
+  /usr/include/c++/15/bits/fs_path.h \
   /usr/include/c++/15/bits/functexcept.h \
   /usr/include/c++/15/bits/functional_hash.h \
   /usr/include/c++/15/bits/hash_bytes.h \
@@ -6772,9 +6795,15 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/bits/hashtable_policy.h \
   /usr/include/c++/15/bits/invoke.h \
   /usr/include/c++/15/bits/ios_base.h \
+  /usr/include/c++/15/bits/istream.tcc \
   /usr/include/c++/15/bits/list.tcc \
   /usr/include/c++/15/bits/locale_classes.h \
   /usr/include/c++/15/bits/locale_classes.tcc \
+  /usr/include/c++/15/bits/locale_conv.h \
+  /usr/include/c++/15/bits/locale_facets.h \
+  /usr/include/c++/15/bits/locale_facets.tcc \
+  /usr/include/c++/15/bits/locale_facets_nonio.h \
+  /usr/include/c++/15/bits/locale_facets_nonio.tcc \
   /usr/include/c++/15/bits/localefwd.h \
   /usr/include/c++/15/bits/memory_resource.h \
   /usr/include/c++/15/bits/memoryfwd.h \
@@ -6783,11 +6812,14 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/bits/nested_exception.h \
   /usr/include/c++/15/bits/new_allocator.h \
   /usr/include/c++/15/bits/node_handle.h \
+  /usr/include/c++/15/bits/ostream.h \
+  /usr/include/c++/15/bits/ostream.tcc \
   /usr/include/c++/15/bits/ostream_insert.h \
   /usr/include/c++/15/bits/parse_numbers.h \
   /usr/include/c++/15/bits/postypes.h \
   /usr/include/c++/15/bits/predefined_ops.h \
   /usr/include/c++/15/bits/ptr_traits.h \
+  /usr/include/c++/15/bits/quoted_string.h \
   /usr/include/c++/15/bits/range_access.h \
   /usr/include/c++/15/bits/refwrap.h \
   /usr/include/c++/15/bits/requires_hosted.h \
@@ -6795,8 +6827,11 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/bits/shared_ptr_atomic.h \
   /usr/include/c++/15/bits/shared_ptr_base.h \
   /usr/include/c++/15/bits/specfun.h \
+  /usr/include/c++/15/bits/sstream.tcc \
   /usr/include/c++/15/bits/std_abs.h \
   /usr/include/c++/15/bits/std_function.h \
+  /usr/include/c++/15/bits/std_mutex.h \
+  /usr/include/c++/15/bits/std_thread.h \
   /usr/include/c++/15/bits/stl_algo.h \
   /usr/include/c++/15/bits/stl_algobase.h \
   /usr/include/c++/15/bits/stl_bvector.h \
@@ -6825,6 +6860,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/bits/string_view.tcc \
   /usr/include/c++/15/bits/stringfwd.h \
   /usr/include/c++/15/bits/uniform_int_dist.h \
+  /usr/include/c++/15/bits/unique_lock.h \
   /usr/include/c++/15/bits/unique_ptr.h \
   /usr/include/c++/15/bits/unordered_map.h \
   /usr/include/c++/15/bits/unordered_set.h \
@@ -6840,8 +6876,10 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/climits \
   /usr/include/c++/15/clocale \
   /usr/include/c++/15/cmath \
+  /usr/include/c++/15/codecvt \
   /usr/include/c++/15/compare \
   /usr/include/c++/15/concepts \
+  /usr/include/c++/15/condition_variable \
   /usr/include/c++/15/cstddef \
   /usr/include/c++/15/cstdint \
   /usr/include/c++/15/cstdio \
@@ -6849,6 +6887,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/cstring \
   /usr/include/c++/15/ctime \
   /usr/include/c++/15/cwchar \
+  /usr/include/c++/15/cwctype \
   /usr/include/c++/15/debug/assertions.h \
   /usr/include/c++/15/debug/debug.h \
   /usr/include/c++/15/exception \
@@ -6859,17 +6898,25 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/ext/numeric_traits.h \
   /usr/include/c++/15/ext/string_conversions.h \
   /usr/include/c++/15/ext/type_traits.h \
+  /usr/include/c++/15/filesystem \
   /usr/include/c++/15/functional \
+  /usr/include/c++/15/future \
   /usr/include/c++/15/initializer_list \
+  /usr/include/c++/15/iomanip \
+  /usr/include/c++/15/ios \
   /usr/include/c++/15/iosfwd \
+  /usr/include/c++/15/istream \
   /usr/include/c++/15/iterator \
   /usr/include/c++/15/limits \
   /usr/include/c++/15/list \
+  /usr/include/c++/15/locale \
   /usr/include/c++/15/map \
   /usr/include/c++/15/memory \
+  /usr/include/c++/15/mutex \
   /usr/include/c++/15/new \
   /usr/include/c++/15/numeric \
   /usr/include/c++/15/optional \
+  /usr/include/c++/15/ostream \
   /usr/include/c++/15/pstl/execution_defs.h \
   /usr/include/c++/15/pstl/glue_algorithm_defs.h \
   /usr/include/c++/15/pstl/glue_memory_defs.h \
@@ -6877,6 +6924,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/c++/15/pstl/pstl_config.h \
   /usr/include/c++/15/ratio \
   /usr/include/c++/15/set \
+  /usr/include/c++/15/sstream \
   /usr/include/c++/15/stdexcept \
   /usr/include/c++/15/stdlib.h \
   /usr/include/c++/15/streambuf \
@@ -6909,14 +6957,22 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/errno.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
+  /usr/include/libintl.h \
   /usr/include/limits.h \
+  /usr/include/linux/can.h \
+  /usr/include/linux/can/raw.h \
   /usr/include/linux/errno.h \
   /usr/include/linux/limits.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
+  /usr/include/linux/socket.h \
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
+  /usr/include/lua5.3/lauxlib.h \
+  /usr/include/lua5.3/lua.h \
+  /usr/include/lua5.3/luaconf.h \
+  /usr/include/lua5.3/lualib.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
@@ -6928,6 +6984,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/strings.h \
   /usr/include/time.h \
   /usr/include/wchar.h \
+  /usr/include/wctype.h \
   /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
   /usr/include/x86_64-linux-gnu/bits/byteswap.h \
   /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
@@ -7001,6 +7058,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
   /usr/include/x86_64-linux-gnu/c++/15/bits/atomic_word.h \
@@ -7008,12 +7066,25 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
   /usr/include/x86_64-linux-gnu/c++/15/bits/c++locale.h \
   /usr/include/x86_64-linux-gnu/c++/15/bits/cpu_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/15/bits/ctype_base.h \
+  /usr/include/x86_64-linux-gnu/c++/15/bits/ctype_inline.h \
   /usr/include/x86_64-linux-gnu/c++/15/bits/error_constants.h \
   /usr/include/x86_64-linux-gnu/c++/15/bits/gthr-default.h \
   /usr/include/x86_64-linux-gnu/c++/15/bits/gthr.h \
+  /usr/include/x86_64-linux-gnu/c++/15/bits/messages_members.h \
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/15/bits/time_members.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/lua5.3-deb-multiarch.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDebug \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QMetaType \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QThread \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q20functional.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q20iterator.h \
@@ -7022,6 +7093,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q20utility.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q23type_traits.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalloc.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qanystringview.h \
@@ -7032,13 +7104,14 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic_cxx11.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasicatomic.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbindingstorage.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearray.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearraylist.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayview.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qchar.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcheckedint_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcomparehelpers.h \
@@ -7051,9 +7124,13 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcontiguouscache.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdarwinhelpers.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatastream.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdebug.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtCore/qendian.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qexceptionhandling.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfiledevice.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qflags.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qfloat16.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qforeach.h \
@@ -7064,16 +7141,16 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qglobalstatic.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qhash.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qhashfunctions.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qiodevice.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qiodevicebase.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qiterable.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qiterator.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qlatin1stringview.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtCore/qline.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qlist.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qlocale.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qlogging.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qmalloc.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qmap.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtCore/qmargins.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qmath.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qmetacontainer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qmetatype.h \
@@ -7086,9 +7163,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qobjectdefs_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qoverload.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qpair.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtCore/qpoint.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qprocessordetection.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtCore/qrect.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qrefcount.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qscopedpointer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qscopeguard.h \
@@ -7097,7 +7172,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qshareddata_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qsharedpointer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qsharedpointer_impl.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtCore/qsize.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qspan.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qstdlibdetection.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qstring.h \
@@ -7125,6 +7199,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtenvironmentvariables.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtextstream.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtformat_impl.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtnoop.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtpreprocessorsupport.h \
@@ -7141,37 +7217,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qversiontagging.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qxptype_traits.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qyieldcpu.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qaction.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qbitmap.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qbrush.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qcolor.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qcursor.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qfont.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qfontinfo.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qfontmetrics.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qfontvariableaxis.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qicon.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qimage.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qpalette.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qpixelformat.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qpixmap.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qpolygon.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qregion.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qrgb.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qrgba64.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiglobal.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtransform.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtGui/qwindowdefs.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QWidget \
-  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsizepolicy.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgets-config.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsexports.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsglobal.h \
-  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qwidget.h \
   /usr/include/x86_64-linux-gnu/sys/cdefs.h \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
@@ -7196,6 +7241,7 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/M
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
@@ -7424,6 +7470,10 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/M
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
+  /usr/include/lua5.3/lauxlib.h \
+  /usr/include/lua5.3/lua.h \
+  /usr/include/lua5.3/luaconf.h \
+  /usr/include/lua5.3/lualib.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
@@ -7527,6 +7577,7 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/M
   /usr/include/x86_64-linux-gnu/c++/15/bits/time_members.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/lua5.3-deb-multiarch.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractAxis \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QAbstractSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChart \
@@ -8061,6 +8112,10 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o:
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QToolButton:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollBar:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QFile:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime:
 
 /usr/include/CL/cl_platform.h:
 
@@ -8932,8 +8987,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h:
 
-/usr/include/c++/15/bits/stl_raw_storage_iter.h:
-
 /usr/include/c++/15/bits/ostream.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
@@ -9156,6 +9209,10 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject_impl.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/15/include/pconfigintrin.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qpropertyanimation.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearraylist.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake:
@@ -9227,10 +9284,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o:
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentAdditionalTargetInfo.cmake:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qpropertyanimation.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/15/include/pconfigintrin.h:
 
 /usr/include/c++/15/numeric:
 
@@ -10024,6 +10077,12 @@ MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanFrameModel.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qstandardpaths.h:
 
+/usr/include/c++/15/bits/stl_raw_storage_iter.h:
+
+MagistralaCAN4_autogen/PRMOGMWJPH/moc_LuaScriptEngine.cpp:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearraymatcher.h:
+
 MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanSniffer.cpp:
 
 /usr/include/c++/15/bits/monostate.h:
@@ -10191,8 +10250,6 @@ MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanSniffer.cpp:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qpoint.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbuffer.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearraymatcher.h:
 
 /usr/include/c++/15/ratio:
 
