@@ -416,6 +416,15 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractscrollarea.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractbutton.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qhash.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
@@ -426,26 +435,29 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QVector \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qvector.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QThread \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h \
+ /usr/include/c++/15/future /usr/include/c++/15/mutex \
+ /usr/include/c++/15/bits/std_mutex.h \
+ /usr/include/c++/15/bits/unique_lock.h \
+ /usr/include/c++/15/condition_variable \
+ /usr/include/c++/15/bits/atomic_futex.h \
+ /usr/include/c++/15/bits/std_thread.h /usr/include/linux/can.h \
+ /usr/include/linux/socket.h /usr/include/linux/can/raw.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QVBoxLayout \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHeaderView \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qheaderview.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractitemview.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qitemselectionmodel.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractitemdelegate.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyleoption.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qlocale.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qvalidator.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qregularexpression.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtabbar.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtabwidget.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/QFont \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qfont.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/QDebug \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qdebug.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHBoxLayout \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QInputDialog \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qinputdialog.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlineedit.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextcursor.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextformat.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qpen.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qdialog.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMessageBox \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmessagebox.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qdialogbuttonbox.h
