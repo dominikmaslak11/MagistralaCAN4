@@ -7,12 +7,37 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <cstring>
-#include <linux/can/raw.h>
 
 CanSniffer::CanSniffer(QObject *parent) : QObject(parent) {}
 
 CanSniffer::~CanSniffer() {
     if (m_running) stop();
+}
+
+bool CanSniffer::isSocketValid() const {
+    return m_socket >= 0;
+}
+
+void CanSniffer::writeFrame(const CanFrame &frame) {
+    if (m_socket < 0) {
+        emit errorOccurred("writeFrame: socket nie jest otwarty");
+        return;
+    }
+
+    struct can_frame raw;
+    memset(&raw, 0, sizeof(raw));
+    raw.can_id = frame.id;
+    if (frame.extended) raw.can_id |= CAN_EFF_FLAG;
+    if (frame.rtr)      raw.can_id |= CAN_RTR_FLAG;
+    if (frame.error)    raw.can_id |= CAN_ERR_FLAG;
+    raw.len = frame.dlc;
+    for (int i = 0; i < frame.dlc && i < 8; ++i)
+        raw.data[i] = frame.data[i];
+
+    ssize_t n = write(m_socket, &raw, sizeof(raw));
+    if (n != sizeof(raw)) {
+        emit errorOccurred(QString("writeFrame: zapis się nie powiódł (%1)").arg(strerror(errno)));
+    }
 }
 
 void CanSniffer::start(const QString &interface) {
@@ -36,7 +61,6 @@ void CanSniffer::stop() {
 
 void CanSniffer::doWork() {
     while (m_running) {
-        // Bufor na maksymalną ramkę CAN FD (72 bajty nagłówek + 64 dane)
         uint8_t buf[CANFD_MTU];
         ssize_t nbytes = read(m_socket, buf, sizeof(buf));
         if (nbytes < 0) {
@@ -50,15 +74,13 @@ void CanSniffer::doWork() {
         uint64_t ts = systemTimestamp();
         CanFrame canFrame;
         if (nbytes == CAN_MTU) {
-            // Klasyczna ramka
             struct can_frame *frame = (struct can_frame*)buf;
             canFrame = parseFrame(*frame, ts);
         } else if (nbytes == CANFD_MTU) {
-            // CAN FD
             struct canfd_frame *frame = (struct canfd_frame*)buf;
             canFrame.id = frame->can_id & CAN_EFF_MASK;
             canFrame.extended = frame->can_id & CAN_EFF_FLAG;
-            canFrame.rtr = false; // FD ramki nie mają RTR
+            canFrame.rtr = false;
             canFrame.error = frame->can_id & CAN_ERR_FLAG;
             canFrame.fd = true;
             canFrame.dlc = frame->len > 64 ? 64 : frame->len;
@@ -66,7 +88,7 @@ void CanSniffer::doWork() {
                 canFrame.data[i] = frame->data[i];
             canFrame.timestamp = ts;
         } else {
-            continue; // nieznany rozmiar
+            continue;
         }
         emit newFrame(canFrame);
     }
@@ -74,19 +96,14 @@ void CanSniffer::doWork() {
 }
 
 bool CanSniffer::openSocket(const QString &ifname) {
-    // Próba otwarcia z CAN_RAW i FD
     m_socket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
     if (m_socket < 0) {
         emit errorOccurred("socket() nie powiódł się");
         return false;
     }
 
-    // Włącz obsługę CAN FD
     int enable = 1;
-    if (setsockopt(m_socket, SOL_CAN_RAW, CAN_RAW_FD_FRAMES, &enable, sizeof(enable)) < 0) {
-        // Jeśli nie udało się, to tylko klasyczne ramki – nie krytyczne
-        qDebug("CAN FD nie jest obsługiwane przez sterownik, tylko CAN 2.0");
-    }
+    setsockopt(m_socket, SOL_CAN_RAW, CAN_RAW_FD_FRAMES, &enable, sizeof(enable));
 
     struct ifreq ifr;
     std::strncpy(ifr.ifr_name, ifname.toStdString().c_str(), IFNAMSIZ - 1);

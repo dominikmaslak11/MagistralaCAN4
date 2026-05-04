@@ -548,6 +548,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QComboBox \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGraphicsView \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGraphicsWidget \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGridLayout \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
@@ -561,6 +562,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractscrollarea.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcheckbox.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcombobox.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qframe.h \
@@ -569,7 +571,10 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsscene.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicswidget.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlabel.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlineedit.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h \
@@ -1047,7 +1052,13 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlabel.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsview.h:
 
@@ -1058,6 +1069,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcombobox.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcheckbox.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h:
 
@@ -1390,6 +1403,8 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/include/c++/15/bits/concept_check.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicWalkLibsHelpers.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGridLayout:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q20memory.h:
 

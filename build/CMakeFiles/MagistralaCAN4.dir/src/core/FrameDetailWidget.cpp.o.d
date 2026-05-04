@@ -413,17 +413,36 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractscrollarea.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qhash.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QMetaType \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qmetatype.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstring.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGroupBox \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgroupbox.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QVBoxLayout \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHBoxLayout \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHeaderView \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qheaderview.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractitemview.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qitemselectionmodel.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractitemdelegate.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyleoption.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qlocale.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qvalidator.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qregularexpression.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtabbar.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtabwidget.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/QFont \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qfont.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/QColor \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qcolor.h
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QDebug \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdebug.h

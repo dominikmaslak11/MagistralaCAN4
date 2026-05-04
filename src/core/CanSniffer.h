@@ -12,6 +12,9 @@ public:
     explicit CanSniffer(QObject *parent = nullptr);
     ~CanSniffer() override;
 
+    void writeFrame(const CanFrame &frame);
+    bool isSocketValid() const;
+
 signals:
     void newFrame(const CanFrame &frame);
     void statusChanged(bool running);

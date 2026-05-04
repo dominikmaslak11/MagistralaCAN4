@@ -133,6 +133,13 @@ void CanFrameModel::setOverwriteMode(bool enabled) {
     endResetModel();
 }
 
+CanFrame CanFrameModel::frameAt(int row) const {
+    QMutexLocker lock(&m_mutex);
+    if (row >= 0 && row < m_frames.size())
+        return m_frames.at(row);
+    return CanFrame();
+}
+
 void CanFrameModel::clear() {
     beginResetModel();
     {

@@ -10,6 +10,8 @@
 #include "core/CanSniffer.h"
 #include "core/CanFrameModel.h"
 #include "core/AssociativeLearner.h"
+#include "core/LuaScriptEngine.h"
+#include "core/FrameDetailWidget.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -24,7 +26,9 @@ private slots:
     void refreshInterfaces();
     void applyOverwriteMode(bool enabled);
     void onUserScroll(int value);
-    void exportToCandump();   // NOWE
+    void exportToCandump();
+    void loadLuaScript();
+    void onFrameSelected(const QModelIndex &index);   // NOWE
 
 private:
     void setupStyle();
@@ -34,6 +38,8 @@ private:
     CanSniffer m_sniffer;
     CanFrameModel *m_model;
     AssociativeLearner *m_learner;
+    LuaScriptEngine *m_luaEngine;
+    FrameDetailWidget *m_frameDetail;  // NOWE
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
