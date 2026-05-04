@@ -16,6 +16,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("MagistralaCAN4 - Sniffer CAN");
+    Logger::log("Aplikacja MagistralaCAN4 uruchomiona");
     resize(1280, 800);
 
     m_model = new CanFrameModel(this);
@@ -29,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_tableView->setAlternatingRowColors(false);
 
     m_learner = new AssociativeLearner;
+    // Lokalny skrót klawiszowy (zawsze działa przy aktywnym oknie)
+    m_hotkeyMarkEvent = new QShortcut(QKeySequence("Ctrl+Shift+E"), this);
+    connect(m_hotkeyMarkEvent, &QShortcut::activated, m_learner, &AssociativeLearner::markEvent);
+    Logger::log("Lokalny skrót Ctrl+Shift+E utworzony");
     m_luaEngine = new LuaScriptEngine(this);
     m_luaEngine->setSniffer(&m_sniffer);
     m_frameDetail = new FrameDetailWidget;
@@ -50,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_sniffer, &CanSniffer::newFrame, this, &MainWindow::onNewFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::errorOccurred, this, [this](const QString &msg) {
         QMessageBox::warning(this, "Błąd CAN", msg);
+        Logger::log(QString("Błąd CAN: %1").arg(msg));
         m_sniffer.stop();
         m_sniffing = false;
         m_btnStartStop->setText("▶ Start");
@@ -65,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setupToolBar();
     setupCentralWidget();
     setupStyle();
+    // Globalny skrót klawiszowy Ctrl+Shift+E = zarejestruj zdarzenie
 
     refreshInterfaces();
     if (m_interfaceCombo->count() > 0)
@@ -77,9 +84,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
     connect(m_learner, &AssociativeLearner::eventMarked, this, [this](int iteration) {
         showTrayNotification("Zdarzenie", QString("Zarejestrowano zdarzenie #%1").arg(iteration));
+        Logger::log(QString("Zarejestrowano zdarzenie #%1").arg(iteration));
     });
     connect(m_learner, &AssociativeLearner::anomalyDetected, this, [this]() {
         showTrayNotification("Anomalia", "Wykryto anomalię na magistrali!");
+        Logger::log("Wykryto anomalię na magistrali!");
     });
     connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
 }
@@ -93,6 +102,7 @@ void MainWindow::toggleSniffing() {
         QString iface = m_interfaceCombo->currentText().trimmed();
         if (iface.isEmpty()) { QMessageBox::warning(this, "Brak interfejsu", "Wybierz interfejs CAN."); return; }
         m_sniffer.start(iface); m_sniffing = true;
+        Logger::log(QString("Rozpoczęto sniffing na interfejsie %1").arg(iface));
         m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false); m_batchTimer.start();
     } else {
         m_sniffer.stop(); m_sniffing = false;
@@ -143,12 +153,14 @@ void MainWindow::exportToCandump() {
     }
     file.close();
     QMessageBox::information(this, "Eksport", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
+        Logger::log(QString("Wyeksportowano %1 ramek do candump").arg(frames.size()));
 }
 
 void MainWindow::loadLuaScript() {
     QString fileName = QFileDialog::getOpenFileName(this, "Wczytaj skrypt Lua", "", "Skrypty Lua (*.lua);;Wszystkie pliki (*)");
     if (fileName.isEmpty()) return;
     m_luaEngine->loadScript(fileName);
+        Logger::log(QString("Załadowano skrypt Lua: %1").arg(fileName));
 }
 
 void MainWindow::loadDbcFile() {
@@ -156,6 +168,7 @@ void MainWindow::loadDbcFile() {
     if (fileName.isEmpty()) return;
     if (m_dbcParser.load(fileName)) {
         m_frameDetail->setDbcParser(&m_dbcParser);
+        Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
     } else {
         QMessageBox::warning(this, "DBC", "Nie udało się wczytać pliku DBC.");
@@ -223,8 +236,5 @@ void MainWindow::setupStyle() {
         QLabel { color: #c0c0c0; }
         QTableView, QTableWidget { background-color: #0a0e17; alternate-background-color: #161b22; color: #c0c0c0; gridline-color: #2a2a3c; selection-background-color: #e94560; selection-color: #ffffff; font-family: "Consolas", "Courier New", monospace; font-size: 12px; }
         QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-            background: #2c0735;
-            border: 1px solid #ff00ff;
-        }
     )");
 }

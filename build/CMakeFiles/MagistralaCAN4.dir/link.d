@@ -4,7 +4,6 @@ MagistralaCAN4: \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o \
   CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o \
-  CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o \
   CMakeFiles/MagistralaCAN4.dir/main.cpp.o \
@@ -59,10 +58,6 @@ MagistralaCAN4: \
   /usr/lib/gcc/x86_64-linux-gnu/15/libgcc.a \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o \
-  /usr/lib/i386-linux-gnu/libXau.so.6 \
-  /usr/lib/x86_64-linux-gnu/libXau.so.6 \
-  /usr/lib/i386-linux-gnu/libXdmcp.so.6 \
-  /usr/lib/x86_64-linux-gnu/libXdmcp.so.6 \
   /usr/lib/x86_64-linux-gnu/libQt6OpenGLWidgets.so.6.10.2 \
   /usr/lib/x86_64-linux-gnu/libQt6OpenGL.so.6.10.2 \
   /lib64/ld-linux-x86-64.so.2 \
@@ -99,6 +94,7 @@ MagistralaCAN4: \
   /usr/lib/x86_64-linux-gnu/libGLdispatch.so.0 \
   /usr/lib/i386-linux-gnu/libexpat.so.1 \
   /usr/lib/x86_64-linux-gnu/libexpat.so.1 \
+  /usr/lib/x86_64-linux-gnu/libxcb.so \
   /usr/lib/i386-linux-gnu/libatomic.so.1 \
   /usr/lib/x86_64-linux-gnu/libatomic.so.1 \
   /usr/lib/i386-linux-gnu/libpcre2-8.so.0 \
@@ -114,6 +110,10 @@ MagistralaCAN4: \
   /usr/lib/x86_64-linux-gnu/libicudata.so.78 \
   /usr/lib/i386-linux-gnu/libgomp.so.1 \
   /usr/lib/x86_64-linux-gnu/libgomp.so.1 \
+  /usr/lib/i386-linux-gnu/libXau.so.6 \
+  /usr/lib/x86_64-linux-gnu/libXau.so.6 \
+  /usr/lib/i386-linux-gnu/libXdmcp.so.6 \
+  /usr/lib/x86_64-linux-gnu/libXdmcp.so.6 \
   /usr/lib/i386-linux-gnu/libsystemd.so.0 \
   /usr/lib/x86_64-linux-gnu/libsystemd.so.0 \
   /usr/lib/i386-linux-gnu/libbrotlicommon.so.1 \
@@ -128,8 +128,6 @@ MagistralaCAN4: \
 CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o:
 
 CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o:
-
-CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o:
 
 CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o:
 
@@ -239,14 +237,6 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o:
 
-/usr/lib/i386-linux-gnu/libXau.so.6:
-
-/usr/lib/x86_64-linux-gnu/libXau.so.6:
-
-/usr/lib/i386-linux-gnu/libXdmcp.so.6:
-
-/usr/lib/x86_64-linux-gnu/libXdmcp.so.6:
-
 /usr/lib/x86_64-linux-gnu/libQt6OpenGLWidgets.so.6.10.2:
 
 /usr/lib/x86_64-linux-gnu/libQt6OpenGL.so.6.10.2:
@@ -319,6 +309,8 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o:
 
 /usr/lib/x86_64-linux-gnu/libexpat.so.1:
 
+/usr/lib/x86_64-linux-gnu/libxcb.so:
+
 /usr/lib/i386-linux-gnu/libatomic.so.1:
 
 /usr/lib/x86_64-linux-gnu/libatomic.so.1:
@@ -348,6 +340,14 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o:
 /usr/lib/i386-linux-gnu/libgomp.so.1:
 
 /usr/lib/x86_64-linux-gnu/libgomp.so.1:
+
+/usr/lib/i386-linux-gnu/libXau.so.6:
+
+/usr/lib/x86_64-linux-gnu/libXau.so.6:
+
+/usr/lib/i386-linux-gnu/libXdmcp.so.6:
+
+/usr/lib/x86_64-linux-gnu/libXdmcp.so.6:
 
 /usr/lib/i386-linux-gnu/libsystemd.so.0:
 

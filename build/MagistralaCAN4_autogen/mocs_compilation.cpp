@@ -4,7 +4,6 @@
 #include "PRMOGMWJPH/moc_CanSniffer.cpp"
 #include "PRMOGMWJPH/moc_CandidateModel.cpp"
 #include "PRMOGMWJPH/moc_FrameDetailWidget.cpp"
-#include "PRMOGMWJPH/moc_GlobalHotkey.cpp"
 #include "PRMOGMWJPH/moc_LuaScriptEngine.cpp"
 #include "PRMOGMWJPH/moc_OfflineAnalyzer.cpp"
 #include "MXUWEOXILK/moc_MainWindow.cpp"

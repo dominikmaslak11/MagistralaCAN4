@@ -342,12 +342,6 @@
 			null
 		],
 		[
-			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h",
-			"Mu",
-			"PRMOGMWJPH/moc_GlobalHotkey.cpp",
-			null
-		],
-		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h",
 			"Mu",
 			"PRMOGMWJPH/moc_GpuCorrelator.cpp",
@@ -492,11 +486,6 @@
 		],
 		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp",
-			"Mu",
-			null
-		],
-		[
-			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp",
 			"Mu",
 			null
 		],

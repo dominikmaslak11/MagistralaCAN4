@@ -23,8 +23,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o"
   "CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o.d"
-  "CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o"
-  "CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o"
   "CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o"

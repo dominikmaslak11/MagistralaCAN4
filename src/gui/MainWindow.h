@@ -14,7 +14,9 @@
 #include "core/FrameDetailWidget.h"
 #include "core/DbcParser.h"
 #include "core/OfflineAnalyzer.h"
+#include "core/Logger.h"
 #include <QSystemTrayIcon>
+#include <QShortcut>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -54,6 +56,7 @@ private:
     QCheckBox *m_overwriteCheck;
     QLabel *m_statusLabel;
     QSystemTrayIcon *m_trayIcon = nullptr;
+    QShortcut *m_hotkeyMarkEvent = nullptr;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;

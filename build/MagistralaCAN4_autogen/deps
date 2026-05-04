@@ -21,8 +21,6 @@ MagistralaCAN4_autogen/timestamp: \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h \
-	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp \
-	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
 	/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp \
@@ -293,7 +291,6 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
 	/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
 	/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
-	/usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
 	/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
 	/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
 	/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
@@ -304,7 +301,6 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
 	/usr/include/x86_64-linux-gnu/bits/typesizes.h \
 	/usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
-	/usr/include/x86_64-linux-gnu/bits/uio-ext.h \
 	/usr/include/x86_64-linux-gnu/bits/uio_lim.h \
 	/usr/include/x86_64-linux-gnu/bits/waitflags.h \
 	/usr/include/x86_64-linux-gnu/bits/waitstatus.h \
@@ -343,7 +339,6 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h \
-	/usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractNativeEventFilter \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
@@ -374,7 +369,6 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h \
-	/usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qalgorithms.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qalloc.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtCore/qanystringview.h \
@@ -522,8 +516,8 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/QBrush \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/QFont \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/QImage \
-	/usr/include/x86_64-linux-gnu/qt6/QtGui/QKeySequence \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/QPen \
+	/usr/include/x86_64-linux-gnu/qt6/QtGui/QShortcut \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/QTransform \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qaction.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qbitmap.h \
@@ -558,6 +552,7 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qrgba64.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qscreen.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qscreen_platform.h \
+	/usr/include/x86_64-linux-gnu/qt6/QtGui/qshortcut.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextcursor.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextdocument.h \
 	/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextformat.h \
@@ -628,10 +623,6 @@ MagistralaCAN4_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/sys/select.h \
 	/usr/include/x86_64-linux-gnu/sys/single_threaded.h \
 	/usr/include/x86_64-linux-gnu/sys/types.h \
-	/usr/include/x86_64-linux-gnu/sys/uio.h \
-	/usr/include/xcb/xcb.h \
-	/usr/include/xcb/xcb_keysyms.h \
-	/usr/include/xcb/xproto.h \
 	/usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h \
 	/usr/lib/gcc/x86_64-linux-gnu/15/include/stdbool.h \
 	/usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \

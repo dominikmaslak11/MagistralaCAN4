@@ -23,10 +23,11 @@ public slots:
     void loadFile();
     void playPause();
     void stop();
-    void setSpeed(int value);  // 1-100
+    void setSpeed(int value);
+    void nextFrame();           // NOWE: ręczne przejście do następnej ramki
 
-private slots:
-    void playNextFrame();
+protected:
+    void keyPressEvent(QKeyEvent *event) override;  // przechwytywanie Enter
 
 private:
     QVector<CanFrame> m_frames;
@@ -36,8 +37,9 @@ private:
     QPushButton *m_loadBtn;
     QPushButton *m_playPauseBtn;
     QPushButton *m_stopBtn;
+    QPushButton *m_nextBtn;    // NOWY
     QSlider *m_speedSlider;
-    QCheckBox *m_originalTimestampsCheck;   // NOWE
+    QCheckBox *m_originalTimestampsCheck;
     QLabel *m_statusLabel;
     QProgressBar *m_progressBar;
     QTimer m_timer;
