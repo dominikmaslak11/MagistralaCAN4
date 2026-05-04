@@ -1136,13 +1136,16 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: Mag
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartView \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QScatterSeries \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractaxis.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchart.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlegend.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qscatterseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
@@ -1752,13 +1755,16 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartView \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QScatterSeries \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractaxis.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchart.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlegend.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qscatterseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
@@ -2394,13 +2400,16 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzf
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartView \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QScatterSeries \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractaxis.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchart.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlegend.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qscatterseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
@@ -8130,13 +8139,16 @@ CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o: /home/nz2xzhkzfeew
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartView \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QScatterSeries \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractaxis.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchart.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlegend.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qscatterseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
@@ -8785,13 +8797,16 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/M
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartView \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QScatterSeries \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractaxis.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchart.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlegend.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qscatterseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
