@@ -92,10 +92,38 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.s: cma
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/mocs_compilation.cpp -o CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.s
 
+CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
+CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp
+CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp
+
+CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp > CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.i
+
+CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp -o CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.s
+
+CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
+CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp
+CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp
+
+CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp > CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.i
+
+CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.cpp -o CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.s
+
 CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.i: cmake_force
@@ -109,7 +137,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.i: cmake_force
@@ -123,7 +151,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/main.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/main.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/main.cpp
 CMakeFiles/MagistralaCAN4.dir/main.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/MagistralaCAN4.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/MagistralaCAN4.dir/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/main.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/main.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/main.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/main.cpp
 
 CMakeFiles/MagistralaCAN4.dir/main.cpp.i: cmake_force
@@ -137,7 +165,7 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.i: cmake_force
@@ -151,7 +179,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.i: cmake_force
@@ -165,7 +193,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.i: cmake_force
@@ -179,7 +207,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.i: cmake_force
@@ -193,7 +221,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.i: cmake_force
@@ -207,7 +235,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.i: cmake_force
@@ -221,7 +249,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.i: cmake_force
@@ -235,7 +263,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.i: cmake_force
@@ -249,7 +277,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.cpp
 CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.i: cmake_force
@@ -263,7 +291,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.s: cmake_force
 CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: CMakeFiles/MagistralaCAN4.dir/flags.make
 CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.cpp
 CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o -MF CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o.d -o CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o -c /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.cpp
 
 CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.i: cmake_force
@@ -277,6 +305,8 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.s: cmake_force
 # Object files for target MagistralaCAN4
 MagistralaCAN4_OBJECTS = \
 "CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o" \
+"CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o" \
+"CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o" \
 "CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o" \
 "CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o" \
 "CMakeFiles/MagistralaCAN4.dir/main.cpp.o" \
@@ -295,6 +325,8 @@ MagistralaCAN4_OBJECTS = \
 MagistralaCAN4_EXTERNAL_OBJECTS =
 
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o
+MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/core/Logger.cpp.o
+MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/main.cpp.o
@@ -310,6 +342,10 @@ MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/build.make
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/compiler_depend.ts
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libxcb.so
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libxcb-render.so
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libxcb-shm.so
+MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libxcb-keysyms.so
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Concurrent.so.6.10.2
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Charts.so.6.10.2
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/liblua5.3.so
@@ -323,7 +359,7 @@ MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libGLX.so
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libOpenGL.so
 MagistralaCAN4: /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.10.2
 MagistralaCAN4: CMakeFiles/MagistralaCAN4.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable MagistralaCAN4"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Linking CXX executable MagistralaCAN4"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/MagistralaCAN4.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

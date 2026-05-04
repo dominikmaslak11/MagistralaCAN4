@@ -572,18 +572,10 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qprogressbar.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSlider \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h \
- /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qstringlist.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qfiledevice.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qfiledevice.h \
  /usr/include/c++/15/filesystem /usr/include/c++/15/bits/fs_fwd.h \
  /usr/include/c++/15/bits/fs_path.h /usr/include/c++/15/locale \
  /usr/include/c++/15/bits/locale_facets.h /usr/include/c++/15/cwctype \
@@ -605,8 +597,32 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /usr/include/c++/15/bits/istream.tcc \
  /usr/include/c++/15/bits/sstream.tcc /usr/include/c++/15/codecvt \
  /usr/include/c++/15/bits/fs_dir.h /usr/include/c++/15/bits/fs_ops.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qtextstream.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfileinfo.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractNativeEventFilter \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/QKeySequence \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h \
+ /usr/include/xcb/xcb.h /usr/include/x86_64-linux-gnu/sys/uio.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
+ /usr/include/x86_64-linux-gnu/bits/uio-ext.h /usr/include/xcb/xproto.h \
+ /usr/include/xcb/xcb.h /usr/include/xcb/xcb_keysyms.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qstringlist.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QSet \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qset.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QToolBar \
@@ -630,8 +646,6 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QFileDialog \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qfiledialog.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qtextstream.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QStyle \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMenu \

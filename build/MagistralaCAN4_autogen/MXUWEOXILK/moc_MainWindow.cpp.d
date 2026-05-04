@@ -7,7 +7,9 @@
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/DbcParser.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h \
   /usr/include/alloca.h \
@@ -146,6 +148,7 @@
   /usr/include/c++/15/ext/numeric_traits.h \
   /usr/include/c++/15/ext/string_conversions.h \
   /usr/include/c++/15/ext/type_traits.h \
+  /usr/include/c++/15/filesystem \
   /usr/include/c++/15/functional \
   /usr/include/c++/15/future \
   /usr/include/c++/15/initializer_list \
@@ -269,6 +272,7 @@
   /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
@@ -279,6 +283,7 @@
   /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/uio-ext.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
@@ -317,7 +322,11 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractNativeEventFilter \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QMap \
@@ -329,6 +338,7 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QSize \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QSizeF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QThread \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QVariant \
@@ -343,6 +353,7 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstracteventdispatcher.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalloc.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qanystringview.h \
@@ -359,6 +370,7 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearraylist.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayview.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qchar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcheckedint_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h \
@@ -376,11 +388,17 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdarwinhelpers.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatastream.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qdebug.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qendian.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qexceptionhandling.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfiledevice.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfileinfo.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qflags.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qfloat16.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qforeach.h \
@@ -460,6 +478,7 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtformat_impl.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtnoop.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtpreprocessorsupport.h \
@@ -482,6 +501,7 @@
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QBrush \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QFont \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QImage \
+  /usr/include/x86_64-linux-gnu/qt6/QtGui/QKeySequence \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QPen \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/QTransform \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/qaction.h \
@@ -587,6 +607,10 @@
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/x86_64-linux-gnu/sys/uio.h \
+  /usr/include/xcb/xcb.h \
+  /usr/include/xcb/xcb_keysyms.h \
+  /usr/include/xcb/xproto.h \
   /usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/15/include/stdbool.h \
   /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \

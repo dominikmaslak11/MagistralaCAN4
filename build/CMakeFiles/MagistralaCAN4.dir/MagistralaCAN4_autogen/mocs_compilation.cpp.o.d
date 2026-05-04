@@ -566,6 +566,16 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/DbcParser.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_GlobalHotkey.cpp \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/GlobalHotkey.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractNativeEventFilter \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/QKeySequence \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h \
+ /usr/include/xcb/xcb.h /usr/include/x86_64-linux-gnu/sys/uio.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
+ /usr/include/x86_64-linux-gnu/bits/uio-ext.h /usr/include/xcb/xproto.h \
+ /usr/include/xcb/xcb.h /usr/include/xcb/xcb_keysyms.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_LuaScriptEngine.cpp \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/LuaScriptEngine.h \
  /usr/include/lua5.3/lua.h /usr/include/lua5.3/luaconf.h \
@@ -582,5 +592,42 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/MXUWEOXILK/../../../src/gui/MainWindow.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qfiledevice.h \
+ /usr/include/c++/15/filesystem /usr/include/c++/15/bits/fs_fwd.h \
+ /usr/include/c++/15/bits/fs_path.h /usr/include/c++/15/locale \
+ /usr/include/c++/15/bits/locale_facets.h /usr/include/c++/15/cwctype \
+ /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/ctype_base.h \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/ctype_inline.h \
+ /usr/include/c++/15/bits/locale_facets.tcc \
+ /usr/include/c++/15/bits/locale_facets_nonio.h \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/time_members.h \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/15/bits/codecvt.h \
+ /usr/include/c++/15/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/15/bits/locale_conv.h /usr/include/c++/15/iomanip \
+ /usr/include/c++/15/bits/quoted_string.h /usr/include/c++/15/sstream \
+ /usr/include/c++/15/istream /usr/include/c++/15/ios \
+ /usr/include/c++/15/bits/basic_ios.h \
+ /usr/include/c++/15/bits/basic_ios.tcc /usr/include/c++/15/ostream \
+ /usr/include/c++/15/bits/ostream.h /usr/include/c++/15/bits/ostream.tcc \
+ /usr/include/c++/15/bits/istream.tcc \
+ /usr/include/c++/15/bits/sstream.tcc /usr/include/c++/15/codecvt \
+ /usr/include/c++/15/bits/fs_dir.h /usr/include/c++/15/bits/fs_ops.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qtextstream.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdir.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdirlisting.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qdatetime.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qfileinfo.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h
