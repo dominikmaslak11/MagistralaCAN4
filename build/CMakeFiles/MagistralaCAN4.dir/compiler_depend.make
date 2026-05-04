@@ -548,6 +548,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QComboBox \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGraphicsView \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGraphicsWidget \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGridLayout \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
@@ -561,6 +562,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractscrollarea.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcheckbox.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcombobox.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qframe.h \
@@ -569,7 +571,10 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsscene.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicswidget.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlabel.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlineedit.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h \
@@ -8263,6 +8268,10 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtresource.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/15/include/mwaitxintrin.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel:
+
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qfontinfo.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtdeprecationdefinitions.h:
@@ -9177,6 +9186,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGridLayout:
+
 /usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.10.2:
 
 /usr/include/c++/15/bits/concept_check.h:
@@ -9533,10 +9544,6 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsTargets-none.cmake:
 
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel:
-
-/usr/lib/gcc/x86_64-linux-gnu/15/include/mwaitxintrin.h:
-
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp:
 
 /usr/include/features.h:
@@ -9647,6 +9654,12 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/15/include/pmmintrin.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qlatin1stringview.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/15/include/sm3intrin.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcheckbox.h:
@@ -9657,9 +9670,19 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsview.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlabel.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/include/avx512vnnivlintrin.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qsocketnotifier.h:
+
+/usr/lib/x86_64-linux-gnu/libc.so:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h:
 
@@ -10393,10 +10416,6 @@ MagistralaCAN4_autogen/mocs_compilation.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qsimd.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qsocketnotifier.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h:
-
 /usr/include/x86_64-linux-gnu/bits/errno.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qsortfilterproxymodel.h:
@@ -10447,23 +10466,11 @@ MagistralaCAN4_autogen/mocs_compilation.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHBoxLayout:
 
-/usr/lib/gcc/x86_64-linux-gnu/15/include/pmmintrin.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qlatin1stringview.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qfiledialog.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qfloat16.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qheaderview.h:
-
-/usr/lib/x86_64-linux-gnu/libc.so:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicTestHelpers.cmake:
 
