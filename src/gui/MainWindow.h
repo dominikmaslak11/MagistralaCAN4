@@ -14,6 +14,7 @@
 #include "core/FrameDetailWidget.h"
 #include "core/DbcParser.h"
 #include "core/OfflineAnalyzer.h"
+#include "core/CanDashboard.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -50,6 +51,7 @@ private:
     FrameDetailWidget *m_frameDetail;
     DbcParser m_dbcParser;
     OfflineAnalyzer *m_offlineAnalyzer;
+    CanDashboard *m_canDashboard;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;

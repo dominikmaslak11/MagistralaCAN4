@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/MagistralaCAN4.dir/main.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o"
   "CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o"
   "CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o"

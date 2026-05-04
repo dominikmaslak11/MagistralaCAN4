@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/mocs_compilation.cpp" "CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/main.cpp" "CMakeFiles/MagistralaCAN4.dir/main.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/main.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o.d"
+  "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/CanDashboard.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrameModel.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/CanFrameModel.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o.d"

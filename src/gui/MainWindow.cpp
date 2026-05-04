@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_luaEngine->setSniffer(&m_sniffer);
     m_frameDetail = new FrameDetailWidget;
     m_frameDetail->setSniffer(&m_sniffer);
+    m_canDashboard = new CanDashboard;
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     // --- System tray ---
     m_trayIcon = new QSystemTrayIcon(this);
@@ -80,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, m_canDashboard, &CanDashboard::updateSignal, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -169,6 +171,7 @@ void MainWindow::loadDbcFile() {
     if (fileName.isEmpty()) return;
     if (m_dbcParser.load(fileName)) {
         m_frameDetail->setDbcParser(&m_dbcParser);
+        m_canDashboard->setDbcParser(&m_dbcParser);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
     } else {
@@ -209,6 +212,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_learner, "Uczenie asocjacyjne");
     tabs->addTab(m_frameDetail, "Szczegóły ramki");
     tabs->addTab(m_offlineAnalyzer, "Analiza offline");
+    tabs->addTab(m_canDashboard, "Dashboard CAN");
     setCentralWidget(tabs);
 }
 

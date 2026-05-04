@@ -539,6 +539,15 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmochelpers.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmocconstants.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/q20algorithm.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanDashboard.cpp \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/CanDashboard.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGridLayout \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/DbcParser.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanFrameModel.cpp \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/CanFrameModel.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QMutex \
@@ -559,17 +568,10 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_CandidateModel.cpp \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_FrameDetailWidget.cpp \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/FrameDetailWidget.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGridLayout \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayout.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QEvent \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h \
- /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/DbcParser.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/moc_LuaScriptEngine.cpp \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4_autogen/PRMOGMWJPH/../../../src/core/LuaScriptEngine.h \
  /usr/include/lua5.3/lua.h /usr/include/lua5.3/luaconf.h \

@@ -294,6 +294,12 @@
 			null
 		],
 		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.h",
+			"Mu",
+			"PRMOGMWJPH/moc_CanDashboard.cpp",
+			null
+		],
+		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.h",
 			"Mu",
 			"PRMOGMWJPH/moc_CanExporter.cpp",
@@ -451,6 +457,11 @@
 		[ "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/main.cpp", "Mu", null ],
 		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.cpp",
 			"Mu",
 			null
 		],

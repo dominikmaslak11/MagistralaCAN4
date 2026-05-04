@@ -11,6 +11,7 @@ find_package(Lua REQUIRED)
 find_package(OpenCL REQUIRED)
 
 set(SOURCES
+    src/core/CanDashboard.cpp
     src/core/Logger.cpp
     src/core/OfflineAnalyzer.cpp
     src/core/DbcParser.cpp
@@ -28,6 +29,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    src/core/CanDashboard.h
     src/core/Logger.h
     src/core/OfflineAnalyzer.h
     src/core/DbcParser.h
