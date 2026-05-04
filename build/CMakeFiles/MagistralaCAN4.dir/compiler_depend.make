@@ -560,6 +560,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSlider \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QWidget \
@@ -592,6 +593,7 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qslider.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyle.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qstyleoption.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtabbar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtableview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtablewidget.h \
@@ -9418,6 +9420,10 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/include/immintrin.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/15/include/ia32intrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/15/include/hresetintrin.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h:
 
 /usr/share/cmake-4.2/Modules/FindPackageMessage.cmake:
@@ -9858,8 +9864,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiDependencies.cmake:
-
 /usr/share/cmake-4.2/Modules/Platform/Linux.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomicscopedvaluerollback.h:
@@ -9987,8 +9991,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/CanExporter.cpp.o:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qspan.h:
 
 /usr/include/c++/15/bits/unique_ptr.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/15/include/hresetintrin.h:
 
 /usr/lib/x86_64-linux-gnu/libxkbcommon.so.0:
 
@@ -10930,6 +10932,12 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsizepolicy.h:
 
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiDependencies.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGL/Qt6OpenGLTargets-none.cmake:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qmetatype.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtablewidget.h:
@@ -11180,6 +11188,8 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon:
+
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Gui/Qt6GuiConfig.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h:
@@ -11211,8 +11221,6 @@ CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o:
 /usr/include/c++/15/ext/alloc_traits.h:
 
 /usr/include/c++/15/bits/locale_facets_nonio.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGL/Qt6OpenGLTargets-none.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGL/Qt6OpenGLTargets.cmake:
 
@@ -11429,8 +11437,6 @@ MagistralaCAN4_autogen/PRMOGMWJPH/moc_CanSniffer.cpp:
 /usr/lib/gcc/x86_64-linux-gnu/15/include/avx512vpopcntdqintrin.h:
 
 /usr/include/wctype.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/15/include/ia32intrin.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicWalkLibsHelpers.cmake:
 

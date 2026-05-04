@@ -10,6 +10,9 @@
 #include <QScrollBar>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QStyle>
+#include <QSystemTrayIcon>
+#include <QMenu>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("MagistralaCAN4 - Sniffer CAN");
@@ -30,6 +33,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_luaEngine->setSniffer(&m_sniffer);
     m_frameDetail = new FrameDetailWidget;
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
+    // --- System tray ---
+    m_trayIcon = new QSystemTrayIcon(this);
+    m_trayIcon->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
+    m_trayIcon->setToolTip("MagistralaCAN4");
+    auto *trayMenu = new QMenu(this);
+    trayMenu->addAction("Przywróć", this, &QMainWindow::show);
+    trayMenu->addAction("Zamknij", qApp, &QApplication::quit);
+    m_trayIcon->setContextMenu(trayMenu);
+    m_trayIcon->show();
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::trayActivated);
 
     m_batchTimer.setInterval(33);
     connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
@@ -62,6 +75,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
+    connect(m_learner, &AssociativeLearner::eventMarked, this, [this](int iteration) {
+        showTrayNotification("Zdarzenie", QString("Zarejestrowano zdarzenie #%1").arg(iteration));
+    });
+    connect(m_learner, &AssociativeLearner::anomalyDetected, this, [this]() {
+        showTrayNotification("Anomalia", "Wykryto anomalię na magistrali!");
+    });
     connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
 }
 
@@ -179,12 +198,23 @@ void MainWindow::setupCentralWidget() {
     setCentralWidget(tabs);
 }
 
+void MainWindow::showTrayNotification(const QString &title, const QString &message) {
+    if (m_trayIcon) m_trayIcon->showMessage(title, message, QSystemTrayIcon::Information, 5000);
+}
+
+void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
+    if (reason == QSystemTrayIcon::DoubleClick || reason == QSystemTrayIcon::Trigger) {
+        show();
+        activateWindow();
+    }
+}
+
 void MainWindow::setupStyle() {
     qApp->setStyleSheet(R"(
         QMainWindow { background-color: #0a0e17; }
         QToolBar { background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1a1a2e, stop:1 #16213e); border-bottom: 2px solid #e94560; spacing: 8px; padding: 4px; }
-        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 5px 15px; font-weight: bold; }
-        QPushButton:hover { background: #e94560; color: #0a0e17; }
+        QPushButton, QToolButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 5px 15px; font-weight: bold; }
+        QPushButton:hover, QToolButton:hover { background: #e94560; color: #0a0e17; }
         QComboBox { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 3px 8px; min-width: 100px; }
         QComboBox::drop-down { border: none; }
         QComboBox QAbstractItemView { background: #1a1a2e; color: #00ffaa; selection-background-color: #e94560; }
@@ -193,19 +223,6 @@ void MainWindow::setupStyle() {
         QLabel { color: #c0c0c0; }
         QTableView, QTableWidget { background-color: #0a0e17; alternate-background-color: #161b22; color: #c0c0c0; gridline-color: #2a2a3c; selection-background-color: #e94560; selection-color: #ffffff; font-family: "Consolas", "Courier New", monospace; font-size: 12px; }
         QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-        QToolButton#clearButton {
-            background: #1a1a2e;
-            color: #00ffaa;
-            border: 1px solid #e94560;
-            border-radius: 4px;
-            padding: 5px 15px;
-            font-weight: bold;
-        }
-        QToolButton#clearButton:hover {
-            background: #e94560;
-            color: #0a0e17;
-        }
-        QToolButton#clearButton:pressed {
             background: #2c0735;
             border: 1px solid #ff00ff;
         }

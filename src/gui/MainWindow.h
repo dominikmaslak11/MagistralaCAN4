@@ -14,6 +14,7 @@
 #include "core/FrameDetailWidget.h"
 #include "core/DbcParser.h"
 #include "core/OfflineAnalyzer.h"
+#include <QSystemTrayIcon>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -21,6 +22,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
+    void showTrayNotification(const QString &title, const QString &message);
+    void trayActivated(QSystemTrayIcon::ActivationReason reason);
 private slots:
     void toggleSniffing();
     void onNewFrame(const CanFrame &frame);
@@ -50,6 +53,7 @@ private:
     QComboBox *m_interfaceCombo;
     QCheckBox *m_overwriteCheck;
     QLabel *m_statusLabel;
+    QSystemTrayIcon *m_trayIcon = nullptr;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;

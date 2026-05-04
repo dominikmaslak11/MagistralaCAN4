@@ -1,102 +1,81 @@
 #!/usr/bin/env bash
-# add_cross_variable_matrix.sh – macierz korelacji między zmiennymi (heatmapa)
+# add_tray_notifications.sh – tray, powiadomienia, jednolity design przycisków
 set -e
 
-echo "=== Dodawanie macierzy korelacji zmiennych ==="
+echo "=== Dodawanie tray i powiadomień ==="
 
-# 1. Nagłówek – nowe pole dla macierzy i przycisku
-sed -i '/QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;/a\
-    // Macierz korelacji zmiennych\
-    QPushButton  *m_crossVarBtn;\
-    QTableWidget *m_crossVarTable;' src/core/AssociativeLearner.h
+# 1. AssociativeLearner.h – dodajemy sygnał anomalyDetected
+sed -i '/void eventMarked(int iteration);/a\    void anomalyDetected();' src/core/AssociativeLearner.h
 
-# Deklaracja metody
-sed -i '/void predictNextFrames();/a\    void updateCrossVariableMatrix();' src/core/AssociativeLearner.h
+# 2. AssociativeLearner.cpp – emitujemy sygnał w checkAnomaly() oraz checkAutoEvent()
+sed -i '/m_anomalyTable->setItem(row,2,new QTableWidgetItem("Anomalia wykryta"));/a\        emit anomalyDetected();' src/core/AssociativeLearner.cpp
+sed -i '/m_autoEventLabel->setText("Ostatnie auto-zdarzenie: OK");/a\        emit anomalyDetected();' src/core/AssociativeLearner.cpp
 
-# 2. Konstruktor – nowe elementy UI (wstaw przed końcem)
-sed -i '/m_markovTimer = new QTimer(this);/a\
-    // --- Macierz korelacji zmiennych ---\
-    auto *crossVarLayout = new QHBoxLayout;\
-    crossVarLayout->addWidget(new QLabel("Macierz korelacji zmiennych:"));\
-    m_crossVarBtn = new QPushButton("Pokaż macierz korelacji zmiennych");\
-    crossVarLayout->addWidget(m_crossVarBtn);\
-    crossVarLayout->addStretch();\
-    mainLayout->addLayout(crossVarLayout);\
-    m_crossVarTable = new QTableWidget(0,0);\
-    m_crossVarTable->verticalHeader()->hide();\
-    m_crossVarTable->horizontalHeader()->setStretchLastSection(true);\
-    m_crossVarTable->setShowGrid(false);\
-    m_crossVarTable->setAlternatingRowColors(false);\
-    m_crossVarTable->setEditTriggers(QAbstractItemView::NoEditTriggers);\
-    m_crossVarTable->setMinimumHeight(300);\
-    mainLayout->addWidget(m_crossVarTable);\
-    connect(m_crossVarBtn, \&QPushButton::clicked, this, \&AssociativeLearner::updateCrossVariableMatrix);' src/core/AssociativeLearner.cpp
+# 3. MainWindow.h – dodajemy QSystemTrayIcon oraz sloty
+sed -i '/#include "core\/OfflineAnalyzer.h"/a #include <QSystemTrayIcon>' src/gui/MainWindow.h
 
-# 3. Implementacja updateCrossVariableMatrix (na końcu pliku .cpp)
-cat >> src/core/AssociativeLearner.cpp << 'EOF'
+# W klasie dodajemy składowe i sloty
+sed -i '/private slots:/i\    void showTrayNotification(const QString &title, const QString &message);\
+    void trayActivated(QSystemTrayIcon::ActivationReason reason);' src/gui/MainWindow.h
 
-// ---------- Macierz korelacji zmiennych ----------
-void AssociativeLearner::updateCrossVariableMatrix() {
-    QStringList varNames = m_observationsMap.keys();
-    int N = varNames.size();
-    if (N < 2) {
-        m_crossVarTable->setRowCount(0);
-        m_crossVarTable->setColumnCount(0);
-        return;
+sed -i '/QLabel \*m_statusLabel;/a\    QSystemTrayIcon *m_trayIcon = nullptr;' src/gui/MainWindow.h
+
+# 4. MainWindow.cpp – implementacja tray i powiadomień
+sed -i '/#include <QTextStream>/a #include <QMenu>' src/gui/MainWindow.cpp
+sed -i '/#include <QTextStream>/a #include <QSystemTrayIcon>' src/gui/MainWindow.cpp
+sed -i '/#include <QTextStream>/a #include <QStyle>' src/gui/MainWindow.cpp
+
+# Po utworzeniu m_offlineAnalyzer w konstruktorze, tworzymy tray
+sed -i '/m_offlineAnalyzer = new OfflineAnalyzer/a\
+    // --- System tray ---\
+    m_trayIcon = new QSystemTrayIcon(this);\
+    m_trayIcon->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));\
+    m_trayIcon->setToolTip("MagistralaCAN4");\
+    auto *trayMenu = new QMenu(this);\
+    trayMenu->addAction("Przywróć", this, &QMainWindow::show);\
+    trayMenu->addAction("Zamknij", qApp, &QApplication::quit);\
+    m_trayIcon->setContextMenu(trayMenu);\
+    m_trayIcon->show();\
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::trayActivated);' src/gui/MainWindow.cpp
+
+# Podłącz powiadomienia do sygnałów AssociativeLearner
+sed -i '/connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);/i\
+    connect(m_learner, &AssociativeLearner::eventMarked, this, [this](int iteration) {\
+        showTrayNotification("Zdarzenie", QString("Zarejestrowano zdarzenie #%1").arg(iteration));\
+    });\
+    connect(m_learner, &AssociativeLearner::anomalyDetected, this, [this]() {\
+        showTrayNotification("Anomalia", "Wykryto anomalię na magistrali!");\
+    });' src/gui/MainWindow.cpp
+
+# Dodaj implementacje slotów (na końcu pliku, przed końcową klamrą klasy? Lepiej wstawić po setupStyle)
+# Wstawiamy po definicji setupCentralWidget()
+sed -i '/^void MainWindow::setupCentralWidget/,/^}/!b; /^}/a\
+\
+void MainWindow::showTrayNotification(const QString &title, const QString &message) {\
+    if (m_trayIcon) m_trayIcon->showMessage(title, message, QSystemTrayIcon::Information, 5000);\
+}\
+\
+void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {\
+    if (reason == QSystemTrayIcon::DoubleClick || reason == QSystemTrayIcon::Trigger) {\
+        show();\
+        activateWindow();\
+    }\
+}' src/gui/MainWindow.cpp
+
+# 5. Ujednolicenie stylu wszystkich przycisków (w setupStyle)
+# Zastępujemy dotychczasowy arkusz CSS rozszerzoną wersją z osobnym stylem QToolButton
+sed -i '/void MainWindow::setupStyle/,/^}/{
+    /qApp->setStyleSheet/,/    )");/{
+        # Usuwamy starą regułę QToolButton#clearButton (jeśli istnieje) i dodajemy ogólną
+        /QToolButton#clearButton/,/QToolButton#clearButton:pressed/d
+        s/QPushButton {/QPushButton, QToolButton {/
+        s/QPushButton:hover/QPushButton:hover, QToolButton:hover/
+        s/QPushButton:pressed/QPushButton:pressed, QToolButton:pressed/
     }
+}' src/gui/MainWindow.cpp
 
-    // Zbuduj wektory wartości dla każdej zmiennej (uśrednione w oknach czasowych)
-    QVector<QVector<double>> series(N);
-    for (int i = 0; i < N; ++i) {
-        const QVector<ValueObservation> &obs = m_observationsMap[varNames[i]];
-        for (const auto &o : obs)
-            series[i].append(o.value);
-    }
+# Upewniamy się, że w arkuszu nie ma już żadnego QToolButton#clearButton (zostały usunięte)
+# Dla pewności możemy jeszcze raz wyczyścić
+sed -i '/QToolButton#clearButton/,/}/d' src/gui/MainWindow.cpp
 
-    // Oblicz macierz korelacji Pearsona
-    m_crossVarTable->setRowCount(N);
-    m_crossVarTable->setColumnCount(N);
-    m_crossVarTable->setHorizontalHeaderLabels(varNames);
-    m_crossVarTable->setVerticalHeaderLabels(varNames);
-
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            const QVector<double> &X = series[i];
-            const QVector<double> &Y = series[j];
-            int len = qMin(X.size(), Y.size());
-            if (len < 3) {
-                m_crossVarTable->setItem(i, j, new QTableWidgetItem("N/A"));
-                continue;
-            }
-
-            double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
-            for (int k = 0; k < len; ++k) {
-                double x = X[k], y = Y[k];
-                sumX += x; sumY += y;
-                sumXY += x * y;
-                sumX2 += x * x;
-                sumY2 += y * y;
-            }
-            double denom = sqrt((len * sumX2 - sumX * sumX) * (len * sumY2 - sumY * sumY));
-            double corr = (denom != 0) ? (len * sumXY - sumX * sumY) / denom : 0.0;
-
-            QTableWidgetItem *item = new QTableWidgetItem(QString::number(corr, 'f', 2));
-            // Kolor: od niebieskiego (-1) przez żółty (0) do zielonego (+1)
-            int r, g, b;
-            if (corr < 0) {
-                r = (int)(255 * (1 + corr));
-                g = (int)(255 * (1 + corr));
-                b = 255;
-            } else {
-                r = (int)(255 * (1 - corr));
-                g = 255;
-                b = (int)(255 * (1 - corr));
-            }
-            item->setBackground(QColor(r, g, b));
-            m_crossVarTable->setItem(i, j, item);
-        }
-    }
-}
-EOF
-
-echo "=== Macierz korelacji zmiennych dodana. Kompiluj: cd build && make -j\$(nproc) ==="
+echo "=== Tray i powiadomienia dodane. Kompiluj: cd build && make -j\$(nproc) ==="
