@@ -61,6 +61,7 @@ public slots:
     void updateCrossVariableMatrix();
     void computeMutualInformation();
     void autoKMeans();
+    void runPcaClustering();
 
 signals:
     void eventMarked(int iteration);
@@ -107,6 +108,10 @@ private:
     QTableWidget *m_sequenceTable;
     QTableWidget *m_crossByteTable;
     QPushButton  *m_clusterBtn;
+    QPushButton  *m_pcaBtn;
+    QChartView   *m_pcaChartView;
+    QChart       *m_pcaChart;
+    QScatterSeries *m_pcaSeries;
     QTableWidget *m_clusterTable;
     QPushButton  *m_trainPredictionBtn;
     QTableWidget *m_predictionTable;
