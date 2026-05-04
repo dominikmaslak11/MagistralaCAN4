@@ -325,13 +325,16 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QChartView \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/QScatterSeries \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractaxis.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qabstractseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchart.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartglobal.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qchartview.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlegend.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qscatterseries.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtcharts-config.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCharts/qtchartsexports.h \
@@ -1130,6 +1133,14 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiglobal.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h:
+
+/usr/share/cmake-4.2/Modules/FindPackageMessage.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h:
+
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
@@ -1215,6 +1226,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Core/Qt6CoreTargets.cmake:
 
 /usr/include/endian.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h:
 
 /usr/include/c++/15/tr1/modified_bessel_func.tcc:
 
@@ -1756,6 +1769,8 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/c++/15/bits/invoke.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries:
+
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLists.txt:
 
 /usr/include/c++/15/bits/locale_classes.tcc:
@@ -1838,8 +1853,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qrgba64.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h:
-
 /usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h:
 
 /usr/include/c++/15/bits/stl_iterator.h:
@@ -1867,8 +1880,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/c++/15/cwchar:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h:
 
 /usr/include/c++/15/bits/memory_resource.h:
 
@@ -1931,6 +1942,8 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries:
 
 /usr/share/cmake-4.2/Modules/Internal/CMakeCXXLinkerInformation.cmake:
 
@@ -2407,7 +2420,3 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qpolygon.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qscreen_platform.h:
-
-/usr/share/cmake-4.2/Modules/FindPackageMessage.cmake:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h:

@@ -46,6 +46,8 @@ public slots:
     void addObservation();
     void saveSession();
     void loadSession();
+    void exportModels();
+    void importModels();
     void clusterWindows();
     void trainPrediction();
     void updatePredictionDisplay();
@@ -124,6 +126,8 @@ private:
     QVector<float> m_normalStd;
 
     QPushButton  *m_saveBtn;
+    QPushButton  *m_exportModelsBtn;
+    QPushButton  *m_importModelsBtn;
     QPushButton  *m_loadBtn;
 
     // Wykres
