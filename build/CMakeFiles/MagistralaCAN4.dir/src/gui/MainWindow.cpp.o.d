@@ -476,6 +476,8 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextformat.h \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qpen.h \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/QShortcut \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qshortcut.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QMap \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qmap.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
@@ -611,8 +613,6 @@ CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/QShortcut \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qshortcut.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstringlist.h \

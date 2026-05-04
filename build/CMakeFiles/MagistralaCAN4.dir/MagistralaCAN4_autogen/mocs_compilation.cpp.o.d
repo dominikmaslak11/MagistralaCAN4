@@ -442,6 +442,8 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcombobox.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QCheckBox \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qcheckbox.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/QShortcut \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qshortcut.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
@@ -620,6 +622,4 @@ CMakeFiles/MagistralaCAN4.dir/MagistralaCAN4_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfileinfo.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/QShortcut \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qshortcut.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h
