@@ -7,12 +7,14 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QKeyEvent>
 #include <QRegularExpression>
 
 OfflineAnalyzer::OfflineAnalyzer(AssociativeLearner *learner,
                                  LuaScriptEngine *lua,
                                  QWidget *parent)
     : QWidget(parent), m_learner(learner), m_luaEngine(lua) {
+    setFocusPolicy(Qt::StrongFocus);   // potrzebne do przechwytywania klawiszy
     auto *layout = new QVBoxLayout(this);
 
     m_loadBtn = new QPushButton("📂 Wczytaj plik candump");
@@ -23,8 +25,11 @@ OfflineAnalyzer::OfflineAnalyzer(AssociativeLearner *learner,
     m_playPauseBtn->setEnabled(false);
     m_stopBtn = new QPushButton("⏹ Stop");
     m_stopBtn->setEnabled(false);
+    m_nextBtn = new QPushButton("⏭ Następna ramka");
+    m_nextBtn->setEnabled(false);
     controls->addWidget(m_playPauseBtn);
     controls->addWidget(m_stopBtn);
+    controls->addWidget(m_nextBtn);
     layout->addLayout(controls);
 
     auto *speedLayout = new QHBoxLayout;
@@ -52,7 +57,8 @@ OfflineAnalyzer::OfflineAnalyzer(AssociativeLearner *learner,
     connect(m_playPauseBtn, &QPushButton::clicked, this, &OfflineAnalyzer::playPause);
     connect(m_stopBtn, &QPushButton::clicked, this, &OfflineAnalyzer::stop);
     connect(m_speedSlider, &QSlider::valueChanged, this, &OfflineAnalyzer::setSpeed);
-    connect(&m_timer, &QTimer::timeout, this, &OfflineAnalyzer::playNextFrame);
+    connect(&m_timer, &QTimer::timeout, this, &OfflineAnalyzer::nextFrame);
+    connect(m_nextBtn, &QPushButton::clicked, this, &OfflineAnalyzer::nextFrame);
 
     setStyleSheet(R"(
         QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 6px 15px; font-weight: bold; }
@@ -99,7 +105,16 @@ void OfflineAnalyzer::loadFile() {
     m_statusLabel->setText(QString("Wczytano %1 ramek.").arg(m_frames.size()));
     m_playPauseBtn->setEnabled(true);
     m_stopBtn->setEnabled(true);
+    m_nextBtn->setEnabled(true);
     m_currentIndex = 0;
+
+    // Wyświetl info o pierwszym odstępie
+    if (m_frames.size() > 1) {
+        int64_t diff = m_frames[1].timestamp - m_frames[0].timestamp;
+        m_statusLabel->setText(QString("Wczytano %1 ramek. Następny odstęp: %2 µs")
+                               .arg(m_frames.size())
+                               .arg(diff));
+    }
 }
 
 void OfflineAnalyzer::playPause() {
@@ -111,27 +126,7 @@ void OfflineAnalyzer::playPause() {
         if (m_currentIndex >= m_frames.size()) m_currentIndex = 0;
         m_playing = true;
         m_playPauseBtn->setText("⏸ Pauza");
-
-        if (m_originalTimestampsCheck->isChecked() && m_frames.size() > 1 && m_currentIndex < m_frames.size()) {
-            // Tryb z oryginalnymi timestampami: oblicz odstęp do następnej ramki
-            uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
-            uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
-                               ? m_frames.at(m_currentIndex + 1).timestamp
-                               : currentTs;
-            int64_t diff = static_cast<int64_t>(nextTs - currentTs);
-            if (diff < 0) diff = 0;
-
-            // Skaluj przez prędkość (odwrotnie: suwak 1 → 100x wolniej, 100 → normalnie)
-            double speedFactor = m_speedSlider->value() / 100.0;
-            int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);  // diff w µs → ms
-            if (intervalMs < 1) intervalMs = 1;
-
-            m_timer.start(intervalMs);
-        } else {
-            // Stały interwał (jak poprzednio)
-            int speed = m_speedSlider->value();
-            m_timer.start(qMax(1, 100 - speed));
-        }
+        nextFrame(); // Natychmiast wyślij pierwszą ramkę
     }
 }
 
@@ -147,13 +142,45 @@ void OfflineAnalyzer::stop() {
 void OfflineAnalyzer::setSpeed(int value) {
     Q_UNUSED(value);
     if (m_playing) {
-        // Restart timera z nową prędkością
         m_timer.stop();
+        // W trybie automatycznym timer uruchomi się sam przy następnym nextFrame
+        if (m_currentIndex < m_frames.size()) {
+            nextFrame();
+        }
+    }
+}
+
+void OfflineAnalyzer::nextFrame() {
+    if (m_currentIndex >= m_frames.size()) {
+        if (m_playing) {
+            stop();
+            m_statusLabel->setText("Odtwarzanie zakończone.");
+        }
+        return;
+    }
+
+    const CanFrame &frame = m_frames.at(m_currentIndex);
+    if (m_learner) m_learner->processFrame(frame);
+    if (m_luaEngine) m_luaEngine->onNewFrame(frame);
+
+    m_currentIndex++;
+    m_progressBar->setValue(m_currentIndex);
+
+    // Wyświetl informację o odstępie do następnej ramki
+    QString status = QString("Ramka %1 / %2").arg(m_currentIndex).arg(m_frames.size());
+    if (m_currentIndex < m_frames.size()) {
+        int64_t diff = m_frames[m_currentIndex].timestamp - m_frames[m_currentIndex-1].timestamp;
+        status += QString(" | Odstęp: %1 µs").arg(diff);
+    } else {
+        status += " | Koniec";
+    }
+    m_statusLabel->setText(status);
+
+    // Jeśli automatyczne odtwarzanie aktywne, ustaw timer na następną ramkę
+    if (m_playing && m_currentIndex < m_frames.size()) {
         if (m_originalTimestampsCheck->isChecked() && m_currentIndex > 0 && m_currentIndex < m_frames.size()) {
-            uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
-            uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
-                               ? m_frames.at(m_currentIndex + 1).timestamp
-                               : currentTs;
+            uint64_t currentTs = m_frames.at(m_currentIndex-1).timestamp;
+            uint64_t nextTs = m_frames.at(m_currentIndex).timestamp;
             int64_t diff = static_cast<int64_t>(nextTs - currentTs);
             if (diff < 0) diff = 0;
             double speedFactor = m_speedSlider->value() / 100.0;
@@ -167,36 +194,11 @@ void OfflineAnalyzer::setSpeed(int value) {
     }
 }
 
-void OfflineAnalyzer::playNextFrame() {
-    if (m_currentIndex >= m_frames.size()) {
-        stop();
-        m_statusLabel->setText("Odtwarzanie zakończone.");
-        return;
+void OfflineAnalyzer::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        if (!m_playing && !m_frames.isEmpty()) {
+            nextFrame();  // W trybie ręcznym Enter wysyła kolejną ramkę
+        }
     }
-
-    const CanFrame &frame = m_frames.at(m_currentIndex);
-    if (m_learner) m_learner->processFrame(frame);
-    if (m_luaEngine) m_luaEngine->onNewFrame(frame);
-
-    m_currentIndex++;
-    m_progressBar->setValue(m_currentIndex);
-    m_statusLabel->setText(QString("Ramka %1 / %2").arg(m_currentIndex).arg(m_frames.size()));
-
-    // Przygotuj timer na następną ramkę, jeśli gra i używa oryginalnych timestampów
-    if (m_playing && m_currentIndex < m_frames.size() && m_originalTimestampsCheck->isChecked()) {
-        m_timer.stop();  // zatrzymaj obecny timer
-
-        uint64_t currentTs = m_frames.at(m_currentIndex).timestamp;
-        uint64_t nextTs = (m_currentIndex + 1 < m_frames.size())
-                           ? m_frames.at(m_currentIndex + 1).timestamp
-                           : currentTs;
-        int64_t diff = static_cast<int64_t>(nextTs - currentTs);
-        if (diff < 0) diff = 0;
-        double speedFactor = m_speedSlider->value() / 100.0;
-        int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);
-        if (intervalMs < 1) intervalMs = 1;
-
-        m_timer.start(intervalMs);
-    }
-    // Jeśli nie używa oryginalnych timestampów, timer już leci ze stałym interwałem
+    QWidget::keyPressEvent(event);
 }

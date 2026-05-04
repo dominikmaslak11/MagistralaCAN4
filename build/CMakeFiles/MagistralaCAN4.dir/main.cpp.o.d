@@ -613,14 +613,7 @@ CMakeFiles/MagistralaCAN4.dir/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfile.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfileinfo.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimezone.h \
- /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GlobalHotkey.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractNativeEventFilter \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractnativeeventfilter.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/QKeySequence \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h \
- /usr/include/xcb/xcb.h /usr/include/x86_64-linux-gnu/sys/uio.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
- /usr/include/x86_64-linux-gnu/bits/uio-ext.h /usr/include/xcb/xproto.h \
- /usr/include/xcb/xcb.h /usr/include/xcb/xcb_keysyms.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSystemTrayIcon \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qsystemtrayicon.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/QShortcut \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qshortcut.h

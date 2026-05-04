@@ -395,30 +395,6 @@ src/core/FrameDetailWidget.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.s
 .PHONY : src/core/FrameDetailWidget.cpp.s
 
-src/core/GlobalHotkey.o: src/core/GlobalHotkey.cpp.o
-.PHONY : src/core/GlobalHotkey.o
-
-# target to build an object file
-src/core/GlobalHotkey.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.o
-.PHONY : src/core/GlobalHotkey.cpp.o
-
-src/core/GlobalHotkey.i: src/core/GlobalHotkey.cpp.i
-.PHONY : src/core/GlobalHotkey.i
-
-# target to preprocess a source file
-src/core/GlobalHotkey.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.i
-.PHONY : src/core/GlobalHotkey.cpp.i
-
-src/core/GlobalHotkey.s: src/core/GlobalHotkey.cpp.s
-.PHONY : src/core/GlobalHotkey.s
-
-# target to generate assembly for a file
-src/core/GlobalHotkey.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/GlobalHotkey.cpp.s
-.PHONY : src/core/GlobalHotkey.cpp.s
-
 src/core/GpuCorrelator.o: src/core/GpuCorrelator.cpp.o
 .PHONY : src/core/GpuCorrelator.o
 
@@ -580,9 +556,6 @@ help:
 	@echo "... src/core/FrameDetailWidget.o"
 	@echo "... src/core/FrameDetailWidget.i"
 	@echo "... src/core/FrameDetailWidget.s"
-	@echo "... src/core/GlobalHotkey.o"
-	@echo "... src/core/GlobalHotkey.i"
-	@echo "... src/core/GlobalHotkey.s"
 	@echo "... src/core/GpuCorrelator.o"
 	@echo "... src/core/GpuCorrelator.i"
 	@echo "... src/core/GpuCorrelator.s"

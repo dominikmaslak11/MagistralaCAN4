@@ -6,10 +6,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts)
+find_package(XCB REQUIRED)
 find_package(Lua REQUIRED)
 find_package(OpenCL REQUIRED)
 
 set(SOURCES
+    src/core/Logger.cpp
     src/core/OfflineAnalyzer.cpp
     src/core/DbcParser.cpp
     main.cpp
@@ -26,6 +28,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    src/core/Logger.h
     src/core/OfflineAnalyzer.h
     src/core/DbcParser.h
     src/core/CanFrame.h
@@ -50,6 +53,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${XCB_LIBRARIES}
     Qt6::Widgets
     Qt6::Core
     Qt6::Concurrent
