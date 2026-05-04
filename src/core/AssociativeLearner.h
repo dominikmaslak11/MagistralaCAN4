@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QShortcut>
 #include <QTimer>
 #include <QMap>
 #include <QHash>
@@ -40,6 +41,7 @@ public:
 public slots:
     void processFrame(const CanFrame &frame);
     void markEvent();
+    void markNonEvent();
     void resetLearning();
     void addVariable(const QString &name);
     QVector<ValueObservation> currentObservations() const;
@@ -92,6 +94,8 @@ private:
 
     // UI
     QPushButton *m_markEventBtn;
+    QPushButton *m_markNonEventBtn;
+    QShortcut  *m_shortcutNonEvent;
     QPushButton *m_resetBtn;
     QLabel      *m_iterationLabel;
     QTableView  *m_candidatesView;
@@ -147,6 +151,7 @@ private:
     static constexpr int HISTORY_MAX = 20000;
 
     QVector<EventRecord> m_events;
+    QVector<EventRecord> m_nonEvents;   // okna bez zdarzenia (tło)
     int m_iteration = 0;
 
     // Mapowanie zmiennych

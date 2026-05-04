@@ -1,3 +1,5 @@
+#include "Logger.h"
+#include "Logger.h"
 #include "AssociativeLearner.h"
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -30,6 +32,10 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_iterationLabel = new QLabel("Liczba iteracji: 0");
     m_iterationLabel->setStyleSheet("color: #00ffaa; font-weight: bold;");
     mainLayout->addWidget(m_markEventBtn);
+    m_markNonEventBtn = new QPushButton("⛔ Brak zdarzenia");
+    mainLayout->addWidget(m_markNonEventBtn);
+    m_shortcutNonEvent = new QShortcut(QKeySequence("Ctrl+Shift+D"), this);
+    connect(m_shortcutNonEvent, &QShortcut::activated, this, &AssociativeLearner::markNonEvent);
     mainLayout->addWidget(m_resetBtn);
     mainLayout->addWidget(m_iterationLabel);
 
@@ -243,6 +249,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     mainLayout->addLayout(serLayout);
 
     connect(m_markEventBtn, &QPushButton::clicked, this, &AssociativeLearner::markEvent);
+    connect(m_markNonEventBtn, &QPushButton::clicked, this, &AssociativeLearner::markNonEvent);
     connect(m_resetBtn, &QPushButton::clicked, this, &AssociativeLearner::resetLearning);
     connect(m_addObsBtn, &QPushButton::clicked, this, &AssociativeLearner::addObservation);
     connect(m_saveBtn, &QPushButton::clicked, this, &AssociativeLearner::saveSession);
@@ -396,6 +403,37 @@ void AssociativeLearner::updateCandidates() {
             sim += dot/(std::sqrt(nA)*std::sqrt(nB)+1e-6f); pairs++;
         }
         cands.append({id, QString("ID 0x%1").arg(id,3,16,QChar('0')).toUpper(), (pairs>0?sim/pairs:0.0f), (int)vecs.size()});
+    }
+    // Kontrast z tłem: obniż score ID, które występują podobnie w non-eventach
+    if (!m_nonEvents.isEmpty()) {
+        for (auto &cand : cands) {
+            uint32_t id = cand.canId;
+            double bgSim = 0.0;
+            int bgPairs = 0;
+            for (const auto &nonEv : m_nonEvents) {
+                auto it = nonEv.idFeatures.find(id);
+                if (it != nonEv.idFeatures.end()) {
+                    for (const auto &ev : m_events) {
+                        auto itEv = ev.idFeatures.find(id);
+                        if (itEv != ev.idFeatures.end()) {
+                            float dot = 0, nA = 0, nB = 0;
+                            const auto &v1 = it.value();
+                            const auto &v2 = itEv.value();
+                            for (int k = 0; k < v1.size(); ++k) {
+                                float a = v1[k], b = v2[k];
+                                dot += a*b; nA += a*a; nB += b*b;
+                            }
+                            bgSim += dot / (std::sqrt(nA)*std::sqrt(nB) + 1e-6f);
+                            bgPairs++;
+                        }
+                    }
+                }
+            }
+            if (bgPairs > 0) {
+                double bgAvg = bgSim / bgPairs;
+                cand.score = cand.score * (1.0 - bgAvg * 0.5);  /* im bardziej podobne do tła, tym większa kara */
+            }
+        }
     }
     std::sort(cands.begin(), cands.end(), [](const Candidate &a, const Candidate &b){ return a.score>b.score; });
     m_candidateModel->setCandidates(cands);
@@ -1295,4 +1333,18 @@ void AssociativeLearner::runPcaClustering() {
     // Informacja o wariancji w tytule wykresu
     m_pcaChart->setTitle(QString("PCA (2 składowe) – zasoby wariancji: %1%")
                         .arg(varExplained * 100, 0, 'f', 1));
+}
+
+// ---------- Rejestracja braku zdarzenia ----------
+void AssociativeLearner::markNonEvent() {
+    if (m_frameHistory.empty()) return;
+    uint64_t latestTs = m_frameHistory.back().timestamp;
+    QVector<CanFrame> window;
+    for (const auto &f : m_frameHistory)
+        if (f.timestamp >= latestTs - m_adaptiveBefore && f.timestamp <= latestTs + m_adaptiveAfter)
+            window.append(f);
+    if (window.size() < 3) return;
+    EventRecord rec; rec.windowFrames = window; rec.idFeatures = buildFeatureVectors(window);
+    m_nonEvents.push_back(rec);
+    Logger::log("Zarejestrowano BRAK zdarzenia");
 }
