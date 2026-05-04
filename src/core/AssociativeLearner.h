@@ -56,6 +56,7 @@ public slots:
     void trainMarkovModel();
     void predictNextFrames();
     void updateCrossVariableMatrix();
+    void computeMutualInformation();
 
 signals:
     void eventMarked(int iteration);
@@ -142,6 +143,9 @@ private:
     QString m_currentVariable;
 
     QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
+    // Mutual Information
+    QPushButton  *m_miBtn;
+    QTableWidget *m_miTable;
     // Macierz korelacji zmiennych
     QPushButton  *m_crossVarBtn;
     QTableWidget *m_crossVarTable;
