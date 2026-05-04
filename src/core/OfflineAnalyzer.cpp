@@ -1,59 +1,3 @@
-#!/usr/bin/env bash
-# add_offline_analysis.sh – analiza offline z plików candump
-set -e
-
-echo "=== Wdrażanie analizy offline ==="
-
-# 1. Nowy moduł: OfflineAnalyzer
-cat > src/core/OfflineAnalyzer.h << 'EOF'
-#pragma once
-#include <QWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QProgressBar>
-#include <QSlider>
-#include <QTimer>
-#include <QVector>
-#include "CanFrame.h"
-
-class AssociativeLearner;
-class LuaScriptEngine;
-
-class OfflineAnalyzer : public QWidget {
-    Q_OBJECT
-public:
-    explicit OfflineAnalyzer(AssociativeLearner *learner,
-                             LuaScriptEngine *lua = nullptr,
-                             QWidget *parent = nullptr);
-
-public slots:
-    void loadFile();
-    void playPause();
-    void stop();
-    void setSpeed(int value);  // 1-100
-
-private slots:
-    void playNextFrame();
-
-private:
-    QVector<CanFrame> m_frames;
-    int m_currentIndex = 0;
-    bool m_playing = false;
-
-    QPushButton *m_loadBtn;
-    QPushButton *m_playPauseBtn;
-    QPushButton *m_stopBtn;
-    QSlider *m_speedSlider;
-    QLabel *m_statusLabel;
-    QProgressBar *m_progressBar;
-    QTimer m_timer;
-
-    AssociativeLearner *m_learner;
-    LuaScriptEngine *m_luaEngine;
-};
-EOF
-
-cat > src/core/OfflineAnalyzer.cpp << 'EOF'
 #include "OfflineAnalyzer.h"
 #include "AssociativeLearner.h"
 #include "LuaScriptEngine.h"
@@ -197,18 +141,3 @@ void OfflineAnalyzer::playNextFrame() {
     m_progressBar->setValue(m_currentIndex);
     m_statusLabel->setText(QString("Ramka %1 / %2").arg(m_currentIndex).arg(m_frames.size()));
 }
-EOF
-
-# 2. MainWindow.h – dodanie OfflineAnalyzer
-sed -i '/#include "core\/DbcParser.h"/a #include "core/OfflineAnalyzer.h"' src/gui/MainWindow.h
-sed -i '/DbcParser m_dbcParser;/a\    OfflineAnalyzer *m_offlineAnalyzer;' src/gui/MainWindow.h
-
-# 3. MainWindow.cpp – utworzenie instancji i zakładki
-sed -i '/m_frameDetail = new FrameDetailWidget;/a\    m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);' src/gui/MainWindow.cpp
-sed -i '/tabs->addTab(m_frameDetail, "Szczegóły ramki");/a\    tabs->addTab(m_offlineAnalyzer, "Analiza offline");' src/gui/MainWindow.cpp
-
-# 4. CMakeLists.txt – dodanie OfflineAnalyzer
-sed -i '/set(SOURCES/a\    src/core/OfflineAnalyzer.cpp' CMakeLists.txt
-sed -i '/set(HEADERS/a\    src/core/OfflineAnalyzer.h' CMakeLists.txt
-
-echo "=== Analiza offline dodana. Kompiluj: cd build && cmake .. && make -j\$(nproc) ==="

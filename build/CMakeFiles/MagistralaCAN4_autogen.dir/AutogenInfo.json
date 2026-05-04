@@ -345,6 +345,12 @@
 			null
 		],
 		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h",
+			"Mu",
+			"PRMOGMWJPH/moc_OfflineAnalyzer.cpp",
+			null
+		],
+		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.h",
 			"Mu",
 			"MXUWEOXILK/moc_MainWindow.cpp",
@@ -475,6 +481,11 @@
 		],
 		[
 			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp",
 			"Mu",
 			null
 		],

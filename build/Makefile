@@ -443,6 +443,30 @@ src/core/LuaScriptEngine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.s
 .PHONY : src/core/LuaScriptEngine.cpp.s
 
+src/core/OfflineAnalyzer.o: src/core/OfflineAnalyzer.cpp.o
+.PHONY : src/core/OfflineAnalyzer.o
+
+# target to build an object file
+src/core/OfflineAnalyzer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o
+.PHONY : src/core/OfflineAnalyzer.cpp.o
+
+src/core/OfflineAnalyzer.i: src/core/OfflineAnalyzer.cpp.i
+.PHONY : src/core/OfflineAnalyzer.i
+
+# target to preprocess a source file
+src/core/OfflineAnalyzer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.i
+.PHONY : src/core/OfflineAnalyzer.cpp.i
+
+src/core/OfflineAnalyzer.s: src/core/OfflineAnalyzer.cpp.s
+.PHONY : src/core/OfflineAnalyzer.s
+
+# target to generate assembly for a file
+src/core/OfflineAnalyzer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MagistralaCAN4.dir/build.make CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.s
+.PHONY : src/core/OfflineAnalyzer.cpp.s
+
 src/gui/MainWindow.o: src/gui/MainWindow.cpp.o
 .PHONY : src/gui/MainWindow.o
 
@@ -514,6 +538,9 @@ help:
 	@echo "... src/core/LuaScriptEngine.o"
 	@echo "... src/core/LuaScriptEngine.i"
 	@echo "... src/core/LuaScriptEngine.s"
+	@echo "... src/core/OfflineAnalyzer.o"
+	@echo "... src/core/OfflineAnalyzer.i"
+	@echo "... src/core/OfflineAnalyzer.s"
 	@echo "... src/gui/MainWindow.o"
 	@echo "... src/gui/MainWindow.i"
 	@echo "... src/gui/MainWindow.s"

@@ -21,6 +21,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o.d"
+  "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp" "CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o.d"
   "/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.cpp" "CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o" "gcc" "CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o.d"
   "" "MagistralaCAN4" "gcc" "CMakeFiles/MagistralaCAN4.dir/link.d"
   )

@@ -12,6 +12,8 @@
 #include "core/AssociativeLearner.h"
 #include "core/LuaScriptEngine.h"
 #include "core/FrameDetailWidget.h"
+#include "core/DbcParser.h"
+#include "core/OfflineAnalyzer.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -28,7 +30,8 @@ private slots:
     void onUserScroll(int value);
     void exportToCandump();
     void loadLuaScript();
-    void onFrameSelected(const QModelIndex &index);   // NOWE
+    void loadDbcFile();
+    void onFrameSelected(const QModelIndex &index);
 
 private:
     void setupStyle();
@@ -39,7 +42,9 @@ private:
     CanFrameModel *m_model;
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;
-    FrameDetailWidget *m_frameDetail;  // NOWE
+    FrameDetailWidget *m_frameDetail;
+    DbcParser m_dbcParser;
+    OfflineAnalyzer *m_offlineAnalyzer;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;

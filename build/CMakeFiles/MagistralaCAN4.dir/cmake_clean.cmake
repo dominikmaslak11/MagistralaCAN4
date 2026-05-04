@@ -27,6 +27,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o"
   "CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o.d"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o"
+  "CMakeFiles/MagistralaCAN4.dir/src/core/OfflineAnalyzer.cpp.o.d"
   "CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o"
   "CMakeFiles/MagistralaCAN4.dir/src/gui/MainWindow.cpp.o.d"
   "MagistralaCAN4"
