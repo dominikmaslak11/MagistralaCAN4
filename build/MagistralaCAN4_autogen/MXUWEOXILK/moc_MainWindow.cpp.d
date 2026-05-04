@@ -9,6 +9,7 @@
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -533,8 +534,10 @@
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QProgressBar \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSlider \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QWidget \
@@ -559,6 +562,7 @@
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlineedit.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qprogressbar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h \
   /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h \

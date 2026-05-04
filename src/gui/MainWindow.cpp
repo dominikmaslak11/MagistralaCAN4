@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_luaEngine = new LuaScriptEngine(this);
     m_luaEngine->setSniffer(&m_sniffer);
     m_frameDetail = new FrameDetailWidget;
+    m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
 
     m_batchTimer.setInterval(33);
     connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
@@ -58,59 +59,36 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
-    connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged,
-            this, &MainWindow::onUserScroll);
-
-    connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) {
-        qDebug() << "[Lua]" << msg;
-    });
-    connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) {
-        qWarning() << "[Lua ERROR]" << err;
-    });
-
-    // Podłączenie kliknięcia w tabeli -> widok szczegółów
+    connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
+    connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
+    connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
     connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
 }
 
 MainWindow::~MainWindow() {
-    if (m_sniffing) {
-        m_sniffer.stop();
-        m_batchTimer.stop();
-    }
+    if (m_sniffing) { m_sniffer.stop(); m_batchTimer.stop(); }
 }
 
 void MainWindow::toggleSniffing() {
     if (!m_sniffing) {
         QString iface = m_interfaceCombo->currentText().trimmed();
-        if (iface.isEmpty()) {
-            QMessageBox::warning(this, "Brak interfejsu", "Wybierz interfejs CAN.");
-            return;
-        }
-        m_sniffer.start(iface);
-        m_sniffing = true;
-        m_btnStartStop->setText("■ Stop");
-        m_interfaceCombo->setEnabled(false);
-        m_batchTimer.start();
+        if (iface.isEmpty()) { QMessageBox::warning(this, "Brak interfejsu", "Wybierz interfejs CAN."); return; }
+        m_sniffer.start(iface); m_sniffing = true;
+        m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false); m_batchTimer.start();
     } else {
-        m_sniffer.stop();
-        m_sniffing = false;
-        m_btnStartStop->setText("▶ Start");
-        m_interfaceCombo->setEnabled(true);
-        m_batchTimer.stop();
+        m_sniffer.stop(); m_sniffing = false;
+        m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true); m_batchTimer.stop();
         m_frameBuffer.clear();
     }
 }
 
-void MainWindow::onNewFrame(const CanFrame &frame) {
-    m_frameBuffer.append(frame);
-}
+void MainWindow::onNewFrame(const CanFrame &frame) { m_frameBuffer.append(frame); }
 
 void MainWindow::updateTableBatch() {
     if (m_frameBuffer.isEmpty()) return;
     m_model->processIncomingFrames(m_frameBuffer);
     m_frameBuffer.clear();
-    if (m_autoScroll)
-        m_tableView->scrollToBottom();
+    if (m_autoScroll) m_tableView->scrollToBottom();
 }
 
 void MainWindow::refreshInterfaces() {
@@ -119,15 +97,11 @@ void MainWindow::refreshInterfaces() {
     QStringList ifaces = CanInterfaceEnumerator::availableCanInterfaces();
     m_interfaceCombo->addItems(ifaces);
     int idx = m_interfaceCombo->findText(current);
-    if (idx >= 0)
-        m_interfaceCombo->setCurrentIndex(idx);
-    else if (!current.isEmpty())
-        m_interfaceCombo->setCurrentText(current);
+    if (idx >= 0) m_interfaceCombo->setCurrentIndex(idx);
+    else if (!current.isEmpty()) m_interfaceCombo->setCurrentText(current);
 }
 
-void MainWindow::applyOverwriteMode(bool enabled) {
-    m_model->setOverwriteMode(enabled);
-}
+void MainWindow::applyOverwriteMode(bool enabled) { m_model->setOverwriteMode(enabled); }
 
 void MainWindow::onUserScroll(int value) {
     QScrollBar *vbar = m_tableView->verticalScrollBar();
@@ -138,30 +112,16 @@ void MainWindow::onUserScroll(int value) {
 void MainWindow::exportToCandump() {
     QString fileName = QFileDialog::getSaveFileName(this, "Eksportuj do candump", "", "Pliki candump (*.log *.txt);;Wszystkie pliki (*)");
     if (fileName.isEmpty()) return;
-
     QVector<CanFrame> frames = m_model->allFrames();
     QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::warning(this, "Błąd", "Nie można zapisać pliku.");
-        return;
-    }
-
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) { QMessageBox::warning(this, "Błąd", "Nie można zapisać pliku."); return; }
     QTextStream out(&file);
-    QString iface = m_interfaceCombo->currentText().trimmed();
-    if (iface.isEmpty()) iface = "vcan0";
-
+    QString iface = m_interfaceCombo->currentText().trimmed(); if (iface.isEmpty()) iface = "vcan0";
     for (const auto &frame : frames) {
-        QString line = QString("(%1) %2 %3#%4")
-                .arg(frame.timestamp)
-                .arg(iface)
-                .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0'))
-                .arg(frame.dlc < 8 ? QString::number(frame.dlc) : "8");
-        for (int i = 0; i < frame.dlc && i < 8; ++i) {
-            line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
-        }
+        QString line = QString("(%1) %2 %3#%4").arg(frame.timestamp).arg(iface).arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0')).arg(frame.dlc < 8 ? QString::number(frame.dlc) : "8");
+        for (int i = 0; i < frame.dlc && i < 8; ++i) line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
         out << line << "\n";
     }
-
     file.close();
     QMessageBox::information(this, "Eksport", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
 }
@@ -172,149 +132,69 @@ void MainWindow::loadLuaScript() {
     m_luaEngine->loadScript(fileName);
 }
 
+void MainWindow::loadDbcFile() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Wczytaj plik DBC", "", "Pliki DBC (*.dbc);;Wszystkie pliki (*)");
+    if (fileName.isEmpty()) return;
+    if (m_dbcParser.load(fileName)) {
+        m_frameDetail->setDbcParser(&m_dbcParser);
+        QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
+    } else {
+        QMessageBox::warning(this, "DBC", "Nie udało się wczytać pliku DBC.");
+    }
+}
+
 void MainWindow::onFrameSelected(const QModelIndex &index) {
     if (!index.isValid()) return;
-    CanFrame frame = m_model->frameAt(index.row()); // wymaga metody frameAt w modelu
+    CanFrame frame = m_model->frameAt(index.row());
     m_frameDetail->loadFrame(frame);
 }
 
 void MainWindow::setupToolBar() {
-    auto *toolbar = addToolBar("Główne");
-    toolbar->setMovable(false);
-
-    m_interfaceCombo = new QComboBox;
-    m_interfaceCombo->setEditable(true);
-    m_interfaceCombo->setMinimumWidth(120);
-    m_interfaceCombo->setToolTip("Wybierz interfejs CAN (np. vcan0, can0)");
+    auto *toolbar = addToolBar("Główne"); toolbar->setMovable(false);
+    m_interfaceCombo = new QComboBox; m_interfaceCombo->setEditable(true); m_interfaceCombo->setMinimumWidth(120);
     toolbar->addWidget(m_interfaceCombo);
-
-    auto *refreshBtn = new QPushButton("↻");
-    refreshBtn->setToolTip("Odśwież listę interfejsów");
-    connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
+    auto *refreshBtn = new QPushButton("↻"); connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
     toolbar->addWidget(refreshBtn);
-
     toolbar->addSeparator();
-
-    m_btnStartStop = new QPushButton("▶ Start");
-    connect(m_btnStartStop, &QPushButton::clicked, this, &MainWindow::toggleSniffing);
+    m_btnStartStop = new QPushButton("▶ Start"); connect(m_btnStartStop, &QPushButton::clicked, this, &MainWindow::toggleSniffing);
     toolbar->addWidget(m_btnStartStop);
-
-    m_overwriteCheck = new QCheckBox("Nadpisywanie");
-    m_overwriteCheck->setChecked(true);
-    connect(m_overwriteCheck, &QCheckBox::toggled, this, &MainWindow::applyOverwriteMode);
+    m_overwriteCheck = new QCheckBox("Nadpisywanie"); m_overwriteCheck->setChecked(true); connect(m_overwriteCheck, &QCheckBox::toggled, this, &MainWindow::applyOverwriteMode);
     toolbar->addWidget(m_overwriteCheck);
-
     toolbar->addSeparator();
-
-    m_statusLabel = new QLabel("Rozłączony");
-    m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
+    m_statusLabel = new QLabel("Rozłączony"); m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
     toolbar->addWidget(m_statusLabel);
-
     toolbar->addSeparator();
-
-    QAction *clearAction = toolbar->addAction("🗙 Wyczyść");
-    if (clearAction) {
-        connect(clearAction, &QAction::triggered, this, [this]() {
-            m_model->clear();
-        });
-        QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction));
-        if (clearBtn) clearBtn->setObjectName("clearButton");
-    }
-
-    QAction *exportAction = toolbar->addAction("📥 Eksportuj candump");
-    connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
-
-    QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua");
-    connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
+    QAction *clearAction = toolbar->addAction("🗙 Wyczyść"); if (clearAction) { connect(clearAction, &QAction::triggered, [this]() { m_model->clear(); }); QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction)); if (clearBtn) clearBtn->setObjectName("clearButton"); }
+    QAction *exportAction = toolbar->addAction("📥 Eksportuj candump"); connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
+    QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
+    QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
 }
 
 void MainWindow::setupCentralWidget() {
     auto *tabs = new QTabWidget;
     tabs->addTab(m_tableView, "Ruch CAN");
     tabs->addTab(m_learner, "Uczenie asocjacyjne");
-    tabs->addTab(m_frameDetail, "Szczegóły ramki");   // NOWA ZAKŁADKA
+    tabs->addTab(m_frameDetail, "Szczegóły ramki");
+    tabs->addTab(m_offlineAnalyzer, "Analiza offline");
     setCentralWidget(tabs);
 }
 
 void MainWindow::setupStyle() {
     qApp->setStyleSheet(R"(
-        QMainWindow {
-            background-color: #0a0e17;
-        }
-        QToolBar {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #1a1a2e, stop:1 #16213e);
-            border-bottom: 2px solid #e94560;
-            spacing: 8px;
-            padding: 4px;
-        }
-        QPushButton {
-            background: #1a1a2e;
-            color: #00ffaa;
-            border: 1px solid #e94560;
-            border-radius: 4px;
-            padding: 5px 15px;
-            font-weight: bold;
-        }
-        QPushButton:hover {
-            background: #e94560;
-            color: #0a0e17;
-        }
-        QComboBox {
-            background: #1a1a2e;
-            color: #00ffaa;
-            border: 1px solid #e94560;
-            border-radius: 4px;
-            padding: 3px 8px;
-            min-width: 100px;
-        }
+        QMainWindow { background-color: #0a0e17; }
+        QToolBar { background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1a1a2e, stop:1 #16213e); border-bottom: 2px solid #e94560; spacing: 8px; padding: 4px; }
+        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 5px 15px; font-weight: bold; }
+        QPushButton:hover { background: #e94560; color: #0a0e17; }
+        QComboBox { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 3px 8px; min-width: 100px; }
         QComboBox::drop-down { border: none; }
-        QComboBox QAbstractItemView {
-            background: #1a1a2e;
-            color: #00ffaa;
-            selection-background-color: #e94560;
-        }
-        QCheckBox {
-            color: #ff66cc; font-weight: bold;
-        }
+        QComboBox QAbstractItemView { background: #1a1a2e; color: #00ffaa; selection-background-color: #e94560; }
+        QCheckBox { color: #ff66cc; font-weight: bold; }
         QCheckBox::indicator { width: 16px; height: 16px; }
         QLabel { color: #c0c0c0; }
-        QTableView, QTableWidget {
-            background-color: #0a0e17;
-            alternate-background-color: #161b22;
-            color: #c0c0c0;
-            gridline-color: #2a2a3c;
-            selection-background-color: #e94560;
-            selection-color: #ffffff;
-            font-family: "Consolas", "Courier New", monospace;
-            font-size: 12px;
-        }
-        QHeaderView::section {
-            background-color: #1a1a2e;
-            color: #ff66cc;
-            font-weight: bold;
-            padding: 4px;
-            border: none;
-            border-bottom: 2px solid #e94560;
-        }
-        QToolButton#clearButton {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                stop:0 #1a1a2e, stop:0.5 #2c0735, stop:1 #e94560);
-            color: #00ffaa;
-            border: 1px solid #e94560;
-            border-radius: 6px;
-            padding: 6px 14px;
-            font-weight: bold;
-        }
-        QToolButton#clearButton:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                stop:0 #e94560, stop:0.5 #2c0735, stop:1 #1a1a2e);
-            color: #0a0e17;
-            border: 1px solid #ff66cc;
-        }
-        QToolButton#clearButton:pressed {
-            background: #2c0735;
-            border: 1px solid #ff00ff;
-        }
+        QTableView, QTableWidget { background-color: #0a0e17; alternate-background-color: #161b22; color: #c0c0c0; gridline-color: #2a2a3c; selection-background-color: #e94560; selection-color: #ffffff; font-family: "Consolas", "Courier New", monospace; font-size: 12px; }
+        QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #e94560; }
+        QToolButton#clearButton { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #1a1a2e, stop:0.5 #2c0735, stop:1 #e94560); color: #00ffaa; border: 1px solid #e94560; border-radius: 6px; padding: 6px 14px; font-weight: bold; }
+        QToolButton#clearButton:hover { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #e94560, stop:0.5 #2c0735, stop:1 #1a1a2e); color: #0a0e17; border: 1px solid #ff66cc; }
+        QToolButton#clearButton:pressed { background: #2c0735; border: 1px solid #ff00ff; }
     )");
 }

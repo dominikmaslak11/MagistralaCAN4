@@ -5,12 +5,14 @@
 #include <QScrollArea>
 #include <QHash>
 #include "CanFrame.h"
+#include "DbcParser.h"
 
 class FrameDetailWidget : public QWidget {
     Q_OBJECT
 public:
     explicit FrameDetailWidget(QWidget *parent = nullptr);
     void loadFrame(const CanFrame &frame);
+    void setDbcParser(DbcParser *parser);   // NOWE
 
 private:
     void buildGrid();
@@ -22,8 +24,9 @@ private:
     QLabel *m_idLabel;
     QLabel *m_dlcLabel;
     QLabel *m_timestampLabel;
-    QVector<QLabel*> m_byteLabels;      // etykiety bajtów (hex)
-    QVector<QVector<QLabel*>> m_bitLabels;  // etykiety bitów (8 bajtów × 8 bitów)
-    QHash<uint32_t, CanFrame> m_lastFrameMap; // ostatnia ramka dla każdego ID
-    uint32_t m_currentId = 0xFFFFFFFF;
+    QLabel *m_signalLabel;                 // NOWE
+    QVector<QLabel*> m_byteLabels;
+    QVector<QVector<QLabel*>> m_bitLabels;
+    QHash<uint32_t, CanFrame> m_lastFrameMap;
+    DbcParser *m_dbcParser = nullptr;      // NOWE
 };

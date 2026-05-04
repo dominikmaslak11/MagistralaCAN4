@@ -10,6 +10,8 @@ find_package(Lua REQUIRED)
 find_package(OpenCL REQUIRED)
 
 set(SOURCES
+    src/core/OfflineAnalyzer.cpp
+    src/core/DbcParser.cpp
     main.cpp
     src/core/CanSniffer.cpp
     src/core/CanFrameModel.cpp
@@ -24,6 +26,8 @@ set(SOURCES
 )
 
 set(HEADERS
+    src/core/OfflineAnalyzer.h
+    src/core/DbcParser.h
     src/core/CanFrame.h
     src/core/CanSniffer.h
     src/core/CanFrameModel.h

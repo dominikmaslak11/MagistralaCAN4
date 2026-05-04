@@ -28,6 +28,8 @@
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.cpp
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.cpp
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/gui/MainWindow.h
  /usr/bin/cmake
@@ -555,8 +557,10 @@
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QProgressBar
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QScrollArea
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QSlider
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableView
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTableWidget
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QWidget
@@ -581,6 +585,7 @@
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlineedit.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qprogressbar.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qscrollarea.h
@@ -8544,6 +8549,7 @@ MagistralaCAN4
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir/src/core/CanInterfaceEnumerator.cpp.o
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir/src/core/CanSniffer.cpp.o
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir/src/core/CandidateModel.cpp.o
+ /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir/src/core/DbcParser.cpp.o
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir/src/core/FrameDetailWidget.cpp.o
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir/src/core/GpuCorrelator.cpp.o
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir/src/core/LuaScriptEngine.cpp.o
