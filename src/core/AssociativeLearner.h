@@ -62,6 +62,7 @@ public slots:
     void predictNextFrames();
     void updateCrossVariableMatrix();
     void computeMutualInformation();
+    void computeMIC();
     void autoKMeans();
     void runPcaClustering();
 
@@ -166,6 +167,8 @@ private:
     QLineSeries *m_elbowSeries;
     // Mutual Information
     QPushButton  *m_miBtn;
+    QPushButton  *m_micBtn;
+    QTableWidget *m_micTable;
     QTableWidget *m_miTable;
     // Macierz korelacji zmiennych
     QPushButton  *m_crossVarBtn;

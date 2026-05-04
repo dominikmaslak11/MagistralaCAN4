@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
-# fix_non_event_simple.sh – dodaje #include "Logger.h" do AssociativeLearner.cpp
+# fix_mic_qvector.sh – poprawki kompilacji MIC
 set -e
-echo "=== Dodawanie include Logger.h ==="
-# Wstaw #include "Logger.h" na samym początku pliku (przed pierwszym istniejącym include)
-sed -i '1i #include "Logger.h"' src/core/AssociativeLearner.cpp
+echo "=== Naprawa konwersji QVector -> std::vector w MIC ==="
+
+# 1. Popraw dwie linie przypisania std::vector = QVector
+sed -i 's/std::vector<double> xSorted = values;/std::vector<double> xSorted(values.begin(), values.end());/' src/core/AssociativeLearner.cpp
+sed -i 's/std::vector<double> ySorted = byteVals;/std::vector<double> ySorted(byteVals.begin(), byteVals.end());/' src/core/AssociativeLearner.cpp
+
+# 2. Usuń zdublowane #include "Logger.h" na początku pliku (opcjonalnie, dla porządku)
+sed -i '2{/^#include "Logger.h"$/d}' src/core/AssociativeLearner.cpp
+
 echo "Gotowe. Kompiluj: cd build && make -j\$(nproc)"

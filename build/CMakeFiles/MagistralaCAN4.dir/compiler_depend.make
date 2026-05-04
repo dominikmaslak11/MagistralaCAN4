@@ -2178,6 +2178,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzf
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CandidateModel.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -2553,7 +2554,10 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzf
   /usr/include/x86_64-linux-gnu/qt6/QtConcurrent/qtconcurrentthreadengine.h \
   /usr/include/x86_64-linux-gnu/qt6/QtConcurrent/qtconcurrentversion.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QAbstractTableModel \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDateTime \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDeadlineTimer \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QFile \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QJsonArray \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QJsonDocument \
@@ -2570,6 +2574,7 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: /home/nz2xzhkzf
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QSizeF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QVariant \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QVector \

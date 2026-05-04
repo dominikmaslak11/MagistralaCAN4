@@ -1,5 +1,4 @@
 #include "Logger.h"
-#include "Logger.h"
 #include "AssociativeLearner.h"
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -227,6 +226,21 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_miTable->setShowGrid(false); m_miTable->setAlternatingRowColors(false);
     m_miTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_miTable->setMinimumHeight(500);  /* wystarczająco na 20 wierszy */
+    // --- Maximal Information Coefficient ---
+    auto *micLayout = new QHBoxLayout;
+    micLayout->addWidget(new QLabel("Maximal Information Coefficient (MIC):"));
+    m_micBtn = new QPushButton("Oblicz MIC");
+    micLayout->addWidget(m_micBtn);
+    micLayout->addStretch();
+    mainLayout->addLayout(micLayout);
+    m_micTable = new QTableWidget(0,3);
+    m_micTable->setHorizontalHeaderLabels({"CAN ID","Bajt","MIC"});
+    m_micTable->verticalHeader()->hide(); m_micTable->horizontalHeader()->setStretchLastSection(true);
+    m_micTable->setShowGrid(false); m_micTable->setAlternatingRowColors(false);
+    m_micTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_micTable->setMinimumHeight(500);
+    mainLayout->addWidget(m_micTable);
+    connect(m_micBtn, &QPushButton::clicked, this, &AssociativeLearner::computeMIC);
     mainLayout->addWidget(m_miTable);
     connect(m_miBtn, &QPushButton::clicked, this, &AssociativeLearner::computeMutualInformation);
     connect(m_markovTimer, &QTimer::timeout, this, &AssociativeLearner::predictNextFrames);
@@ -1347,4 +1361,135 @@ void AssociativeLearner::markNonEvent() {
     EventRecord rec; rec.windowFrames = window; rec.idFeatures = buildFeatureVectors(window);
     m_nonEvents.push_back(rec);
     Logger::log("Zarejestrowano BRAK zdarzenia");
+}
+
+// ---------- Maximal Information Coefficient (MIC) ----------
+void AssociativeLearner::computeMIC() {
+    QVector<ValueObservation> obs = currentObservations();
+    if (obs.size() < 10) {
+        m_micTable->setRowCount(0);
+        return;
+    }
+
+    QVector<double> values;
+    for (const auto &o : obs) values.append(o.value);
+
+    // Znajdź ID wspólne dla wszystkich obserwacji
+    QSet<uint32_t> commonIds;
+    bool first = true;
+    for (const auto &o : obs) {
+        QSet<uint32_t> ids;
+        for (auto it = o.idAverageBytes.begin(); it != o.idAverageBytes.end(); ++it)
+            ids.insert(it.key());
+        if (first) { commonIds = ids; first = false; }
+        else commonIds &= ids;
+    }
+
+    struct MICEntry { uint32_t id; int byte; double mic; };
+    QVector<MICEntry> entries;
+    QMutex mutex;
+
+    QVector<QPair<uint32_t,int>> tasks;
+    for (uint32_t id : commonIds)
+        for (int b = 0; b < 64; ++b)
+            tasks.append({id, b});
+
+    QtConcurrent::blockingMap(tasks, [&](const QPair<uint32_t,int> &task) {
+        uint32_t id = task.first;
+        int byte = task.second;
+
+        QVector<double> byteVals;
+        for (const auto &o : obs) {
+            auto it = o.idAverageBytes.find(id);
+            if (it != o.idAverageBytes.end())
+                byteVals.append((double)it.value()[byte]);
+        }
+        if (byteVals.size() < 10) return;
+
+        int N = values.size();
+        double micMax = 0.0;
+
+        // Próbkuj różne podziały siatki (max 8x8)
+        for (int xBins = 2; xBins <= 8; ++xBins) {
+            for (int yBins = 2; yBins <= 8; ++yBins) {
+                if (xBins * yBins > N/2) continue;  // zbyt dużo komórek
+
+                // Wyznacz granice binów dla X (wartości)
+                std::vector<double> xSorted(values.begin(), values.end());
+                std::sort(xSorted.begin(), xSorted.end());
+                std::vector<double> xEdges(xBins+1);
+                for (int i = 0; i <= xBins; ++i)
+                    xEdges[i] = xSorted[(int)(i * (N-1) / (double)xBins)];
+
+                // Wyznacz granice binów dla Y (bajtów)
+                std::vector<double> ySorted(byteVals.begin(), byteVals.end());
+                std::sort(ySorted.begin(), ySorted.end());
+                std::vector<double> yEdges(yBins+1);
+                for (int i = 0; i <= yBins; ++i)
+                    yEdges[i] = ySorted[(int)(i * (N-1) / (double)yBins)];
+
+                // Wypełnij histogram
+                QVector<QVector<int>> histogram(xBins, QVector<int>(yBins, 0));
+                for (int i = 0; i < N; ++i) {
+                    int xi = std::upper_bound(xEdges.begin(), xEdges.end(), values[i]) - xEdges.begin() - 1;
+                    int yi = std::upper_bound(yEdges.begin(), yEdges.end(), byteVals[i]) - yEdges.begin() - 1;
+                    if (xi >= 0 && xi < xBins && yi >= 0 && yi < yBins)
+                        histogram[xi][yi]++;
+                }
+
+                // Oblicz MI
+                double Hx = 0.0, Hy = 0.0, Hxy = 0.0;
+                QVector<int> margX(xBins, 0), margY(yBins, 0);
+                for (int i = 0; i < xBins; ++i)
+                    for (int j = 0; j < yBins; ++j) {
+                        margX[i] += histogram[i][j];
+                        margY[j] += histogram[i][j];
+                    }
+
+                for (int i = 0; i < xBins; ++i)
+                    if (margX[i] > 0) {
+                        double px = (double)margX[i] / N;
+                        Hx -= px * log(px);
+                    }
+                for (int j = 0; j < yBins; ++j)
+                    if (margY[j] > 0) {
+                        double py = (double)margY[j] / N;
+                        Hy -= py * log(py);
+                    }
+                for (int i = 0; i < xBins; ++i)
+                    for (int j = 0; j < yBins; ++j) {
+                        double pxy = (double)histogram[i][j] / N;
+                        if (pxy > 0)
+                            Hxy -= pxy * log(pxy);
+                    }
+
+                double mi = Hx + Hy - Hxy;
+                double norm = std::log(std::min(xBins, yBins));
+                if (norm > 0) {
+                    double mic = mi / norm;
+                    if (mic > micMax) micMax = mic;
+                }
+            }
+        }
+
+        QMutexLocker lock(&mutex);
+        entries.append({id, byte, micMax});
+    });
+
+    // Sortuj malejąco według MIC
+    std::sort(entries.begin(), entries.end(),
+              [](const MICEntry &a, const MICEntry &b) { return a.mic > b.mic; });
+
+    m_micTable->setRowCount(entries.size());
+    for (int i = 0; i < entries.size(); ++i) {
+        const auto &e = entries[i];
+        m_micTable->setItem(i, 0, new QTableWidgetItem(QString("0x%1").arg(e.id,3,16,QChar('0')).toUpper()));
+        m_micTable->setItem(i, 1, new QTableWidgetItem(QString::number(e.byte)));
+        m_micTable->setItem(i, 2, new QTableWidgetItem(QString::number(e.mic, 'f', 4)));
+
+        QColor col = (e.mic > 0.5) ? QColor("#00ffaa") : (e.mic > 0.3) ? QColor("#ffaa00") : QColor("#ff66cc");
+        m_micTable->item(i,0)->setForeground(QColor("#c0c0c0"));
+        m_micTable->item(i,1)->setForeground(QColor("#c0c0c0"));
+        m_micTable->item(i,2)->setForeground(col);
+    }
 }
