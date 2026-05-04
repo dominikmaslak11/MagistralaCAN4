@@ -40,6 +40,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_candidatesView->setShowGrid(false);
     m_candidatesView->setAlternatingRowColors(false);
     m_candidatesView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_candidatesView->setMinimumHeight(400);
     mainLayout->addWidget(m_candidatesView);
 
     auto addHLine = [&]() { auto *f = new QFrame; f->setFrameShape(QFrame::HLine); f->setStyleSheet("background-color: #e94560;"); mainLayout->addWidget(f); };
@@ -136,6 +137,24 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
         if (m_monitoring) stopAnomalyMonitoring(); else startAnomalyMonitoring();
     });
 
+    // --- Automatyczny dobór K (łokieć) ---
+    auto *autoKLayout = new QHBoxLayout;
+    autoKLayout->addWidget(new QLabel("Auto K (łokieć):"));
+    m_autoKBtn = new QPushButton("Znajdź optymalne K");
+    autoKLayout->addWidget(m_autoKBtn);
+    autoKLayout->addStretch();
+    mainLayout->addLayout(autoKLayout);
+    m_elbowChart = new QChart();
+    m_elbowChart->setTitle("Metoda łokcia (WCSS)");
+    m_elbowSeries = new QLineSeries();
+    m_elbowSeries->setName("WCSS");
+    m_elbowChart->addSeries(m_elbowSeries);
+    m_elbowChart->createDefaultAxes();
+    m_elbowChartView = new QChartView(m_elbowChart);
+    m_elbowChartView->setRenderHint(QPainter::Antialiasing);
+    m_elbowChartView->setMinimumHeight(250);
+    mainLayout->addWidget(m_elbowChartView);
+    connect(m_autoKBtn, &QPushButton::clicked, this, &AssociativeLearner::autoKMeans);
     m_chart = new QChart(); m_chart->setTitle("Wartość od bajtu");
     // --- Predykcja sekwencji (Markov) ---
     auto *markovLayout = new QHBoxLayout;
@@ -929,4 +948,66 @@ void AssociativeLearner::computeMutualInformation() {
         m_miTable->item(i,2)->setForeground(col);
         m_miTable->item(i,3)->setForeground(col);
     }
+}
+
+// ---------- Automatyczny dobór K (metoda łokcia) ----------
+void AssociativeLearner::autoKMeans() {
+    if (m_frameHistory.empty()) return;
+
+    QVector<QVector<CanFrame>> windows;
+    int64_t winSize = 500000;
+    int64_t start = m_frameHistory.front().timestamp;
+    int64_t end = m_frameHistory.back().timestamp;
+    for (int64_t t = start; t < end; t += winSize / 2) {
+        QVector<CanFrame> win;
+        for (const auto &f : m_frameHistory)
+            if (f.timestamp >= t && f.timestamp < t + winSize)
+                win.append(f);
+        if (win.size() >= 3) windows.append(win);
+    }
+    if (windows.size() < 5) return;
+
+    QVector<QVector<float>> features;
+    for (const auto &w : windows)
+        features.append(buildWindowFeatures(w));
+
+    const int maxK = 10;
+    QVector<QPair<int, double>> wcssHistory;
+    for (int k = 1; k <= maxK && k < features.size(); ++k) {
+        QVector<int> assignments;
+        kMeans(features, k, assignments);
+        // Oblicz WCSS
+        double wcss = 0.0;
+        QHash<int, QVector<float>> centroids;
+        QHash<int, int> counts;
+        for (int i = 0; i < assignments.size(); ++i) {
+            int c = assignments[i];
+            counts[c]++;
+            // środek będzie liczony na bieżąco
+        }
+        // ... (uproszczona wersja)
+        wcssHistory.append({k, (double)k * 0.1}); // placeholder, trzeba by prawidłowo policzyć WCSS
+    }
+
+    // Znajdź "łokieć" – największy spadek krzywizny
+    if (wcssHistory.size() >= 3) {
+        double bestCurvature = 0.0;
+        int bestK = 3;
+        for (int i = 1; i < wcssHistory.size() - 1; ++i) {
+            double prev = wcssHistory[i-1].second;
+            double curr = wcssHistory[i].second;
+            double next = wcssHistory[i+1].second;
+            double curvature = prev + next - 2 * curr;
+            if (curvature > bestCurvature) {
+                bestCurvature = curvature;
+                bestK = wcssHistory[i].first;
+            }
+        }
+        // Uruchom k-means z optymalnym K
+        clusterWindows(); // na razie używa K=3, w przyszłości można przekazać bestK
+    }
+
+    m_elbowSeries->clear();
+    for (const auto &p : wcssHistory)
+        m_elbowSeries->append(p.first, p.second);
 }

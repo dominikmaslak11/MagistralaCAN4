@@ -518,6 +518,10 @@ CMakeFiles/MagistralaCAN4.dir/src/core/AssociativeLearner.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/QImage \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qimage.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLineSeries \
+ /usr/include/x86_64-linux-gnu/qt6/QtCharts/qlineseries.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCharts/QXYSeries \
+ /usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h \
  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QMetaType \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qmetatype.h \

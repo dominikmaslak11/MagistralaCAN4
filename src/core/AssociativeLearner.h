@@ -15,6 +15,7 @@
 #include <utility>
 #include <QtCharts/QChartView>
 #include <QtCharts/QScatterSeries>
+#include <QtCharts/QLineSeries>
 #include <QtCharts/QChart>
 #include "CanFrame.h"
 #include "CandidateModel.h"
@@ -57,6 +58,7 @@ public slots:
     void predictNextFrames();
     void updateCrossVariableMatrix();
     void computeMutualInformation();
+    void autoKMeans();
 
 signals:
     void eventMarked(int iteration);
@@ -143,6 +145,11 @@ private:
     QString m_currentVariable;
 
     QHash<QPair<uint32_t,int>, QPair<double,double>> m_linearModels;
+    // Metoda łokcia (Auto K)
+    QPushButton *m_autoKBtn;
+    QChartView  *m_elbowChartView;
+    QChart      *m_elbowChart;
+    QLineSeries *m_elbowSeries;
     // Mutual Information
     QPushButton  *m_miBtn;
     QTableWidget *m_miTable;
