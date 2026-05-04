@@ -554,6 +554,7 @@ void AssociativeLearner::checkAnomaly() {
         m_anomalyTable->setItem(row,0,new QTableWidgetItem(QString::number(now/1000000.0,'f',2)));
         m_anomalyTable->setItem(row,1,new QTableWidgetItem(QString::number(score,'f',2)));
         m_anomalyTable->setItem(row,2,new QTableWidgetItem("Anomalia wykryta")); m_anomalyTable->scrollToBottom(); }
+        emit anomalyDetected();
 }
 
 // ---------- Wykres ----------
@@ -646,6 +647,7 @@ void AssociativeLearner::checkAutoEvent() {
     if (found) {
         markEvent();  // Automatycznie zarejestruj zdarzenie
         m_autoEventLabel->setText("Ostatnie auto-zdarzenie: OK");
+        emit anomalyDetected();
     }
 }
 

@@ -59,6 +59,7 @@ public slots:
 
 signals:
     void eventMarked(int iteration);
+    void anomalyDetected();
 
 private slots:
     void onVariableChanged(int idx);
