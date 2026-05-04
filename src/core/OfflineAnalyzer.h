@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QSlider>
+#include <QCheckBox>
 #include <QTimer>
 #include <QVector>
 #include "CanFrame.h"
@@ -36,6 +37,7 @@ private:
     QPushButton *m_playPauseBtn;
     QPushButton *m_stopBtn;
     QSlider *m_speedSlider;
+    QCheckBox *m_originalTimestampsCheck;   // NOWE
     QLabel *m_statusLabel;
     QProgressBar *m_progressBar;
     QTimer m_timer;
