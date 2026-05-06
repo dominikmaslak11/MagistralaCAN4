@@ -51,6 +51,7 @@ public slots:
     void exportModels();
     void importModels();
     void generateLuaScript();
+    void exportHtmlReport();
     void clusterWindows();
     void trainPrediction();
     void updatePredictionDisplay();
@@ -140,6 +141,7 @@ private:
     QPushButton  *m_exportModelsBtn;
     QPushButton  *m_importModelsBtn;
     QPushButton  *m_generateLuaBtn;
+    QPushButton  *m_exportReportBtn;
     QPushButton  *m_loadBtn;
 
     // Wykres

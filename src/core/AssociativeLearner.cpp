@@ -259,9 +259,11 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_exportModelsBtn = new QPushButton("📤 Eksportuj modele");
     m_importModelsBtn = new QPushButton("📥 Importuj modele");
     m_generateLuaBtn = new QPushButton("📝 Generuj skrypt Lua");
+    m_exportReportBtn = new QPushButton("📄 Eksportuj raport HTML");
     serLayout->addWidget(m_saveBtn); serLayout->addWidget(m_loadBtn);
     serLayout->addWidget(m_exportModelsBtn); serLayout->addWidget(m_importModelsBtn);
     serLayout->addWidget(m_generateLuaBtn);
+    serLayout->addWidget(m_exportReportBtn);
     mainLayout->addLayout(serLayout);
 
     connect(m_markEventBtn, &QPushButton::clicked, this, &AssociativeLearner::markEvent);
@@ -273,6 +275,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     connect(m_exportModelsBtn, &QPushButton::clicked, this, &AssociativeLearner::exportModels);
     connect(m_importModelsBtn, &QPushButton::clicked, this, &AssociativeLearner::importModels);
     connect(m_generateLuaBtn, &QPushButton::clicked, this, &AssociativeLearner::generateLuaScript);
+    connect(m_exportReportBtn, &QPushButton::clicked, this, &AssociativeLearner::exportHtmlReport);
     connect(m_ngramCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int) { updateSequenceTable(); });
     connect(m_clusterBtn, &QPushButton::clicked, this, &AssociativeLearner::clusterWindows);
     connect(m_trainPredictionBtn, &QPushButton::clicked, this, &AssociativeLearner::trainPrediction);
@@ -1575,4 +1578,101 @@ void AssociativeLearner::generateLuaScript() {
 
     Logger::log(QString("Wygenerowano skrypt Lua: %1").arg(path));
     QMessageBox::information(this, "Generator Lua", "Skrypt Lua został zapisany.");
+}
+
+// ---------- Eksport raportu HTML ----------
+void AssociativeLearner::exportHtmlReport() {
+    QString path = QFileDialog::getSaveFileName(this, "Zapisz raport HTML", "raport.html", "HTML (*.html)");
+    if (path.isEmpty()) return;
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Błąd", "Nie można zapisać pliku.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out << "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Raport MagistralaCAN4</title>";
+    out << "<style>body{background:#0a0e17;color:#c0c0c0;font-family:Consolas,monospace;padding:20px;}"
+        << "h1{color:#00ffaa;}h2{color:#ff66cc;}table{border-collapse:collapse;width:100%;margin-bottom:30px;}"
+        << "th{background:#1a1a2e;color:#ffaa00;padding:6px;text-align:left;}"
+        << "td{padding:4px;border-bottom:1px solid #2a2a3c;}.green{color:#00ffaa}.red{color:#ff66cc}.orange{color:#ffaa00}";
+    out << "</style></head><body>";
+    out << "<h1>Raport MagistralaCAN4</h1>";
+    out << "<p>Wygenerowano: " << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") << "</p>";
+    out << "<p>Zmienna: " << m_currentVariable << ", Liczba iteracji: " << m_iteration << "</p>";
+
+    // Kandydaci
+    out << "<h2>Kandydaci</h2><table><tr><th>ID</th><th>Opis</th><th>Pewność</th><th>Wystąpienia</th></tr>";
+    if (m_candidateModel) {
+        for (int r = 0; r < m_candidateModel->rowCount(); ++r) {
+            QModelIndex idxId = m_candidateModel->index(r, 0);
+            QModelIndex idxDesc = m_candidateModel->index(r, 1);
+            QModelIndex idxScore = m_candidateModel->index(r, 2);
+            QModelIndex idxCount = m_candidateModel->index(r, 3);
+            out << "<tr>"
+                << "<td>" << (idxId.isValid() ? m_candidateModel->data(idxId).toString() : "") << "</td>"
+                << "<td>" << (idxDesc.isValid() ? m_candidateModel->data(idxDesc).toString() : "") << "</td>"
+                << "<td>" << (idxScore.isValid() ? m_candidateModel->data(idxScore).toString() : "") << "</td>"
+                << "<td>" << (idxCount.isValid() ? m_candidateModel->data(idxCount).toString() : "") << "</td>"
+                << "</tr>";
+        }
+    }
+    out << "</table>";
+
+    // Pomocnicza lambda do generowania tabel QTableWidget
+    auto htmlTable = [&](QTableWidget *tbl, const QString &title, const QStringList &headers) {
+        if (!tbl || tbl->rowCount() == 0) return;
+        out << "<h2>" << title << "</h2><table><tr>";
+        foreach(const QString &h, headers) out << "<th>" << h << "</th>";
+        out << "</tr>";
+        for (int r = 0; r < tbl->rowCount(); ++r) {
+            out << "<tr>";
+            for (int c = 0; c < headers.size(); ++c) {
+                QTableWidgetItem *it = tbl->item(r, c);
+                out << "<td>" << (it ? it->text() : "") << "</td>";
+            }
+            out << "</tr>";
+        }
+        out << "</table>";
+    };
+
+    htmlTable(m_correlationTable, "Korelacja wartość-bajt", {"CAN ID", "Bajt", "Korelacja"});
+    htmlTable(m_sequenceTable, "Sekwencje", {"Sekwencja ID", "Wystąpienia", "Pewność"});
+    htmlTable(m_crossByteTable, "Korelacja międzybajtowa", {"ID1", "Bajt1", "ID2", "Bajt2", "Korelacja"});
+    htmlTable(m_miTable, "Mutual Information", {"CAN ID", "Bajt", "MI (nat)", "Porównanie"});
+    htmlTable(m_micTable, "Maximal Information Coefficient", {"CAN ID", "Bajt", "MIC"});
+    htmlTable(m_predictionTable, "Predykcja wartości", {"CAN ID", "Bajt", "a", "b", "Prognoza"});
+    htmlTable(m_clusterTable, "Klastrowanie", {"Klaster", "Śr. ramek", "Dominujące ID", "Liczba okien"});
+    htmlTable(m_markovTable, "Predykcja Markowa", {"Ostatnie ID", "Przewidywane ID", "Prawdopodobieństwo"});
+    htmlTable(m_anomalyTable, "Anomalie", {"Czas (s)", "Wynik", "Opis"});
+
+    // Macierz korelacji zmiennych (z kolorami tła)
+    if (m_crossVarTable && m_crossVarTable->rowCount() > 0 && m_crossVarTable->columnCount() > 0) {
+        out << "<h2>Macierz korelacji zmiennych</h2><table><tr><th></th>";
+        for (int c = 0; c < m_crossVarTable->columnCount(); ++c) {
+            QTableWidgetItem *hitem = m_crossVarTable->horizontalHeaderItem(c);
+            out << "<th>" << (hitem ? hitem->text() : "") << "</th>";
+        }
+        out << "</tr>";
+        for (int r = 0; r < m_crossVarTable->rowCount(); ++r) {
+            QTableWidgetItem *vitem = m_crossVarTable->verticalHeaderItem(r);
+            out << "<tr><th>" << (vitem ? vitem->text() : "") << "</th>";
+            for (int c = 0; c < m_crossVarTable->columnCount(); ++c) {
+                QTableWidgetItem *it = m_crossVarTable->item(r, c);
+                out << "<td";
+                if (it && it->background().color() != QColor(Qt::transparent) && it->background().style() != Qt::NoBrush) {
+                    QColor bg = it->background().color();
+                    out << " style='background-color:" << bg.name() << ";'";
+                }
+                out << ">" << (it ? it->text() : "") << "</td>";
+            }
+            out << "</tr>";
+        }
+        out << "</table>";
+    }
+
+    out << "</body></html>";
+    file.close();
+    Logger::log(QString("Wygenerowano raport HTML: %1").arg(path));
 }

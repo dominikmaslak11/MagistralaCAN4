@@ -8,6 +8,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/main.cpp \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.cpp \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/AssociativeLearner.h \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.cpp \
+  /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.cpp \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanExporter.h \
   /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h \
@@ -838,8 +840,6 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/share/cmake-4.2/Modules/Linker/GNU.cmake:
 
-/usr/share/cmake-4.2/Modules/Internal/CheckCompilerFlag.cmake:
-
 /usr/share/cmake-4.2/Modules/GNUInstallDirs.cmake:
 
 /usr/share/cmake-4.2/Modules/FindVulkan.cmake:
@@ -1194,6 +1194,10 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qpainter.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h:
+
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.h:
@@ -1274,8 +1278,6 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 
 /usr/include/c++/15/tr1/poly_hermite.tcc:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h:
-
 /usr/include/stdint.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6Core/Qt6CoreTargets.cmake:
@@ -1333,6 +1335,8 @@ MagistralaCAN4_autogen/timestamp: /home/nz2xzhkzfeewkgbu/MagistralaCAN4/CMakeLis
 /usr/include/c++/15/bits/predefined_ops.h:
 
 /usr/include/c++/15/new:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.cpp:
 
 /usr/include/linux/errno.h:
 
@@ -1426,6 +1430,8 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/bits/basic_string.tcc:
 
+/usr/include/c++/15/bits/stream_iterator.h:
+
 /usr/include/c++/15/unordered_set:
 
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qwidget.h:
@@ -1474,44 +1480,6 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qrect.h:
 
-/usr/include/c++/15/backward/auto_ptr.h:
-
-/usr/include/c++/15/bits/stl_heap.h:
-
-/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qpair.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentTargets-none.cmake:
-
-/usr/include/c++/15/cstdlib:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qfunctionaltools_impl.h:
-
-/usr/include/c++/15/bits/std_thread.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qaction.h:
-
-/usr/share/cmake-4.2/Modules/Compiler/GNU.cmake:
-
-/usr/include/c++/15/bits/requires_hosted.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/QImage:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsConfigVersionImpl.cmake:
-
-/usr/include/asm-generic/bitsperlong.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
-
-/usr/include/c++/15/typeinfo:
-
-/usr/include/c++/15/bits/std_abs.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qfontmetrics.h:
-
 /usr/include/alloca.h:
 
 /usr/include/c++/15/string:
@@ -1524,27 +1492,11 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.h:
 
-/usr/lib/linux/uapi/x86/asm/bitsperlong.h:
-
-/usr/include/x86_64-linux-gnu/bits/local_lim.h:
-
-/usr/share/cmake-4.2/Modules/CMakeGenericSystem.cmake:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtFeatureCommon.cmake:
-
-/usr/include/c++/15/bits/std_function.h:
-
-/usr/include/c++/15/bits/atomic_base.h:
-
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/OfflineAnalyzer.cpp:
 
 /usr/include/c++/15/algorithm:
 
 /usr/include/c++/15/bits/hash_bytes.h:
-
-/usr/include/c++/15/filesystem:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qxptype_traits.h:
 
 /usr/include/c++/15/bits/range_access.h:
 
@@ -1561,6 +1513,18 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qline.h:
+
+/usr/lib/linux/uapi/x86/asm/bitsperlong.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/share/cmake-4.2/Modules/CMakeGenericSystem.cmake:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtFeatureCommon.cmake:
+
+/usr/include/c++/15/bits/std_function.h:
+
+/usr/include/c++/15/bits/atomic_base.h:
 
 /usr/include/c++/15/climits:
 
@@ -1596,10 +1560,6 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/asm-generic/int-ll64.h:
 
-/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/locale.h:
-
 /usr/include/c++/15/bits/nested_exception.h:
 
 /usr/include/c++/15/bits/memoryfwd.h:
@@ -1614,6 +1574,52 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/c++/15/bits/stl_set.h:
 
+/usr/include/c++/15/backward/auto_ptr.h:
+
+/usr/include/c++/15/bits/stl_heap.h:
+
+/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qpair.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentTargets-none.cmake:
+
+/usr/include/c++/15/cstdlib:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qfunctionaltools_impl.h:
+
+/usr/include/c++/15/bits/std_thread.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qaction.h:
+
+/usr/share/cmake-4.2/Modules/Compiler/GNU.cmake:
+
+/usr/include/c++/15/bits/requires_hosted.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qxptype_traits.h:
+
+/usr/include/c++/15/filesystem:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsConfigVersionImpl.cmake:
+
+/usr/include/asm-generic/bitsperlong.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
+
+/usr/include/c++/15/typeinfo:
+
+/usr/include/c++/15/bits/std_abs.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qrubberband.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qfontmetrics.h:
+
+/usr/share/cmake-4.2/Modules/Internal/CheckCompilerFlag.cmake:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanDashboard.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp:
+
 /usr/include/c++/15/tr1/riemann_zeta.tcc:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanFrame.h:
@@ -1622,47 +1628,27 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 
 /usr/include/x86_64-linux-gnu/c++/15/bits/gthr.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qttypetraits.h:
-
-/usr/include/c++/15/numeric:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentAdditionalTargetInfo.cmake:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qtypeinfo.h:
-
-/usr/include/c++/15/bits/charconv.h:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h:
-
-/usr/include/c++/15/tr1/gamma.tcc:
-
-/usr/include/limits.h:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets-none.cmake:
-
-/usr/include/c++/15/bits/algorithmfwd.h:
-
-/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
-
-/usr/include/c++/15/bits/enable_special_members.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsscene.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q20functional.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qregularexpression.h:
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h:
 
-CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
+/usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake:
 
-/usr/include/c++/15/bits/char_traits.h:
+/usr/include/x86_64-linux-gnu/bits/cpu-set.h:
 
-/usr/include/c++/15/cctype:
+/usr/include/c++/15/functional:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qbrush.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicslayoutitem.h:
+
+/usr/include/c++/15/bits/utility.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.cpp:
+
+/usr/include/c++/15/bits/cxxabi_init_exception.h:
 
 /usr/share/cmake-4.2/Modules/Platform/Linux-GNU.cmake:
 
@@ -1686,6 +1672,24 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qttypetraits.h:
+
+/usr/include/c++/15/numeric:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Concurrent/Qt6ConcurrentAdditionalTargetInfo.cmake:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCharts/qxyseries.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qtypeinfo.h:
+
+/usr/include/c++/15/bits/charconv.h:
+
+/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanInterfaceEnumerator.cpp:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCharts/QLegend:
 
 /usr/include/assert.h:
@@ -1698,17 +1702,21 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QTextStream:
 
+/usr/include/c++/15/bits/move.h:
+
+/usr/include/c++/15/bits/unique_ptr.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qyieldcpu.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.cpp:
 
-/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake:
-
-/usr/include/asm-generic/errno-base.h:
-
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/Logger.cpp:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake:
+
+/usr/include/asm-generic/errno-base.h:
 
 /usr/include/c++/15/bits/unordered_map.h:
 
@@ -1721,26 +1729,6 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtypes.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/FrameDetailWidget.cpp:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake:
-
-/usr/include/x86_64-linux-gnu/bits/cpu-set.h:
-
-/usr/include/c++/15/functional:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qbrush.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicslayoutitem.h:
-
-/usr/include/c++/15/bits/utility.h:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/CanSniffer.cpp:
-
-/usr/include/c++/15/bits/cxxabi_init_exception.h:
-
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/LuaScriptEngine.h:
 
 /usr/include/pthread.h:
 
@@ -1770,6 +1758,8 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qmetacontainer.h:
 
+/usr/include/c++/15/bits/enable_special_members.h:
+
 /home/nz2xzhkzfeewkgbu/MagistralaCAN4/src/core/GpuCorrelator.h:
 
 /usr/include/c++/15/bits/cxxabi_forced.h:
@@ -1793,6 +1783,24 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h:
 
 /usr/include/c++/15/bits/parse_numbers.h:
+
+CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
+
+/usr/include/c++/15/cctype:
+
+/usr/include/c++/15/bits/char_traits.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qregularexpression.h:
+
+/usr/include/c++/15/tr1/gamma.tcc:
+
+/usr/include/limits.h:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsTargets-none.cmake:
+
+/usr/include/c++/15/bits/algorithmfwd.h:
+
+/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicGitHelpers.cmake:
 
@@ -1840,10 +1848,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/c++/15/bits/atomic_lockfree_defines.h:
 
-/usr/include/c++/15/bits/unique_ptr.h:
-
-/usr/include/c++/15/bits/move.h:
-
 /usr/lib/x86_64-linux-gnu/cmake/Qt6OpenGL/Qt6OpenGLAdditionalTargetInfo.cmake:
 
 /usr/include/c++/15/bits/new_allocator.h:
@@ -1876,8 +1880,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 
 /usr/include/c++/15/bits/ostream_insert.h:
 
-/usr/include/c++/15/bits/stream_iterator.h:
-
 /usr/include/c++/15/bits/postypes.h:
 
 /usr/include/c++/15/type_traits:
@@ -1891,8 +1893,6 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/c++/15/map:
 
 /usr/include/c++/15/bits/refwrap.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qkeysequence.h:
 
 /usr/include/c++/15/concepts:
 
@@ -1945,6 +1945,12 @@ MagistralaCAN4_autogen/moc_predefs.h:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtconfiginclude.h:
 
 /usr/include/stdio.h:
+
+/usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/QImage:
 
 /usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
 
