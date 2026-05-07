@@ -79,7 +79,11 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
         mainLayout->addWidget(tbl);
     };
 
-    makeTable(m_correlationTable, {"CAN ID","Bajt","Korelacja",""});
+    makeTable(m_correlationTable, {"CAN ID","Bajt","Korelacja","p-value","Istotna?"});
+    m_significanceFilter = new QCheckBox("Tylko istotne statystycznie (p < 0.05)");
+    m_significanceFilter->setStyleSheet("color: #ffaa00; font-weight: bold;");
+    connect(m_significanceFilter, &QCheckBox::toggled, this, &AssociativeLearner::applySignificanceFilter);
+    mainLayout->addWidget(m_significanceFilter);
     addHLine();
 
     auto *seqLayout = new QHBoxLayout;
@@ -527,8 +531,22 @@ void AssociativeLearner::updateCorrelationTable() {
         auto &e=entries[i]; m_correlationTable->setItem(i,0,new QTableWidgetItem(QString("0x%1").arg(e.id,3,16,QChar('0')).toUpper()));
         m_correlationTable->setItem(i,1,new QTableWidgetItem(QString::number(e.b)));
         m_correlationTable->setItem(i,2,new QTableWidgetItem(QString::number(e.corr,'f',3)));
-        QColor col = (fabs(e.corr)>0.7)?QColor("#00ffaa"):(fabs(e.corr)>0.4)?QColor("#ffaa00"):QColor("#ff66cc");
-        m_correlationTable->item(i,0)->setForeground(QColor("#c0c0c0")); m_correlationTable->item(i,1)->setForeground(QColor("#c0c0c0")); m_correlationTable->item(i,2)->setForeground(col);
+        // p-value
+        int n = currentObservations().size();
+        double pv = pearsonPValue(e.corr, n);
+        auto *pItem = new QTableWidgetItem(QString::number(pv, 'e', 2));
+        m_correlationTable->setItem(i, 3, pItem);
+        // Istotność
+        bool sig = (pv < 0.05);
+        auto *sigItem = new QTableWidgetItem(sig ? "TAK" : "nie");
+        m_correlationTable->setItem(i, 4, sigItem);
+
+        QColor corrCol = (fabs(e.corr)>0.7)?QColor("#00ffaa"):(fabs(e.corr)>0.4)?QColor("#ffaa00"):QColor("#ff66cc");
+        QColor pCol = sig ? QColor("#00ffaa") : QColor("#ff4444");
+        m_correlationTable->item(i,0)->setForeground(QColor("#c0c0c0")); m_correlationTable->item(i,1)->setForeground(QColor("#c0c0c0"));
+        m_correlationTable->item(i,2)->setForeground(corrCol);
+        m_correlationTable->item(i,3)->setForeground(pCol);
+        m_correlationTable->item(i,4)->setForeground(pCol);
     }
 }
 
@@ -1755,4 +1773,30 @@ void AssociativeLearner::exportHtmlReport() {
     out << "</body></html>";
     file.close();
     Logger::log(QString("Wygenerowano raport HTML: %1").arg(path));
+}
+
+// ---------- Istotność statystyczna ----------
+double AssociativeLearner::pearsonPValue(double r, int n) {
+    if (n <= 2) return 1.0;
+    if (fabs(r) >= 1.0) return 0.0;
+    double t = r * sqrt((n - 2) / (1.0 - r * r));
+    double df = n - 2;
+    // Przybliżenie funkcji beta niekompletnej dla testu t
+    double x = df / (df + t * t);
+    double a = df / 2.0, b = 0.5;
+    // Proste przybliżenie regularyzowanej funkcji beta
+    double bt = (x > 0 && x < 1) ? exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * log(x) + b * log(1.0 - x)) : 0.0;
+    double p = bt * (x < (a + 1.0) / (a + b + 2.0)
+        ? (1.0 / a) : (1.0 / b));
+    return std::min(1.0, 2.0 * std::max(p, 1.0 - p)); // two-tailed
+}
+
+void AssociativeLearner::applySignificanceFilter() {
+    bool filter = m_significanceFilter->isChecked();
+    for (int i = 0; i < m_correlationTable->rowCount(); ++i) {
+        auto *pItem = m_correlationTable->item(i, 3);
+        if (!pItem) continue;
+        double pv = pItem->text().toDouble();
+        m_correlationTable->setRowHidden(i, filter && pv >= 0.05);
+    }
 }
