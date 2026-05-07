@@ -31,6 +31,8 @@ set(SOURCES
     src/core/DbcEditorWidget.cpp
     src/core/CanNodeSimulator.cpp
     src/core/CanNodeSimWidget.cpp
+    src/core/RemoteCanClient.cpp
+    src/core/RemoteCanWidget.cpp
     src/gui/MainWindow.cpp
 )
 
@@ -56,6 +58,8 @@ set(HEADERS
     src/core/DbcEditorWidget.h
     src/core/CanNodeSimulator.h
     src/core/CanNodeSimWidget.h
+    src/core/RemoteCanClient.h
+    src/core/RemoteCanWidget.h
     src/gui/MainWindow.h
 )
 

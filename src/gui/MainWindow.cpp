@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_j1939Widget = new J1939Widget;
     m_dbcEditor = new DbcEditorWidget;
     m_canSimWidget = new CanNodeSimWidget(&m_sniffer, m_luaEngine);
+    m_remoteCanWidget = new RemoteCanWidget(&m_sniffer);
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     // --- System tray ---
     m_trayIcon = new QSystemTrayIcon(this);
@@ -102,6 +103,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         Logger::log("Wykryto anomalię na magistrali!");
     });
     connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
+
+    // Zdalny CAN – serwer: broadcast lokalnych ramek do klientów WSS
+    connect(m_model, &CanFrameModel::frameUpdated,
+            m_remoteCanWidget->server(), &WebSocketServer::broadcastFrame);
+
+    // Zdalny CAN – klient: wstrzykiwanie odebranych ramek do pipeline'u
+    connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
+            this, &MainWindow::onNewFrame, Qt::QueuedConnection);
+    connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
+            m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
+    connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
+            m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
 
     // Edytor DBC → podmiana parsera w dashboardzie i szczegółach
     connect(m_dbcEditor, &DbcEditorWidget::dbcApplied, this, [this]() {
@@ -231,6 +244,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_j1939Widget, "Diagnostyka J1939");
     tabs->addTab(m_dbcEditor, "Edytor DBC");
     tabs->addTab(m_canSimWidget, "Symulacja CAN");
+    tabs->addTab(m_remoteCanWidget, "Zdalny CAN");
     setCentralWidget(tabs);
 }
 
