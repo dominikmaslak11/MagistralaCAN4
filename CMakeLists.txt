@@ -33,6 +33,9 @@ set(SOURCES
     src/core/CanNodeSimWidget.cpp
     src/core/RemoteCanClient.cpp
     src/core/RemoteCanWidget.cpp
+    src/core/UdsParser.cpp
+    src/core/UdsWidget.cpp
+    src/core/CanGaugeWidget.cpp
     src/gui/MainWindow.cpp
 )
 
@@ -60,6 +63,10 @@ set(HEADERS
     src/core/CanNodeSimWidget.h
     src/core/RemoteCanClient.h
     src/core/RemoteCanWidget.h
+    src/core/CanGaugeWidget.h
+    src/core/UdsFrame.h
+    src/core/UdsParser.h
+    src/core/UdsWidget.h
     src/gui/MainWindow.h
 )
 

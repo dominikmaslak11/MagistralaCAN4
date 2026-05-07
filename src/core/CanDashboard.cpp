@@ -1,98 +1,188 @@
 #include "CanDashboard.h"
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QScrollArea>
-#include <QFont>
-#include <QDebug>
+#include <QLabel>
 
 CanDashboard::CanDashboard(QWidget *parent) : QWidget(parent) {
-    auto *scrollArea = new QScrollArea;
-    scrollArea->setWidgetResizable(true);
-    auto *scrollWidget = new QWidget;
-    auto *mainLayout = new QVBoxLayout(scrollWidget);
-
-    m_grid = new QGridLayout;
-    m_grid->setSpacing(6);
-    mainLayout->addLayout(m_grid);
-    mainLayout->addStretch();
-
-    scrollArea->setWidget(scrollWidget);
     auto *outerLayout = new QVBoxLayout(this);
-    outerLayout->setContentsMargins(0,0,0,0);
-    outerLayout->addWidget(scrollArea);
+    outerLayout->setContentsMargins(0, 0, 0, 0);
+
+    // ── Górny pasek: wyszukiwarka + przycisk kolumn ──
+    auto *topBar = new QHBoxLayout;
+    m_searchBox = new QLineEdit;
+    m_searchBox->setPlaceholderText("Szukaj sygnału...");
+    m_searchBox->setStyleSheet(
+        "QLineEdit { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; "
+        "border-radius: 4px; padding: 5px 10px; font-family: Consolas; font-size: 12px; }");
+    topBar->addWidget(m_searchBox);
+    m_columnsBtn = new QPushButton("3 kol.");
+    m_columnsBtn->setFixedWidth(60);
+    m_columnsBtn->setStyleSheet("QPushButton { background: #1a1a2e; color: #ffaa00; border: 1px solid #e94560; "
+                                "border-radius: 4px; padding: 4px; font-weight: bold; }");
+    topBar->addWidget(m_columnsBtn);
+    outerLayout->addLayout(topBar);
+
+    // ── Scroll area z grupami ──
+    m_scrollArea = new QScrollArea;
+    m_scrollArea->setWidgetResizable(true);
+    m_scrollWidget = new QWidget;
+    m_groupsLayout = new QVBoxLayout(m_scrollWidget);
+    m_groupsLayout->setContentsMargins(4, 4, 4, 4);
+    m_groupsLayout->addStretch();
+    m_scrollArea->setWidget(m_scrollWidget);
+    outerLayout->addWidget(m_scrollArea, 1);
+
+    // ── Staleness timer ──
+    m_staleTimer.setInterval(1000);
+    connect(&m_staleTimer, &QTimer::timeout, this, &CanDashboard::onStalenessCheck);
+    m_staleTimer.start();
+
+    // ── Sygnały ──
+    connect(m_searchBox, &QLineEdit::textChanged, this, &CanDashboard::applyFilter);
+    connect(m_columnsBtn, &QPushButton::clicked, this, [this]() {
+        m_columns = (m_columns == 2) ? 3 : (m_columns == 3) ? 4 : 2;
+        m_columnsBtn->setText(QString("%1 kol.").arg(m_columns));
+        rebuildDashboard();
+    });
 
     setStyleSheet(R"(
-        QLabel {
-            font-family: "Consolas", "Courier New", monospace;
-            padding: 4px 8px;
-            color: #c0c0c0;
-        }
+        QScrollArea { background-color: #0a0e17; border: none; }
+        QLabel { color: #c0c0c0; }
     )");
 }
 
 void CanDashboard::setDbcParser(const DbcParser *parser) {
     m_dbcParser = parser;
-    // Wyczyść stare panele
-    QLayoutItem *child;
-    while ((child = m_grid->takeAt(0)) != nullptr) {
-        if (child->widget()) delete child->widget();
-        delete child;
-    }
-    m_valueLabels.clear();
     m_idToSignals.clear();
+    m_messages.clear();
 
-    if (!m_dbcParser) return;
-
-    // Zbuduj mapowanie ID -> sygnały
-    QVector<DbcMessage> msgs = m_dbcParser->messages();
-    for (const auto &msg : msgs) {
-        QStringList signalNames;
-        for (const auto &sig : msg.sigList) {
-            signalNames.append(sig.name);
-        }
-        m_idToSignals[msg.id] = signalNames;
+    if (m_dbcParser) {
+        m_messages = m_dbcParser->messages();
+        for (const auto &msg : m_messages)
+            for (const auto &sig : msg.sigList)
+                m_idToSignals[msg.id].append(sig.name);
     }
 
-    buildPanels();
+    rebuildDashboard();
 }
 
-void CanDashboard::buildPanels() {
-    if (!m_dbcParser) return;
+void CanDashboard::rebuildDashboard() {
+    // Wyczyść stare widgety
+    for (auto it = m_gauges.begin(); it != m_gauges.end(); ++it)
+        delete it.value();
+    m_gauges.clear();
 
-    int row = 0, col = 0;
-    const int maxCols = 3;
+    for (auto it = m_groups.begin(); it != m_groups.end(); ++it) {
+        delete it->header;
+        delete it->container;
+    }
+    m_groups.clear();
 
-    // Nagłówki
-    auto makeHeader = [&](const QString &text) {
-        auto *lbl = new QLabel(text);
-        lbl->setStyleSheet("font-weight: bold; color: #ffaa00; font-size: 14px;");
+    // Usuń wszystko z layoutu (poza stretchem)
+    while (m_groupsLayout->count() > 1) {
+        auto *item = m_groupsLayout->takeAt(0);
+        if (item->widget()) delete item->widget();
+        delete item;
+    }
+
+    if (!m_dbcParser || m_messages.isEmpty()) {
+        auto *lbl = new QLabel("Wczytaj plik DBC aby wyświetlić dashboard.");
         lbl->setAlignment(Qt::AlignCenter);
-        return lbl;
-    };
+        lbl->setStyleSheet("color: #ffaa00; font-size: 14px; padding: 20px;");
+        m_groupsLayout->insertWidget(0, lbl);
+        return;
+    }
 
-    // Iteruj po wszystkich wiadomościach i sygnałach
-    QVector<DbcMessage> msgs = m_dbcParser->messages();
-    for (const auto &msg : msgs) {
+    for (const auto &msg : m_messages) {
+        if (msg.sigList.isEmpty()) continue;
+
+        // ── Nagłówek grupy (przycisk do zwijania) ──
+        auto *header = new QPushButton(
+            QString("📦 0x%1 — %2  [%3 sygn.]")
+                .arg(msg.id, 3, 16, QChar('0')).toUpper()
+                .arg(msg.name).arg(msg.sigList.size()));
+        header->setStyleSheet(
+            "QPushButton { text-align: left; background: #1a1a2e; color: #ff66cc; "
+            "border: 1px solid #e94560; border-radius: 4px; padding: 6px 12px; "
+            "font-weight: bold; font-size: 12px; } "
+            "QPushButton:hover { background: #2a2a3e; }");
+        header->setCheckable(true);
+        header->setChecked(false);
+        m_groupsLayout->insertWidget(m_groupsLayout->count() - 1, header);
+
+        // ── Kontener z siatką gauge'y ──
+        auto *container = new QFrame;
+        auto *grid = new QGridLayout(container);
+        grid->setSpacing(4);
+        container->setFrameStyle(QFrame::NoFrame);
+
+        int col = 0, row = 0;
         for (const auto &sig : msg.sigList) {
-            // Etykieta nazwy sygnału
-            auto *nameLabel = new QLabel(sig.name + ":");
-            nameLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            nameLabel->setStyleSheet("color: #ff66cc; font-weight: bold;");
-            m_grid->addWidget(nameLabel, row, col * 2);
-
-            // Etykieta wartości
-            auto *valueLabel = new QLabel("— " + sig.unit);
-            valueLabel->setAlignment(Qt::AlignCenter);
-            valueLabel->setStyleSheet("background-color: #161b22; color: #00ffaa; font-size: 18px; font-weight: bold; border-radius: 4px; min-width: 100px;");
-            m_grid->addWidget(valueLabel, row, col * 2 + 1);
-
-            m_valueLabels[sig.name] = valueLabel;
+            auto *gauge = new CanGaugeWidget(CanGaugeWidget::Bar);
+            gauge->setSignalName(sig.name);
+            gauge->setUnit(sig.unit);
+            gauge->setRange(sig.minimum, sig.maximum);
+            gauge->setVisible(true);
+            grid->addWidget(gauge, row, col, 1, 1);
+            m_gauges[sig.name] = gauge;
 
             col++;
-            if (col >= maxCols) {
-                col = 0;
-                row++;
+            if (col >= m_columns) { col = 0; row++; }
+        }
+        m_groupsLayout->insertWidget(m_groupsLayout->count() - 1, container);
+
+        // Zwijanie
+        uint32_t id = msg.id;
+        GroupWidgets gw { header, container, false };
+        m_groups[id] = gw;
+
+        connect(header, &QPushButton::toggled, this, [this, id](bool checked) {
+            if (m_groups.contains(id)) {
+                m_groups[id].collapsed = checked;
+                m_groups[id].container->setVisible(!checked);
+                m_groups[id].header->setText(
+                    m_groups[id].header->text().replace(checked ? "📦" : "📂", checked ? "📂" : "📦"));
+            }
+        });
+    }
+
+    applyFilter(m_searchBox->text());
+}
+
+void CanDashboard::applyFilter(const QString &text) {
+    QString filter = text.trimmed().toLower();
+
+    for (auto it = m_groups.begin(); it != m_groups.end(); ++it) {
+        uint32_t id = it.key();
+        const auto &sigNames = m_idToSignals.value(id);
+        bool anyVisible = filter.isEmpty();
+
+        if (!filter.isEmpty()) {
+            // Sprawdź czy którykolwiek sygnał pasuje do filtra
+            for (const auto &name : sigNames) {
+                if (name.toLower().contains(filter) ||
+                    QString("0x%1").arg(id, 3, 16, QChar('0')).contains(filter)) {
+                    anyVisible = true;
+                    break;
+                }
+            }
+            // Pokaż/ukryj pojedyncze gauge'e
+            for (const auto &name : sigNames) {
+                if (auto *g = m_gauges.value(name))
+                    g->setVisible(name.toLower().contains(filter));
+            }
+        } else {
+            for (const auto &name : sigNames) {
+                if (auto *g = m_gauges.value(name))
+                    g->setVisible(true);
             }
         }
+
+        it->header->setVisible(anyVisible);
+        if (!it->collapsed)
+            it->container->setVisible(anyVisible);
     }
 }
 
@@ -105,17 +195,19 @@ void CanDashboard::updateSignal(const CanFrame &frame) {
     DbcMessage msg = m_dbcParser->messageForId(frame.id);
     if (msg.id == 0) return;
 
-    // Dla każdego sygnału w tej wiadomości (uproszczona ekstrakcja, bajt po bajcie)
-    // W docelowej wersji można użyć zaawansowanej ekstrakcji bitowej
     for (const auto &sig : msg.sigList) {
         int byteIdx = sig.startBit / 8;
         if (byteIdx < frame.dlc) {
             uint8_t rawValue = frame.data[byteIdx];
             double value = rawValue * sig.scale + sig.offset;
-            QLabel *label = m_valueLabels.value(sig.name);
-            if (label) {
-                label->setText(QString("%1 %2").arg(value, 0, 'f', 1).arg(sig.unit));
+            if (auto *gauge = m_gauges.value(sig.name)) {
+                gauge->setValue(value);
             }
         }
     }
+}
+
+void CanDashboard::onStalenessCheck() {
+    for (auto *gauge : m_gauges)
+        gauge->checkStaleness();
 }
