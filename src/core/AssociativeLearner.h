@@ -208,6 +208,23 @@ private:
     QTimer       *m_autoDiscoveryTimer;
     QLabel       *m_autoDiscoveryLabel;
 
+    // Neural network
+    QPushButton  *m_trainNnBtn;
+    QLabel       *m_nnStatusLabel;
+    QLabel       *m_nnPredictionLabel;
+    QTimer       *m_nnTimer;
+    struct NnWeights {
+        QVector<QVector<double>> w1, w2, w3; // input→h1, h1→h2, h2→out
+        QVector<double> b1, b2;
+        double b3 = 0;
+    };
+    NnWeights m_nnWeights;
+    bool m_nnTrained = false;
+    int  m_nnInputDim = 16;
+    void trainNeuralNetwork();
+    double predictNeural(const QVector<double> &input) const;
+    void updateNnPrediction();
+
     const DbcParser   *m_dbc   = nullptr;
     const J1939Parser *m_j1939 = nullptr;
 };
