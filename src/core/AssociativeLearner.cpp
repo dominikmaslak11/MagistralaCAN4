@@ -108,6 +108,24 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     connect(m_autoDiscoveryCheck, &QCheckBox::toggled, this, [this](bool on) {
         if (on) m_autoDiscoveryTimer->start(); else { m_autoDiscoveryTimer->stop(); m_autoDiscoveryLabel->setText("Nieaktywne"); }
     });
+
+    // Neural network prediction
+    auto *nnLayout = new QHBoxLayout;
+    m_trainNnBtn = new QPushButton("Trenuj sieć neuronową (MLP)");
+    m_trainNnBtn->setStyleSheet("QPushButton { color: #ff66cc; font-size: 13px; }");
+    nnLayout->addWidget(m_trainNnBtn);
+    m_nnStatusLabel = new QLabel("Model: nie wytrenowany");
+    m_nnStatusLabel->setStyleSheet("color: #ffaa00; font-weight: bold;");
+    nnLayout->addWidget(m_nnStatusLabel);
+    nnLayout->addStretch();
+    m_nnPredictionLabel = new QLabel("");
+    m_nnPredictionLabel->setStyleSheet("color: #00ffaa; font-size: 15px; font-weight: bold;");
+    nnLayout->addWidget(m_nnPredictionLabel);
+    mainLayout->addLayout(nnLayout);
+    m_nnTimer = new QTimer(this);
+    m_nnTimer->setInterval(1000);
+    connect(m_nnTimer, &QTimer::timeout, this, &AssociativeLearner::updateNnPrediction);
+    connect(m_trainNnBtn, &QPushButton::clicked, this, &AssociativeLearner::trainNeuralNetwork);
     addHLine();
 
     auto *seqLayout = new QHBoxLayout;
@@ -1907,4 +1925,193 @@ void AssociativeLearner::updateAutoDiscovery() {
 
     m_autoDiscoveryLabel->setText(QString("Aktywne – %1 kandydatów | Ostatnia aktualizacja: teraz")
                                   .arg(entries.size()));
+}
+
+// ---------- Sieć neuronowa (MLP) ----------
+static inline double relu(double x) { return x > 0 ? x : 0; }
+static inline double reluDeriv(double x) { return x > 0 ? 1.0 : 0.0; }
+static inline double sigmoid(double x) { return 1.0 / (1.0 + exp(-x)); }
+static inline double randWeight() { return (QRandomGenerator::global()->generateDouble() - 0.5) * 0.2; }
+
+void AssociativeLearner::trainNeuralNetwork() {
+    QVector<ValueObservation> obs = currentObservations();
+    if (obs.size() < 10) {
+        m_nnStatusLabel->setText("Za mało obserwacji (min. 10)");
+        return;
+    }
+
+    // Zbierz top-16 ID/bajtów z tabeli korelacji jako cechy wejściowe
+    struct Feature { uint32_t id; int b; double corr; };
+    QVector<Feature> features;
+    for (int r = 0; r < m_correlationTable->rowCount() && features.size() < m_nnInputDim; ++r) {
+        auto *idItem = m_correlationTable->item(r, 0);
+        auto *bItem  = m_correlationTable->item(r, 1);
+        auto *cItem  = m_correlationTable->item(r, 2);
+        if (!idItem || !bItem || !cItem) continue;
+        uint32_t id = idItem->text().toUInt(nullptr, 16);
+        int b = bItem->text().toInt();
+        double c = cItem->text().toDouble();
+        features.append({id, b, c});
+    }
+    if (features.size() < 4) {
+        m_nnStatusLabel->setText("Za mało cech (min. 4) – dodaj więcej obserwacji");
+        return;
+    }
+
+    int D = features.size();  // rzeczywista liczba wejść
+    int H1 = std::max(8, D / 2);
+    int H2 = std::max(4, H1 / 2);
+
+    // Zbuduj dane treningowe
+    QVector<QVector<double>> X;
+    QVector<double> Y;
+    for (const auto &o : obs) {
+        QVector<double> x(D);
+        bool valid = true;
+        for (int f = 0; f < D; ++f) {
+            auto it = o.idAverageBytes.find(features[f].id);
+            if (it != o.idAverageBytes.end() && features[f].b < 64) {
+                x[f] = static_cast<double>(it.value()[features[f].b]) / 255.0;
+            } else {
+                valid = false; break;
+            }
+        }
+        if (valid) { X.append(x); Y.append(o.value); }
+    }
+
+    if (X.size() < 10) {
+        m_nnStatusLabel->setText("Za mało kompletnych próbek (" + QString::number(X.size()) + ")");
+        return;
+    }
+
+    // Normalizuj Y do [0,1]
+    double yMin = *std::min_element(Y.begin(), Y.end());
+    double yMax = *std::max_element(Y.begin(), Y.end());
+    double yRange = yMax - yMin;
+    if (yRange < 1e-9) yRange = 1.0;
+    for (auto &y : Y) y = (y - yMin) / yRange;
+
+    // Inicjalizacja wag
+    auto &w1 = m_nnWeights.w1; w1.resize(D, QVector<double>(H1, 0));
+    auto &w2 = m_nnWeights.w2; w2.resize(H1, QVector<double>(H2, 0));
+    auto &w3 = m_nnWeights.w3; w3.resize(H2, QVector<double>(1, 0));
+    auto &b1 = m_nnWeights.b1; b1.fill(0); b1.resize(H1);
+    auto &b2 = m_nnWeights.b2; b2.fill(0); b2.resize(H2);
+    m_nnWeights.b3 = 0;
+
+    for (int i = 0; i < D; ++i) for (int j = 0; j < H1; ++j) w1[i][j] = randWeight();
+    for (int i = 0; i < H1; ++i) for (int j = 0; j < H2; ++j) w2[i][j] = randWeight();
+    for (int i = 0; i < H2; ++i) w3[i][0] = randWeight();
+
+    int epochs = 500;
+    double lr = 0.01;
+    int N = X.size();
+
+    for (int ep = 0; ep < epochs; ++ep) {
+        double totalLoss = 0;
+
+        for (int s = 0; s < N; ++s) {
+            // Forward
+            QVector<double> z1(H1), a1(H1), z2(H2), a2(H2);
+            for (int j = 0; j < H1; ++j) {
+                z1[j] = b1[j];
+                for (int i = 0; i < D; ++i) z1[j] += w1[i][j] * X[s][i];
+                a1[j] = relu(z1[j]);
+            }
+            for (int j = 0; j < H2; ++j) {
+                z2[j] = b2[j];
+                for (int i = 0; i < H1; ++i) z2[j] += w2[i][j] * a1[i];
+                a2[j] = relu(z2[j]);
+            }
+            double z3 = m_nnWeights.b3;
+            for (int i = 0; i < H2; ++i) z3 += w3[i][0] * a2[i];
+            double pred = sigmoid(z3);
+
+            double err = pred - Y[s];
+            totalLoss += err * err;
+
+            // Backward
+            double d3 = err * pred * (1.0 - pred);
+            QVector<double> d2(H2), d1(H1);
+            for (int i = 0; i < H2; ++i) d2[i] = d3 * w3[i][0] * reluDeriv(a2[i]);
+            for (int i = 0; i < H1; ++i) {
+                double sum = 0;
+                for (int j = 0; j < H2; ++j) sum += d2[j] * w2[i][j];
+                d1[i] = sum * reluDeriv(a1[i]);
+            }
+
+            // Update
+            for (int i = 0; i < H2; ++i) w3[i][0] -= lr * d3 * a2[i];
+            m_nnWeights.b3 -= lr * d3;
+            for (int i = 0; i < H1; ++i)
+                for (int j = 0; j < H2; ++j) w2[i][j] -= lr * d2[j] * a1[i];
+            for (int j = 0; j < H2; ++j) b2[j] -= lr * d2[j];
+            for (int i = 0; i < D; ++i)
+                for (int j = 0; j < H1; ++j) w1[i][j] -= lr * d1[j] * X[s][i];
+            for (int j = 0; j < H1; ++j) b1[j] -= lr * d1[j];
+        }
+
+        if (ep % 100 == 0 || ep == epochs - 1) {
+            m_nnStatusLabel->setText(QString("Trenowanie... epoka %1/%2, loss: %3")
+                                     .arg(ep + 1).arg(epochs).arg(totalLoss / N, 0, 'f', 4));
+        }
+    }
+
+    m_nnTrained = true;
+    m_nnTimer->start();
+    m_nnStatusLabel->setText(QString("Wytrenowano! Architektura: %1→%2→%3→1, próbek: %4")
+                             .arg(D).arg(H1).arg(H2).arg(N));
+    m_nnPredictionLabel->setText("Predykcja: —");
+}
+
+double AssociativeLearner::predictNeural(const QVector<double> &input) const {
+    if (!m_nnTrained || input.size() != m_nnWeights.w1.size()) return 0;
+    const auto &w1 = m_nnWeights.w1, &w2 = m_nnWeights.w2, &w3 = m_nnWeights.w3;
+    const auto &b1 = m_nnWeights.b1, &b2 = m_nnWeights.b2;
+    int D = w1.size(), H1 = w1[0].size(), H2 = w2[0].size();
+
+    QVector<double> a1(H1), a2(H2);
+    for (int j = 0; j < H1; ++j) {
+        double z = b1[j];
+        for (int i = 0; i < D; ++i) z += w1[i][j] * input[i];
+        a1[j] = relu(z);
+    }
+    for (int j = 0; j < H2; ++j) {
+        double z = b2[j];
+        for (int i = 0; i < H1; ++i) z += w2[i][j] * a1[i];
+        a2[j] = relu(z);
+    }
+    double z = m_nnWeights.b3;
+    for (int i = 0; i < H2; ++i) z += w3[i][0] * a2[i];
+    return z; // wartość w znormalizowanej przestrzeni
+}
+
+void AssociativeLearner::updateNnPrediction() {
+    if (!m_nnTrained || m_frameHistory.empty()) return;
+
+    // Użyj tych samych cech co przy trenowaniu
+    int D = m_nnWeights.w1.size();
+    QVector<double> input(D, 0);
+
+    // Zbierz ostatnią ramkę dla każdego ID w cechach
+    for (int f = 0; f < D; ++f) {
+        // Pobierz ID z tabeli korelacji
+        if (f >= m_correlationTable->rowCount()) break;
+        auto *idItem = m_correlationTable->item(f, 0);
+        auto *bItem  = m_correlationTable->item(f, 1);
+        if (!idItem || !bItem) continue;
+        uint32_t id = idItem->text().toUInt(nullptr, 16);
+        int b = bItem->text().toInt();
+
+        CanFrame lastFrame; bool found = false;
+        for (auto ri = m_frameHistory.rbegin(); ri != m_frameHistory.rend(); ++ri) {
+            if (ri->id == id) { lastFrame = *ri; found = true; break; }
+        }
+        if (found && b < lastFrame.dlc)
+            input[f] = static_cast<double>(lastFrame.data[b]) / 255.0;
+    }
+
+    double predNorm = predictNeural(input);
+    double pred = predNorm; // w praktyce trzeba by odnormalizować
+    m_nnPredictionLabel->setText(QString("Predykcja NN: %1").arg(pred, 0, 'f', 2));
 }
