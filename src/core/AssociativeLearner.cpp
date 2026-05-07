@@ -33,8 +33,6 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     mainLayout->addWidget(m_markEventBtn);
     m_markNonEventBtn = new QPushButton("⛔ Brak zdarzenia");
     mainLayout->addWidget(m_markNonEventBtn);
-    m_shortcutNonEvent = new QShortcut(QKeySequence("Ctrl+Shift+D"), this);
-    connect(m_shortcutNonEvent, &QShortcut::activated, this, &AssociativeLearner::markNonEvent);
     mainLayout->addWidget(m_resetBtn);
     mainLayout->addWidget(m_iterationLabel);
 
@@ -1366,7 +1364,11 @@ void AssociativeLearner::markNonEvent() {
     if (window.size() < 3) return;
     EventRecord rec; rec.windowFrames = window; rec.idFeatures = buildFeatureVectors(window);
     m_nonEvents.push_back(rec);
-    Logger::log("Zarejestrowano BRAK zdarzenia");
+    m_iteration++;
+    m_iterationLabel->setText(QString("Liczba iteracji: %1 (non‑event: %2)").arg(m_iteration).arg(m_nonEvents.size()));
+    Logger::log(QString("Zarejestrowano BRAK zdarzenia #%1 (okno: %2 ramek)")
+                .arg(m_nonEvents.size()).arg(window.size()));
+    updateCandidates();  // przelicz kontrast z tłem
 }
 
 // ---------- Maximal Information Coefficient (MIC) ----------

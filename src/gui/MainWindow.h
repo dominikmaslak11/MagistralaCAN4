@@ -15,6 +15,9 @@
 #include "core/DbcParser.h"
 #include "core/OfflineAnalyzer.h"
 #include "core/CanDashboard.h"
+#include "core/J1939Widget.h"
+#include "core/DbcEditorWidget.h"
+#include "core/CanNodeSimWidget.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -52,6 +55,9 @@ private:
     DbcParser m_dbcParser;
     OfflineAnalyzer *m_offlineAnalyzer;
     CanDashboard *m_canDashboard;
+    J1939Widget *m_j1939Widget;
+    DbcEditorWidget *m_dbcEditor;
+    CanNodeSimWidget *m_canSimWidget;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
@@ -59,6 +65,7 @@ private:
     QLabel *m_statusLabel;
     QSystemTrayIcon *m_trayIcon = nullptr;
     QShortcut *m_hotkeyMarkEvent = nullptr;
+    QShortcut *m_hotkeyNonEvent = nullptr;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;

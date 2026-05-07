@@ -27,11 +27,21 @@ struct DbcMessage {
 class DbcParser {
 public:
     bool load(const QString &fileName);
+    bool save(const QString &fileName) const;
+
     QVector<DbcMessage> messages() const;
     DbcMessage messageForId(uint32_t id) const;
     QString signalDescriptions(uint32_t id, const uint8_t* data, int dlc) const;
 
+    /// Podmienia całą bazę wiadomości (np. z edytora).
+    void setMessages(const QVector<DbcMessage> &msgs);
+
+    /// Serializuje do stringa DBC (do podglądu).
+    static QString serialize(const QVector<DbcMessage> &msgs);
+
 private:
+    void rebuildMap();
+
     QVector<DbcMessage> m_messages;
     QHash<uint32_t, DbcMessage> m_messageMap;
 };

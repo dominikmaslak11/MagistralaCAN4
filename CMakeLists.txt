@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets)
 find_package(XCB REQUIRED)
 find_package(Lua REQUIRED)
 find_package(OpenCL REQUIRED)
@@ -25,6 +25,12 @@ set(SOURCES
     src/core/CanInterfaceEnumerator.cpp
     src/core/GpuCorrelator.cpp
     src/core/CandidateModel.cpp
+    src/core/WebSocketServer.cpp
+    src/core/J1939Parser.cpp
+    src/core/J1939Widget.cpp
+    src/core/DbcEditorWidget.cpp
+    src/core/CanNodeSimulator.cpp
+    src/core/CanNodeSimWidget.cpp
     src/gui/MainWindow.cpp
 )
 
@@ -43,6 +49,13 @@ set(HEADERS
     src/core/CanInterfaceEnumerator.h
     src/core/GpuCorrelator.h
     src/core/CandidateModel.h
+    src/core/WebSocketServer.h
+    src/core/J1939Frame.h
+    src/core/J1939Parser.h
+    src/core/J1939Widget.h
+    src/core/DbcEditorWidget.h
+    src/core/CanNodeSimulator.h
+    src/core/CanNodeSimWidget.h
     src/gui/MainWindow.h
 )
 
@@ -60,6 +73,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Concurrent
     Qt6::Charts
+    Qt6::WebSockets
     ${LUA_LIBRARIES}
     ${OpenCL_LIBRARIES}
 )
