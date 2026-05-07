@@ -18,6 +18,7 @@
 #include "core/J1939Widget.h"
 #include "core/DbcEditorWidget.h"
 #include "core/CanNodeSimWidget.h"
+#include "core/RemoteCanWidget.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -58,6 +59,7 @@ private:
     J1939Widget *m_j1939Widget;
     DbcEditorWidget *m_dbcEditor;
     CanNodeSimWidget *m_canSimWidget;
+    RemoteCanWidget  *m_remoteCanWidget;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
