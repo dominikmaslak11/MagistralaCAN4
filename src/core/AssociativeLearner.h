@@ -88,6 +88,8 @@ private:
     void updateCrossByteTable();
     void updateChart();
     void updateTimeChart();
+    void applySignificanceFilter();
+    static double pearsonPValue(double r, int n);
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
 
@@ -116,6 +118,7 @@ private:
     QPushButton *m_addObsBtn;
 
     QTableWidget *m_correlationTable;
+    QCheckBox    *m_significanceFilter;
     QComboBox    *m_ngramCombo;
     QTableWidget *m_sequenceTable;
     QTableWidget *m_crossByteTable;
