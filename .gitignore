@@ -1,4 +1,5 @@
 build/
+!build/MagistralaCAN4
 *.o
 *.pro.user
 *.autosave
