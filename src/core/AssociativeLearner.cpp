@@ -84,6 +84,30 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_significanceFilter->setStyleSheet("color: #ffaa00; font-weight: bold;");
     connect(m_significanceFilter, &QCheckBox::toggled, this, &AssociativeLearner::applySignificanceFilter);
     mainLayout->addWidget(m_significanceFilter);
+
+    // Auto-discovery
+    auto *autoDiscLayout = new QHBoxLayout;
+    m_autoDiscoveryCheck = new QCheckBox("Auto-discovery: ciągłe odkrywanie predykcyjnych sygnałów");
+    m_autoDiscoveryCheck->setStyleSheet("color: #00ffaa; font-weight: bold; font-size: 13px;");
+    autoDiscLayout->addWidget(m_autoDiscoveryCheck);
+    autoDiscLayout->addStretch();
+    m_autoDiscoveryLabel = new QLabel("Nieaktywne");
+    m_autoDiscoveryLabel->setStyleSheet("color: #ffaa00;");
+    autoDiscLayout->addWidget(m_autoDiscoveryLabel);
+    mainLayout->addLayout(autoDiscLayout);
+    m_autoDiscoveryTable = new QTableWidget(0, 5);
+    m_autoDiscoveryTable->setHorizontalHeaderLabels({"CAN ID","Bajt","Korelacja","p-value","Opis"});
+    m_autoDiscoveryTable->verticalHeader()->hide(); m_autoDiscoveryTable->horizontalHeader()->setStretchLastSection(true);
+    m_autoDiscoveryTable->setShowGrid(false); m_autoDiscoveryTable->setAlternatingRowColors(false);
+    m_autoDiscoveryTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_autoDiscoveryTable->setMinimumHeight(250);
+    mainLayout->addWidget(m_autoDiscoveryTable);
+    m_autoDiscoveryTimer = new QTimer(this);
+    m_autoDiscoveryTimer->setInterval(2000);
+    connect(m_autoDiscoveryTimer, &QTimer::timeout, this, &AssociativeLearner::updateAutoDiscovery);
+    connect(m_autoDiscoveryCheck, &QCheckBox::toggled, this, [this](bool on) {
+        if (on) m_autoDiscoveryTimer->start(); else { m_autoDiscoveryTimer->stop(); m_autoDiscoveryLabel->setText("Nieaktywne"); }
+    });
     addHLine();
 
     auto *seqLayout = new QHBoxLayout;
@@ -1799,4 +1823,88 @@ void AssociativeLearner::applySignificanceFilter() {
         double pv = pItem->text().toDouble();
         m_correlationTable->setRowHidden(i, filter && pv >= 0.05);
     }
+}
+
+// ---------- Auto-discovery ----------
+void AssociativeLearner::updateAutoDiscovery() {
+    QVector<ValueObservation> obs = currentObservations();
+    if (obs.size() < 5 || m_frameHistory.empty()) {
+        m_autoDiscoveryTable->setRowCount(0);
+        m_autoDiscoveryLabel->setText("Za mało danych (" + QString::number(obs.size()) + " obs.)");
+        return;
+    }
+
+    // Zbierz wszystkie ID widoczne w ostatnich 2 sekundach
+    uint64_t now = m_frameHistory.back().timestamp;
+    QSet<uint32_t> recentIds;
+    QHash<uint32_t, QVector<uint8_t>> recentSamples;
+    QHash<uint32_t, int> recentCount;
+
+    for (auto it = m_frameHistory.rbegin(); it != m_frameHistory.rend(); ++it) {
+        if (now - it->timestamp > 2'000'000) break;
+        recentIds.insert(it->id);
+        if (!recentSamples.contains(it->id))
+            recentSamples[it->id] = QVector<uint8_t>(64, 0);
+        recentCount[it->id]++;
+    }
+
+    // Dla każdego (ID, bajt) oblicz korelację z obserwacjami
+    struct ADEntry { uint32_t id; int b; double corr; double pv; };
+    QVector<ADEntry> entries;
+
+    for (uint32_t id : recentIds) {
+        for (int b = 0; b < 64; ++b) {
+            QVector<double> bx, by;
+            for (const auto &o : obs) {
+                auto it = o.idAverageBytes.find(id);
+                if (it != o.idAverageBytes.end()) {
+                    bx.append(o.value);
+                    by.append(static_cast<double>(it.value()[b]));
+                }
+            }
+            int N = bx.size();
+            if (N < 5) continue;
+
+            double sx = 0, sy = 0, sxy = 0, sx2 = 0, sy2 = 0;
+            for (int i = 0; i < N; ++i) {
+                double x = bx[i], y = by[i];
+                sx += x; sy += y; sxy += x * y; sx2 += x * x; sy2 += y * y;
+            }
+            double den = sqrt((N * sx2 - sx * sx) * (N * sy2 - sy * sy));
+            double corr = (den != 0) ? (N * sxy - sx * sy) / den : 0.0;
+            if (fabs(corr) < 0.5) continue; // próg minimalny
+
+            double pv = pearsonPValue(corr, N);
+            entries.append({id, b, corr, pv});
+        }
+    }
+
+    std::sort(entries.begin(), entries.end(),
+              [](const ADEntry &a, const ADEntry &b) { return fabs(a.corr) > fabs(b.corr); });
+
+    int rows = std::min(static_cast<int>(entries.size()), 30);
+    m_autoDiscoveryTable->setRowCount(rows);
+    for (int i = 0; i < rows; ++i) {
+        const auto &e = entries[i];
+        m_autoDiscoveryTable->setItem(i, 0, new QTableWidgetItem(
+            QString("0x%1").arg(e.id, 3, 16, QChar('0')).toUpper()));
+        m_autoDiscoveryTable->setItem(i, 1, new QTableWidgetItem(QString::number(e.b)));
+        m_autoDiscoveryTable->setItem(i, 2, new QTableWidgetItem(QString::number(e.corr, 'f', 3)));
+        m_autoDiscoveryTable->setItem(i, 3, new QTableWidgetItem(QString::number(e.pv, 'e', 2)));
+        QString desc;
+        if (m_dbc) {
+            DbcMessage dm = m_dbc->messageForId(e.id);
+            if (dm.id != 0) desc = dm.name;
+        }
+        m_autoDiscoveryTable->setItem(i, 4, new QTableWidgetItem(desc));
+
+        QColor col = (fabs(e.corr) > 0.8) ? QColor("#00ffaa") :
+                     (fabs(e.corr) > 0.6) ? QColor("#ffaa00") : QColor("#ff66cc");
+        for (int c = 0; c < 5; ++c)
+            if (auto *it = m_autoDiscoveryTable->item(i, c))
+                it->setForeground(c == 4 ? QColor("#ffaa00") : col);
+    }
+
+    m_autoDiscoveryLabel->setText(QString("Aktywne – %1 kandydatów | Ostatnia aktualizacja: teraz")
+                                  .arg(entries.size()));
 }

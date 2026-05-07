@@ -89,6 +89,7 @@ private:
     void updateChart();
     void updateTimeChart();
     void applySignificanceFilter();
+    void updateAutoDiscovery();
     static double pearsonPValue(double r, int n);
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
@@ -200,6 +201,12 @@ private:
     QHash<uint32_t, QHash<uint32_t, int>> m_transitions; // fromId -> toId -> count
     QHash<uint32_t, uint32_t> m_markovBestNext;        // fromId -> best next id
     QHash<uint32_t, double>   m_markovProb;            // fromId -> probability
+
+    // Auto-discovery
+    QCheckBox    *m_autoDiscoveryCheck;
+    QTableWidget *m_autoDiscoveryTable;
+    QTimer       *m_autoDiscoveryTimer;
+    QLabel       *m_autoDiscoveryLabel;
 
     const DbcParser   *m_dbc   = nullptr;
     const J1939Parser *m_j1939 = nullptr;
