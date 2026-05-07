@@ -22,6 +22,9 @@
 #include "CandidateModel.h"
 #include "GpuCorrelator.h"
 
+class DbcParser;
+class J1939Parser;
+
 struct EventRecord {
     QVector<CanFrame> windowFrames;
     QHash<uint32_t, QVector<float>> idFeatures;
@@ -46,6 +49,8 @@ public slots:
     void addVariable(const QString &name);
     QVector<ValueObservation> currentObservations() const;
     void addObservation();
+    void setDbcParser(const DbcParser *dbc) { m_dbc = dbc; }
+    void setJ1939Parser(const J1939Parser *j1939) { m_j1939 = j1939; }
     void saveSession();
     void loadSession();
     void exportModels();
@@ -192,4 +197,7 @@ private:
     QHash<uint32_t, QHash<uint32_t, int>> m_transitions; // fromId -> toId -> count
     QHash<uint32_t, uint32_t> m_markovBestNext;        // fromId -> best next id
     QHash<uint32_t, double>   m_markovProb;            // fromId -> probability
+
+    const DbcParser   *m_dbc   = nullptr;
+    const J1939Parser *m_j1939 = nullptr;
 };

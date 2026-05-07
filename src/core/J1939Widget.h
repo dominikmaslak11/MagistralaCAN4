@@ -49,6 +49,8 @@ class J1939Widget : public QWidget {
 public:
     explicit J1939Widget(QWidget *parent = nullptr);
 
+    const J1939Parser *parser() const { return &m_parser; }
+
 public slots:
     void processFrame(const CanFrame &frame);
     void onFrameSelected(const QModelIndex &index);

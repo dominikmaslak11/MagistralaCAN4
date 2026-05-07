@@ -1,5 +1,7 @@
 #include "Logger.h"
 #include "AssociativeLearner.h"
+#include "DbcParser.h"
+#include "J1939Parser.h"
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -446,7 +448,26 @@ void AssociativeLearner::updateCandidates() {
             float dot=0,nA=0,nB=0; for(int k=0;k<vecs[i].size();++k){ float a=vecs[i][k],b=vecs[j][k]; dot+=a*b; nA+=a*a; nB+=b*b; }
             sim += dot/(std::sqrt(nA)*std::sqrt(nB)+1e-6f); pairs++;
         }
-        cands.append({id, QString("ID 0x%1").arg(id,3,16,QChar('0')).toUpper(), (pairs>0?sim/pairs:0.0f), (int)vecs.size()});
+        QString desc = QString("ID 0x%1").arg(id, 3, 16, QChar('0')).toUpper();
+        // Wzbogać opis o DBC / J1939
+        if (m_dbc) {
+            DbcMessage dm = m_dbc->messageForId(id);
+            if (dm.id != 0) {
+                desc = dm.name;
+                if (!dm.sigList.isEmpty())
+                    desc += " (" + dm.sigList.first().name + "...)";
+            }
+        }
+        if (m_j1939 && (id & 0x80000000)) {
+            // Wyciągnij PGN z 29-bit CAN ID
+            uint32_t pf = (id >> 16) & 0xFF;
+            uint32_t ps = (id >> 8) & 0xFF;
+            uint32_t dp = (id >> 24) & 0x1;
+            uint32_t r  = (id >> 25) & 0x1;
+            uint32_t pgn = (r << 17) | (dp << 16) | (pf << 8) | (pf < 240 ? ps : 0);
+            desc += " | " + m_j1939->pgnName(pgn);
+        }
+        cands.append({id, desc, (pairs>0?sim/pairs:0.0f), (int)vecs.size()});
     }
     // Kontrast z tłem: obniż score ID, które występują podobnie w non-eventach
     if (!m_nonEvents.isEmpty()) {

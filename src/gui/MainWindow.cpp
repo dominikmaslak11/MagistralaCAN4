@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_frameDetail->setSniffer(&m_sniffer);
     m_canDashboard = new CanDashboard;
     m_j1939Widget = new J1939Widget;
+    m_learner->setJ1939Parser(m_j1939Widget->parser());
     m_dbcEditor = new DbcEditorWidget;
     m_canSimWidget = new CanNodeSimWidget(&m_sniffer, m_luaEngine);
     m_remoteCanWidget = new RemoteCanWidget(&m_sniffer);
@@ -124,6 +125,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         const DbcParser *parser = m_dbcEditor->parser();
         m_frameDetail->setDbcParser(const_cast<DbcParser*>(parser));
         m_canDashboard->setDbcParser(parser);
+        m_learner->setDbcParser(parser);
     });
 }
 
@@ -203,6 +205,7 @@ void MainWindow::loadDbcFile() {
     if (m_dbcParser.load(fileName)) {
         m_frameDetail->setDbcParser(&m_dbcParser);
         m_canDashboard->setDbcParser(&m_dbcParser);
+        m_learner->setDbcParser(&m_dbcParser);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
     } else {
