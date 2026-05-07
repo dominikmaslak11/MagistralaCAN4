@@ -36,6 +36,7 @@ set(SOURCES
     src/core/UdsParser.cpp
     src/core/UdsWidget.cpp
     src/core/CanGaugeWidget.cpp
+    src/core/LogComparatorWidget.cpp
     src/gui/MainWindow.cpp
 )
 
@@ -64,6 +65,7 @@ set(HEADERS
     src/core/RemoteCanClient.h
     src/core/RemoteCanWidget.h
     src/core/CanGaugeWidget.h
+    src/core/LogComparatorWidget.h
     src/core/UdsFrame.h
     src/core/UdsParser.h
     src/core/UdsWidget.h

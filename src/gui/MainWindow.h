@@ -19,6 +19,8 @@
 #include "core/DbcEditorWidget.h"
 #include "core/CanNodeSimWidget.h"
 #include "core/RemoteCanWidget.h"
+#include "core/UdsWidget.h"
+#include "core/LogComparatorWidget.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -60,6 +62,8 @@ private:
     DbcEditorWidget *m_dbcEditor;
     CanNodeSimWidget *m_canSimWidget;
     RemoteCanWidget  *m_remoteCanWidget;
+    UdsWidget        *m_udsWidget;
+    LogComparatorWidget *m_logComparator;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;

@@ -46,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_dbcEditor = new DbcEditorWidget;
     m_canSimWidget = new CanNodeSimWidget(&m_sniffer, m_luaEngine);
     m_remoteCanWidget = new RemoteCanWidget(&m_sniffer);
+    m_udsWidget = new UdsWidget;
+    m_logComparator = new LogComparatorWidget;
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     // --- System tray ---
     m_trayIcon = new QSystemTrayIcon(this);
@@ -91,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_sniffer, &CanSniffer::newFrame, m_canDashboard, &CanDashboard::updateSignal, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_j1939Widget, &J1939Widget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_canSimWidget->simulator(), &CanNodeSimulator::onNewFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, m_udsWidget, &UdsWidget::processFrame, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -245,6 +248,8 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_dbcEditor, "Edytor DBC");
     tabs->addTab(m_canSimWidget, "Symulacja CAN");
     tabs->addTab(m_remoteCanWidget, "Zdalny CAN");
+    tabs->addTab(m_udsWidget, "Diagnostyka UDS");
+    tabs->addTab(m_logComparator, "Porównywarka logów");
     setCentralWidget(tabs);
 }
 
