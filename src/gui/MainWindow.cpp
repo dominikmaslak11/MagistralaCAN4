@@ -30,15 +30,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_tableView->setAlternatingRowColors(false);
 
     m_learner = new AssociativeLearner;
-    // Lokalny skrót klawiszowy (zawsze działa przy aktywnym oknie)
+    // Lokalne skróty klawiszowe (zawsze działają przy aktywnym oknie)
     m_hotkeyMarkEvent = new QShortcut(QKeySequence("Ctrl+Shift+E"), this);
     connect(m_hotkeyMarkEvent, &QShortcut::activated, m_learner, &AssociativeLearner::markEvent);
     Logger::log("Lokalny skrót Ctrl+Shift+E utworzony");
+    m_hotkeyNonEvent = new QShortcut(QKeySequence("Ctrl+Shift+D"), this);
+    connect(m_hotkeyNonEvent, &QShortcut::activated, m_learner, &AssociativeLearner::markNonEvent);
+    Logger::log("Lokalny skrót Ctrl+Shift+D utworzony");
     m_luaEngine = new LuaScriptEngine(this);
     m_luaEngine->setSniffer(&m_sniffer);
     m_frameDetail = new FrameDetailWidget;
     m_frameDetail->setSniffer(&m_sniffer);
     m_canDashboard = new CanDashboard;
+    m_j1939Widget = new J1939Widget;
+    m_dbcEditor = new DbcEditorWidget;
+    m_canSimWidget = new CanNodeSimWidget(&m_sniffer, m_luaEngine);
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     // --- System tray ---
     m_trayIcon = new QSystemTrayIcon(this);
@@ -82,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_canDashboard, &CanDashboard::updateSignal, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, m_j1939Widget, &J1939Widget::processFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, m_canSimWidget->simulator(), &CanNodeSimulator::onNewFrame, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -94,6 +102,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         Logger::log("Wykryto anomalię na magistrali!");
     });
     connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
+
+    // Edytor DBC → podmiana parsera w dashboardzie i szczegółach
+    connect(m_dbcEditor, &DbcEditorWidget::dbcApplied, this, [this]() {
+        const DbcParser *parser = m_dbcEditor->parser();
+        m_frameDetail->setDbcParser(const_cast<DbcParser*>(parser));
+        m_canDashboard->setDbcParser(parser);
+    });
 }
 
 MainWindow::~MainWindow() {
@@ -213,6 +228,9 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_frameDetail, "Szczegóły ramki");
     tabs->addTab(m_offlineAnalyzer, "Analiza offline");
     tabs->addTab(m_canDashboard, "Dashboard CAN");
+    tabs->addTab(m_j1939Widget, "Diagnostyka J1939");
+    tabs->addTab(m_dbcEditor, "Edytor DBC");
+    tabs->addTab(m_canSimWidget, "Symulacja CAN");
     setCentralWidget(tabs);
 }
 

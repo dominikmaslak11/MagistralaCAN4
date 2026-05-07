@@ -98,7 +98,6 @@ private:
     // UI
     QPushButton *m_markEventBtn;
     QPushButton *m_markNonEventBtn;
-    QShortcut  *m_shortcutNonEvent;
     QPushButton *m_resetBtn;
     QLabel      *m_iterationLabel;
     QTableView  *m_candidatesView;

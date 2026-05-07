@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QDebug>
+#include <algorithm>
 
 bool DbcParser::load(const QString &fileName) {
     QFile file(fileName);
@@ -82,4 +83,55 @@ QString DbcParser::signalDescriptions(uint32_t id, const uint8_t* data, int dlc)
         desc.append(QString("%1 = %2 %3").arg(sig.name).arg(value, 0, 'f', 2).arg(sig.unit));
     }
     return desc.join("; ");
+}
+
+// ── Nowe metody (edytor DBC) ────────────────────────────────
+
+bool DbcParser::save(const QString &fileName) const {
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+
+    QTextStream out(&file);
+    out << serialize(m_messages);
+    file.close();
+    qDebug() << "Zapisano DBC:" << fileName;
+    return true;
+}
+
+QString DbcParser::serialize(const QVector<DbcMessage> &msgs) {
+    QString out;
+    QTextStream ts(&out);
+
+    // Sortuj wg ID
+    auto sorted = msgs;
+    std::sort(sorted.begin(), sorted.end(),
+              [](const DbcMessage &a, const DbcMessage &b) { return a.id < b.id; });
+
+    for (const auto &msg : sorted) {
+        ts << "BO_ " << msg.id << " " << msg.name << ": " << msg.dlc << " Vector__XXX\n";
+        for (const auto &sig : msg.sigList) {
+            ts << " SG_ " << sig.name << " : "
+               << sig.startBit << "|" << sig.length << "@"
+               << (sig.isLittleEndian ? "1" : "0")
+               << (sig.isSigned ? "-" : "+")
+               << " (" << sig.scale << "," << sig.offset << ")"
+               << " [" << sig.minimum << "|" << sig.maximum << "]"
+               << " \"" << sig.unit << "\""
+               << " Vector__XXX\n";
+        }
+        ts << "\n";
+    }
+    return out;
+}
+
+void DbcParser::setMessages(const QVector<DbcMessage> &msgs) {
+    m_messages = msgs;
+    rebuildMap();
+}
+
+void DbcParser::rebuildMap() {
+    m_messageMap.clear();
+    for (const auto &msg : m_messages)
+        m_messageMap[msg.id] = msg;
 }
