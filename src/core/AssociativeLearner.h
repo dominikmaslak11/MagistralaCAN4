@@ -82,6 +82,7 @@ private:
     void updateSequenceTable();
     void updateCrossByteTable();
     void updateChart();
+    void updateTimeChart();
     void recalcAdaptiveWindow();
     QHash<uint32_t, QVector<float>> buildFeatureVectors(const QVector<CanFrame> &window);
 
@@ -143,10 +144,18 @@ private:
     QPushButton  *m_exportReportBtn;
     QPushButton  *m_loadBtn;
 
-    // Wykres
+    // Wykres scatter
     QChartView   *m_chartView;
     QChart       *m_chart;
     QScatterSeries *m_scatterSeries;
+
+    // Wykres czasowy (zmienna + bajty CAN w czasie)
+    QChartView   *m_timeChartView;
+    QChart       *m_timeChart;
+    QLineSeries  *m_varTimeSeries;
+    QLineSeries  *m_byteTimeSeries;
+    QComboBox    *m_timeIdCombo;
+    QComboBox    *m_timeByteCombo;
 
     CandidateModel *m_candidateModel;
     GpuCorrelator   m_correlator;

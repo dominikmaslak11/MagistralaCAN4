@@ -252,6 +252,32 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_chartView->setMinimumHeight(300);
     mainLayout->addWidget(m_chartView);
 
+    // --- Wykres czasowy (zmienna + bajty CAN w czasie) ---
+    addHLine();
+    auto *timeChartLayout = new QHBoxLayout;
+    timeChartLayout->addWidget(new QLabel("Wykres w czasie:"));
+    m_timeIdCombo = new QComboBox; m_timeIdCombo->setMinimumWidth(120);
+    m_timeByteCombo = new QComboBox; m_timeByteCombo->setMinimumWidth(80);
+    for (int b = 0; b < 64; ++b) m_timeByteCombo->addItem(QString("Bajt %1").arg(b), b);
+    timeChartLayout->addWidget(m_timeIdCombo);
+    timeChartLayout->addWidget(m_timeByteCombo);
+    timeChartLayout->addStretch();
+    mainLayout->addLayout(timeChartLayout);
+
+    m_timeChart = new QChart();
+    m_timeChart->setTitle("Zmienna i bajt CAN w czasie");
+    m_varTimeSeries = new QLineSeries(); m_varTimeSeries->setName("Zmienna"); m_varTimeSeries->setColor(QColor("#00ffaa"));
+    m_byteTimeSeries = new QLineSeries(); m_byteTimeSeries->setName("Bajt CAN"); m_byteTimeSeries->setColor(QColor("#ff66cc"));
+    m_timeChart->addSeries(m_varTimeSeries);
+    m_timeChart->addSeries(m_byteTimeSeries);
+    m_timeChart->createDefaultAxes();
+    m_timeChartView = new QChartView(m_timeChart); m_timeChartView->setRenderHint(QPainter::Antialiasing);
+    m_timeChartView->setMinimumHeight(300);
+    mainLayout->addWidget(m_timeChartView);
+
+    connect(m_timeIdCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int) { updateTimeChart(); });
+    connect(m_timeByteCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int) { updateTimeChart(); });
+
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję"); m_loadBtn = new QPushButton("📂 Wczytaj sesję");
     m_exportModelsBtn = new QPushButton("📤 Eksportuj modele");
@@ -362,7 +388,7 @@ void AssociativeLearner::addObservation() {
         obs.idAverageBytes[it.key()] = avg;
     }
     m_observationsMap[m_currentVariable].append(obs); m_valueInput->clear();
-    updateCorrelationTable(); updateCrossByteTable(); updateChart();
+    updateCorrelationTable(); updateCrossByteTable(); updateChart(); updateTimeChart();
     if (m_autoEventCheck->isChecked()) checkAutoEvent();
 }
 
@@ -685,6 +711,37 @@ void AssociativeLearner::updateChart() {
     for(const auto &o : obs) {
         auto it = o.idAverageBytes.find(anyId);
         if(it!=o.idAverageBytes.end()) m_scatterSeries->append((double)it.value()[anyByte], o.value);
+    }
+}
+
+void AssociativeLearner::updateTimeChart() {
+    m_varTimeSeries->clear();
+    m_byteTimeSeries->clear();
+    QVector<ValueObservation> obs = currentObservations();
+    if (obs.size() < 2) return;
+
+    // Aktualizuj listę ID w kombie
+    QSet<uint32_t> ids;
+    for (const auto &o : obs)
+        for (auto it = o.idAverageBytes.begin(); it != o.idAverageBytes.end(); ++it)
+            ids.insert(it.key());
+    m_timeIdCombo->blockSignals(true);
+    m_timeIdCombo->clear();
+    for (uint32_t id : ids)
+        m_timeIdCombo->addItem(QString("0x%1").arg(id, 3, 16, QChar('0')).toUpper(), id);
+    m_timeIdCombo->blockSignals(false);
+
+    uint32_t selId = m_timeIdCombo->currentData().toUInt();
+    int selByte = m_timeByteCombo->currentData().toInt();
+
+    for (int i = 0; i < obs.size(); ++i) {
+        double x = i;
+        double varVal = obs[i].value;
+        m_varTimeSeries->append(x, varVal);
+
+        auto it = obs[i].idAverageBytes.find(selId);
+        if (it != obs[i].idAverageBytes.end() && selByte < 64)
+            m_byteTimeSeries->append(x, (double)it.value()[selByte]);
     }
 }
 
