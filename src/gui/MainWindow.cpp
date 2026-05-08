@@ -13,6 +13,7 @@
 #include <QStyle>
 #include <QSystemTrayIcon>
 #include <QMenu>
+#include <QClipboard>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("MagistralaCAN4 - Sniffer CAN");
@@ -23,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_tableView = new QTableView;
     m_tableView->setModel(m_model);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     m_tableView->verticalHeader()->hide();
     m_tableView->horizontalHeader()->setStretchLastSection(true);
     m_tableView->setShowGrid(false);
@@ -86,6 +87,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setupToolBar();
     setupCentralWidget();
     setupStyle();
+
+    // Ctrl+C – kopiuj zaznaczone ramki
+    auto *copyShortcut = new QShortcut(QKeySequence("Ctrl+C"), m_tableView);
+    connect(copyShortcut, &QShortcut::activated, this, &MainWindow::copySelectedToClipboard);
 
     // Statystyki CAN – timer co 500ms
     m_canStatsTimer.setInterval(500);
@@ -359,6 +364,26 @@ void MainWindow::toggleCanPause() {
             m_frameBuffer.clear();
         }
     }
+}
+
+void MainWindow::copySelectedToClipboard() {
+    auto sel = m_tableView->selectionModel()->selectedRows();
+    if (sel.isEmpty()) return;
+
+    QStringList lines;
+    // Nagłówek
+    QStringList hdr;
+    for (int c = 0; c < m_model->columnCount(); ++c)
+        hdr << m_model->headerData(c, Qt::Horizontal).toString();
+    lines << hdr.join('\t');
+
+    for (const auto &idx : sel) {
+        QStringList cols;
+        for (int c = 0; c < m_model->columnCount(); ++c)
+            cols << m_model->data(m_model->index(idx.row(), c)).toString();
+        lines << cols.join('\t');
+    }
+    QApplication::clipboard()->setText(lines.join('\n'));
 }
 
 void MainWindow::setupStyle() {

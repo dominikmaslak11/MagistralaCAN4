@@ -47,6 +47,7 @@ private slots:
     void updateCanStats();
     void applyIdFilter(const QString &text);
     void toggleCanPause();
+    void copySelectedToClipboard();
 
 private:
     void setupStyle();
