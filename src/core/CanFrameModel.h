@@ -28,6 +28,7 @@ public:
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
     void setDbcParser(const DbcParser *dbc) { m_dbc = dbc; }
     void setJ1939Parser(const J1939Parser *j1939) { m_j1939 = j1939; }
+    void setMaxFrames(int max) { m_maxFrames = max; }
 
     // NOWE: dostęp do wszystkich ramek (dla eksportu)
     QVector<CanFrame> allFrames() const;
@@ -50,6 +51,7 @@ private:
     QVector<CanFrame> m_frames;
     QHash<uint32_t, int> m_idToRow;
     bool m_overwrite = true;
+    int  m_maxFrames = 50000;
     const DbcParser   *m_dbc   = nullptr;
     const J1939Parser *m_j1939 = nullptr;
 };
