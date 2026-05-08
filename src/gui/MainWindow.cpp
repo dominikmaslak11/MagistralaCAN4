@@ -119,6 +119,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_sniffer, &CanSniffer::newFrame, m_obdWidget, &ObdWidget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_canOpenWidget, &CanOpenWidget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, &m_recorder, &CanRecorder::recordFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, &m_mdf4Writer, &Mdf4Writer::recordFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, &m_mqttBridge, &MqttBridge::onNewFrame, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
@@ -295,6 +296,7 @@ void MainWindow::setupToolBar() {
     QAction *exportAction = toolbar->addAction("📥 Eksportuj candump"); connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
     QAction *csvAction = toolbar->addAction("📊 Eksportuj CSV"); connect(csvAction, &QAction::triggered, this, &MainWindow::exportToCsv);
     QAction *recAction = toolbar->addAction("⏺ Nagraj"); connect(recAction, &QAction::triggered, this, &MainWindow::toggleRecording);
+    QAction *mdf4Action = toolbar->addAction("📦 Nagraj MDF4"); connect(mdf4Action, &QAction::triggered, this, &MainWindow::toggleMdf4Recording);
     QAction *restAction = toolbar->addAction("🌐 REST API"); connect(restAction, &QAction::triggered, this, &MainWindow::toggleRestApi);
     QAction *mqttAction = toolbar->addAction("📡 MQTT"); connect(mqttAction, &QAction::triggered, this, &MainWindow::toggleMqtt);
     QAction *themeAction = toolbar->addAction("☀️ Jasny motyw"); connect(themeAction, &QAction::triggered, this, &MainWindow::toggleTheme);
@@ -482,6 +484,16 @@ void MainWindow::toggleRestApi() {
 }
 
 static bool s_darkTheme = true;
+
+void MainWindow::toggleMdf4Recording() {
+    if (m_mdf4Writer.isRecording()) {
+        m_mdf4Writer.stop();
+    } else {
+        QString path = QFileDialog::getSaveFileName(this, "Nagraj sesję MDF4", "sesja.mf4", "MDF4 (*.mf4)");
+        if (path.isEmpty()) return;
+        m_mdf4Writer.start(path);
+    }
+}
 
 void MainWindow::toggleMqtt() {
     m_mqttBridge.setEnabled(!m_mqttBridge.isEnabled());
