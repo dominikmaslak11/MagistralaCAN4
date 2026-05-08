@@ -4,11 +4,14 @@
 #include <QMutex>
 #include "CanFrame.h"
 
+class DbcParser;
+class J1939Parser;
+
 class CanFrameModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     enum Column {
-        ID, EXT, RTR, DLC, DATA, TIMESTAMP, FD, DELTA, _COUNT
+        ID, EXT, RTR, DLC, DATA, TIMESTAMP, FD, DELTA, SIGNAL, _COUNT
     };
 
     explicit CanFrameModel(QObject *parent = nullptr);
@@ -22,6 +25,8 @@ public:
     void setOverwriteMode(bool enabled);
     void clear();
     CanFrame frameAt(int row) const;
+    void setDbcParser(const DbcParser *dbc) { m_dbc = dbc; }
+    void setJ1939Parser(const J1939Parser *j1939) { m_j1939 = j1939; }
 
     // NOWE: dostęp do wszystkich ramek (dla eksportu)
     QVector<CanFrame> allFrames() const;
@@ -40,4 +45,6 @@ private:
     QVector<CanFrame> m_frames;
     QHash<uint32_t, int> m_idToRow;
     bool m_overwrite = true;
+    const DbcParser   *m_dbc   = nullptr;
+    const J1939Parser *m_j1939 = nullptr;
 };

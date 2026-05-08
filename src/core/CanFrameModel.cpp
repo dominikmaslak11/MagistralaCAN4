@@ -1,4 +1,6 @@
 #include "CanFrameModel.h"
+#include "DbcParser.h"
+#include "J1939Parser.h"
 #include <QColor>
 
 CanFrameModel::CanFrameModel(QObject *parent) : QAbstractTableModel(parent) {}
@@ -40,6 +42,23 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
                 return QString("%1 µs").arg(m_deltas[index.row()]);
             return "—";
         }
+        case Column::SIGNAL: {
+            QString desc;
+            if (m_dbc && frame.id) {
+                DbcMessage dm = m_dbc->messageForId(frame.id);
+                if (dm.id != 0 && !dm.sigList.isEmpty())
+                    desc = dm.sigList.first().name;
+            }
+            if (desc.isEmpty() && m_j1939 && (frame.id & 0x80000000)) {
+                uint32_t pf = (frame.id >> 16) & 0xFF;
+                uint32_t ps = (frame.id >> 8) & 0xFF;
+                uint32_t dp = (frame.id >> 24) & 0x1;
+                uint32_t r  = (frame.id >> 25) & 0x1;
+                uint32_t pgn = (r << 17) | (dp << 16) | (pf << 8) | (pf < 240 ? ps : 0);
+                desc = m_j1939->pgnName(pgn);
+            }
+            return desc.isEmpty() ? QString() : desc;
+        }
         default: break;
         }
     } else if (role == Qt::TextAlignmentRole) {
@@ -54,7 +73,25 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::TIMESTAMP: return QColor("#888888");
         case Column::FD:        return QColor(frame.fd ? "#00ffaa" : "#666666");
         case Column::DELTA:     return QColor("#8888cc");
+        case Column::SIGNAL:    return QColor("#ffaa00");
         }
+    } else if (role == Qt::ToolTipRole && index.column() == Column::SIGNAL) {
+        QString tip;
+        if (m_dbc && frame.id) {
+            DbcMessage dm = m_dbc->messageForId(frame.id);
+            if (dm.id != 0) {
+                QStringList parts;
+                for (const auto &sig : dm.sigList) {
+                    int byteIdx = sig.startBit / 8;
+                    if (byteIdx < frame.dlc) {
+                        double val = frame.data[byteIdx] * sig.scale + sig.offset;
+                        parts.append(QString("%1 = %2 %3").arg(sig.name).arg(val, 0, 'f', 2).arg(sig.unit));
+                    }
+                }
+                tip = parts.join("\n");
+            }
+        }
+        return tip.isEmpty() ? QVariant() : tip;
     } else if (role == Qt::BackgroundRole) {
         return (index.row() % 2) ? QColor("#0d1117") : QColor("#161b22");
     }
@@ -72,6 +109,7 @@ QVariant CanFrameModel::headerData(int section, Qt::Orientation orientation, int
         case Column::TIMESTAMP: return "Czas [µs]";
         case Column::FD:        return "FD";
         case Column::DELTA:     return "Delta";
+        case Column::SIGNAL:    return "DBC / J1939";
         }
     }
     return {};
