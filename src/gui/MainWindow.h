@@ -44,6 +44,8 @@ private slots:
     void loadLuaScript();
     void loadDbcFile();
     void onFrameSelected(const QModelIndex &index);
+    void updateCanStats();
+    void applyIdFilter(const QString &text);
 
 private:
     void setupStyle();
@@ -72,6 +74,14 @@ private:
     QSystemTrayIcon *m_trayIcon = nullptr;
     QShortcut *m_hotkeyMarkEvent = nullptr;
     QShortcut *m_hotkeyNonEvent = nullptr;
+
+    // Statystyki CAN
+    QLineEdit *m_canFilterEdit;
+    QLabel    *m_canStatsLabel;
+    QTimer     m_canStatsTimer;
+    uint64_t   m_totalFrameCount = 0;
+    uint64_t   m_lastStatsFrameCount = 0;
+    QSet<uint32_t> m_uniqueIdsSinceLastStats;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;

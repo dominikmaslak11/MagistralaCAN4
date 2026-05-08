@@ -83,7 +83,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setupToolBar();
     setupCentralWidget();
     setupStyle();
-    // Globalny skrót klawiszowy Ctrl+Shift+E = zarejestruj zdarzenie
+
+    // Statystyki CAN – timer co 500ms
+    m_canStatsTimer.setInterval(500);
+    connect(&m_canStatsTimer, &QTimer::timeout, this, &MainWindow::updateCanStats);
+    m_canStatsTimer.start();
 
     refreshInterfaces();
     if (m_interfaceCombo->count() > 0)
@@ -147,7 +151,11 @@ void MainWindow::toggleSniffing() {
     }
 }
 
-void MainWindow::onNewFrame(const CanFrame &frame) { m_frameBuffer.append(frame); }
+void MainWindow::onNewFrame(const CanFrame &frame) {
+    m_frameBuffer.append(frame);
+    m_totalFrameCount++;
+    m_uniqueIdsSinceLastStats.insert(frame.id);
+}
 
 void MainWindow::updateTableBatch() {
     if (m_frameBuffer.isEmpty()) return;
@@ -242,7 +250,28 @@ void MainWindow::setupToolBar() {
 
 void MainWindow::setupCentralWidget() {
     auto *tabs = new QTabWidget;
-    tabs->addTab(m_tableView, "Ruch CAN");
+
+    // Zakładka "Ruch CAN" z paskiem statystyk i filtrem ID
+    auto *canTab = new QWidget;
+    auto *canLayout = new QVBoxLayout(canTab);
+    canLayout->setContentsMargins(0, 0, 0, 0);
+
+    auto *canHeader = new QHBoxLayout;
+    m_canFilterEdit = new QLineEdit;
+    m_canFilterEdit->setPlaceholderText("Filtruj po CAN ID (hex, np. 123 lub 0x123)...");
+    m_canFilterEdit->setStyleSheet("QLineEdit { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; "
+                                    "border-radius: 4px; padding: 5px 10px; font-size: 12px; }");
+    connect(m_canFilterEdit, &QLineEdit::textChanged, this, &MainWindow::applyIdFilter);
+    canHeader->addWidget(m_canFilterEdit, 1);
+
+    m_canStatsLabel = new QLabel("Ramki: 0 | FPS: 0 | Unikalne ID: 0 | Obciążenie: 0%");
+    m_canStatsLabel->setStyleSheet("color: #ffaa00; font-weight: bold; font-size: 11px; "
+                                    "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
+    canHeader->addWidget(m_canStatsLabel);
+    canLayout->addLayout(canHeader);
+    canLayout->addWidget(m_tableView);
+
+    tabs->addTab(canTab, "Ruch CAN");
     tabs->addTab(m_learner, "Uczenie asocjacyjne");
     tabs->addTab(m_frameDetail, "Szczegóły ramki");
     tabs->addTab(m_offlineAnalyzer, "Analiza offline");
@@ -264,6 +293,35 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     if (reason == QSystemTrayIcon::DoubleClick || reason == QSystemTrayIcon::Trigger) {
         show();
         activateWindow();
+    }
+}
+
+void MainWindow::updateCanStats() {
+    uint64_t delta = m_totalFrameCount - m_lastStatsFrameCount;
+    double fps = delta / 0.5; // 500ms timer
+    int uniqueIds = m_uniqueIdsSinceLastStats.size();
+    // Szacunkowe obciążenie: 8B * fps / 500kbps (dla CAN 2.0)
+    double busLoad = (delta * 8 * 8.0) / (500'000 * 0.5) * 100.0;
+    if (busLoad > 100) busLoad = 100;
+
+    m_canStatsLabel->setText(QString("Ramki: %1 | FPS: %2 | Unikalne ID: %3 | Obc.: %4%")
+                             .arg(m_totalFrameCount).arg(fps, 0, 'f', 0).arg(uniqueIds)
+                             .arg(busLoad, 0, 'f', 1));
+    m_lastStatsFrameCount = m_totalFrameCount;
+    m_uniqueIdsSinceLastStats.clear();
+}
+
+void MainWindow::applyIdFilter(const QString &text) {
+    QString filter = text.trimmed();
+    if (filter.startsWith("0x", Qt::CaseInsensitive))
+        filter = filter.mid(2);
+    bool filterActive = !filter.isEmpty();
+    uint32_t filterId = filterActive ? filter.toUInt(nullptr, 16) : 0;
+
+    for (int i = 0; i < m_model->rowCount(); ++i) {
+        CanFrame f = m_model->frameAt(i);
+        bool show = !filterActive || (f.id == filterId);
+        m_tableView->setRowHidden(i, !show);
     }
 }
 

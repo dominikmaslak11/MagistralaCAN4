@@ -18,9 +18,10 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid() || index.row() >= m_frames.size())
         return {};
 
+    QMutexLocker lock(&m_mutex);
+    const CanFrame &frame = m_frames.at(index.row());
+
     if (role == Qt::DisplayRole) {
-        QMutexLocker lock(&m_mutex);
-        const CanFrame &frame = m_frames.at(index.row());
         switch (index.column()) {
         case Column::ID:        return QString::number(frame.id, 16).toUpper().rightJustified(3, '0');
         case Column::EXT:       return frame.extended ? "EXT" : "STD";
@@ -33,6 +34,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
             return dataHex.trimmed();
         }
         case Column::TIMESTAMP: return QString("%1 µs").arg(frame.timestamp);
+        case Column::FD:       return frame.fd ? "FD" : "CAN";
         default: break;
         }
     } else if (role == Qt::TextAlignmentRole) {
@@ -45,6 +47,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::DLC:       return QColor("#66ccff");
         case Column::DATA:      return QColor("#aa44ff");
         case Column::TIMESTAMP: return QColor("#888888");
+        case Column::FD:        return QColor(frame.fd ? "#00ffaa" : "#666666");
         }
     } else if (role == Qt::BackgroundRole) {
         return (index.row() % 2) ? QColor("#0d1117") : QColor("#161b22");
@@ -61,6 +64,7 @@ QVariant CanFrameModel::headerData(int section, Qt::Orientation orientation, int
         case Column::DLC:       return "DLC";
         case Column::DATA:      return "Dane (hex)";
         case Column::TIMESTAMP: return "Czas [µs]";
+        case Column::FD:        return "FD";
         }
     }
     return {};
@@ -78,8 +82,18 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
             auto it = m_idToRow.find(frame.id);
             if (it != m_idToRow.end()) {
                 int row = it.value();
+                // Śledź zmiany bajtów
+                QVector<uint8_t> prev = m_previousData.value(frame.id);
+                QVector<uint8_t> changed(64, 0);
+                for (int i = 0; i < frame.dlc && i < prev.size(); ++i)
+                    changed[i] = (frame.data[i] != prev[i]) ? 1 : 0;
+                // Zapisz zmiany jako metadane w CanFrame (użyj pola error tymczasowo)
                 m_frames[row] = frame;
                 changedRows.append(row);
+                // Zapisz poprzednie dane
+                QVector<uint8_t> cur(64, 0);
+                for (int i = 0; i < frame.dlc && i < 64; ++i) cur[i] = frame.data[i];
+                m_previousData[frame.id] = cur;
                 continue;
             }
         }
