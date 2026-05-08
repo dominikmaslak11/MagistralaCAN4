@@ -2,9 +2,13 @@
 #include <QSurfaceFormat>
 #include <QIcon>
 #include "gui/MainWindow.h"
+#include "core/CanFrame.h"
 
 int main(int argc, char *argv[])
 {
+    // Rejestracja CanFrame dla queued signal/slot (wymagane przy >512B)
+    qRegisterMetaType<CanFrame>("CanFrame");
+
     // Wymuś akcelerację GPU (OpenGL/Vulkan) - Qt6 domyślnie używa RHI
     QApplication app(argc, argv);
     app.setApplicationName("MagistralaCAN4");
