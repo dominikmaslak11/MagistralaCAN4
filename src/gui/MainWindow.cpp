@@ -209,6 +209,29 @@ void MainWindow::exportToCandump() {
         Logger::log(QString("Wyeksportowano %1 ramek do candump").arg(frames.size()));
 }
 
+void MainWindow::exportToCsv() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Eksportuj do CSV", "", "CSV (*.csv)");
+    if (fileName.isEmpty()) return;
+    QVector<CanFrame> frames = m_model->allFrames();
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+    QTextStream out(&file);
+    // Nagłówek
+    out << "Index,Timestamp_us,ID(hex),Type,RTR,DLC,Data(hex),FD\n";
+    for (int i = 0; i < frames.size(); ++i) {
+        const auto &f = frames[i];
+        QString data;
+        for (int b = 0; b < f.dlc && b < 8; ++b)
+            data += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
+        out << i << "," << f.timestamp << ",0x" << QString::number(f.id, 16).toUpper()
+            << "," << (f.extended ? "EXT" : "STD") << "," << (f.rtr ? "RTR" : "Data")
+            << "," << f.dlc << "," << data << "," << (f.fd ? "FD" : "CAN") << "\n";
+    }
+    file.close();
+    Logger::log(QString("Wyeksportowano %1 ramek do CSV").arg(frames.size()));
+    QMessageBox::information(this, "Eksport CSV", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
+}
+
 void MainWindow::loadLuaScript() {
     QString fileName = QFileDialog::getOpenFileName(this, "Wczytaj skrypt Lua", "", "Skrypty Lua (*.lua);;Wszystkie pliki (*)");
     if (fileName.isEmpty()) return;
@@ -254,6 +277,7 @@ void MainWindow::setupToolBar() {
     toolbar->addSeparator();
     QAction *clearAction = toolbar->addAction("🗙 Wyczyść"); if (clearAction) { connect(clearAction, &QAction::triggered, [this]() { m_model->clear(); }); QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction)); if (clearBtn) clearBtn->setObjectName("clearButton"); }
     QAction *exportAction = toolbar->addAction("📥 Eksportuj candump"); connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
+    QAction *csvAction = toolbar->addAction("📊 Eksportuj CSV"); connect(csvAction, &QAction::triggered, this, &MainWindow::exportToCsv);
     QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
     QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
 }
