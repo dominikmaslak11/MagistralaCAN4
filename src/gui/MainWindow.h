@@ -24,6 +24,9 @@
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QChart>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -87,6 +90,10 @@ private:
     uint64_t      m_lastStatsFrameCount = 0;
     QSet<uint32_t> m_uniqueIdsSinceLastStats;
     bool           m_canPaused = false;
+    QChartView    *m_fpsChartView;
+    QChart        *m_fpsChart;
+    QLineSeries   *m_fpsSeries;
+    int            m_fpsHistoryCount = 0;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;

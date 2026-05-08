@@ -310,6 +310,23 @@ void MainWindow::setupCentralWidget() {
                                   "QPushButton:hover { background: #e94560; color: #0a0e17; }");
     connect(m_canPauseBtn, &QPushButton::clicked, this, &MainWindow::toggleCanPause);
     canHeader->addWidget(m_canPauseBtn);
+
+    // Mini-wykres FPS
+    m_fpsChart = new QChart();
+    m_fpsChart->setMargins(QMargins(0,0,0,0));
+    m_fpsChart->setBackgroundRoundness(0);
+    m_fpsChart->legend()->hide();
+    m_fpsSeries = new QLineSeries(); m_fpsSeries->setColor(QColor("#00ffaa"));
+    m_fpsChart->addSeries(m_fpsSeries);
+    m_fpsChart->createDefaultAxes();
+    m_fpsChart->axes(Qt::Horizontal).first()->setVisible(false);
+    m_fpsChart->axes(Qt::Vertical).first()->setVisible(false);
+    m_fpsChartView = new QChartView(m_fpsChart);
+    m_fpsChartView->setRenderHint(QPainter::Antialiasing);
+    m_fpsChartView->setFixedSize(120, 30);
+    m_fpsChartView->setStyleSheet("background: transparent;");
+    canHeader->addWidget(m_fpsChartView);
+
     canLayout->addLayout(canHeader);
     canLayout->addWidget(m_tableView);
 
@@ -351,6 +368,13 @@ void MainWindow::updateCanStats() {
                              .arg(busLoad, 0, 'f', 1));
     m_lastStatsFrameCount = m_totalFrameCount;
     m_uniqueIdsSinceLastStats.clear();
+
+    // Aktualizuj mini-wykres FPS (ostatnie 60 próbek = 30s)
+    m_fpsSeries->append(m_fpsHistoryCount, fps);
+    m_fpsHistoryCount++;
+    if (m_fpsSeries->count() > 60)
+        m_fpsSeries->removePoints(0, m_fpsSeries->count() - 60);
+    m_fpsChart->axes(Qt::Vertical).first()->setRange(0, std::max(100.0, fps * 1.5));
 }
 
 void MainWindow::applyIdFilter(const QString &text) {
