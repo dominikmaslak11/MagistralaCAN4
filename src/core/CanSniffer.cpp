@@ -66,6 +66,13 @@ void CanSniffer::writeFrame(const CanFrame &frame) {
 
 void CanSniffer::start(const QString &interface) {
     if (m_running) return;
+
+    // Weryfikuj rejestrację CanFrame w Qt meta-systemie
+    if (QMetaType::fromName("CanFrame").id() == QMetaType::UnknownType) {
+        emit errorOccurred("CanFrame nie jest zarejestrowany w QMetaType. Uruchom qRegisterMetaType<CanFrame>().");
+        return;
+    }
+
     if (!openSocket(interface)) {
         emit errorOccurred("Nie można otworzyć interfejsu: " + interface);
         return;
