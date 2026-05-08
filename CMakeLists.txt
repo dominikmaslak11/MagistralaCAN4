@@ -37,6 +37,8 @@ set(SOURCES
     src/core/UdsWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
+    src/core/ObdParser.cpp
+    src/core/ObdWidget.cpp
     src/gui/MainWindow.cpp
 )
 
@@ -66,6 +68,8 @@ set(HEADERS
     src/core/RemoteCanWidget.h
     src/core/CanGaugeWidget.h
     src/core/LogComparatorWidget.h
+    src/core/ObdFrame.h
+    src/core/ObdWidget.h
     src/core/UdsFrame.h
     src/core/UdsParser.h
     src/core/UdsWidget.h
