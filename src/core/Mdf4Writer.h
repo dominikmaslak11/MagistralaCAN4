@@ -43,7 +43,7 @@ private:
     int m_nextChannelBlock = 0;
 
     struct ChanData {
-        QVector<uint8_t> buffer;
+        QByteArray buffer;
         uint64_t lastTs = 0;
         int samples = 0;
         uint64_t dataBlockPos = 0;
