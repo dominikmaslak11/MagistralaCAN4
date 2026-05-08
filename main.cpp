@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QSurfaceFormat>
+#include <QIcon>
 #include "gui/MainWindow.h"
 
 int main(int argc, char *argv[])
@@ -9,6 +10,9 @@ int main(int argc, char *argv[])
     app.setApplicationName("MagistralaCAN4");
     app.setApplicationVersion("2.0.0");
     app.setOrganizationName("CustomLabs");
+
+    // Ikona aplikacji (pasek zadań KDE, środowisko)
+    app.setWindowIcon(QIcon(":/ico.png"));
 
     // Styl Fusion dla spójnego wyglądu z akceleracją sprzętową
     app.setStyle("Fusion");
