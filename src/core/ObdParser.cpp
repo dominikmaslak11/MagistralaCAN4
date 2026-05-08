@@ -57,34 +57,35 @@ ObdParser::ObdParser() {
     };
 
     // Mode 0x01 PIDs
+    auto p = [](uint8_t m, uint16_t pid) { return qMakePair(m, pid); };
     m_pidDb = {
-        {{0x01, 0x00}, {"PIDs supported (00-20)", "", 1, 0}},
-        {{0x01, 0x04}, {"Calculated Engine Load", "%", 100.0/255, 0}},
-        {{0x01, 0x05}, {"Engine Coolant Temperature", "°C", 1, -40}},
-        {{0x01, 0x0A}, {"Fuel Pressure", "kPa", 3, 0}},
-        {{0x01, 0x0B}, {"Intake Manifold Pressure", "kPa", 1, 0}},
-        {{0x01, 0x0C}, {"Engine RPM", "rpm", 0.25, 0}},
-        {{0x01, 0x0D}, {"Vehicle Speed", "km/h", 1, 0}},
-        {{0x01, 0x0E}, {"Timing Advance", "°", 0.5, -64}},
-        {{0x01, 0x0F}, {"Intake Air Temperature", "°C", 1, -40}},
-        {{0x01, 0x10}, {"MAF Air Flow Rate", "g/s", 0.01, 0}},
-        {{0x01, 0x11}, {"Throttle Position", "%", 100.0/255, 0}},
-        {{0x01, 0x13}, {"Oxygen Sensors Present", "", 1, 0}},
-        {{0x01, 0x14}, {"O2 Sensor 1 Voltage", "V", 0.005, 0}},
-        {{0x01, 0x1C}, {"OBD Standard", "", 1, 0}},
-        {{0x01, 0x1F}, {"Run Time Since Start", "s", 1, 0}},
-        {{0x01, 0x20}, {"PIDs supported (21-40)", "", 1, 0}},
-        {{0x01, 0x21}, {"Distance with MIL", "km", 1, 0}},
-        {{0x01, 0x2F}, {"Fuel Level Input", "%", 100.0/255, 0}},
-        {{0x01, 0x33}, {"Barometric Pressure", "kPa", 1, 0}},
-        {{0x01, 0x42}, {"Control Module Voltage", "V", 0.001, 0}},
-        {{0x01, 0x46}, {"Ambient Air Temperature", "°C", 1, -40}},
+        {p(0x01, 0x00), {"PIDs supported (00-20)", "", 1, 0}},
+        {p(0x01, 0x04), {"Calculated Engine Load", "%", 100.0/255, 0}},
+        {p(0x01, 0x05), {"Engine Coolant Temperature", "°C", 1, -40}},
+        {p(0x01, 0x0A), {"Fuel Pressure", "kPa", 3, 0}},
+        {p(0x01, 0x0B), {"Intake Manifold Pressure", "kPa", 1, 0}},
+        {p(0x01, 0x0C), {"Engine RPM", "rpm", 0.25, 0}},
+        {p(0x01, 0x0D), {"Vehicle Speed", "km/h", 1, 0}},
+        {p(0x01, 0x0E), {"Timing Advance", "°", 0.5, -64}},
+        {p(0x01, 0x0F), {"Intake Air Temperature", "°C", 1, -40}},
+        {p(0x01, 0x10), {"MAF Air Flow Rate", "g/s", 0.01, 0}},
+        {p(0x01, 0x11), {"Throttle Position", "%", 100.0/255, 0}},
+        {p(0x01, 0x13), {"Oxygen Sensors Present", "", 1, 0}},
+        {p(0x01, 0x14), {"O2 Sensor 1 Voltage", "V", 0.005, 0}},
+        {p(0x01, 0x1C), {"OBD Standard", "", 1, 0}},
+        {p(0x01, 0x1F), {"Run Time Since Start", "s", 1, 0}},
+        {p(0x01, 0x20), {"PIDs supported (21-40)", "", 1, 0}},
+        {p(0x01, 0x21), {"Distance with MIL", "km", 1, 0}},
+        {p(0x01, 0x2F), {"Fuel Level Input", "%", 100.0/255, 0}},
+        {p(0x01, 0x33), {"Barometric Pressure", "kPa", 1, 0}},
+        {p(0x01, 0x42), {"Control Module Voltage", "V", 0.001, 0}},
+        {p(0x01, 0x46), {"Ambient Air Temperature", "°C", 1, -40}},
     };
 
     // Mode 0x09 PIDs
-    m_pidDb[{{0x09, 0x02}}] = {"VIN (chars 1-4)", "", 1, 0};
-    m_pidDb[{{0x09, 0x04}}] = {"Calibration ID", "", 1, 0};
-    m_pidDb[{{0x09, 0x06}}] = {"CVN", "", 1, 0};
+    m_pidDb[qMakePair(uint8_t(0x09), uint16_t(0x02))] = {"VIN (chars 1-4)", "", 1, 0};
+    m_pidDb[qMakePair(uint8_t(0x09), uint16_t(0x04))] = {"Calibration ID", "", 1, 0};
+    m_pidDb[qMakePair(uint8_t(0x09), uint16_t(0x06))] = {"CVN", "", 1, 0};
 }
 
 QString ObdParser::modeName(uint8_t mode) const {
@@ -92,17 +93,17 @@ QString ObdParser::modeName(uint8_t mode) const {
 }
 
 QString ObdParser::pidName(uint8_t mode, uint16_t pid) const {
-    auto it = m_pidDb.find({mode, pid});
+    auto it = m_pidDb.find(qMakePair(mode, pid));
     return (it != m_pidDb.end()) ? it->name : QString("PID 0x%1").arg(pid, 4, 16, QChar('0'));
 }
 
 QString ObdParser::pidUnit(uint8_t mode, uint16_t pid) const {
-    auto it = m_pidDb.find({mode, pid});
+    auto it = m_pidDb.find(qMakePair(mode, pid));
     return (it != m_pidDb.end()) ? it->unit : "";
 }
 
 double ObdParser::decodePidValue(uint8_t mode, uint16_t pid, const uint8_t *data, int len) const {
-    auto it = m_pidDb.find({mode, pid});
+    auto it = m_pidDb.find(qMakePair(mode, pid));
     if (it == m_pidDb.end() || len < 4) return 0;
 
     uint16_t raw = (static_cast<uint16_t>(data[3]) << 8) | data[4];
