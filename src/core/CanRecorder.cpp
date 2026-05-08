@@ -29,8 +29,12 @@ void CanRecorder::stopRecording() {
 
 void CanRecorder::recordFrame(const CanFrame &frame) {
     if (!m_recording) return;
-    uint8_t flags = (frame.extended ? 0x01 : 0) | (frame.rtr ? 0x02 : 0) | (frame.error ? 0x04 : 0) | (frame.fd ? 0x08 : 0);
-    m_stream << (quint64)frame.timestamp << (quint32)frame.id << flags << frame.dlc;
+    uint8_t flags = (frame.extended ? 0x01 : 0) | (frame.rtr ? 0x02 : 0) | (frame.error ? 0x04 : 0) | (frame.fd ? 0x08 : 0) | (frame.xl ? 0x10 : 0);
+    if (frame.xl) {
+        m_stream << (quint64)frame.timestamp << (quint32)frame.id << flags << (quint16)frame.dlc;
+    } else {
+        m_stream << (quint64)frame.timestamp << (quint32)frame.id << flags << frame.dlc;
+    }
     m_stream.writeRawData(reinterpret_cast<const char *>(frame.data.data()), frame.dlc);
     m_frameCount++;
 }
