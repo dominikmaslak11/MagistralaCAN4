@@ -209,6 +209,21 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
             emit dataChanged(index(r.first, 0), index(r.second, Column::_COUNT - 1));
         }
     }
+
+    // Auto-cleanup: usuń najstarsze jeśli przekroczono limit
+    if (m_maxFrames > 0 && m_frames.size() > m_maxFrames) {
+        int toRemove = m_frames.size() - m_maxFrames;
+        beginRemoveRows(QModelIndex(), 0, toRemove - 1);
+        m_frames.erase(m_frames.begin(), m_frames.begin() + toRemove);
+        if (!m_deltas.isEmpty())
+            m_deltas.erase(m_deltas.begin(), m_deltas.begin() + toRemove);
+        if (!m_isBurst.isEmpty())
+            m_isBurst.erase(m_isBurst.begin(), m_isBurst.begin() + toRemove);
+        m_idToRow.clear(); // odbuduj mapę
+        for (int i = 0; i < m_frames.size(); ++i)
+            m_idToRow[m_frames[i].id] = i;
+        endRemoveRows();
+    }
 }
 
 void CanFrameModel::setOverwriteMode(bool enabled) {
