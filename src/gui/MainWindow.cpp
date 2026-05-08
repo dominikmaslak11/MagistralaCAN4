@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
+    m_pluginLoader.loadFromDirectory("./plugins");
+    connect(&m_sniffer, &CanSniffer::newFrame, &m_pluginLoader, &PluginLoader::broadcastFrame, Qt::QueuedConnection);
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     setWindowIcon(QIcon(":/ico.png"));
 
@@ -361,6 +363,10 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_logComparator, "Porównywarka logów");
     tabs->addTab(m_obdWidget, "Diagnostyka OBD-II");
     tabs->addTab(m_canOpenWidget, "CANopen");
+    // Wtyczki z plugins/
+    for (auto *plugin : m_pluginLoader.plugins())
+        if (auto *w = plugin->widget())
+            tabs->addTab(w, plugin->name());
     setCentralWidget(tabs);
 }
 
