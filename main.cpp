@@ -39,7 +39,17 @@ int main(int argc, char *argv[])
     logMsg("qRegisterMetaType<CanFrame>...");
     qRegisterMetaType<CanFrame>("CanFrame");
 
-    // Wymuś akcelerację GPU (OpenGL/Vulkan) - Qt6 domyślnie używa RHI
+    // Wymuś akcelerację GPU (OpenGL) przez Qt6 RHI
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setVersion(3, 3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setSwapInterval(1);
+    format.setRenderableType(QSurfaceFormat::OpenGL);
+    QSurfaceFormat::setDefaultFormat(format);
+    logMsg("QSurfaceFormat configured: OpenGL 3.3 Core, depth=24, stencil=8, vsync=on");
+
     logMsg("Creating QApplication...");
     QApplication app(argc, argv);
     logMsg("QApplication created");
