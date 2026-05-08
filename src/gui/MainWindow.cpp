@@ -54,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_udsWidget = new UdsWidget;
     m_logComparator = new LogComparatorWidget;
     m_obdWidget = new ObdWidget;
+    m_restServer.setModel(m_model);
+    connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
+    connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     // --- System tray ---
     m_trayIcon = new QSystemTrayIcon(this);
@@ -282,6 +285,7 @@ void MainWindow::setupToolBar() {
     QAction *exportAction = toolbar->addAction("📥 Eksportuj candump"); connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
     QAction *csvAction = toolbar->addAction("📊 Eksportuj CSV"); connect(csvAction, &QAction::triggered, this, &MainWindow::exportToCsv);
     QAction *recAction = toolbar->addAction("⏺ Nagraj"); connect(recAction, &QAction::triggered, this, &MainWindow::toggleRecording);
+    QAction *restAction = toolbar->addAction("🌐 REST API"); connect(restAction, &QAction::triggered, this, &MainWindow::toggleRestApi);
     QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
     QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
 }
@@ -374,6 +378,9 @@ void MainWindow::updateCanStats() {
     m_lastStatsFrameCount = m_totalFrameCount;
     m_uniqueIdsSinceLastStats.clear();
 
+    m_restServer.fps = fps;
+    m_restServer.uniqueIds = uniqueIds;
+
     // Aktualizuj mini-wykres FPS (ostatnie 60 próbek = 30s)
     m_fpsSeries->append(m_fpsHistoryCount, fps);
     m_fpsHistoryCount++;
@@ -443,9 +450,17 @@ void MainWindow::toggleRecording() {
     if (m_recorder.isRecording()) {
         m_recorder.stopRecording();
     } else {
-        QString path = QFileDialog::getSaveFileName(this, "Nagraj sesję CAN", "sesja_%1.mcan", "MCAN (*.mcan)");
+        QString path = QFileDialog::getSaveFileName(this, "Nagraj sesję CAN", "sesja.mcan", "MCAN (*.mcan)");
         if (path.isEmpty()) return;
         m_recorder.startRecording(path);
+    }
+}
+
+void MainWindow::toggleRestApi() {
+    if (m_restServer.isRunning()) {
+        m_restServer.stop();
+    } else {
+        m_restServer.start(8080);
     }
 }
 
