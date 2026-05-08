@@ -39,6 +39,7 @@ set(SOURCES
     src/core/LogComparatorWidget.cpp
     src/core/ObdParser.cpp
     src/core/ObdWidget.cpp
+    src/core/CanRecorder.cpp
     src/gui/MainWindow.cpp
 )
 
@@ -70,6 +71,7 @@ set(HEADERS
     src/core/LogComparatorWidget.h
     src/core/ObdFrame.h
     src/core/ObdWidget.h
+    src/core/CanRecorder.h
     src/core/UdsFrame.h
     src/core/UdsParser.h
     src/core/UdsWidget.h
