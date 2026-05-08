@@ -23,6 +23,7 @@
 #include "core/LogComparatorWidget.h"
 #include "core/ObdWidget.h"
 #include "core/CanRecorder.h"
+#include "core/HttpRestServer.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -55,6 +56,7 @@ private slots:
     void toggleCanPause();
     void copySelectedToClipboard();
     void toggleRecording();
+    void toggleRestApi();
 
 private:
     void setupStyle();
@@ -77,6 +79,7 @@ private:
     LogComparatorWidget *m_logComparator;
     ObdWidget           *m_obdWidget;
     CanRecorder          m_recorder;
+    HttpRestServer       m_restServer;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
