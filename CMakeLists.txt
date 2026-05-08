@@ -17,6 +17,7 @@ set(SOURCES
     src/core/DbcParser.cpp
     main.cpp
     src/core/CanSniffer.cpp
+    src/core/SocketCanDriver.cpp
     src/core/CanFrameModel.cpp
     src/core/FrameDetailWidget.cpp
     src/core/AssociativeLearner.cpp
@@ -56,7 +57,9 @@ set(HEADERS
     src/core/OfflineAnalyzer.h
     src/core/DbcParser.h
     src/core/CanFrame.h
+    src/core/ICanDriver.h
     src/core/CanSniffer.h
+    src/core/SocketCanDriver.h
     src/core/CanFrameModel.h
     src/core/FrameDetailWidget.h
     src/core/AssociativeLearner.h
