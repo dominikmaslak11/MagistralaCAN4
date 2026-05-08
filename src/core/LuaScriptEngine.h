@@ -4,13 +4,15 @@
 #include <QTimer>
 #include "CanFrame.h"
 
+#ifdef HAS_LUA
 extern "C" {
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 }
+#endif
 
-class CanSniffer;  // forward‑declaration
+class CanSniffer;
 
 class LuaScriptEngine : public QObject {
     Q_OBJECT
@@ -20,10 +22,9 @@ public:
 
     bool loadScript(const QString &fileName);
     void unloadScript();
-    bool isLoaded() const;
+    bool isLoaded() const { return m_loaded; }
 
-    // Ustawienie wskaźnika do sniffera (do sendFrame)
-    void setSniffer(CanSniffer *sniffer);
+    void setSniffer(CanSniffer *sniffer) { m_sniffer = sniffer; }
 
 public slots:
     void onNewFrame(const CanFrame &frame);
@@ -33,11 +34,13 @@ signals:
     void errorOccurred(const QString &err);
 
 private:
+#ifdef HAS_LUA
     static int api_sendFrame(lua_State *L);
     static int api_log(lua_State *L);
     static int api_getTick(lua_State *L);
-
     lua_State *m_lua = nullptr;
+#endif
     CanSniffer *m_sniffer = nullptr;
     uint64_t m_startTick = 0;
+    bool m_loaded = false;
 };

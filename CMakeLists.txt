@@ -5,11 +5,24 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
+# ── Qt6 (wspólne) ──
 find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets)
-find_package(XCB REQUIRED)
-find_package(Lua REQUIRED)
-find_package(OpenCL REQUIRED)
 
+# ── Platform-specific dependencies ──
+if(UNIX AND NOT APPLE)
+    find_package(XCB REQUIRED)
+    find_package(Lua REQUIRED)
+    find_package(OpenCL REQUIRED)
+    set(HAS_LUA ON)
+    set(HAS_OPENCL ON)
+    set(HAS_XCB ON)
+elseif(WIN32 OR MINGW)
+    set(HAS_LUA OFF)
+    set(HAS_OPENCL OFF)
+    set(HAS_XCB OFF)
+endif()
+
+# ── Source files ──
 set(SOURCES
     src/core/CanDashboard.cpp
     src/core/Logger.cpp
@@ -22,11 +35,9 @@ set(SOURCES
     src/core/CanFrameModel.cpp
     src/core/FrameDetailWidget.cpp
     src/core/AssociativeLearner.cpp
-    src/core/LuaScriptEngine.cpp
-    src/core/CanExporter.cpp
-    src/core/CanInterfaceEnumerator.cpp
-    src/core/GpuCorrelator.cpp
     src/core/CandidateModel.cpp
+    src/core/LuaScriptEngine.cpp
+    src/core/GpuCorrelator.cpp
     src/core/WebSocketServer.cpp
     src/core/J1939Parser.cpp
     src/core/J1939Widget.cpp
@@ -52,6 +63,11 @@ set(SOURCES
     resources.qrc
 )
 
+if(HAS_XCB)
+    list(APPEND SOURCES src/core/CanInterfaceEnumerator.cpp)
+    list(APPEND SOURCES src/core/CanExporter.cpp)
+endif()
+
 set(HEADERS
     src/core/CanDashboard.h
     src/core/Logger.h
@@ -65,10 +81,6 @@ set(HEADERS
     src/core/CanFrameModel.h
     src/core/FrameDetailWidget.h
     src/core/AssociativeLearner.h
-    src/core/LuaScriptEngine.h
-    src/core/CanExporter.h
-    src/core/CanInterfaceEnumerator.h
-    src/core/GpuCorrelator.h
     src/core/CandidateModel.h
     src/core/WebSocketServer.h
     src/core/J1939Frame.h
@@ -97,25 +109,45 @@ set(HEADERS
     src/gui/MainWindow.h
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+if(HAS_XCB)
+    list(APPEND HEADERS src/core/CanInterfaceEnumerator.h)
+    list(APPEND HEADERS src/core/CanExporter.h)
+endif()
+
+# ── Executable ──
+if(WIN32 OR MINGW)
+    add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS})
+else()
+    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/src
-    ${LUA_INCLUDE_DIR}
-    ${OpenCL_INCLUDE_DIRS}
 )
 
+# ── Link libraries ──
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${XCB_LIBRARIES}
     Qt6::Widgets
     Qt6::Core
     Qt6::Concurrent
     Qt6::Charts
     Qt6::WebSockets
-    ${LUA_LIBRARIES}
-    ${OpenCL_LIBRARIES}
 )
 
-if(UNIX AND NOT APPLE)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE LINUX_SOCKETCAN)
+if(HAS_XCB)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR} ${OpenCL_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        ${XCB_LIBRARIES}
+        ${LUA_LIBRARIES}
+        ${OpenCL_LIBRARIES}
+    )
+    target_compile_definitions(${PROJECT_NAME} PRIVATE HAS_LUA HAS_OPENCL HAS_XCB)
+elseif(WIN32 OR MINGW)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE Q_OS_WIN)
+endif()
+
+# ── Windows specifics ──
+if(WIN32 OR MINGW)
+    # Statyczne linkowanie MinGW runtime (brak zależności od libgcc_s_seh-1.dll itp.)
+    target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
 endif()
