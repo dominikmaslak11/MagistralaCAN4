@@ -42,6 +42,7 @@ set(SOURCES
     src/core/CanRecorder.cpp
     src/core/HttpRestServer.cpp
     src/gui/MainWindow.cpp
+    resources.qrc
 )
 
 set(HEADERS

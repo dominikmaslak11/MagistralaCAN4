@@ -58,9 +58,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
+    setWindowIcon(QIcon(":/ico.png"));
+
     // --- System tray ---
     m_trayIcon = new QSystemTrayIcon(this);
-    m_trayIcon->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
+    m_trayIcon->setIcon(QIcon(":/ico.png"));
     m_trayIcon->setToolTip("MagistralaCAN4");
     auto *trayMenu = new QMenu(this);
     trayMenu->addAction("Przywróć", this, &QMainWindow::show);
