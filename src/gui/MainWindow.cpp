@@ -117,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_sniffer, &CanSniffer::newFrame, m_obdWidget, &ObdWidget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_canOpenWidget, &CanOpenWidget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, &m_recorder, &CanRecorder::recordFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, &m_mqttBridge, &MqttBridge::onNewFrame, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -148,6 +149,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_frameDetail->setDbcParser(const_cast<DbcParser*>(parser));
         m_canDashboard->setDbcParser(parser);
         m_learner->setDbcParser(parser);
+        m_mqttBridge.setDbcParser(parser);
     });
 }
 
@@ -258,6 +260,7 @@ void MainWindow::loadDbcFile() {
         m_canDashboard->setDbcParser(&m_dbcParser);
         m_learner->setDbcParser(&m_dbcParser);
         m_model->setDbcParser(&m_dbcParser);
+        m_mqttBridge.setDbcParser(&m_dbcParser);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
     } else {
@@ -291,6 +294,7 @@ void MainWindow::setupToolBar() {
     QAction *csvAction = toolbar->addAction("📊 Eksportuj CSV"); connect(csvAction, &QAction::triggered, this, &MainWindow::exportToCsv);
     QAction *recAction = toolbar->addAction("⏺ Nagraj"); connect(recAction, &QAction::triggered, this, &MainWindow::toggleRecording);
     QAction *restAction = toolbar->addAction("🌐 REST API"); connect(restAction, &QAction::triggered, this, &MainWindow::toggleRestApi);
+    QAction *mqttAction = toolbar->addAction("📡 MQTT"); connect(mqttAction, &QAction::triggered, this, &MainWindow::toggleMqtt);
     QAction *themeAction = toolbar->addAction("☀️ Jasny motyw"); connect(themeAction, &QAction::triggered, this, &MainWindow::toggleTheme);
     QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
     QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
@@ -472,6 +476,10 @@ void MainWindow::toggleRestApi() {
 }
 
 static bool s_darkTheme = true;
+
+void MainWindow::toggleMqtt() {
+    m_mqttBridge.setEnabled(!m_mqttBridge.isEnabled());
+}
 
 void MainWindow::toggleTheme() {
     s_darkTheme = !s_darkTheme;
