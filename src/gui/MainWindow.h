@@ -43,6 +43,11 @@ public:
 
     void showTrayNotification(const QString &title, const QString &message);
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
+
+signals:
+    /// Ramka po przetworzeniu przez model (DirectConnection do slotów analizy)
+    void frameProcessed(const CanFrame &frame);
+
 private slots:
     void toggleSniffing();
     void onNewFrame(const CanFrame &frame);
