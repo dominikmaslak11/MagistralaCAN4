@@ -18,6 +18,7 @@ set(SOURCES
     main.cpp
     src/core/CanSniffer.cpp
     src/core/SocketCanDriver.cpp
+    src/core/PcanDriver.cpp
     src/core/CanFrameModel.cpp
     src/core/FrameDetailWidget.cpp
     src/core/AssociativeLearner.cpp
@@ -60,6 +61,7 @@ set(HEADERS
     src/core/ICanDriver.h
     src/core/CanSniffer.h
     src/core/SocketCanDriver.h
+    src/core/PcanDriver.h
     src/core/CanFrameModel.h
     src/core/FrameDetailWidget.h
     src/core/AssociativeLearner.h
