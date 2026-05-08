@@ -73,7 +73,7 @@ QString CanOpenParser::typeName(CanOpenFrame::Type t) const {
     return m_typeDb.value(t, {"???", "Unknown"}).name;
 }
 
-QString CanOpenParser::nmtCommand(uint8_t cmd) {
+QString CanOpenParser::nmtCommand(uint8_t cmd) const {
     switch (cmd) {
     case 0x01: return "Start Remote Node";
     case 0x02: return "Stop Remote Node";
@@ -84,7 +84,7 @@ QString CanOpenParser::nmtCommand(uint8_t cmd) {
     }
 }
 
-QString CanOpenParser::emcyCode(uint16_t code) {
+QString CanOpenParser::emcyCode(uint16_t code) const {
     switch (code) {
     case 0x1000: return "Generic Error";
     case 0x5000: return "Device Hardware";
@@ -95,7 +95,7 @@ QString CanOpenParser::emcyCode(uint16_t code) {
     }
 }
 
-QString CanOpenParser::sdoCommand(uint8_t cmd) {
+QString CanOpenParser::sdoCommand(uint8_t cmd) const {
     uint8_t ccs = (cmd >> 5) & 0x7;
     switch (ccs) {
     case 0: return "Download Segment";
@@ -107,7 +107,7 @@ QString CanOpenParser::sdoCommand(uint8_t cmd) {
     }
 }
 
-QString CanOpenParser::heartbeatState(uint8_t state) {
+QString CanOpenParser::heartbeatState(uint8_t state) const {
     switch (state) {
     case 0x00: return "Boot-up";
     case 0x04: return "Stopped";

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <QString>
+#include <QHash>
 #include "CanFrame.h"
 
 /**
