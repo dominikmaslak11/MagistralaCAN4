@@ -25,6 +25,7 @@
 #include "core/CanOpenWidget.h"
 #include "core/CanRecorder.h"
 #include "core/MqttBridge.h"
+#include "core/PluginLoader.h"
 #include "core/HttpRestServer.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
@@ -86,6 +87,7 @@ private:
     CanRecorder          m_recorder;
     HttpRestServer       m_restServer;
     MqttBridge           m_mqttBridge;
+    PluginLoader         m_pluginLoader;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
