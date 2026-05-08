@@ -96,7 +96,13 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
     } else if (role == Qt::BackgroundRole) {
         if (index.row() < m_isBurst.size() && m_isBurst[index.row()])
             return QColor("#2e1a0a"); // ciemnopomarańczowe dla burstów
-        return (index.row() % 2) ? QColor("#0d1117") : QColor("#161b22");
+        // Kolorowanie wg zakresu ID
+        static const QColor idColors[] = {
+            QColor("#0d1117"), QColor("#111a1a"), QColor("#1a111a"),
+            QColor("#1a1a11"), QColor("#111a11"), QColor("#1a1111")
+        };
+        int colorIdx = (frame.id / 0x100) % 6;
+        return idColors[colorIdx];
     } else if (role == Qt::UserRole) {
         // Wartości numeryczne do sortowania
         switch (index.column()) {
