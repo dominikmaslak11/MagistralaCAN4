@@ -1,6 +1,9 @@
 #pragma once
 #include <cstdint>
 #include <QString>
+#include <QHash>
+#include <QList>
+#include <QPair>
 #include "CanFrame.h"
 
 struct ObdFrame {
