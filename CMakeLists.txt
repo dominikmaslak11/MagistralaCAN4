@@ -37,6 +37,8 @@ set(SOURCES
     src/core/UdsWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
+    src/core/CanOpenParser.cpp
+    src/core/CanOpenWidget.cpp
     src/core/ObdParser.cpp
     src/core/ObdWidget.cpp
     src/core/CanRecorder.cpp
@@ -71,6 +73,8 @@ set(HEADERS
     src/core/RemoteCanWidget.h
     src/core/CanGaugeWidget.h
     src/core/LogComparatorWidget.h
+    src/core/CanOpenFrame.h
+    src/core/CanOpenWidget.h
     src/core/ObdFrame.h
     src/core/ObdWidget.h
     src/core/CanRecorder.h

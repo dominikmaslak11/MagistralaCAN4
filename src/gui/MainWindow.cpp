@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_udsWidget = new UdsWidget;
     m_logComparator = new LogComparatorWidget;
     m_obdWidget = new ObdWidget;
+    m_canOpenWidget = new CanOpenWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -114,6 +115,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_sniffer, &CanSniffer::newFrame, m_canSimWidget->simulator(), &CanNodeSimulator::onNewFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_udsWidget, &UdsWidget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_obdWidget, &ObdWidget::processFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, m_canOpenWidget, &CanOpenWidget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, &m_recorder, &CanRecorder::recordFrame, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
@@ -354,6 +356,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_udsWidget, "Diagnostyka UDS");
     tabs->addTab(m_logComparator, "Porównywarka logów");
     tabs->addTab(m_obdWidget, "Diagnostyka OBD-II");
+    tabs->addTab(m_canOpenWidget, "CANopen");
     setCentralWidget(tabs);
 }
 

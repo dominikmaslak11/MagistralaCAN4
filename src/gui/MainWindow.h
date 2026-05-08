@@ -22,6 +22,7 @@
 #include "core/UdsWidget.h"
 #include "core/LogComparatorWidget.h"
 #include "core/ObdWidget.h"
+#include "core/CanOpenWidget.h"
 #include "core/CanRecorder.h"
 #include "core/HttpRestServer.h"
 #include "core/Logger.h"
@@ -79,6 +80,7 @@ private:
     UdsWidget        *m_udsWidget;
     LogComparatorWidget *m_logComparator;
     ObdWidget           *m_obdWidget;
+    CanOpenWidget       *m_canOpenWidget;
     CanRecorder          m_recorder;
     HttpRestServer       m_restServer;
     QTableView *m_tableView;
