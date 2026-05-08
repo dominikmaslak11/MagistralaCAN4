@@ -21,6 +21,7 @@
 #include "core/RemoteCanWidget.h"
 #include "core/UdsWidget.h"
 #include "core/LogComparatorWidget.h"
+#include "core/ObdWidget.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -72,6 +73,7 @@ private:
     RemoteCanWidget  *m_remoteCanWidget;
     UdsWidget        *m_udsWidget;
     LogComparatorWidget *m_logComparator;
+    ObdWidget           *m_obdWidget;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
