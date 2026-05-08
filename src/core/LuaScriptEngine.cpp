@@ -13,6 +13,7 @@ LuaScriptEngine::~LuaScriptEngine() {
 }
 
 bool LuaScriptEngine::loadScript(const QString &fileName) {
+#ifdef HAS_LUA
     unloadScript();
 
     m_lua = luaL_newstate();
@@ -23,7 +24,6 @@ bool LuaScriptEngine::loadScript(const QString &fileName) {
 
     luaL_openlibs(m_lua);
 
-    // Rejestracja API jako domknięć z upvalue – wskaźnik do tej instancji
     lua_pushlightuserdata(m_lua, this);
     lua_pushcclosure(m_lua, api_sendFrame, 1);
     lua_setglobal(m_lua, "sendFrame");
@@ -62,26 +62,28 @@ bool LuaScriptEngine::loadScript(const QString &fileName) {
     }
     lua_pop(m_lua, 1);
 
+    m_loaded = true;
     emit logMessage("Skrypt Lua załadowany: " + fileName);
     return true;
+#else
+    Q_UNUSED(fileName);
+    emit errorOccurred("Lua nie jest dostępne na tej platformie");
+    return false;
+#endif
 }
 
 void LuaScriptEngine::unloadScript() {
+#ifdef HAS_LUA
     if (m_lua) {
         lua_close(m_lua);
         m_lua = nullptr;
     }
-}
-
-bool LuaScriptEngine::isLoaded() const {
-    return m_lua != nullptr;
-}
-
-void LuaScriptEngine::setSniffer(CanSniffer *sniffer) {
-    m_sniffer = sniffer;
+#endif
+    m_loaded = false;
 }
 
 void LuaScriptEngine::onNewFrame(const CanFrame &frame) {
+#ifdef HAS_LUA
     if (!m_lua) return;
 
     lua_getglobal(m_lua, "onFrame");
@@ -103,9 +105,12 @@ void LuaScriptEngine::onNewFrame(const CanFrame &frame) {
         emit errorOccurred(QString("Błąd w onFrame: %1").arg(err));
         lua_pop(m_lua, 1);
     }
+#else
+    Q_UNUSED(frame);
+#endif
 }
 
-// --- API dla skryptów Lua (prawidłowe domknięcia) ---
+#ifdef HAS_LUA
 int LuaScriptEngine::api_sendFrame(lua_State *L) {
     LuaScriptEngine *engine = (LuaScriptEngine*)lua_touserdata(L, lua_upvalueindex(1));
     if (!engine) {
@@ -161,3 +166,4 @@ int LuaScriptEngine::api_getTick(lua_State *L) {
     lua_pushinteger(L, now - engine->m_startTick);
     return 1;
 }
+#endif
