@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_tableView->horizontalHeader()->setStretchLastSection(true);
     m_tableView->setShowGrid(false);
     m_tableView->setAlternatingRowColors(false);
+    m_tableView->setSortingEnabled(true);
+    m_tableView->horizontalHeader()->setSortIndicatorShown(true);
 
     m_learner = new AssociativeLearner;
     // Lokalne skróty klawiszowe (zawsze działają przy aktywnym oknie)

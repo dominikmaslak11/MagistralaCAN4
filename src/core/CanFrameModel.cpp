@@ -2,6 +2,7 @@
 #include "DbcParser.h"
 #include "J1939Parser.h"
 #include <QColor>
+#include <numeric>
 
 CanFrameModel::CanFrameModel(QObject *parent) : QAbstractTableModel(parent) {}
 
@@ -94,6 +95,18 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         return tip.isEmpty() ? QVariant() : tip;
     } else if (role == Qt::BackgroundRole) {
         return (index.row() % 2) ? QColor("#0d1117") : QColor("#161b22");
+    } else if (role == Qt::UserRole) {
+        // Wartości numeryczne do sortowania
+        switch (index.column()) {
+        case Column::ID:        return frame.id;
+        case Column::DLC:       return frame.dlc;
+        case Column::TIMESTAMP: return QVariant::fromValue(frame.timestamp);
+        case Column::DELTA: {
+            if (index.row() < m_deltas.size()) return QVariant::fromValue(m_deltas[index.row()]);
+            return QVariant::fromValue(0ULL);
+        }
+        default: return {};
+        }
     }
     return {};
 }
@@ -226,4 +239,47 @@ void CanFrameModel::clear() {
 QVector<CanFrame> CanFrameModel::allFrames() const {
     QMutexLocker lock(&m_mutex);
     return m_frames;
+}
+
+void CanFrameModel::sort(int column, Qt::SortOrder order) {
+    QMutexLocker lock(&m_mutex);
+    if (column < 0 || column >= _COUNT || m_frames.isEmpty()) return;
+
+    // Zbuduj indeksy i posortuj
+    QVector<int> indices(m_frames.size());
+    std::iota(indices.begin(), indices.end(), 0);
+
+    std::sort(indices.begin(), indices.end(), [&](int a, int b) {
+        const CanFrame &fa = m_frames[a];
+        const CanFrame &fb = m_frames[b];
+        bool less = false;
+        switch (column) {
+        case ID:        less = fa.id < fb.id; break;
+        case DLC:       less = fa.dlc < fb.dlc; break;
+        case TIMESTAMP: less = fa.timestamp < fb.timestamp; break;
+        case FD:        less = (!fa.fd && fb.fd); break;
+        case DELTA: {
+            uint64_t da = (a < m_deltas.size()) ? m_deltas[a] : 0;
+            uint64_t db = (b < m_deltas.size()) ? m_deltas[b] : 0;
+            less = da < db; break;
+        }
+        default: less = column % 2 == 0 ? a < b : a > b; break;
+        }
+        return (order == Qt::AscendingOrder) ? less : !less;
+    });
+
+    // Przebuduj wektory wg nowej kolejności
+    QVector<CanFrame> sortedFrames(m_frames.size());
+    QVector<uint64_t> sortedDeltas(m_deltas.size());
+    for (int i = 0; i < indices.size(); ++i) {
+        sortedFrames[i] = m_frames[indices[i]];
+        if (indices[i] < m_deltas.size())
+            sortedDeltas[i] = m_deltas[indices[i]];
+    }
+    m_frames = sortedFrames;
+    m_deltas = sortedDeltas;
+    m_idToRow.clear(); // po sortowaniu mapa ID→row jest nieaktualna
+
+    lock.unlock();
+    emit layoutChanged();
 }
