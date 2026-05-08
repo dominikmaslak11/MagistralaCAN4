@@ -32,12 +32,15 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::DLC:       return frame.dlc;
         case Column::DATA: {
             QString dataHex;
-            for (int i = 0; i < frame.dlc; ++i)
+            int maxShow = frame.xl ? 16 : (frame.fd ? 64 : 8);
+            for (int i = 0; i < frame.dlc && i < maxShow; ++i)
                 dataHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+            if (frame.dlc > maxShow)
+                dataHex += QString("... (%1 bajtów)").arg(frame.dlc);
             return dataHex.trimmed();
         }
         case Column::TIMESTAMP: return QString("%1 µs").arg(frame.timestamp);
-        case Column::FD:       return frame.fd ? "FD" : "CAN";
+        case Column::FD:       return frame.xl ? "XL" : frame.fd ? "FD" : "CAN";
         case Column::DELTA: {
             if (index.row() < m_deltas.size() && m_deltas[index.row()] > 0)
                 return QString("%1 µs").arg(m_deltas[index.row()]);
@@ -72,10 +75,16 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::DLC:       return QColor("#66ccff");
         case Column::DATA:      return QColor("#aa44ff");
         case Column::TIMESTAMP: return QColor("#888888");
-        case Column::FD:        return QColor(frame.fd ? "#00ffaa" : "#666666");
+        case Column::FD:        return QColor(frame.xl ? "#ff4444" : frame.fd ? "#00ffaa" : "#666666");
         case Column::DELTA:     return QColor("#8888cc");
         case Column::SIGNAL:    return QColor("#ffaa00");
         }
+    } else if (role == Qt::ToolTipRole && index.column() == Column::DATA && frame.xl) {
+        QString fullHex;
+        for (int i = 0; i < frame.dlc && i < 256; ++i)
+            fullHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+        if (frame.dlc > 256) fullHex += "...";
+        return QString("CAN XL %1 bajtów:\n%2").arg(frame.dlc).arg(fullHex.trimmed());
     } else if (role == Qt::ToolTipRole && index.column() == Column::SIGNAL) {
         QString tip;
         if (m_dbc && frame.id) {

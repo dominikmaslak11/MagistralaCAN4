@@ -6,6 +6,8 @@
 #include <linux/can/raw.h>
 #include "CanFrame.h"
 
+static constexpr int CAN_SNIFFER_MTU = CANXL_MTU;  // max rozmiar ramki
+
 class CanSniffer : public QObject {
     Q_OBJECT
 public:

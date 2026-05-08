@@ -233,7 +233,8 @@ void MainWindow::exportToCsv() {
             data += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
         out << i << "," << f.timestamp << ",0x" << QString::number(f.id, 16).toUpper()
             << "," << (f.extended ? "EXT" : "STD") << "," << (f.rtr ? "RTR" : "Data")
-            << "," << f.dlc << "," << data << "," << (f.fd ? "FD" : "CAN") << "\n";
+            << "," << f.dlc << "," << data << ","
+            << (f.xl ? "XL" : f.fd ? "FD" : "CAN") << "\n";
     }
     file.close();
     Logger::log(QString("Wyeksportowano %1 ramek do CSV").arg(frames.size()));

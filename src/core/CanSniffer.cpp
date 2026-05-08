@@ -24,19 +24,43 @@ void CanSniffer::writeFrame(const CanFrame &frame) {
         return;
     }
 
-    struct can_frame raw;
-    memset(&raw, 0, sizeof(raw));
-    raw.can_id = frame.id;
-    if (frame.extended) raw.can_id |= CAN_EFF_FLAG;
-    if (frame.rtr)      raw.can_id |= CAN_RTR_FLAG;
-    if (frame.error)    raw.can_id |= CAN_ERR_FLAG;
-    raw.len = frame.dlc;
-    for (int i = 0; i < frame.dlc && i < 8; ++i)
-        raw.data[i] = frame.data[i];
-
-    ssize_t n = write(m_socket, &raw, sizeof(raw));
-    if (n != sizeof(raw)) {
-        emit errorOccurred(QString("writeFrame: zapis się nie powiódł (%1)").arg(strerror(errno)));
+    if (frame.xl) {
+        struct canxl_frame xlf;
+        memset(&xlf, 0, sizeof(xlf));
+        xlf.prio = frame.id & CANXL_PRIO_MASK;
+        xlf.flags = 0;
+        xlf.sdt = frame.sdt;
+        xlf.af = frame.af;
+        xlf.len = frame.dlc > CANXL_MAX_DLC ? CANXL_MAX_DLC : frame.dlc;
+        for (int i = 0; i < xlf.len && i < 2048; ++i)
+            xlf.data[i] = frame.data[i];
+        ssize_t n = write(m_socket, &xlf, CANXL_HDR_SIZE + xlf.len);
+        if (n != (ssize_t)(CANXL_HDR_SIZE + xlf.len))
+            emit errorOccurred(QString("writeFrame XL: zapis się nie powiódł (%1)").arg(strerror(errno)));
+    } else if (frame.fd) {
+        struct canfd_frame fdf;
+        memset(&fdf, 0, sizeof(fdf));
+        fdf.can_id = frame.id;
+        if (frame.extended) fdf.can_id |= CAN_EFF_FLAG;
+        fdf.flags |= CANFD_BRS;
+        fdf.len = frame.dlc > 64 ? 64 : frame.dlc;
+        for (int i = 0; i < fdf.len; ++i) fdf.data[i] = frame.data[i];
+        ssize_t n = write(m_socket, &fdf, CANFD_MTU);
+        if (n != CANFD_MTU)
+            emit errorOccurred(QString("writeFrame FD: zapis się nie powiódł (%1)").arg(strerror(errno)));
+    } else {
+        struct can_frame raw;
+        memset(&raw, 0, sizeof(raw));
+        raw.can_id = frame.id;
+        if (frame.extended) raw.can_id |= CAN_EFF_FLAG;
+        if (frame.rtr)      raw.can_id |= CAN_RTR_FLAG;
+        if (frame.error)    raw.can_id |= CAN_ERR_FLAG;
+        raw.len = frame.dlc;
+        for (int i = 0; i < frame.dlc && i < 8; ++i)
+            raw.data[i] = frame.data[i];
+        ssize_t n = write(m_socket, &raw, sizeof(raw));
+        if (n != sizeof(raw))
+            emit errorOccurred(QString("writeFrame: zapis się nie powiódł (%1)").arg(strerror(errno)));
     }
 }
 
@@ -61,7 +85,7 @@ void CanSniffer::stop() {
 
 void CanSniffer::doWork() {
     while (m_running) {
-        uint8_t buf[CANFD_MTU];
+        uint8_t buf[CAN_SNIFFER_MTU];
         ssize_t nbytes = read(m_socket, buf, sizeof(buf));
         if (nbytes < 0) {
             if (m_running) {
@@ -87,6 +111,19 @@ void CanSniffer::doWork() {
             for (int i = 0; i < canFrame.dlc; ++i)
                 canFrame.data[i] = frame->data[i];
             canFrame.timestamp = ts;
+        } else if (nbytes == CANXL_MTU || nbytes >= CANXL_MIN_MTU) {
+            // CAN XL frame
+            struct canxl_frame *xlf = (struct canxl_frame*)buf;
+            canFrame.id = xlf->prio & CANXL_PRIO_MASK;
+            canFrame.extended = true;
+            canFrame.xl = true;
+            canFrame.fd = false;
+            canFrame.sdt = xlf->sdt;
+            canFrame.af = xlf->af;
+            canFrame.dlc = xlf->len > CANXL_MAX_DLC ? CANXL_MAX_DLC : xlf->len;
+            for (int i = 0; i < canFrame.dlc && i < 2048; ++i)
+                canFrame.data[i] = xlf->data[i];
+            canFrame.timestamp = ts;
         } else {
             continue;
         }
@@ -104,6 +141,10 @@ bool CanSniffer::openSocket(const QString &ifname) {
 
     int enable = 1;
     setsockopt(m_socket, SOL_CAN_RAW, CAN_RAW_FD_FRAMES, &enable, sizeof(enable));
+    // Włącz CAN XL (jeśli kernel wspiera)
+    if (setsockopt(m_socket, SOL_CAN_RAW, CAN_RAW_XL_FRAMES, &enable, sizeof(enable)) < 0) {
+        qDebug() << "CAN XL not supported by kernel (ignoring)";
+    }
 
     struct ifreq ifr;
     std::strncpy(ifr.ifr_name, ifname.toStdString().c_str(), IFNAMSIZ - 1);
