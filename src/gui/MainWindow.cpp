@@ -159,6 +159,7 @@ void MainWindow::onNewFrame(const CanFrame &frame) {
 
 void MainWindow::updateTableBatch() {
     if (m_frameBuffer.isEmpty()) return;
+    if (m_canPaused) return; // buforuj w tle, nie odświeżaj tabeli
     m_model->processIncomingFrames(m_frameBuffer);
     m_frameBuffer.clear();
     if (m_autoScroll) m_tableView->scrollToBottom();
@@ -268,6 +269,14 @@ void MainWindow::setupCentralWidget() {
     m_canStatsLabel->setStyleSheet("color: #ffaa00; font-weight: bold; font-size: 11px; "
                                     "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
     canHeader->addWidget(m_canStatsLabel);
+
+    m_canPauseBtn = new QPushButton("⏸ Pauza");
+    m_canPauseBtn->setFixedWidth(90);
+    m_canPauseBtn->setStyleSheet("QPushButton { background: #1a1a2e; color: #ffaa00; border: 1px solid #e94560; "
+                                  "border-radius: 4px; padding: 4px 10px; font-weight: bold; font-size: 11px; } "
+                                  "QPushButton:hover { background: #e94560; color: #0a0e17; }");
+    connect(m_canPauseBtn, &QPushButton::clicked, this, &MainWindow::toggleCanPause);
+    canHeader->addWidget(m_canPauseBtn);
     canLayout->addLayout(canHeader);
     canLayout->addWidget(m_tableView);
 
@@ -322,6 +331,29 @@ void MainWindow::applyIdFilter(const QString &text) {
         CanFrame f = m_model->frameAt(i);
         bool show = !filterActive || (f.id == filterId);
         m_tableView->setRowHidden(i, !show);
+    }
+}
+
+void MainWindow::toggleCanPause() {
+    m_canPaused = !m_canPaused;
+    if (m_canPaused) {
+        m_canPauseBtn->setText("▶ Wznów");
+        m_canPauseBtn->setStyleSheet("QPushButton { background: #e94560; color: #0a0e17; border: 1px solid #e94560; "
+                                      "border-radius: 4px; padding: 4px 10px; font-weight: bold; font-size: 11px; }");
+        m_canStatsLabel->setStyleSheet("color: #ff4444; font-weight: bold; font-size: 11px; "
+                                        "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
+    } else {
+        m_canPauseBtn->setText("⏸ Pauza");
+        m_canPauseBtn->setStyleSheet("QPushButton { background: #1a1a2e; color: #ffaa00; border: 1px solid #e94560; "
+                                      "border-radius: 4px; padding: 4px 10px; font-weight: bold; font-size: 11px; } "
+                                      "QPushButton:hover { background: #e94560; color: #0a0e17; }");
+        m_canStatsLabel->setStyleSheet("color: #ffaa00; font-weight: bold; font-size: 11px; "
+                                        "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
+        // Wznów – przetwórz zbuforowane ramki
+        if (!m_frameBuffer.isEmpty()) {
+            m_model->processIncomingFrames(m_frameBuffer);
+            m_frameBuffer.clear();
+        }
     }
 }
 

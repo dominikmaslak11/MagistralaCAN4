@@ -8,7 +8,7 @@ class CanFrameModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     enum Column {
-        ID, EXT, RTR, DLC, DATA, TIMESTAMP, FD, _COUNT
+        ID, EXT, RTR, DLC, DATA, TIMESTAMP, FD, DELTA, _COUNT
     };
 
     explicit CanFrameModel(QObject *parent = nullptr);
@@ -32,6 +32,10 @@ signals:
 private:
     /// Dla podświetlania zmian: przechowuje poprzednie dane dla każdego ID.
     QHash<uint32_t, QVector<uint8_t>> m_previousData;
+    /// Do obliczania delty: ostatni timestamp per ID.
+    QHash<uint32_t, uint64_t> m_lastTimestampPerId;
+    /// Delta dla każdej ramki (równoległa do m_frames).
+    QVector<uint64_t> m_deltas;
     mutable QMutex m_mutex;
     QVector<CanFrame> m_frames;
     QHash<uint32_t, int> m_idToRow;
