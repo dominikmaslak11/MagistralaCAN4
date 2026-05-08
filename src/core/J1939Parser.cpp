@@ -37,7 +37,8 @@ bool J1939Frame::fromCanFrame(const CanFrame &can, J1939Frame &out) {
 
     out.timestamp = can.timestamp;
     out.dlc       = can.dlc;
-    std::copy(std::begin(can.data), std::end(can.data), std::begin(out.data));
+    size_t n = std::min<size_t>(can.dlc, out.data.size());
+    std::copy_n(std::begin(can.data), n, std::begin(out.data));
 
     return true;
 }
