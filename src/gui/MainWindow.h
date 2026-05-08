@@ -28,6 +28,7 @@
 #include "core/Mdf4Writer.h"
 #include "core/PluginLoader.h"
 #include "core/HttpRestServer.h"
+#include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -76,6 +77,7 @@ private:
     void setupCentralWidget();
 
     CanSniffer m_sniffer;
+    ICanDriver *m_canDriver = nullptr;
     CanFrameModel *m_model;
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;

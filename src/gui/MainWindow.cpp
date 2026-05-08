@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "core/SocketCanDriver.h"
 #include "core/CanInterfaceEnumerator.h"
 #include <QToolBar>
 #include <QToolButton>
@@ -60,6 +61,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
     m_pluginLoader.loadFromDirectory("./plugins");
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
+
+    // --- CAN Driver (SocketCAN na Linux) ---
+    m_canDriver = new SocketCanDriver();
+    m_sniffer.setDriver(m_canDriver);
+
     setWindowIcon(QIcon(":/ico.png"));
 
     // --- System tray ---
@@ -197,7 +203,8 @@ void MainWindow::updateTableBatch() {
 void MainWindow::refreshInterfaces() {
     QString current = m_interfaceCombo->currentText();
     m_interfaceCombo->clear();
-    QStringList ifaces = CanInterfaceEnumerator::availableCanInterfaces();
+    QStringList ifaces = m_canDriver ? m_canDriver->availableDevices()
+                                     : CanInterfaceEnumerator::availableCanInterfaces();
     m_interfaceCombo->addItems(ifaces);
     int idx = m_interfaceCombo->findText(current);
     if (idx >= 0) m_interfaceCombo->setCurrentIndex(idx);
