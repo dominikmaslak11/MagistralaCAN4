@@ -3,20 +3,26 @@
 #include <QtConcurrent>
 #include <algorithm>
 #include <cmath>
+
+#ifdef HAS_OPENCL
 #include <CL/cl.h>
+#endif
 
 GpuCorrelator::GpuCorrelator() {
     initialize();
 }
 
 GpuCorrelator::~GpuCorrelator() {
+#ifdef HAS_OPENCL
     if (m_kernel) clReleaseKernel(static_cast<cl_kernel>(m_kernel));
     if (m_program) clReleaseProgram(static_cast<cl_program>(m_program));
     if (m_queue) clReleaseCommandQueue(static_cast<cl_command_queue>(m_queue));
     if (m_context) clReleaseContext(static_cast<cl_context>(m_context));
+#endif
 }
 
 bool GpuCorrelator::initialize() {
+#ifdef HAS_OPENCL
     cl_int err;
     cl_platform_id platform = nullptr;
     cl_device_id device = nullptr;
@@ -54,7 +60,6 @@ bool GpuCorrelator::initialize() {
             int row = get_global_id(0);
             int col = get_global_id(1);
             if (row >= N || col >= N) return;
-
             float dot = 0.0f, normA = 0.0f, normB = 0.0f;
             for (int i = 0; i < vecLen; i++) {
                 float a = features[row * vecLen + i];
@@ -94,14 +99,16 @@ bool GpuCorrelator::initialize() {
     m_kernel = kernel;
     m_gpuAvailable = true;
     qDebug("GpuCorrelator: OpenCL gotowy.");
-    return true;
+#endif
+    return m_gpuAvailable;
 }
 
 QVector<QVector<float>> GpuCorrelator::computeCorrelationMatrix(const QVector<QVector<float>> &features) {
+#ifdef HAS_OPENCL
     if (m_gpuAvailable && !features.isEmpty())
         return computeOnGpu(features);
-    else
-        return computeOnCpu(features);
+#endif
+    return computeOnCpu(features);
 }
 
 QVector<QVector<float>> GpuCorrelator::computeOnCpu(const QVector<QVector<float>> &features) {
@@ -128,6 +135,7 @@ QVector<QVector<float>> GpuCorrelator::computeOnCpu(const QVector<QVector<float>
     return result;
 }
 
+#ifdef HAS_OPENCL
 QVector<QVector<float>> GpuCorrelator::computeOnGpu(const QVector<QVector<float>> &features) {
     int N = features.size();
     if (N == 0) return {};
@@ -170,3 +178,4 @@ QVector<QVector<float>> GpuCorrelator::computeOnGpu(const QVector<QVector<float>
             result[i][j] = resultFlat[i * N + j];
     return result;
 }
+#endif
