@@ -11,7 +11,7 @@ bool CanRecorder::startRecording(const QString &filePath) {
     if (!m_file.open(QIODevice::WriteOnly)) return false;
 
     m_stream.setDevice(&m_file);
-    m_stream << MAGIC << VERSION;
+    m_stream << (quint32)MAGIC << (quint32)VERSION;
     m_recording = true;
     m_frameCount = 0;
     emit recordingStarted(filePath);
@@ -30,7 +30,7 @@ void CanRecorder::stopRecording() {
 void CanRecorder::recordFrame(const CanFrame &frame) {
     if (!m_recording) return;
     uint8_t flags = (frame.extended ? 0x01 : 0) | (frame.rtr ? 0x02 : 0) | (frame.error ? 0x04 : 0) | (frame.fd ? 0x08 : 0);
-    m_stream << frame.timestamp << frame.id << flags << frame.dlc;
+    m_stream << (quint64)frame.timestamp << (quint32)frame.id << flags << frame.dlc;
     m_stream.writeRawData(reinterpret_cast<const char *>(frame.data.data()), frame.dlc);
     m_frameCount++;
 }
