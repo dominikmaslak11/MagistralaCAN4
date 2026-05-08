@@ -41,6 +41,7 @@ private slots:
     void applyOverwriteMode(bool enabled);
     void onUserScroll(int value);
     void exportToCandump();
+    void exportToCsv();
     void loadLuaScript();
     void loadDbcFile();
     void onFrameSelected(const QModelIndex &index);
