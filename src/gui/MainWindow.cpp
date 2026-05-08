@@ -109,6 +109,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_sniffer, &CanSniffer::newFrame, m_canSimWidget->simulator(), &CanNodeSimulator::onNewFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_udsWidget, &UdsWidget::processFrame, Qt::QueuedConnection);
     connect(&m_sniffer, &CanSniffer::newFrame, m_obdWidget, &ObdWidget::processFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, &m_recorder, &CanRecorder::recordFrame, Qt::QueuedConnection);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -280,6 +281,7 @@ void MainWindow::setupToolBar() {
     QAction *clearAction = toolbar->addAction("🗙 Wyczyść"); if (clearAction) { connect(clearAction, &QAction::triggered, [this]() { m_model->clear(); }); QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction)); if (clearBtn) clearBtn->setObjectName("clearButton"); }
     QAction *exportAction = toolbar->addAction("📥 Eksportuj candump"); connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
     QAction *csvAction = toolbar->addAction("📊 Eksportuj CSV"); connect(csvAction, &QAction::triggered, this, &MainWindow::exportToCsv);
+    QAction *recAction = toolbar->addAction("⏺ Nagraj"); connect(recAction, &QAction::triggered, this, &MainWindow::toggleRecording);
     QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
     QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
 }
@@ -435,6 +437,16 @@ void MainWindow::copySelectedToClipboard() {
         lines << cols.join('\t');
     }
     QApplication::clipboard()->setText(lines.join('\n'));
+}
+
+void MainWindow::toggleRecording() {
+    if (m_recorder.isRecording()) {
+        m_recorder.stopRecording();
+    } else {
+        QString path = QFileDialog::getSaveFileName(this, "Nagraj sesję CAN", "sesja_%1.mcan", "MCAN (*.mcan)");
+        if (path.isEmpty()) return;
+        m_recorder.startRecording(path);
+    }
 }
 
 void MainWindow::setupStyle() {

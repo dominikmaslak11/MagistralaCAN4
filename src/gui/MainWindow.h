@@ -22,6 +22,7 @@
 #include "core/UdsWidget.h"
 #include "core/LogComparatorWidget.h"
 #include "core/ObdWidget.h"
+#include "core/CanRecorder.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
@@ -53,6 +54,7 @@ private slots:
     void applyIdFilter(const QString &text);
     void toggleCanPause();
     void copySelectedToClipboard();
+    void toggleRecording();
 
 private:
     void setupStyle();
@@ -74,6 +76,7 @@ private:
     UdsWidget        *m_udsWidget;
     LogComparatorWidget *m_logComparator;
     ObdWidget           *m_obdWidget;
+    CanRecorder          m_recorder;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
