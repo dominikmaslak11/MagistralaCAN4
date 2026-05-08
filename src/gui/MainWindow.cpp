@@ -286,6 +286,7 @@ void MainWindow::setupToolBar() {
     QAction *csvAction = toolbar->addAction("📊 Eksportuj CSV"); connect(csvAction, &QAction::triggered, this, &MainWindow::exportToCsv);
     QAction *recAction = toolbar->addAction("⏺ Nagraj"); connect(recAction, &QAction::triggered, this, &MainWindow::toggleRecording);
     QAction *restAction = toolbar->addAction("🌐 REST API"); connect(restAction, &QAction::triggered, this, &MainWindow::toggleRestApi);
+    QAction *themeAction = toolbar->addAction("☀️ Jasny motyw"); connect(themeAction, &QAction::triggered, this, &MainWindow::toggleTheme);
     QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
     QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
 }
@@ -461,6 +462,27 @@ void MainWindow::toggleRestApi() {
         m_restServer.stop();
     } else {
         m_restServer.start(8080);
+    }
+}
+
+static bool s_darkTheme = true;
+
+void MainWindow::toggleTheme() {
+    s_darkTheme = !s_darkTheme;
+    if (s_darkTheme) {
+        setupStyle();
+    } else {
+        qApp->setStyleSheet(R"(
+            QMainWindow { background-color: #f0f0f0; }
+            QToolBar { background: #e8e8e8; border-bottom: 2px solid #ccc; spacing: 8px; padding: 4px; }
+            QPushButton, QToolButton { background: #ddd; color: #333; border: 1px solid #999; border-radius: 4px; padding: 5px 15px; font-weight: bold; }
+            QPushButton:hover, QToolButton:hover { background: #ccc; }
+            QComboBox { background: #fff; color: #333; border: 1px solid #999; border-radius: 4px; padding: 3px 8px; }
+            QCheckBox { color: #333; }
+            QLabel { color: #333; }
+            QTableView, QTableWidget { background-color: #fff; color: #333; gridline-color: #ddd; font-family: Consolas, monospace; font-size: 12px; }
+            QHeaderView::section { background-color: #e0e0e0; color: #333; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #999; }
+        )");
     }
 }
 
