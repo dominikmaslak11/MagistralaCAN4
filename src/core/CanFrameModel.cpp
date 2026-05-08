@@ -94,6 +94,8 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         }
         return tip.isEmpty() ? QVariant() : tip;
     } else if (role == Qt::BackgroundRole) {
+        if (index.row() < m_isBurst.size() && m_isBurst[index.row()])
+            return QColor("#2e1a0a"); // ciemnopomarańczowe dla burstów
         return (index.row() % 2) ? QColor("#0d1117") : QColor("#161b22");
     } else if (role == Qt::UserRole) {
         // Wartości numeryczne do sortowania
@@ -164,6 +166,17 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
         m_lastTimestampPerId[frame.id] = frame.timestamp;
         m_deltas.append(delta);
 
+        // Burst detection: < 1000µs od poprzedniej ramki tego ID
+        bool burst = false;
+        auto burstIt = m_lastBurstTs.find(frame.id);
+        if (burstIt != m_lastBurstTs.end()) {
+            uint64_t burstDelta = (frame.timestamp > burstIt.value())
+                ? frame.timestamp - burstIt.value() : 0;
+            burst = (burstDelta < 1000);
+        }
+        m_lastBurstTs[frame.id] = frame.timestamp;
+        m_isBurst.append(burst);
+
         m_frames.append(frame);
         if (m_overwrite)
             m_idToRow.insert(frame.id, newRow);
@@ -212,6 +225,8 @@ void CanFrameModel::setOverwriteMode(bool enabled) {
         m_deltas.clear();
         m_lastTimestampPerId.clear();
         m_previousData.clear();
+        m_isBurst.clear();
+        m_lastBurstTs.clear();
     }
     endResetModel();
 }
@@ -232,6 +247,8 @@ void CanFrameModel::clear() {
         m_deltas.clear();
         m_lastTimestampPerId.clear();
         m_previousData.clear();
+        m_isBurst.clear();
+        m_lastBurstTs.clear();
     }
     endResetModel();
 }

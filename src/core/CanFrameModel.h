@@ -42,6 +42,10 @@ private:
     QHash<uint32_t, uint64_t> m_lastTimestampPerId;
     /// Delta dla każdej ramki (równoległa do m_frames).
     QVector<uint64_t> m_deltas;
+    /// Burst detection: ostatni timestamp per ID.
+    QHash<uint32_t, uint64_t> m_lastBurstTs;
+    /// Czy ramka jest burstem.
+    QVector<bool> m_isBurst;
     mutable QMutex m_mutex;
     QVector<CanFrame> m_frames;
     QHash<uint32_t, int> m_idToRow;
