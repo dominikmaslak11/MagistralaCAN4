@@ -59,7 +59,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
     m_pluginLoader.loadFromDirectory("./plugins");
-    connect(&m_sniffer, &CanSniffer::newFrame, &m_pluginLoader, &PluginLoader::broadcastFrame, Qt::QueuedConnection);
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     setWindowIcon(QIcon(":/ico.png"));
 
@@ -110,17 +109,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     if (m_interfaceCombo->count() > 0)
         m_interfaceCombo->setCurrentIndex(0);
 
-    connect(&m_sniffer, &CanSniffer::newFrame, m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, m_canDashboard, &CanDashboard::updateSignal, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, m_j1939Widget, &J1939Widget::processFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, m_canSimWidget->simulator(), &CanNodeSimulator::onNewFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, m_udsWidget, &UdsWidget::processFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, m_obdWidget, &ObdWidget::processFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, m_canOpenWidget, &CanOpenWidget::processFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, &m_recorder, &CanRecorder::recordFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, &m_mdf4Writer, &Mdf4Writer::recordFrame, Qt::QueuedConnection);
-    connect(&m_sniffer, &CanSniffer::newFrame, &m_mqttBridge, &MqttBridge::onNewFrame, Qt::QueuedConnection);
+    // Analiza ramek po przetworzeniu przez model (Direct, główny wątek)
+    connect(this, &MainWindow::frameProcessed, m_learner, &AssociativeLearner::processFrame);
+    connect(this, &MainWindow::frameProcessed, m_luaEngine, &LuaScriptEngine::onNewFrame);
+    connect(this, &MainWindow::frameProcessed, m_canDashboard, &CanDashboard::updateSignal);
+    connect(this, &MainWindow::frameProcessed, m_j1939Widget, &J1939Widget::processFrame);
+    connect(this, &MainWindow::frameProcessed, m_canSimWidget->simulator(), &CanNodeSimulator::onNewFrame);
+    connect(this, &MainWindow::frameProcessed, m_udsWidget, &UdsWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed, m_obdWidget, &ObdWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed, m_canOpenWidget, &CanOpenWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed, &m_recorder, &CanRecorder::recordFrame);
+    connect(this, &MainWindow::frameProcessed, &m_mdf4Writer, &Mdf4Writer::recordFrame);
+    connect(this, &MainWindow::frameProcessed, &m_mqttBridge, &MqttBridge::onNewFrame);
+    connect(this, &MainWindow::frameProcessed, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -183,6 +184,11 @@ void MainWindow::onNewFrame(const CanFrame &frame) {
 void MainWindow::updateTableBatch() {
     if (m_frameBuffer.isEmpty()) return;
     if (m_canPaused) return; // buforuj w tle, nie odświeżaj tabeli
+
+    // Emituj ramki do slotów analizy (DirectConnection, zero nadmiarowych kopii)
+    for (const CanFrame &frame : m_frameBuffer)
+        emit frameProcessed(frame);
+
     m_model->processIncomingFrames(m_frameBuffer);
     m_frameBuffer.clear();
     if (m_autoScroll) m_tableView->scrollToBottom();
