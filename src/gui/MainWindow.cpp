@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include <QOpenGLWidget>
 #ifdef Q_OS_WIN
 #include "core/PcanDriver.h"
 #else
@@ -370,6 +371,7 @@ void MainWindow::setupCentralWidget() {
     m_fpsChart->axes(Qt::Horizontal).first()->setVisible(false);
     m_fpsChart->axes(Qt::Vertical).first()->setVisible(false);
     m_fpsChartView = new QChartView(m_fpsChart);
+    m_fpsChartView->setViewport(new QOpenGLWidget());
     m_fpsChartView->setRenderHint(QPainter::Antialiasing);
     m_fpsChartView->setFixedSize(120, 30);
     m_fpsChartView->setStyleSheet("background: transparent;");

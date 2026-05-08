@@ -1,7 +1,7 @@
 #include "CanSniffer.h"
 #include "ICanDriver.h"
 #include <QDebug>
-#include <QtConcurrent>
+#include <QThreadPool>
 
 CanSniffer::CanSniffer(QObject *parent) : QObject(parent) {}
 
@@ -41,7 +41,7 @@ void CanSniffer::start(const QString &interface) {
     m_interface = interface;
     m_running = true;
     emit statusChanged(true);
-    QtConcurrent::run([this] { doWork(); });
+    QThreadPool::globalInstance()->start([this] { doWork(); });
 }
 
 void CanSniffer::stop() {

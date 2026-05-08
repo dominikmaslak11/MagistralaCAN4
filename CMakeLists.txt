@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
 # ── Qt6 (wspólne) ──
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets)
 
 # ── Platform-specific dependencies ──
 if(UNIX AND NOT APPLE)
@@ -134,6 +134,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Concurrent
     Qt6::Charts
     Qt6::WebSockets
+    Qt6::OpenGLWidgets
 )
 
 if(HAS_XCB)
