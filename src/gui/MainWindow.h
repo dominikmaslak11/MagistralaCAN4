@@ -57,6 +57,7 @@ private slots:
     void copySelectedToClipboard();
     void toggleRecording();
     void toggleRestApi();
+    void toggleTheme();
 
 private:
     void setupStyle();
