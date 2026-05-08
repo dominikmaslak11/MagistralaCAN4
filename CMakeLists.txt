@@ -43,6 +43,7 @@ set(SOURCES
     src/core/ObdWidget.cpp
     src/core/CanRecorder.cpp
     src/core/MqttBridge.cpp
+    src/core/Mdf4Writer.cpp
     src/core/PluginLoader.cpp
     src/core/HttpRestServer.cpp
     src/gui/MainWindow.cpp
@@ -81,6 +82,7 @@ set(HEADERS
     src/core/ObdWidget.h
     src/core/CanRecorder.h
     src/core/MqttBridge.h
+    src/core/Mdf4Writer.h
     src/core/ProtocolPlugin.h
     src/core/PluginLoader.h
     src/core/HttpRestServer.h

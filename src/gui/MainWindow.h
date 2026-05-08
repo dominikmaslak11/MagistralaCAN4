@@ -25,6 +25,7 @@
 #include "core/CanOpenWidget.h"
 #include "core/CanRecorder.h"
 #include "core/MqttBridge.h"
+#include "core/Mdf4Writer.h"
 #include "core/PluginLoader.h"
 #include "core/HttpRestServer.h"
 #include "core/Logger.h"
@@ -59,6 +60,7 @@ private slots:
     void toggleCanPause();
     void copySelectedToClipboard();
     void toggleRecording();
+    void toggleMdf4Recording();
     void toggleRestApi();
     void toggleMqtt();
     void toggleTheme();
@@ -85,6 +87,7 @@ private:
     ObdWidget           *m_obdWidget;
     CanOpenWidget       *m_canOpenWidget;
     CanRecorder          m_recorder;
+    Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;
     MqttBridge           m_mqttBridge;
     PluginLoader         m_pluginLoader;
