@@ -51,7 +51,7 @@ private:
     QVector<CanFrame> m_frames;
     QHash<uint32_t, int> m_idToRow;
     bool m_overwrite = true;
-    int  m_maxFrames = 50000;
+    int  m_maxFrames = 10000;  // ograniczone przy 2048B/frame (~20MB max)
     const DbcParser   *m_dbc   = nullptr;
     const J1939Parser *m_j1939 = nullptr;
 };
