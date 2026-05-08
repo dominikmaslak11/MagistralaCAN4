@@ -46,6 +46,7 @@ private slots:
     void onFrameSelected(const QModelIndex &index);
     void updateCanStats();
     void applyIdFilter(const QString &text);
+    void toggleCanPause();
 
 private:
     void setupStyle();
@@ -76,12 +77,14 @@ private:
     QShortcut *m_hotkeyNonEvent = nullptr;
 
     // Statystyki CAN
-    QLineEdit *m_canFilterEdit;
-    QLabel    *m_canStatsLabel;
-    QTimer     m_canStatsTimer;
-    uint64_t   m_totalFrameCount = 0;
-    uint64_t   m_lastStatsFrameCount = 0;
+    QLineEdit    *m_canFilterEdit;
+    QLabel       *m_canStatsLabel;
+    QPushButton  *m_canPauseBtn;
+    QTimer        m_canStatsTimer;
+    uint64_t      m_totalFrameCount = 0;
+    uint64_t      m_lastStatsFrameCount = 0;
     QSet<uint32_t> m_uniqueIdsSinceLastStats;
+    bool           m_canPaused = false;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;

@@ -35,6 +35,11 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         }
         case Column::TIMESTAMP: return QString("%1 µs").arg(frame.timestamp);
         case Column::FD:       return frame.fd ? "FD" : "CAN";
+        case Column::DELTA: {
+            if (index.row() < m_deltas.size() && m_deltas[index.row()] > 0)
+                return QString("%1 µs").arg(m_deltas[index.row()]);
+            return "—";
+        }
         default: break;
         }
     } else if (role == Qt::TextAlignmentRole) {
@@ -48,6 +53,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::DATA:      return QColor("#aa44ff");
         case Column::TIMESTAMP: return QColor("#888888");
         case Column::FD:        return QColor(frame.fd ? "#00ffaa" : "#666666");
+        case Column::DELTA:     return QColor("#8888cc");
         }
     } else if (role == Qt::BackgroundRole) {
         return (index.row() % 2) ? QColor("#0d1117") : QColor("#161b22");
@@ -65,6 +71,7 @@ QVariant CanFrameModel::headerData(int section, Qt::Orientation orientation, int
         case Column::DATA:      return "Dane (hex)";
         case Column::TIMESTAMP: return "Czas [µs]";
         case Column::FD:        return "FD";
+        case Column::DELTA:     return "Delta";
         }
     }
     return {};
@@ -98,6 +105,14 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
             }
         }
         int newRow = m_frames.size();
+        // Oblicz deltę czasu
+        uint64_t delta = 0;
+        auto lastIt = m_lastTimestampPerId.find(frame.id);
+        if (lastIt != m_lastTimestampPerId.end() && frame.timestamp > lastIt.value())
+            delta = frame.timestamp - lastIt.value();
+        m_lastTimestampPerId[frame.id] = frame.timestamp;
+        m_deltas.append(delta);
+
         m_frames.append(frame);
         if (m_overwrite)
             m_idToRow.insert(frame.id, newRow);
@@ -143,6 +158,9 @@ void CanFrameModel::setOverwriteMode(bool enabled) {
         QMutexLocker lock(&m_mutex);
         m_frames.clear();
         m_idToRow.clear();
+        m_deltas.clear();
+        m_lastTimestampPerId.clear();
+        m_previousData.clear();
     }
     endResetModel();
 }
@@ -160,6 +178,9 @@ void CanFrameModel::clear() {
         QMutexLocker lock(&m_mutex);
         m_frames.clear();
         m_idToRow.clear();
+        m_deltas.clear();
+        m_lastTimestampPerId.clear();
+        m_previousData.clear();
     }
     endResetModel();
 }
