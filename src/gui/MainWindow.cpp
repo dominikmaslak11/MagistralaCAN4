@@ -116,15 +116,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_statusLabel->setStyleSheet(running ? "color: #00ffaa;" : "color: #ff4444;");
     });
 
-    setupToolBar();
-    setupCentralWidget();
-    setupStyle();
-
-    // Ctrl+C – kopiuj zaznaczone ramki
-    auto *copyShortcut = new QShortcut(QKeySequence("Ctrl+C"), m_tableView);
-    connect(copyShortcut, &QShortcut::activated, this, &MainWindow::copySelectedToClipboard);
-
-    // Panel statystyk CAN (Faza 2.2 — widget CanStatsPanel)
+    // Panel statystyk CAN (Faza 2.2 — musi być przed setupCentralWidget!)
     m_canStatsPanel = new CanStatsPanel(this);
     connect(m_canStatsPanel, &CanStatsPanel::filterChanged, this, &MainWindow::applyIdFilter);
     connect(m_canStatsPanel, &CanStatsPanel::pauseToggled, this, [this](bool paused) {
@@ -137,6 +129,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_restServer.fps = fps;
         m_restServer.uniqueIds = uniqueIds;
     });
+
+    setupToolBar();
+    setupCentralWidget();
+    setupStyle();
+
+    // Ctrl+C – kopiuj zaznaczone ramki
+    auto *copyShortcut = new QShortcut(QKeySequence("Ctrl+C"), m_tableView);
+    connect(copyShortcut, &QShortcut::activated, this, &MainWindow::copySelectedToClipboard);
 
     refreshInterfaces();
     if (m_interfaceCombo->count() > 0)
