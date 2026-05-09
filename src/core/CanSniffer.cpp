@@ -1,6 +1,7 @@
 #include "CanSniffer.h"
 #include "ICanDriver.h"
 #include <QDebug>
+#include <QThread>
 #include <QThreadPool>
 
 CanSniffer::CanSniffer(QObject *parent) : QObject(parent) {}
@@ -56,11 +57,11 @@ void CanSniffer::doWork() {
     while (m_running) {
         CanFrame frame = m_driver->readFrame();
         if (frame.id == 0 && frame.dlc == 0 && !frame.error) {
-            // Pusta ramka = driver zamknięty / błąd
+            // Pusta ramka = brak danych lub driver zamknięty
             if (!m_running) break;  // zamknięcie normalne
-            // Driver padł, ale wciąż running → błąd
-            if (!m_driver->isValid()) break;
-            continue;  // pusta ramka, czytaj dalej
+            if (!m_driver->isValid()) break;  // driver padł
+            QThread::msleep(1);  // idle — zapobiega busy-wait na nieblokujących driverach
+            continue;
         }
         // Lock-free push to ring buffer
         if (!m_ringBuffer.tryPush(frame)) {

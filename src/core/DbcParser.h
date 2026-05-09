@@ -33,6 +33,10 @@ public:
     DbcMessage messageForId(uint32_t id) const;
     QString signalDescriptions(uint32_t id, const uint8_t* data, int dlc) const;
 
+    /// Dekoduje wartości wszystkich sygnałów dla danej ramki CAN.
+    /// Zwraca mapę nazwa_sygnału → wartość (w jednostkach fizycznych).
+    QHash<QString, double> decodeSignals(uint32_t id, const uint8_t* data, int dlc) const;
+
     /// Podmienia całą bazę wiadomości (np. z edytora).
     void setMessages(const QVector<DbcMessage> &msgs);
 

@@ -70,19 +70,83 @@ DbcMessage DbcParser::messageForId(uint32_t id) const {
 }
 
 QString DbcParser::signalDescriptions(uint32_t id, const uint8_t* data, int dlc) const {
-    DbcMessage msg = messageForId(id);
-    if (msg.id == 0) return "";
+    auto decoded = decodeSignals(id, data, dlc);
+    if (decoded.isEmpty()) return "";
 
+    DbcMessage msg = messageForId(id);
     QStringList desc;
     for (const auto &sig : msg.sigList) {
-        // Ekstrakcja wartości sygnału (uproszczone – tylko dla sygnałów mieszczących się w bajcie)
-        int byteIdx = sig.startBit / 8;
-        if (byteIdx >= dlc) continue;
-        uint8_t rawValue = data[byteIdx];
-        double value = rawValue * sig.scale + sig.offset;
-        desc.append(QString("%1 = %2 %3").arg(sig.name).arg(value, 0, 'f', 2).arg(sig.unit));
+        auto it = decoded.find(sig.name);
+        if (it != decoded.end())
+            desc.append(QString("%1 = %2 %3").arg(sig.name).arg(it.value(), 0, 'f', 2).arg(sig.unit));
     }
     return desc.join("; ");
+}
+
+QHash<QString, double> DbcParser::decodeSignals(uint32_t id, const uint8_t* data, int dlc) const {
+    QHash<QString, double> result;
+    DbcMessage msg = messageForId(id);
+    if (msg.id == 0) return result;
+
+    for (const auto &sig : msg.sigList) {
+        // Wyciągnij surową wartość z bitów
+        uint64_t raw = 0;
+        int bitsExtracted = 0;
+
+        if (sig.isLittleEndian) {
+            // Intel (little-endian): bity idą od startBit w górę, LSB first
+            int bitPos = sig.startBit;
+            while (bitsExtracted < sig.length) {
+                int byteIdx = bitPos / 8;
+                int bitInByte = bitPos % 8;
+                if (byteIdx >= dlc) break;
+                int bitsAvailable = 8 - bitInByte;
+                int bitsNow = std::min(bitsAvailable, sig.length - bitsExtracted);
+                uint8_t mask = ((1U << bitsNow) - 1) << bitInByte;
+                uint64_t chunk = (data[byteIdx] & mask) >> bitInByte;
+                raw |= (chunk << bitsExtracted);
+                bitsExtracted += bitsNow;
+                bitPos += bitsNow;
+            }
+        } else {
+            // Motorola (big-endian): bity idą od startBit w dół
+            int bitPos = sig.startBit;
+            while (bitsExtracted < sig.length) {
+                int byteIdx = bitPos / 8;
+                int bitInByte = bitPos % 8;
+                if (byteIdx >= dlc) break;
+                int bitsAvailable = bitInByte + 1;
+                int bitsNow = std::min(bitsAvailable, sig.length - bitsExtracted);
+                int startBitInByte = bitInByte - bitsNow + 1;
+                uint8_t mask = ((1U << bitsNow) - 1) << startBitInByte;
+                uint64_t chunk = (data[byteIdx] & mask) >> startBitInByte;
+                raw |= (chunk << bitsExtracted);
+                bitsExtracted += bitsNow;
+                bitPos -= bitsNow;
+            }
+        }
+
+        if (bitsExtracted == 0) continue;
+
+        // Konwersja signed/unsigned
+        double value;
+        if (sig.isSigned && bitsExtracted < 64) {
+            uint64_t signMask = 1ULL << (bitsExtracted - 1);
+            if (raw & signMask) {
+                // ujemna
+                uint64_t signExtend = (~0ULL) << bitsExtracted;
+                int64_t sraw = static_cast<int64_t>(raw | signExtend);
+                value = sraw * sig.scale + sig.offset;
+            } else {
+                value = static_cast<int64_t>(raw) * sig.scale + sig.offset;
+            }
+        } else {
+            value = raw * sig.scale + sig.offset;
+        }
+
+        result[sig.name] = value;
+    }
+    return result;
 }
 
 // ── Nowe metody (edytor DBC) ────────────────────────────────
