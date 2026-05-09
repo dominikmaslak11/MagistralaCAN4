@@ -19,6 +19,7 @@
 #include <cmath>
 #include <set>
 #include <random>
+#include <complex>
 #include <QRandomGenerator>
 
 AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
@@ -374,12 +375,12 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     // ── FFT / analiza częstotliwości ──
     addHLine();
     auto *fftHeader = new QHBoxLayout;
-    fftHeader->addWidget(new QLabel("Analiza częstotliwości (DFT):"));
+    fftHeader->addWidget(new QLabel("Analiza częstotliwości (FFT):"));
     m_fftIdCombo = new QComboBox; m_fftIdCombo->setMinimumWidth(120);
     m_fftIdCombo->setPlaceholderText("Wybierz CAN ID...");
     m_fftByteCombo = new QComboBox; m_fftByteCombo->setMinimumWidth(80);
     for (int b = 0; b < 64; ++b) m_fftByteCombo->addItem(QString("Bajt %1").arg(b), b);
-    m_fftBtn = new QPushButton("Uruchom DFT");
+    m_fftBtn = new QPushButton("Uruchom FFT");
     fftHeader->addWidget(m_fftIdCombo);
     fftHeader->addWidget(m_fftByteCombo);
     fftHeader->addWidget(m_fftBtn);
@@ -387,7 +388,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     mainLayout->addLayout(fftHeader);
 
     m_fftChart = new QChart();
-    m_fftChart->setTitle("Widmo częstotliwości (DFT)");
+    m_fftChart->setTitle("Widmo częstotliwości (FFT)");
     m_fftSeries = new QLineSeries(); m_fftSeries->setName("Magnituda"); m_fftSeries->setColor(QColor("#e94560"));
     m_fftChart->addSeries(m_fftSeries);
     m_fftChart->createDefaultAxes();
@@ -2376,26 +2377,59 @@ double AssociativeLearner::predictNeural(const QVector<double> &input) const {
     return z; // wartość w znormalizowanej przestrzeni
 }
 
-// ---------- DFT / analiza częstotliwości ----------
+// ---------- FFT / analiza częstotliwości (Cooley-Tukey) ----------
 void AssociativeLearner::computeDft(const QVector<double> &signal, double fs,
                                      QVector<double> &mags, QVector<double> &freqs) {
     int N = signal.size();
     if (N < 2) return;
-    mags.resize(N / 2 + 1);
-    freqs.resize(N / 2 + 1);
+    // Cooley-Tukey radix-2 FFT (O(N log N))
 
-    // Direct DFT (O(N²)) — wystarczająco szybkie dla N < 10000
-    for (int k = 0; k <= N / 2; ++k) {
-        double real = 0.0, imag = 0.0;
-        for (int n = 0; n < N; ++n) {
-            double angle = -2.0 * M_PI * k * n / N;
-            real += signal[n] * cos(angle);
-            imag += signal[n] * sin(angle);
-        }
-        mags[k] = sqrt(real * real + imag * imag) / N;
-        freqs[k] = k * fs / N;
+    // Pad to next power of 2
+    int N2 = 1;
+    while (N2 < N) N2 <<= 1;
+
+    std::vector<std::complex<double>> x(N2, 0.0);
+    for (int i = 0; i < N; ++i)
+        x[i] = std::complex<double>(signal[i], 0.0);
+
+    // Bit-reversal permutation
+    for (int i = 1, j = 0; i < N2; ++i) {
+        int bit = N2 >> 1;
+        for (; j & bit; bit >>= 1)
+            j ^= bit;
+        j ^= bit;
+        if (i < j)
+            std::swap(x[i], x[j]);
     }
-    // DC component — divide by 2 for correct amplitude
+
+    // Radix-2 butterflies
+    for (int len = 2; len <= N2; len <<= 1) {
+        double angle = -2.0 * M_PI / len;
+        std::complex<double> wlen(std::cos(angle), std::sin(angle));
+        for (int i = 0; i < N2; i += len) {
+            std::complex<double> w(1.0, 0.0);
+            for (int j = 0; j < len / 2; ++j) {
+                std::complex<double> u = x[i + j];
+                std::complex<double> v = x[i + j + len / 2] * w;
+                x[i + j] = u + v;
+                x[i + j + len / 2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+
+    // Output: up to Nyquist (N2/2 + 1 bins)
+    int outBins = N2 / 2 + 1;
+    mags.resize(outBins);
+    freqs.resize(outBins);
+
+    double scale = 1.0 / N;
+    for (int k = 0; k < outBins; ++k) {
+        mags[k] = std::abs(x[k]) * scale;
+        freqs[k] = k * fs / N2;
+    }
+
+    // DC correction
     if (mags.size() > 0) mags[0] /= 2.0;
 }
 
@@ -2437,7 +2471,7 @@ void AssociativeLearner::runFftAnalysis() {
     double fs_hz = 1'000'000.0 / avgInterval;  // samples per second
     QVector<double> signal = values;  // for now, use raw values (close enough for near-uniform CAN traffic)
 
-    // Run DFT
+    // Run FFT
     QVector<double> mags, freqs;
     computeDft(signal, fs_hz, mags, freqs);
 
@@ -2502,7 +2536,7 @@ void AssociativeLearner::runFftAnalysis() {
         if (idx >= 0) m_fftIdCombo->setCurrentIndex(idx);
     }
 
-    Logger::log(QString("DFT: ID=0x%1 byte=%2 N=%3 fs=%4 Hz peaks=%5")
+    Logger::log(QString("FFT: ID=0x%1 byte=%2 N=%3 fs=%4 Hz peaks=%5")
         .arg(targetId, 3, 16, QChar('0')).arg(byteIdx).arg(M)
         .arg(fs_hz, 0, 'f', 1).arg(showN));
 }
