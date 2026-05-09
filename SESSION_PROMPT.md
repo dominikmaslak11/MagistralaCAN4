@@ -142,6 +142,7 @@ Branch: main
 ─────────────────────────────────────────────────────────────
 
 ```
+ebdcd80 docs: session prompt v5 — Faza 1 complete, Faza 2 plan
 2c66879 perf: DFT → Cooley-Tukey FFT (O(N log N)) + DFT→FFT UI labels
 3ea6916 feat: .clang-format config + async button feedback (QtConcurrent::run ready)
 a068cb1 refactor: extract inline styles to style_dark.qss / style_light.qss
@@ -157,19 +158,67 @@ edab4fd v2.1.1: SLCAN driver (serial port) with auto-detection
 Branch: `main` — zsynchronizowany z `origin/main`
 
 ─────────────────────────────────────────────────────────────
-## 🎯 PROMPT WZNOWIENIA
+## 🔑 CREDENTIALS
 ─────────────────────────────────────────────────────────────
 
-Wznawiamy sesję modernizacji MagistralaCAN4 v5.
-Ostatni stan:
-- **Faza 1: ZAKOŃCZONA** — CanFrame 64B, FFT Cooley-Tukey, style .qss, .clang-format
-- Commit `2c66879` na GitHub
-- **Następny krok: Faza 2.1 — dekompozycja AssociativeLearner** (2500+ linii → 5 modułów)
-- Po nim: 2.4 (uzupełnienie QtConcurrent::run), 2.2 (CanStatsPanel)
+```
+GitHub Username: dominikmaslak11
+Repo URL:        https://github.com/dominikmaslak11/MagistralaCAN4.git
+```
 
-Token GitHub: (zapytaj użytkownika)
+Token GitHub — użytkownik przekaże go w nowej sesji.
 
-Kontynuuj od Fazy 2.1.
+─────────────────────────────────────────────────────────────
+## 🎯 PROMPT WZNOWIENIA (wklej w nowej sesji)
+─────────────────────────────────────────────────────────────
+
+Wczytaj plik `SESSION_PROMPT.md`, porównaj lokalne pliki z tym co jest na
+githubie (`git fetch && git status`). Chcę kontynuować pracę od Fazy 2.1.
+
+**Faza 2.1 — dekompozycja AssociativeLearner** (plik ~2530 linii):
+
+Rozbij `src/core/AssociativeLearner.cpp` na 5 modułów:
+
+1. **LearnerUI** (`.h` + `.cpp`) — konstrukcja widgetów, layout, connecty
+   - Wyciągnij cały konstruktor `AssociativeLearner::AssociativeLearner(QWidget*)`
+   - Wszystkie QPushButton, QComboBox, QTableWidget, QChartView — jako osobna klasa
+
+2. **CorrelationEngine** (`.h` + `.cpp`) — korelacje, regresja, MIC, MI
+   - `updateCorrelationTable()`, `computeMutualInformation()`, `computeMIC()`,
+     `updateCrossByteTable()`, `updateCrossVariableMatrix()`, `applySignificanceFilter()`
+   - `trainPrediction()`, `updatePredictionDisplay()`, `LinearModel`
+
+3. **ClusterEngine** (`.h` + `.cpp`) — klastrowanie, PCA, DBSCAN, uczenie
+   - `clusterWindows()`, `runPcaClustering()`, `dbscanClustering()`, `autoKMeans()`
+   - `markEvent()`, `markNonEvent()`, `updateCandidates()`, `resetLearning()`
+   - `buildFeatureVectors()`, `buildWindowFeatures()`, `recalcAdaptiveWindow()`
+   - `kMeans()`, `dbscan()`
+
+4. **AnomalyDetector** (`.h` + `.cpp`) — anomalie, auto-detekcja, NN, Markov
+   - `startAnomalyMonitoring()`, `stopAnomalyMonitoring()`, `checkAnomaly()`
+   - `buildNormalModel()`, `checkAutoEvent()`
+   - `trainNeuralNetwork()`, `updateNnPrediction()`, `predictNeural()`
+   - `trainMarkovModel()`, `predictNextFrames()`
+
+5. **SessionManager** (`.h` + `.cpp`) — persystencja, eksport
+   - `saveSession()`, `loadSession()`, `autoSave()`
+   - `exportModels()`, `importModels()`
+   - `generateLuaScript()`, `exportHtmlReport()`
+
+Pozostałe w AssociativeLearner (jako fasada):
+- `processFrame()`, `addObservation()`, `addVariable()`, `addNewVariable()`
+- `onVariableChanged()`, `currentObservations()`
+- `updateSequenceTable()`, `updateTimeChart()`, `updateChart()`
+- `runFftAnalysis()`, `computeDft()`
+- Wszystkie member variables (`m_*`) — rozdzielone do odpowiednich modułów
+
+**Zasady**:
+- AssociativeLearner staje się fasadą trzymającą wskaźniki do 5 modułów
+- Każdy moduł dostaje referencję do AssociativeLearner (dostęp do `m_frameHistory` itp.)
+- Zachowaj sygnatury metod publicznych (nie psuj connectów!)
+- Kompiluj po każdej wyodrębnionej klasie: `ninja -C build_native -j8`
+
+Token GitHub jest w sekcji 🔑 CREDENTIALS powyżej. Działaj samodzielnie.
 
 ─────────────────────────────────────────────────────────────
 ## END OF SESSION PROMPT — sesja v5, 2026-05-09
