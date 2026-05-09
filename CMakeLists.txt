@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
 # ── Qt6 (wspólne) ──
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort)
 
 # ── Platform-specific dependencies ──
 if(UNIX AND NOT APPLE)
@@ -61,6 +61,7 @@ set(SOURCES
     src/core/Mdf4Writer.cpp
     src/core/PluginLoader.cpp
     src/core/HttpRestServer.cpp
+    src/core/SlCanDriver.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
@@ -80,6 +81,7 @@ set(HEADERS
     src/core/CanSniffer.h
     src/core/SocketCanDriver.h
     src/core/PcanDriver.h
+    src/core/SlCanDriver.h
     src/core/CanFrameModel.h
     src/core/FrameDetailWidget.h
     src/core/AssociativeLearner.h
@@ -136,6 +138,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Charts
     Qt6::WebSockets
     Qt6::OpenGLWidgets
+    Qt6::SerialPort
 )
 
 if(HAS_XCB)

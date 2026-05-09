@@ -6,6 +6,7 @@
 #include "core/SocketCanDriver.h"
 #include "core/CanInterfaceEnumerator.h"
 #endif
+#include "core/SlCanDriver.h"
 
 #include <QToolBar>
 #include <QToolButton>
@@ -76,6 +77,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 #else
     m_canDriver = new SocketCanDriver();
 #endif
+    // SLCAN – zawsze dostępny (porty szeregowe), cross-platform
+    m_slCanDriver = new SlCanDriver();
     m_sniffer.setDriver(m_canDriver);
 
     setWindowIcon(QIcon(":/ico.png"));
@@ -183,6 +186,18 @@ void MainWindow::toggleSniffing() {
     if (!m_sniffing) {
         QString iface = m_interfaceCombo->currentText().trimmed();
         if (iface.isEmpty()) { QMessageBox::warning(this, "Brak interfejsu", "Wybierz interfejs CAN."); return; }
+
+        // Inteligentny wybór drivera po nazwie urządzenia
+        ICanDriver *active = m_canDriver;
+        if (m_slCanDriver && (iface.startsWith("COM", Qt::CaseInsensitive) ||
+                               iface.startsWith("tty") || iface.startsWith("/dev/tty") ||
+                               iface.contains("[SLCAN]") || iface.contains("[Canable]") ||
+                               iface.contains("[candleLight]") || iface.contains("[USBtin]") ||
+                               iface.contains("[CAN232]") || iface.contains("[Lawicel]"))) {
+            active = m_slCanDriver;
+            Logger::log(QString("SLCAN: wybrano sterownik szeregowy dla %1").arg(iface));
+        }
+        m_sniffer.setDriver(active);
         m_sniffer.start(iface); m_sniffing = true;
         Logger::log(QString("Rozpoczęto sniffing na interfejsie %1").arg(iface));
         m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false); m_batchTimer.start();
@@ -227,12 +242,20 @@ void MainWindow::updateTableBatch() {
 void MainWindow::refreshInterfaces() {
     QString current = m_interfaceCombo->currentText();
     m_interfaceCombo->clear();
+
 #ifdef Q_OS_WIN
     QStringList ifaces = m_canDriver ? m_canDriver->availableDevices() : QStringList();
 #else
     QStringList ifaces = m_canDriver ? m_canDriver->availableDevices()
                                      : CanInterfaceEnumerator::availableCanInterfaces();
 #endif
+
+    // Merge SLCAN devices (auto-detekcja portów szeregowych)
+    if (m_slCanDriver) {
+        QStringList slIfaces = m_slCanDriver->availableDevices();
+        ifaces.append(slIfaces);
+    }
+
     m_interfaceCombo->addItems(ifaces);
     int idx = m_interfaceCombo->findText(current);
     if (idx >= 0) m_interfaceCombo->setCurrentIndex(idx);

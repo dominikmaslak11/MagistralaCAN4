@@ -78,6 +78,7 @@ private:
 
     CanSniffer m_sniffer;
     ICanDriver *m_canDriver = nullptr;
+    ICanDriver *m_slCanDriver = nullptr;  // SLCAN backend (serial port)
     CanFrameModel *m_model;
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;
