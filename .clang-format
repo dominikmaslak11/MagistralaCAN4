@@ -1,0 +1,64 @@
+# MagistralaCAN4 — clang-format configuration (C++17, Qt6)
+# Run: clang-format -i src/**/*.cpp src/**/*.h main.cpp
+
+BasedOnStyle: Google
+Language: Cpp
+Standard: c++17
+
+# ── Indentation ──
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+AccessModifierOffset: -4
+IndentCaseLabels: true
+
+# ── Braces ──
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# ── Line width ──
+ColumnLimit: 120
+PenaltyExcessCharacter: 1
+
+# ── Spacing ──
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceAfterCStyleCast: true
+SpacesInContainerLiterals: false
+
+# ── Alignment ──
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: true
+AlignTrailingComments: true
+
+# ── Pointers & references ──
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# ── Includes ──
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  # Qt headers first
+  - Regex: '^<Q[A-Z]'
+    Priority: 1
+  # Other library headers
+  - Regex: '^<(XCB|lua|CL|opencl)'
+    Priority: 2
+  # Standard library
+  - Regex: '^<[a-z_]+>'
+    Priority: 3
+  # Project headers
+  - Regex: '^"'
+    Priority: 4
+
+# ── Misc ──
+MaxEmptyLinesToKeep: 1
+FixNamespaceComments: true
+ReflowComments: true
+SpacesBeforeTrailingComments: 2
+DerivePointerAlignment: false

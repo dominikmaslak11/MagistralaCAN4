@@ -247,6 +247,10 @@ private:
     double predictNeural(const QVector<double> &input) const;
     void updateNnPrediction();
 
+    // Async computation helper (button feedback + QtConcurrent::run)
+    template<typename Func>
+    void runAsync(Func &&compute, QPushButton *btn, const QString &restoreText);
+
     const DbcParser   *m_dbc   = nullptr;
     const J1939Parser *m_j1939 = nullptr;
 };

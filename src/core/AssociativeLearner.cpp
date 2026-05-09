@@ -9,6 +9,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QtConcurrent>
+#include <QFutureWatcher>
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -441,6 +442,22 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     addVariable("temperatura");
 }
 
+
+// ── Async helper (QtConcurrent) ──────────────────────────────
+// Usage: runAsync([this]{ heavyComputation(); }, m_someBtn, "Original Text");
+template<typename Func>
+void AssociativeLearner::runAsync(Func &&compute, QPushButton *btn, const QString &restoreText) {
+    btn->setEnabled(false);
+    btn->setText("Obliczanie...");
+    auto *watcher = new QFutureWatcher<void>(this);
+    connect(watcher, &QFutureWatcher<void>::finished, this, [btn, restoreText, watcher]() {
+        btn->setEnabled(true);
+        btn->setText(restoreText);
+        watcher->deleteLater();
+    });
+    watcher->setFuture(QtConcurrent::run(std::forward<Func>(compute)));
+}
+
 AssociativeLearner::~AssociativeLearner() {
     m_predictionTimer->stop();
     m_anomalyTimer->stop();
@@ -856,6 +873,8 @@ int AssociativeLearner::dbscan(const QVector<QVector<float>> &data, float eps, i
 }
 
 void AssociativeLearner::dbscanClustering() {
+    m_dbscanBtn->setEnabled(false);
+    m_dbscanBtn->setText("Obliczanie...");
     if (m_frameHistory.empty()) return;
 
     bool ok;
@@ -927,7 +946,9 @@ void AssociativeLearner::dbscanClustering() {
 
     Logger::log(QString("DBSCAN: eps=%1 minPts=%2 windows=%3 clusters=%4 noise=%5")
         .arg(eps).arg(minPts).arg(windows.size()).arg(K).arg(noiseCnt));
-}
+
+    m_dbscanBtn->setEnabled(true);
+    m_dbscanBtn->setText("Uruchom DBSCAN");}
 
 // ---------- Predykcja ----------
 void AssociativeLearner::trainPrediction() {
@@ -1627,6 +1648,8 @@ void AssociativeLearner::importModels() {
 
 // ---------- PCA + k-means ----------
 void AssociativeLearner::runPcaClustering() {
+    m_pcaBtn->setEnabled(false);
+    m_pcaBtn->setText("Obliczanie...");
     if (m_frameHistory.empty()) return;
 
     // Tworzenie okien i cech (tak samo jak w clusterWindows)
@@ -1750,7 +1773,9 @@ void AssociativeLearner::runPcaClustering() {
     // Informacja o wariancji w tytule wykresu
     m_pcaChart->setTitle(QString("PCA (2 składowe) – zasoby wariancji: %1%")
                         .arg(varExplained * 100, 0, 'f', 1));
-}
+
+    m_pcaBtn->setEnabled(true);
+    m_pcaBtn->setText("Uruchom PCA i k-srednich");}
 
 // ---------- Rejestracja braku zdarzenia ----------
 void AssociativeLearner::markNonEvent() {
@@ -1772,6 +1797,8 @@ void AssociativeLearner::markNonEvent() {
 
 // ---------- Maximal Information Coefficient (MIC) ----------
 void AssociativeLearner::computeMIC() {
+    m_micBtn->setEnabled(false);
+    m_micBtn->setText("Obliczanie...");
     QVector<ValueObservation> obs = currentObservations();
     if (obs.size() < 10) {
         m_micTable->setRowCount(0);
@@ -1899,7 +1926,9 @@ void AssociativeLearner::computeMIC() {
         m_micTable->item(i,1)->setForeground(QColor("#c0c0c0"));
         m_micTable->item(i,2)->setForeground(col);
     }
-}
+
+    m_micBtn->setEnabled(true);
+    m_micBtn->setText("Oblicz MIC");}
 
 // ---------- Generator skryptów Lua ----------
 void AssociativeLearner::generateLuaScript() {
