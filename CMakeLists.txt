@@ -132,6 +132,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/src
 )
 
+# ── Precompiled header (STL + Qt — 46 translation units) ──
+target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
+
 # ── Link libraries ──
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Widgets
