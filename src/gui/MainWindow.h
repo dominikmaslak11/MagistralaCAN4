@@ -28,13 +28,11 @@
 #include "core/Mdf4Writer.h"
 #include "core/PluginLoader.h"
 #include "core/HttpRestServer.h"
+#include "core/CanStatsPanel.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
-#include <QtCharts/QChart>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -61,9 +59,7 @@ private slots:
     void loadLuaScript();
     void loadDbcFile();
     void onFrameSelected(const QModelIndex &index);
-    void updateCanStats();
     void applyIdFilter(const QString &text);
-    void toggleCanPause();
     void copySelectedToClipboard();
     void toggleRecording();
     void toggleMdf4Recording();
@@ -109,28 +105,8 @@ private:
     QShortcut *m_hotkeyMarkEvent = nullptr;
     QShortcut *m_hotkeyNonEvent = nullptr;
 
-    // Statystyki CAN
-    QLineEdit    *m_canFilterEdit;
-    QLabel       *m_canStatsLabel;
-    QPushButton  *m_canPauseBtn;
-    QTimer        m_canStatsTimer;
-    uint64_t      m_totalFrameCount = 0;
-    uint64_t      m_lastStatsFrameCount = 0;
-    QSet<uint32_t> m_uniqueIdsSinceLastStats;
-    bool           m_canPaused = false;
-    QChartView    *m_fpsChartView;
-    QChart        *m_fpsChart;
-    QLineSeries   *m_fpsSeries;
-    int            m_fpsHistoryCount = 0;
-
-    // Per-ID stats + burst detection
-    struct IdStats { uint64_t count = 0; uint64_t lastTs = 0; double avgInterval = 0; };
-    QHash<uint32_t, IdStats> m_idStats;
-    QVector<double> m_fpsWindow;        // rolling fps for burst detection
-    double          m_fpsMean = 0.0;
-    double          m_fpsStd  = 0.0;
-    static constexpr int BURST_WINDOW = 30;  // 30 samples = 15s
-    static constexpr double BURST_SIGMA = 3.0;
+    // Panel statystyk CAN (Faza 2.2 — wydzielony widget)
+    CanStatsPanel *m_canStatsPanel;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;

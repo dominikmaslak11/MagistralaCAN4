@@ -124,10 +124,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *copyShortcut = new QShortcut(QKeySequence("Ctrl+C"), m_tableView);
     connect(copyShortcut, &QShortcut::activated, this, &MainWindow::copySelectedToClipboard);
 
-    // Statystyki CAN – timer co 500ms
-    m_canStatsTimer.setInterval(500);
-    connect(&m_canStatsTimer, &QTimer::timeout, this, &MainWindow::updateCanStats);
-    m_canStatsTimer.start();
+    // Panel statystyk CAN (Faza 2.2 — widget CanStatsPanel)
+    m_canStatsPanel = new CanStatsPanel(this);
+    connect(m_canStatsPanel, &CanStatsPanel::filterChanged, this, &MainWindow::applyIdFilter);
+    connect(m_canStatsPanel, &CanStatsPanel::pauseToggled, this, [this](bool paused) {
+        if (!paused && !m_frameBuffer.isEmpty()) {
+            m_model->processIncomingFrames(m_frameBuffer);
+            m_frameBuffer.resize(0);
+        }
+    });
+    connect(m_canStatsPanel, &CanStatsPanel::statsUpdated, this, [this](double fps, int uniqueIds) {
+        m_restServer.fps = fps;
+        m_restServer.uniqueIds = uniqueIds;
+    });
 
     refreshInterfaces();
     if (m_interfaceCombo->count() > 0)
@@ -221,17 +230,8 @@ void MainWindow::toggleSniffing() {
 
 void MainWindow::onNewFrame(const CanFrame &frame) {
     m_frameBuffer.append(frame);
-    m_totalFrameCount++;
-    m_uniqueIdsSinceLastStats.insert(frame.id);
-
-    // Per-ID stats
-    auto &st = m_idStats[frame.id];
-    if (st.lastTs > 0 && frame.timestamp > st.lastTs) {
-        double dt = double(frame.timestamp - st.lastTs) / 1'000'000.0;
-        st.avgInterval = st.count > 1 ? (st.avgInterval * (st.count - 1) + dt) / st.count : dt;
-    }
-    st.count++;
-    st.lastTs = frame.timestamp;
+    if (m_canStatsPanel)
+        m_canStatsPanel->onNewFrame(frame.id, frame.timestamp);
 }
 
 void MainWindow::updateTableBatch() {
@@ -239,7 +239,7 @@ void MainWindow::updateTableBatch() {
     m_sniffer.drainAndEmit();
 
     if (m_frameBuffer.isEmpty()) return;
-    if (m_canPaused) return; // buforuj w tle, nie odświeżaj tabeli
+    if (m_canStatsPanel && m_canStatsPanel->isPaused()) return; // buforuj w tle
 
     // Emituj ramki do slotów analizy (DirectConnection, zero nadmiarowych kopii)
     for (const CanFrame &frame : m_frameBuffer)
@@ -393,45 +393,7 @@ void MainWindow::setupCentralWidget() {
     auto *canLayout = new QVBoxLayout(canTab);
     canLayout->setContentsMargins(0, 0, 0, 0);
 
-    auto *canHeader = new QHBoxLayout;
-    m_canFilterEdit = new QLineEdit;
-    m_canFilterEdit->setPlaceholderText("Filtruj po CAN ID (hex, np. 123 lub 0x123)...");
-    m_canFilterEdit->setStyleSheet("QLineEdit { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; "
-                                    "border-radius: 4px; padding: 5px 10px; font-size: 12px; }");
-    connect(m_canFilterEdit, &QLineEdit::textChanged, this, &MainWindow::applyIdFilter);
-    canHeader->addWidget(m_canFilterEdit, 1);
-
-    m_canStatsLabel = new QLabel("Ramki: 0 | FPS: 0 | Unikalne ID: 0 | Obciążenie: 0%");
-    m_canStatsLabel->setStyleSheet("color: #ffaa00; font-weight: bold; font-size: 11px; "
-                                    "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
-    canHeader->addWidget(m_canStatsLabel);
-
-    m_canPauseBtn = new QPushButton("⏸ Pauza");
-    m_canPauseBtn->setFixedWidth(90);
-    m_canPauseBtn->setStyleSheet("QPushButton { background: #1a1a2e; color: #ffaa00; border: 1px solid #e94560; "
-                                  "border-radius: 4px; padding: 4px 10px; font-weight: bold; font-size: 11px; } "
-                                  "QPushButton:hover { background: #e94560; color: #0a0e17; }");
-    connect(m_canPauseBtn, &QPushButton::clicked, this, &MainWindow::toggleCanPause);
-    canHeader->addWidget(m_canPauseBtn);
-
-    // Mini-wykres FPS
-    m_fpsChart = new QChart();
-    m_fpsChart->setMargins(QMargins(0,0,0,0));
-    m_fpsChart->setBackgroundRoundness(0);
-    m_fpsChart->legend()->hide();
-    m_fpsSeries = new QLineSeries(); m_fpsSeries->setColor(QColor("#00ffaa"));
-    m_fpsChart->addSeries(m_fpsSeries);
-    m_fpsChart->createDefaultAxes();
-    m_fpsChart->axes(Qt::Horizontal).first()->setVisible(false);
-    m_fpsChart->axes(Qt::Vertical).first()->setVisible(false);
-    m_fpsChartView = new QChartView(m_fpsChart);
-    m_fpsChartView->setViewport(new QOpenGLWidget());
-    m_fpsChartView->setRenderHint(QPainter::Antialiasing);
-    m_fpsChartView->setFixedSize(120, 30);
-    m_fpsChartView->setStyleSheet("background: transparent;");
-    canHeader->addWidget(m_fpsChartView);
-
-    canLayout->addLayout(canHeader);
+    canLayout->addWidget(m_canStatsPanel);
     canLayout->addWidget(m_tableView);
 
     tabs->addTab(canTab, "Ruch CAN");
@@ -465,74 +427,6 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     }
 }
 
-void MainWindow::updateCanStats() {
-    uint64_t delta = m_totalFrameCount - m_lastStatsFrameCount;
-    double fps = delta / 0.5; // 500ms timer
-    int uniqueIds = m_uniqueIdsSinceLastStats.size();
-    // Szacunkowe obciążenie: 8B * fps / 500kbps (dla CAN 2.0)
-    double busLoad = (delta * 8 * 8.0) / (500'000 * 0.5) * 100.0;
-    if (busLoad > 100) busLoad = 100;
-
-    // --- Per-ID top 3 ---
-    QVector<QPair<uint32_t, uint64_t>> sortedIds;
-    sortedIds.reserve(m_idStats.size());
-    for (auto it = m_idStats.begin(); it != m_idStats.end(); ++it)
-        sortedIds.append({it.key(), it->count});
-    std::sort(sortedIds.begin(), sortedIds.end(),
-              [](auto &a, auto &b) { return a.second > b.second; });
-
-    QString topIds;
-    for (int i = 0; i < 3 && i < sortedIds.size(); ++i)
-        topIds += QString("%1 0x%2(%3) ")
-                     .arg(i > 0 ? "|" : "")
-                     .arg(sortedIds[i].first, 3, 16, QChar('0'))
-                     .arg(sortedIds[i].second);
-
-    // --- Burst detection ---
-    m_fpsWindow.append(fps);
-    if (m_fpsWindow.size() > BURST_WINDOW)
-        m_fpsWindow.removeFirst();
-
-    bool burst = false;
-    if (m_fpsWindow.size() >= BURST_WINDOW) {
-        double sum = 0, sq = 0;
-        for (double f : m_fpsWindow) { sum += f; sq += f * f; }
-        m_fpsMean = sum / m_fpsWindow.size();
-        m_fpsStd = std::sqrt(sq / m_fpsWindow.size() - m_fpsMean * m_fpsMean);
-        if (m_fpsStd < 0.1) m_fpsStd = 0.1;
-        burst = (fps > m_fpsMean + BURST_SIGMA * m_fpsStd);
-    }
-
-    QString burstMarker = burst ? " ⚡BURST" : "";
-
-    m_canStatsLabel->setText(QString("Ramki: %1 | FPS: %2 | Unikalne ID: %3 | Obc.: %4%%5 | Top: %6")
-                             .arg(m_totalFrameCount).arg(fps, 0, 'f', 0).arg(uniqueIds)
-                             .arg(busLoad, 0, 'f', 1).arg(burstMarker).arg(topIds));
-    m_canStatsLabel->setToolTip(burst ? "Wykryto wybuch ruchu CAN — FPS powyżej 3σ od średniej!" : "");
-
-    if (burst) {
-        m_canStatsLabel->setStyleSheet("color: #ff4444; font-weight: bold; font-size: 11px; "
-                                        "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
-        QTimer::singleShot(1500, this, [this]() {
-            m_canStatsLabel->setStyleSheet("color: #ffaa00; font-weight: bold; font-size: 11px; "
-                                            "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
-        });
-    }
-
-    m_lastStatsFrameCount = m_totalFrameCount;
-    m_uniqueIdsSinceLastStats.clear();
-
-    m_restServer.fps = fps;
-    m_restServer.uniqueIds = uniqueIds;
-
-    // Aktualizuj mini-wykres FPS (ostatnie 60 próbek = 30s)
-    m_fpsSeries->append(m_fpsHistoryCount, fps);
-    m_fpsHistoryCount++;
-    if (m_fpsSeries->count() > 60)
-        m_fpsSeries->removePoints(0, m_fpsSeries->count() - 60);
-    m_fpsChart->axes(Qt::Vertical).first()->setRange(0, std::max(100.0, fps * 1.5));
-}
-
 void MainWindow::applyIdFilter(const QString &text) {
     QString filter = text.trimmed();
     if (filter.startsWith("0x", Qt::CaseInsensitive))
@@ -544,29 +438,6 @@ void MainWindow::applyIdFilter(const QString &text) {
         CanFrame f = m_model->frameAt(i);
         bool show = !filterActive || (f.id == filterId);
         m_tableView->setRowHidden(i, !show);
-    }
-}
-
-void MainWindow::toggleCanPause() {
-    m_canPaused = !m_canPaused;
-    if (m_canPaused) {
-        m_canPauseBtn->setText("▶ Wznów");
-        m_canPauseBtn->setStyleSheet("QPushButton { background: #e94560; color: #0a0e17; border: 1px solid #e94560; "
-                                      "border-radius: 4px; padding: 4px 10px; font-weight: bold; font-size: 11px; }");
-        m_canStatsLabel->setStyleSheet("color: #ff4444; font-weight: bold; font-size: 11px; "
-                                        "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
-    } else {
-        m_canPauseBtn->setText("⏸ Pauza");
-        m_canPauseBtn->setStyleSheet("QPushButton { background: #1a1a2e; color: #ffaa00; border: 1px solid #e94560; "
-                                      "border-radius: 4px; padding: 4px 10px; font-weight: bold; font-size: 11px; } "
-                                      "QPushButton:hover { background: #e94560; color: #0a0e17; }");
-        m_canStatsLabel->setStyleSheet("color: #ffaa00; font-weight: bold; font-size: 11px; "
-                                        "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
-        // Wznów – przetwórz zbuforowane ramki
-        if (!m_frameBuffer.isEmpty()) {
-            m_model->processIncomingFrames(m_frameBuffer);
-            m_frameBuffer.resize(0);  // keep capacity
-        }
     }
 }
 

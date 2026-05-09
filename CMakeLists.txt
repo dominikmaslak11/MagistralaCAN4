@@ -62,6 +62,7 @@ set(SOURCES
     src/core/PluginLoader.cpp
     src/core/HttpRestServer.cpp
     src/core/SlCanDriver.cpp
+    src/core/CanStatsPanel.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
@@ -107,6 +108,7 @@ set(HEADERS
     src/core/ProtocolPlugin.h
     src/core/PluginLoader.h
     src/core/HttpRestServer.h
+    src/core/CanStatsPanel.h
     src/core/RingBuffer.h
     src/core/UdsFrame.h
     src/core/UdsParser.h

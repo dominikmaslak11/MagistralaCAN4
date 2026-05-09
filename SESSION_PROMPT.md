@@ -62,7 +62,7 @@
 | # | Zadanie | Priorytet | Status |
 |---|---------|-----------|--------|
 | 2.1 | Rozbicie AssociativeLearner (2500+ linii) na: LearnerUI, CorrelationEngine, ClusterEngine, AnomalyDetector, SessionManager | WYSOKI | ⬜ pending |
-| 2.2 | MainWindow → wydzielić CanStatsPanel (widget) | ŚREDNI | ⬜ pending |
+| 2.2 | MainWindow → wydzielić CanStatsPanel (widget) | ŚREDNI | ✅ done (commit pending) |
 | 2.3 | Wydzielić logikę eksportu do CanExporter | NISKI | ⬜ pending |
 | 2.4 | QtConcurrent::run dla kosztownych korelacji | WYSOKI | 🟡 częściowo (runAsync helper jest, użyty w 3 miejscach) |
 
