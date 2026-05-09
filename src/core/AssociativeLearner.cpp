@@ -129,7 +129,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_nnTimer = new QTimer(this);
     m_nnTimer->setInterval(1000);
     connect(m_nnTimer, &QTimer::timeout, this, &AssociativeLearner::updateNnPrediction);
-    connect(m_trainNnBtn, &QPushButton::clicked, this, &AssociativeLearner::trainNeuralNetwork);
+    connect(m_trainNnBtn, &QPushButton::clicked, this, [this]() { runAsync([this]{ trainNeuralNetwork(); }, m_trainNnBtn, "Trenuj sieć neuronową (MLP)"); });
     addHLine();
 
     auto *seqLayout = new QHBoxLayout;
@@ -254,7 +254,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_elbowChartView->setRenderHint(QPainter::Antialiasing);
     m_elbowChartView->setMinimumHeight(250);
     mainLayout->addWidget(m_elbowChartView);
-    connect(m_autoKBtn, &QPushButton::clicked, this, &AssociativeLearner::autoKMeans);
+    connect(m_autoKBtn, &QPushButton::clicked, this, [this]() { runAsync([this]{ autoKMeans(); }, m_autoKBtn, "Znajdź optymalne K"); });
     m_chart = new QChart(); m_chart->setTitle("Wartość od bajtu");
     // --- Predykcja sekwencji (Markov) ---
     auto *markovLayout = new QHBoxLayout;
@@ -287,7 +287,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_crossVarTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_crossVarTable->setMinimumHeight(300);
     mainLayout->addWidget(m_crossVarTable);
-    connect(m_crossVarBtn, &QPushButton::clicked, this, &AssociativeLearner::updateCrossVariableMatrix);
+    connect(m_crossVarBtn, &QPushButton::clicked, this, [this]() { runAsync([this]{ updateCrossVariableMatrix(); }, m_crossVarBtn, "Pokaż macierz korelacji zmiennych"); });
     // --- Mutual Information ---
     auto *miLayout = new QHBoxLayout;
     miLayout->addWidget(new QLabel("Zależności nieliniowe (MI):"));
@@ -317,7 +317,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     mainLayout->addWidget(m_micTable);
     connect(m_micBtn, &QPushButton::clicked, this, &AssociativeLearner::computeMIC);
     mainLayout->addWidget(m_miTable);
-    connect(m_miBtn, &QPushButton::clicked, this, &AssociativeLearner::computeMutualInformation);
+    connect(m_miBtn, &QPushButton::clicked, this, [this]() { runAsync([this]{ computeMutualInformation(); }, m_miBtn, "Oblicz Mutual Information"); });
     connect(m_markovTimer, &QTimer::timeout, this, &AssociativeLearner::predictNextFrames);
     connect(m_trainMarkovBtn, &QPushButton::clicked, this, [this]() {
         trainMarkovModel();
@@ -408,7 +408,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_fftPeakTable->setMinimumHeight(200);
     mainLayout->addWidget(m_fftPeakTable);
 
-    connect(m_fftBtn, &QPushButton::clicked, this, &AssociativeLearner::runFftAnalysis);
+    connect(m_fftBtn, &QPushButton::clicked, this, [this]() { runAsync([this]{ runFftAnalysis(); }, m_fftBtn, "Uruchom FFT"); });
 
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję"); m_loadBtn = new QPushButton("📂 Wczytaj sesję");
@@ -433,8 +433,8 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     connect(m_generateLuaBtn, &QPushButton::clicked, this, &AssociativeLearner::generateLuaScript);
     connect(m_exportReportBtn, &QPushButton::clicked, this, &AssociativeLearner::exportHtmlReport);
     connect(m_ngramCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int) { updateSequenceTable(); });
-    connect(m_clusterBtn, &QPushButton::clicked, this, &AssociativeLearner::clusterWindows);
-    connect(m_trainPredictionBtn, &QPushButton::clicked, this, &AssociativeLearner::trainPrediction);
+    connect(m_clusterBtn, &QPushButton::clicked, this, [this]() { runAsync([this]{ clusterWindows(); }, m_clusterBtn, "Uruchom k-means"); });
+    connect(m_trainPredictionBtn, &QPushButton::clicked, this, [this]() { runAsync([this]{ trainPrediction(); }, m_trainPredictionBtn, "Trenuj predykcję"); });
     connect(m_addVariableBtn, &QPushButton::clicked, this, &AssociativeLearner::addNewVariable);
     connect(m_variableCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssociativeLearner::onVariableChanged);
 
