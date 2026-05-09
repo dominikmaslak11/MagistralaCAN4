@@ -370,6 +370,44 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     });
     m_autoSavePath = QDir::currentPath() + "/autosave_learner.json";
 
+    // ── FFT / analiza częstotliwości ──
+    addHLine();
+    auto *fftHeader = new QHBoxLayout;
+    fftHeader->addWidget(new QLabel("Analiza częstotliwości (DFT):"));
+    m_fftIdCombo = new QComboBox; m_fftIdCombo->setMinimumWidth(120);
+    m_fftIdCombo->setPlaceholderText("Wybierz CAN ID...");
+    m_fftByteCombo = new QComboBox; m_fftByteCombo->setMinimumWidth(80);
+    for (int b = 0; b < 64; ++b) m_fftByteCombo->addItem(QString("Bajt %1").arg(b), b);
+    m_fftBtn = new QPushButton("Uruchom DFT");
+    fftHeader->addWidget(m_fftIdCombo);
+    fftHeader->addWidget(m_fftByteCombo);
+    fftHeader->addWidget(m_fftBtn);
+    fftHeader->addStretch();
+    mainLayout->addLayout(fftHeader);
+
+    m_fftChart = new QChart();
+    m_fftChart->setTitle("Widmo częstotliwości (DFT)");
+    m_fftSeries = new QLineSeries(); m_fftSeries->setName("Magnituda"); m_fftSeries->setColor(QColor("#e94560"));
+    m_fftChart->addSeries(m_fftSeries);
+    m_fftChart->createDefaultAxes();
+    m_fftChart->axes(Qt::Horizontal).first()->setTitleText("Częstotliwość (Hz)");
+    m_fftChart->axes(Qt::Vertical).first()->setTitleText("|Amplituda|");
+    m_fftChartView = new QChartView(m_fftChart);
+    m_fftChartView->setViewport(new QOpenGLWidget());
+    m_fftChartView->setRenderHint(QPainter::Antialiasing);
+    m_fftChartView->setMinimumHeight(300);
+    mainLayout->addWidget(m_fftChartView);
+
+    m_fftPeakTable = new QTableWidget(0, 4);
+    m_fftPeakTable->setHorizontalHeaderLabels({"Częstotliwość (Hz)","Okres (ms)","|Amplituda|","Opis"});
+    m_fftPeakTable->verticalHeader()->hide(); m_fftPeakTable->horizontalHeader()->setStretchLastSection(true);
+    m_fftPeakTable->setShowGrid(false); m_fftPeakTable->setAlternatingRowColors(false);
+    m_fftPeakTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_fftPeakTable->setMinimumHeight(200);
+    mainLayout->addWidget(m_fftPeakTable);
+
+    connect(m_fftBtn, &QPushButton::clicked, this, &AssociativeLearner::runFftAnalysis);
+
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję"); m_loadBtn = new QPushButton("📂 Wczytaj sesję");
     m_exportModelsBtn = new QPushButton("📤 Eksportuj modele");
@@ -2311,6 +2349,137 @@ double AssociativeLearner::predictNeural(const QVector<double> &input) const {
     double z = m_nnWeights.b3;
     for (int i = 0; i < H2; ++i) z += w3[i][0] * a2[i];
     return z; // wartość w znormalizowanej przestrzeni
+}
+
+// ---------- DFT / analiza częstotliwości ----------
+void AssociativeLearner::computeDft(const QVector<double> &signal, double fs,
+                                     QVector<double> &mags, QVector<double> &freqs) {
+    int N = signal.size();
+    if (N < 2) return;
+    mags.resize(N / 2 + 1);
+    freqs.resize(N / 2 + 1);
+
+    // Direct DFT (O(N²)) — wystarczająco szybkie dla N < 10000
+    for (int k = 0; k <= N / 2; ++k) {
+        double real = 0.0, imag = 0.0;
+        for (int n = 0; n < N; ++n) {
+            double angle = -2.0 * M_PI * k * n / N;
+            real += signal[n] * cos(angle);
+            imag += signal[n] * sin(angle);
+        }
+        mags[k] = sqrt(real * real + imag * imag) / N;
+        freqs[k] = k * fs / N;
+    }
+    // DC component — divide by 2 for correct amplitude
+    if (mags.size() > 0) mags[0] /= 2.0;
+}
+
+void AssociativeLearner::runFftAnalysis() {
+    if (m_frameHistory.empty()) return;
+
+    // Get selected CAN ID
+    QString idText = m_fftIdCombo->currentText().trimmed();
+    if (idText.isEmpty()) return;
+    if (idText.startsWith("0x", Qt::CaseInsensitive))
+        idText = idText.mid(2);
+    bool ok;
+    uint32_t targetId = idText.toUInt(&ok, 16);
+    if (!ok) return;
+
+    int byteIdx = m_fftByteCombo->currentData().toInt();
+    if (byteIdx < 0 || byteIdx >= 64) return;
+
+    // Extract signal: collect (timestamp_us, byte_value) pairs for target CAN ID
+    QVector<uint64_t> timestamps;
+    QVector<double> values;
+    for (const auto &f : m_frameHistory) {
+        if (f.id == targetId && byteIdx < f.dlc) {
+            timestamps.append(f.timestamp);
+            values.append(static_cast<double>(f.data[byteIdx]));
+        }
+    }
+    int M = values.size();
+    if (M < 4) return;
+
+    // Compute sampling rate from average inter-frame interval
+    double totalDuration = 0.0;
+    for (int i = 1; i < M; ++i)
+        totalDuration += static_cast<double>(timestamps[i] - timestamps[i - 1]);
+    double avgInterval = totalDuration / (M - 1);  // microseconds
+    if (avgInterval < 1.0) avgInterval = 1.0;
+
+    // Interpolate to regular grid
+    double fs_hz = 1'000'000.0 / avgInterval;  // samples per second
+    QVector<double> signal = values;  // for now, use raw values (close enough for near-uniform CAN traffic)
+
+    // Run DFT
+    QVector<double> mags, freqs;
+    computeDft(signal, fs_hz, mags, freqs);
+
+    // Update chart
+    m_fftSeries->clear();
+    double magMax = 0.0;
+    for (int i = 1; i < mags.size(); ++i) {  // skip DC (index 0)
+        m_fftSeries->append(freqs[i], mags[i]);
+        if (mags[i] > magMax) magMax = mags[i];
+    }
+    if (magMax < 0.01) magMax = 1.0;
+    double fMax = freqs.back();
+    if (fMax < 1.0) fMax = fs_hz / 2.0;
+    m_fftChart->axes(Qt::Horizontal).first()->setRange(0, fMax);
+    m_fftChart->axes(Qt::Vertical).first()->setRange(0, magMax * 1.1);
+    m_fftChart->setTitle(QString("Widmo ID 0x%1 bajt %2 (fs=≈%3 Hz, N=%4)")
+        .arg(targetId, 3, 16, QChar('0')).arg(byteIdx)
+        .arg(fs_hz, 0, 'f', 1).arg(M));
+
+    // Find peaks (local maxima above threshold)
+    struct Peak { double freq; double mag; int idx; };
+    QVector<Peak> peaks;
+    double threshold = magMax * 0.15;
+    for (int i = 2; i < mags.size() - 1; ++i) {
+        if (mags[i] > threshold && mags[i] > mags[i-1] && mags[i] > mags[i+1])
+            peaks.append({freqs[i], mags[i], i});
+    }
+    std::sort(peaks.begin(), peaks.end(), [](auto &a, auto &b) { return a.mag > b.mag; });
+
+    // Show top 10 peaks
+    int showN = std::min(10, (int)peaks.size());
+    m_fftPeakTable->setRowCount(showN);
+    for (int i = 0; i < showN; ++i) {
+        double periodMs = peaks[i].freq > 0.001 ? 1000.0 / peaks[i].freq : 0.0;
+        m_fftPeakTable->setItem(i, 0, new QTableWidgetItem(
+            QString::number(peaks[i].freq, 'f', 2)));
+        m_fftPeakTable->setItem(i, 1, new QTableWidgetItem(
+            periodMs > 0 ? QString::number(periodMs, 'f', 1) : "∞"));
+        m_fftPeakTable->setItem(i, 2, new QTableWidgetItem(
+            QString::number(peaks[i].mag, 'f', 2)));
+
+        // Description
+        QString desc;
+        if (peaks[i].freq < 0.5) desc = "Wolna zmiana (trend)";
+        else if (periodMs > 900 && periodMs < 1100) desc = "Cykl ~1s";
+        else if (periodMs > 90 && periodMs < 110) desc = "Cykl ~100ms (heartbeat)";
+        else if (periodMs > 9 && periodMs < 11) desc = "Cykl ~10ms (szybki sensor)";
+        else desc = QString("Okresowy, T=%1ms").arg(periodMs, 0, 'f', 1);
+        m_fftPeakTable->setItem(i, 3, new QTableWidgetItem(desc));
+    }
+
+    // Populate ID combo if empty
+    if (m_fftIdCombo->count() == 0) {
+        QSet<uint32_t> ids;
+        for (const auto &f : m_frameHistory) ids.insert(f.id);
+        QList<uint32_t> sorted = ids.values();
+        std::sort(sorted.begin(), sorted.end());
+        for (uint32_t id : sorted)
+            m_fftIdCombo->addItem(QString("0x%1").arg(id, 3, 16, QChar('0')).toUpper(), id);
+        // Restore selection
+        int idx = m_fftIdCombo->findData(targetId);
+        if (idx >= 0) m_fftIdCombo->setCurrentIndex(idx);
+    }
+
+    Logger::log(QString("DFT: ID=0x%1 byte=%2 N=%3 fs=%4 Hz peaks=%5")
+        .arg(targetId, 3, 16, QChar('0')).arg(byteIdx).arg(M)
+        .arg(fs_hz, 0, 'f', 1).arg(showN));
 }
 
 void AssociativeLearner::updateNnPrediction() {

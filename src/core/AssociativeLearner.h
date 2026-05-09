@@ -74,6 +74,7 @@ public slots:
     void computeMIC();
     void autoKMeans();
     void runPcaClustering();
+    void runFftAnalysis();
 
 signals:
     void eventMarked(int iteration);
@@ -99,6 +100,7 @@ private:
     QVector<float> buildWindowFeatures(const QVector<CanFrame> &window);
     int kMeans(const QVector<QVector<float>> &data, int K, QVector<int> &assignments);
     static int dbscan(const QVector<QVector<float>> &data, float eps, int minPts, QVector<int> &assignments);
+    static void computeDft(const QVector<double> &signal, double fs, QVector<double> &mags, QVector<double> &freqs);
     void buildNormalModel();
 
     static constexpr int64_t DEFAULT_BEFORE = 500000;
@@ -176,6 +178,15 @@ private:
     QLineSeries  *m_byteTimeSeries;
     QComboBox    *m_timeIdCombo;
     QComboBox    *m_timeByteCombo;
+
+    // FFT / analiza częstotliwości
+    QPushButton  *m_fftBtn;
+    QComboBox    *m_fftIdCombo;
+    QComboBox    *m_fftByteCombo;
+    QTableWidget *m_fftPeakTable;
+    QChartView   *m_fftChartView;
+    QChart       *m_fftChart;
+    QLineSeries  *m_fftSeries;
 
     CandidateModel *m_candidateModel;
     GpuCorrelator   m_correlator;
