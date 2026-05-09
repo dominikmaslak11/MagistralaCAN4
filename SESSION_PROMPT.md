@@ -30,6 +30,14 @@
 - Dodano `.clang-format`, `runAsync<Func>()` template helper (QtConcurrent::run)
 - async button feedback dla dbscanClustering, runPcaClustering, computeMIC
 
+### 1.5 PCAN + SLCAN driver fixes (Windows)
+- **Commit**: `0b384d5`
+- **PcanDriver**: naprawiono krytyczny bug — odwrócona flaga `PCAN_CHANNEL_OCCUPIED` (driver nigdy nie odczytywał ramek)
+- **PcanDriver**: `availableDevices()` — auto-detekcja sprzętu przez `CAN_GetValue(PCAN_CHANNEL_CONDITION)` zamiast hardcoded listy
+- **PcanDriver**: obsługa kanałów 1-8 + dynamiczne ładowanie `CAN_GetValue`
+- **SlCanDriver**: `detectDevices()` — próbuje 4 prędkości (115200, 500000, 921600, 1M) — candleLight, Lawicel, USBtin, Canable
+- **SlCanDriver**: `open()` parsuje prędkość z nazwy urządzenia zwróconej przez auto-detekcję
+
 ### Wcześniejsze (sesja v4):
 - Event-driven read w CanSniffer (`QThread::msleep(1)`)
 - Dekoder sygnałów DBC (`decodeSignals`)
@@ -142,7 +150,8 @@ Branch: main
 ─────────────────────────────────────────────────────────────
 
 ```
-ebdcd80 docs: session prompt v5 — Faza 1 complete, Faza 2 plan
+0b384d5 fix: PCAN inverted OCCUPIED flag + hw detection; SLCAN multi-baud detection
+a244bea docs: session prompt v5 — Faza 1 complete, Faza 2 plan
 2c66879 perf: DFT → Cooley-Tukey FFT (O(N log N)) + DFT→FFT UI labels
 3ea6916 feat: .clang-format config + async button feedback (QtConcurrent::run ready)
 a068cb1 refactor: extract inline styles to style_dark.qss / style_light.qss
