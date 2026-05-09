@@ -87,7 +87,8 @@ CanFrame SocketCanDriver::readFrame() {
         frame.sdt = xlf->sdt;
         frame.af = xlf->af;
         frame.dlc = xlf->len > CANXL_MAX_DLC ? CANXL_MAX_DLC : xlf->len;
-        for (int i = 0; i < frame.dlc && i < 2048; ++i) frame.data[i] = xlf->data[i];
+        int xlN = std::min(frame.dlc, 64);
+        for (int i = 0; i < xlN; ++i) frame.data[i] = xlf->data[i];
         frame.timestamp = ts;
     }
     return frame;
@@ -102,7 +103,8 @@ void SocketCanDriver::writeFrame(const CanFrame &frame) {
         xlf.sdt = frame.sdt;
         xlf.af = frame.af;
         xlf.len = frame.dlc > CANXL_MAX_DLC ? CANXL_MAX_DLC : frame.dlc;
-        for (int i = 0; i < xlf.len && i < 2048; ++i) xlf.data[i] = frame.data[i];
+        int xlWrN = std::min((int)xlf.len, 64);
+        for (int i = 0; i < xlWrN; ++i) xlf.data[i] = frame.data[i];
         write(m_socket, &xlf, CANXL_HDR_SIZE + xlf.len);
     } else if (frame.fd) {
         struct canfd_frame fdf;

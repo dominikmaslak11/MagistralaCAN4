@@ -81,7 +81,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         }
     } else if (role == Qt::ToolTipRole && index.column() == Column::DATA && frame.xl) {
         QString fullHex;
-        for (int i = 0; i < frame.dlc && i < 256; ++i)
+        for (int i = 0; i < frame.dlc && i < 64; ++i)
             fullHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
         if (frame.dlc > 256) fullHex += "...";
         return QString("CAN XL %1 bajtów:\n%2").arg(frame.dlc).arg(fullHex.trimmed());
