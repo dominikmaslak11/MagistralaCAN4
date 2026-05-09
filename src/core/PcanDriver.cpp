@@ -12,11 +12,20 @@
 #define PCAN_CHANNEL_USBBUS1     0x51
 #define PCAN_CHANNEL_USBBUS2     0x52
 #define PCAN_CHANNEL_USBBUS3     0x53
+#define PCAN_CHANNEL_USBBUS4     0x54
+#define PCAN_CHANNEL_USBBUS5     0x55
+#define PCAN_CHANNEL_USBBUS6     0x56
+#define PCAN_CHANNEL_USBBUS7     0x57
+#define PCAN_CHANNEL_USBBUS8     0x58
 #define PCAN_BAUD_500K           0x001C
 #define PCAN_MESSAGE_STANDARD    0x00
 #define PCAN_MESSAGE_EXTENDED    0x02
 #define PCAN_MESSAGE_FD          0x10
 #define PCAN_MESSAGE_RTR         0x01
+#define PCAN_CHANNEL_CONDITION   0x11
+#define PCAN_CHANNEL_AVAILABLE   0x01
+#define PCAN_CHANNEL_OCCUPIED    0x02
+#define PCAN_CHANNEL_INVALID     0x04
 
 typedef struct { DWORD ID; BYTE MSGTYPE; BYTE LEN; BYTE DATA[8]; } TPCANMsg;
 typedef struct { DWORD ID; DWORD MSGTYPE; DWORD DLC; BYTE DATA[64]; } TPCANMsgFD;
@@ -35,6 +44,7 @@ struct PcanDriver::Impl {
     typedef int (__stdcall *CAN_Write_t)(TPCANHandle, TPCANMsg*);
     typedef int (__stdcall *CAN_WriteFD_t)(TPCANHandle, TPCANMsgFD*);
     typedef int (__stdcall *CAN_GetStatus_t)(TPCANHandle);
+    typedef int (__stdcall *CAN_GetValue_t)(TPCANHandle, DWORD, void*, DWORD*);
     typedef int (__stdcall *CAN_GetErr_t)(int, WORD, char*);
 
     CAN_Init_t      fnInit   = nullptr;
@@ -44,6 +54,7 @@ struct PcanDriver::Impl {
     CAN_Write_t     fnWrite  = nullptr;
     CAN_WriteFD_t   fnWriteFD= nullptr;
     CAN_GetStatus_t fnStatus = nullptr;
+    CAN_GetValue_t  fnGetValue = nullptr;
     CAN_GetErr_t    fnErrTxt = nullptr;
 };
 
@@ -65,8 +76,9 @@ bool PcanDriver::open(const QString &device) {
     d->fnReadFD = (Impl::CAN_ReadFD_t)d->lib.resolve("CAN_ReadFD");
     d->fnWrite  = (Impl::CAN_Write_t) d->lib.resolve("CAN_Write");
     d->fnWriteFD= (Impl::CAN_WriteFD_t)d->lib.resolve("CAN_WriteFD");
-    d->fnStatus = (Impl::CAN_GetStatus_t)d->lib.resolve("CAN_GetStatus");
-    d->fnErrTxt = (Impl::CAN_GetErr_t)  d->lib.resolve("CAN_GetErrorText");
+    d->fnStatus   = (Impl::CAN_GetStatus_t)d->lib.resolve("CAN_GetStatus");
+    d->fnGetValue = (Impl::CAN_GetValue_t)d->lib.resolve("CAN_GetValue");
+    d->fnErrTxt   = (Impl::CAN_GetErr_t)  d->lib.resolve("CAN_GetErrorText");
     if (!d->fnInit || !d->fnRead || !d->fnWrite) {
         qWarning() << "PcanDriver: brak wymaganych funkcji w PCANBasic.dll";
         d->lib.unload();
@@ -76,6 +88,11 @@ bool PcanDriver::open(const QString &device) {
     //  Wybierz kanał
     if (device == "PCAN_USBBUS2") d->channel = PCAN_CHANNEL_USBBUS2;
     else if (device == "PCAN_USBBUS3") d->channel = PCAN_CHANNEL_USBBUS3;
+    else if (device == "PCAN_USBBUS4") d->channel = PCAN_CHANNEL_USBBUS4;
+    else if (device == "PCAN_USBBUS5") d->channel = PCAN_CHANNEL_USBBUS5;
+    else if (device == "PCAN_USBBUS6") d->channel = PCAN_CHANNEL_USBBUS6;
+    else if (device == "PCAN_USBBUS7") d->channel = PCAN_CHANNEL_USBBUS7;
+    else if (device == "PCAN_USBBUS8") d->channel = PCAN_CHANNEL_USBBUS8;
     else d->channel = PCAN_CHANNEL_USBBUS1;
 
     int res = d->fnInit(d->channel, PCAN_BAUD_500K, 0, 0);
@@ -103,10 +120,10 @@ bool PcanDriver::isValid() const { return d && d->initialized; }
 CanFrame PcanDriver::readFrame() {
     if (!d || !d->initialized) return {};
 
-    //  Sprawdź czy kolejka nie jest pusta
+    //  Sprawdź czy są dane w kolejce (PCAN_CHANNEL_OCCUPIED = 0x100)
     if (d->fnStatus) {
         int st = d->fnStatus(d->channel);
-        if (st & 0x100) return {}; // brak danych
+        if (!(st & 0x100)) return {}; // brak danych → wyjdź
     }
 
     //  FD
@@ -168,7 +185,52 @@ void PcanDriver::writeFrame(const CanFrame &frame) {
 }
 
 QStringList PcanDriver::availableDevices() const {
-    return {"PCAN_USBBUS1", "PCAN_USBBUS2", "PCAN_USBBUS3"};
+    QStringList devices;
+
+    // Wczytaj PCANBasic.dll tymczasowo do detekcji sprzętu
+    QLibrary lib("PCANBasic");
+    if (!lib.load()) {
+        qDebug() << "PcanDriver::availableDevices: nie można załadować PCANBasic.dll —"
+                 << lib.errorString();
+        return devices;
+    }
+
+    auto fnGetValue = (Impl::CAN_GetValue_t)lib.resolve("CAN_GetValue");
+    if (!fnGetValue) {
+        qDebug() << "PcanDriver::availableDevices: brak CAN_GetValue w DLL";
+        lib.unload();
+        return devices;
+    }
+
+    // Sprawdź kanały 1-8 – CAN_GetValue(PCAN_CHANNEL_CONDITION) działa bez inicjalizacji
+    static constexpr TPCANHandle channels[] = {
+        PCAN_CHANNEL_USBBUS1, PCAN_CHANNEL_USBBUS2,
+        PCAN_CHANNEL_USBBUS3, PCAN_CHANNEL_USBBUS4,
+        PCAN_CHANNEL_USBBUS5, PCAN_CHANNEL_USBBUS6,
+        PCAN_CHANNEL_USBBUS7, PCAN_CHANNEL_USBBUS8
+    };
+    static const char *names[] = {
+        "PCAN_USBBUS1", "PCAN_USBBUS2", "PCAN_USBBUS3", "PCAN_USBBUS4",
+        "PCAN_USBBUS5", "PCAN_USBBUS6", "PCAN_USBBUS7", "PCAN_USBBUS8"
+    };
+
+    for (int i = 0; i < 8; ++i) {
+        DWORD cond = 0;
+        DWORD len  = sizeof(cond);
+        int res = fnGetValue(channels[i], PCAN_CHANNEL_CONDITION, &cond, &len);
+        if (res == 0 && (cond == PCAN_CHANNEL_AVAILABLE || cond == PCAN_CHANNEL_OCCUPIED)) {
+            QString label = QString("%1%2")
+                .arg(names[i])
+                .arg(cond == PCAN_CHANNEL_OCCUPIED ? " [Zajęty]" : "");
+            devices.append(label);
+            qDebug() << "PcanDriver: wykryto" << label
+                     << "(cond=" << cond << ")";
+        }
+    }
+
+    lib.unload();
+    qDebug() << "PcanDriver::availableDevices: znaleziono" << devices.size() << "kanał(ów)";
+    return devices;
 }
 
 #else

@@ -23,11 +23,23 @@ bool SlCanDriver::open(const QString &device) {
         close();
     }
 
-    // Parsuj nazwę – obsługuje "COM3", "COM3 [opis]", "/dev/ttyACM0"
+    // Parsuj nazwę – obsługuje "COM3", "COM3 [opis @ 921600bps]", "/dev/ttyACM0"
     QString portName = device.section(' ', 0, 0).trimmed();
 
+    // Wyciągnij prędkość z nazwy jeśli dostępna (np. "COM3 [v1.0 @ 500000bps]")
+    int baudFromLabel = 0;
+    int atPos = device.indexOf('@');
+    if (atPos >= 0) {
+        int bpsPos = device.indexOf("bps", atPos);
+        if (bpsPos > atPos) {
+            QString baudStr = device.mid(atPos + 1, bpsPos - atPos - 1).trimmed();
+            baudFromLabel = baudStr.toInt();
+        }
+    }
+    qint32 actualBaud = baudFromLabel > 0 ? baudFromLabel : m_baudRate;
+
     m_port = new QSerialPort(portName);
-    m_port->setBaudRate(m_baudRate);
+    m_port->setBaudRate(actualBaud);
     m_port->setDataBits(QSerialPort::Data8);
     m_port->setStopBits(QSerialPort::OneStop);
     m_port->setParity(QSerialPort::NoParity);
@@ -55,7 +67,7 @@ bool SlCanDriver::open(const QString &device) {
         return false;
     }
 
-    qDebug() << "SlCanDriver: opened" << portName << "baud" << m_baudRate;
+    qDebug() << "SlCanDriver: opened" << portName << "baud" << actualBaud;
     return true;
 }
 
@@ -162,58 +174,70 @@ QStringList SlCanDriver::detectDevices(int timeoutMs) {
             mfr.contains("microsoft") || mfr.contains("logitech"))
             continue;
 
-        QSerialPort probe(info.portName());
-        probe.setBaudRate(921600);
-        probe.setDataBits(QSerialPort::Data8);
-        probe.setStopBits(QSerialPort::OneStop);
-        probe.setParity(QSerialPort::NoParity);
-        probe.setFlowControl(QSerialPort::NoFlowControl);
+        // Próbuj kolejno popularnych prędkości transmisji
+        // candleLight: 921600 | Lawicel CAN232: 115200 | USBtin: 500000 | Canable: 1M
+        static constexpr qint32 baudRates[] = {921600, 1000000, 500000, 115200};
+        bool foundOnPort = false;
 
-        if (!probe.open(QIODevice::ReadWrite)) continue;
-        probe.clear();
+        for (qint32 baud : baudRates) {
+            QSerialPort probe(info.portName());
+            probe.setBaudRate(baud);
+            probe.setDataBits(QSerialPort::Data8);
+            probe.setStopBits(QSerialPort::OneStop);
+            probe.setParity(QSerialPort::NoParity);
+            probe.setFlowControl(QSerialPort::NoFlowControl);
 
-        // Wyślij 'V\r' (version) i czekaj na odpowiedź
-        probe.write("V\r");
-        if (!probe.waitForBytesWritten(100)) { probe.close(); continue; }
+            if (!probe.open(QIODevice::ReadWrite)) continue;
+            probe.clear();
 
-        QByteArray response;
-        QElapsedTimer timer;
-        timer.start();
-        while (timer.elapsed() < timeoutMs) {
-            if (probe.waitForReadyRead(timeoutMs - timer.elapsed())) {
-                response.append(probe.readAll());
-                if (response.contains('\r') || response.contains('\n')) break;
-            } else break;
-        }
+            // Wyślij 'V\r' (version) i czekaj na odpowiedź
+            probe.write("V\r");
+            if (!probe.waitForBytesWritten(100)) { probe.close(); continue; }
 
-        // Wyślij C\r żeby zamknąć (niektóre urządzenia nie lubią szybkiego zamykania portu)
-        probe.write("C\r");
-        probe.waitForBytesWritten(50);
-        probe.close();
+            QByteArray response;
+            QElapsedTimer timer;
+            timer.start();
+            while (timer.elapsed() < timeoutMs) {
+                if (probe.waitForReadyRead(timeoutMs - timer.elapsed())) {
+                    response.append(probe.readAll());
+                    if (response.contains('\r') || response.contains('\n')) break;
+                } else break;
+            }
 
-        if (response.isEmpty()) continue;
+            // Wyślij C\r i zamknij port
+            probe.write("C\r");
+            probe.waitForBytesWritten(50);
+            probe.close();
 
-        QString resp = QString::fromLatin1(response).trimmed();
-        // SLCAN odpowiedź na 'V' to np. "V0101" albo "1013" albo "CAN232 V1.0"
-        bool isSlCan = false;
-        QString label;
+            if (response.isEmpty()) continue;
 
-        if (resp.startsWith('V') && resp.length() >= 2) {
-            isSlCan = true;
-            label = resp.mid(1);
-        } else if (resp.length() >= 4 && resp[0].isDigit()) {
-            // numeryczna wersja bez prefiksu V – typowe dla candleLight
-            isSlCan = true;
-            label = resp;
-        } else if (resp.toLower().contains("can") || resp.toLower().contains("slcan")) {
-            isSlCan = true;
-            label = resp;
-        }
+            QString resp = QString::fromLatin1(response).trimmed();
+            bool isSlCan = false;
+            QString label;
 
-        if (isSlCan) {
-            QString entry = QString("%1 [%2]").arg(info.portName(), label.isEmpty() ? "SLCAN" : label);
-            found.append(entry);
-            qDebug() << "SlCanDriver: found SLCAN device on" << info.portName() << "->" << label;
+            if (resp.startsWith('V') && resp.length() >= 2) {
+                isSlCan = true;
+                label = resp.mid(1);
+            } else if (resp.length() >= 4 && resp[0].isDigit()) {
+                // numeryczna wersja bez prefiksu V – candleLight
+                isSlCan = true;
+                label = resp;
+            } else if (resp.toLower().contains("can") || resp.toLower().contains("slcan")) {
+                isSlCan = true;
+                label = resp;
+            }
+
+            if (isSlCan) {
+                QString entry = QString("%1 [%2 @ %3bps]")
+                    .arg(info.portName())
+                    .arg(label.isEmpty() ? "SLCAN" : label)
+                    .arg(baud);
+                found.append(entry);
+                qDebug() << "SlCanDriver: found SLCAN device on" << info.portName()
+                         << "@" << baud << "->" << label;
+                foundOnPort = true;
+                break;  // znaleziono — nie próbuj innych prędkości
+            }
         }
     }
 
