@@ -62,11 +62,12 @@ void CanSniffer::doWork() {
             if (!m_driver->isValid()) break;
             continue;  // pusta ramka, czytaj dalej
         }
-        // Lock-free push to ring buffer — bez blokowania GUI
-        while (!m_ringBuffer.tryPush(frame) && m_running) {
-            // Ring buffer pełny — consumer (GUI) nie nadąża,
-            // czekamy chwilę na zwolnienie miejsca
-            QThread::usleep(10);
+        // Lock-free push to ring buffer
+        if (!m_ringBuffer.tryPush(frame)) {
+            // Ring buffer pełny — czekamy na sygnał od consumer (GUI)
+            QMutexLocker lock(&m_waitMutex);
+            while (!m_ringBuffer.tryPush(frame) && m_running)
+                m_bufferNotFull.wait(&m_waitMutex, 5);  // max 5ms wait
         }
     }
 }
@@ -75,6 +76,8 @@ void CanSniffer::drainAndEmit() {
     // Called from GUI thread — drains all buffered frames and emits them
     QVector<CanFrame> batch;
     int n = m_ringBuffer.drain(batch);
+    if (n > 0)
+        m_bufferNotFull.wakeOne();  // signal producer: buffer has space
     for (int i = 0; i < n; ++i)
         emit newFrame(batch[i]);
 }

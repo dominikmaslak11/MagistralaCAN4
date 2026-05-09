@@ -59,6 +59,7 @@ public slots:
     void generateLuaScript();
     void exportHtmlReport();
     void clusterWindows();
+    void dbscanClustering();
     void trainPrediction();
     void updatePredictionDisplay();
 
@@ -97,6 +98,7 @@ private:
 
     QVector<float> buildWindowFeatures(const QVector<CanFrame> &window);
     int kMeans(const QVector<QVector<float>> &data, int K, QVector<int> &assignments);
+    static int dbscan(const QVector<QVector<float>> &data, float eps, int minPts, QVector<int> &assignments);
     void buildNormalModel();
 
     static constexpr int64_t DEFAULT_BEFORE = 500000;
@@ -125,6 +127,10 @@ private:
     QTableWidget *m_sequenceTable;
     QTableWidget *m_crossByteTable;
     QPushButton  *m_clusterBtn;
+    QPushButton  *m_dbscanBtn;
+    QLineEdit    *m_dbscanEps;
+    QLineEdit    *m_dbscanMinPts;
+    QTableWidget *m_dbscanTable;
     QPushButton  *m_pcaBtn;
     QChartView   *m_pcaChartView;
     QChart       *m_pcaChart;

@@ -2,6 +2,8 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QMutex>
+#include <QWaitCondition>
 #include <atomic>
 #include "CanFrame.h"
 #include "RingBuffer.h"
@@ -47,4 +49,6 @@ private:
     std::atomic<bool> m_running{false};
     QString m_interface;
     RingBuffer<CanFrame> m_ringBuffer;
+    QMutex m_waitMutex;              // used only with m_bufferNotFull
+    QWaitCondition m_bufferNotFull;  // wake producer when consumer drains
 };

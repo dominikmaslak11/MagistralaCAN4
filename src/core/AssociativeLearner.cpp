@@ -147,6 +147,29 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_clusterBtn = new QPushButton("Uruchom k-means");
     clusterLayout->addWidget(m_clusterBtn); clusterLayout->addStretch();
     mainLayout->addLayout(clusterLayout);
+
+    // ── DBSCAN clustering ──
+    auto *dbscanLayout = new QHBoxLayout;
+    dbscanLayout->addWidget(new QLabel("DBSCAN:"));
+    m_dbscanEps = new QLineEdit("1.0"); m_dbscanEps->setMaximumWidth(50);
+    m_dbscanEps->setPlaceholderText("eps");
+    m_dbscanMinPts = new QLineEdit("3"); m_dbscanMinPts->setMaximumWidth(50);
+    m_dbscanMinPts->setPlaceholderText("minPts");
+    m_dbscanBtn = new QPushButton("Uruchom DBSCAN");
+    dbscanLayout->addWidget(new QLabel("eps:")); dbscanLayout->addWidget(m_dbscanEps);
+    dbscanLayout->addWidget(new QLabel("minPts:")); dbscanLayout->addWidget(m_dbscanMinPts);
+    dbscanLayout->addWidget(m_dbscanBtn);
+    dbscanLayout->addStretch();
+    mainLayout->addLayout(dbscanLayout);
+    m_dbscanTable = new QTableWidget(0, 4);
+    m_dbscanTable->setHorizontalHeaderLabels({"Klaster","Śr. liczba ramek","Dominujące ID","Liczba okien"});
+    m_dbscanTable->verticalHeader()->hide(); m_dbscanTable->horizontalHeader()->setStretchLastSection(true);
+    m_dbscanTable->setShowGrid(false); m_dbscanTable->setAlternatingRowColors(false);
+    m_dbscanTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_dbscanTable->setMinimumHeight(200);
+    mainLayout->addWidget(m_dbscanTable);
+    connect(m_dbscanBtn, &QPushButton::clicked, this, &AssociativeLearner::dbscanClustering);
+
     auto *pcaLayout = new QHBoxLayout;
     pcaLayout->addWidget(new QLabel("PCA + k-means:"));
     m_pcaBtn = new QPushButton("Uruchom PCA i k-średnich");
@@ -745,6 +768,131 @@ void AssociativeLearner::clusterWindows() {
         m_clusterTable->setItem(c,2,new QTableWidgetItem(top.join(", ")));
         m_clusterTable->setItem(c,3,new QTableWidgetItem(QString::number(stats[c].cnt)));
     }
+}
+
+// ---------- DBSCAN ----------
+int AssociativeLearner::dbscan(const QVector<QVector<float>> &data, float eps, int minPts, QVector<int> &assignments) {
+    int N = data.size();
+    if (N == 0) return 0;
+    int dim = data[0].size();
+    assignments.resize(N);
+    assignments.fill(-1);
+
+    QVector<QVector<float>> dist(N, QVector<float>(N, 0.0f));
+    for (int i = 0; i < N; ++i)
+        for (int j = i + 1; j < N; ++j) {
+            float d2 = 0.0f;
+            for (int k = 0; k < dim; ++k) {
+                float diff = data[i][k] - data[j][k];
+                d2 += diff * diff;
+            }
+            dist[i][j] = d2;
+            dist[j][i] = d2;
+        }
+
+    float eps2 = eps * eps;
+    int clusterId = 0;
+
+    for (int p = 0; p < N; ++p) {
+        if (assignments[p] != -1) continue;
+
+        QVector<int> neighbors;
+        for (int q = 0; q < N; ++q)
+            if (dist[p][q] <= eps2) neighbors.append(q);
+
+        if (neighbors.size() < (size_t)minPts) continue;
+
+        assignments[p] = clusterId;
+        for (int ni = 0; ni < neighbors.size(); ++ni) {
+            int q = neighbors[ni];
+            if (assignments[q] != -1) continue;
+            assignments[q] = clusterId;
+
+            QVector<int> qn;
+            for (int r = 0; r < N; ++r)
+                if (dist[q][r] <= eps2) qn.append(r);
+            if (qn.size() >= (size_t)minPts)
+                for (int r : qn)
+                    if (!neighbors.contains(r))
+                        neighbors.append(r);
+        }
+        clusterId++;
+    }
+    return clusterId;
+}
+
+void AssociativeLearner::dbscanClustering() {
+    if (m_frameHistory.empty()) return;
+
+    bool ok;
+    float eps = m_dbscanEps->text().toFloat(&ok);
+    if (!ok || eps <= 0) { eps = 1.0f; m_dbscanEps->setText("1.0"); }
+    int minPts = m_dbscanMinPts->text().toInt(&ok);
+    if (!ok || minPts < 2) { minPts = 3; m_dbscanMinPts->setText("3"); }
+
+    QVector<QVector<CanFrame>> windows;
+    int64_t winSize = 500000, start = m_frameHistory.front().timestamp,
+            end = m_frameHistory.back().timestamp;
+    for (int64_t t = start; t < end; t += winSize / 2) {
+        QVector<CanFrame> win;
+        for (const auto &f : m_frameHistory)
+            if (f.timestamp >= t && f.timestamp < t + winSize)
+                win.append(f);
+        if (win.size() >= 3) windows.append(win);
+    }
+    if (windows.size() < 5) return;
+
+    QVector<QVector<float>> features;
+    for (const auto &w : windows)
+        features.append(buildWindowFeatures(w));
+
+    QVector<int> assignments;
+    int K = dbscan(features, eps, minPts, assignments);
+
+    struct Stats { int cnt = 0; double avg = 0; QHash<uint32_t,int> freq; };
+    QVector<Stats> stats(std::max(1, K));
+    int noiseCnt = 0;
+    for (int i = 0; i < assignments.size(); ++i) {
+        int c = assignments[i];
+        if (c < 0) { noiseCnt++; continue; }
+        stats[c].cnt++;
+        stats[c].avg += windows[i].size();
+        for (auto &f : windows[i]) stats[c].freq[f.id]++;
+    }
+    for (int c = 0; c < stats.size(); ++c)
+        if (stats[c].cnt) stats[c].avg /= stats[c].cnt;
+
+    int rows = K + (noiseCnt > 0 ? 1 : 0);
+    m_dbscanTable->setRowCount(rows);
+    for (int c = 0; c < K; ++c) {
+        m_dbscanTable->setItem(c, 0, new QTableWidgetItem(
+            QString("Klaster %1").arg(c + 1)));
+        m_dbscanTable->setItem(c, 1, new QTableWidgetItem(
+            QString::number(stats[c].avg, 'f', 1)));
+        QList<QPair<uint32_t,int>> srt;
+        for (auto it = stats[c].freq.begin(); it != stats[c].freq.end(); ++it)
+            srt.append({it.key(), it.value()});
+        std::sort(srt.begin(), srt.end(),
+                  [](auto &a, auto &b) { return a.second > b.second; });
+        QStringList top;
+        for (int i = 0; i < 3 && i < srt.size(); ++i)
+            top.append(QString("0x%1").arg(srt[i].first, 3, 16, QChar('0'))
+                                    .toUpper());
+        m_dbscanTable->setItem(c, 2, new QTableWidgetItem(top.join(", ")));
+        m_dbscanTable->setItem(c, 3, new QTableWidgetItem(
+            QString::number(stats[c].cnt)));
+    }
+    if (noiseCnt > 0) {
+        int r = K;
+        m_dbscanTable->setItem(r, 0, new QTableWidgetItem("Szum"));
+        m_dbscanTable->setItem(r, 1, new QTableWidgetItem("-"));
+        m_dbscanTable->setItem(r, 2, new QTableWidgetItem("-"));
+        m_dbscanTable->setItem(r, 3, new QTableWidgetItem(
+            QString::number(noiseCnt)));
+    }
+
+    Logger::log(QString("DBSCAN: eps=%1 minPts=%2 windows=%3 clusters=%4 noise=%5")
+        .arg(eps).arg(minPts).arg(windows.size()).arg(K).arg(noiseCnt));
 }
 
 // ---------- Predykcja ----------
