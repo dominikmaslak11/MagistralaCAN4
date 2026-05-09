@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     Logger::log("Aplikacja MagistralaCAN4 uruchomiona");
     resize(1280, 800);
 
+    m_frameBuffer.reserve(4096);  // pre-alloc, unikamy realokacji
+
     m_model = new CanFrameModel(this);
     m_tableView = new QTableView;
     m_tableView->setModel(m_model);
@@ -92,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_batchTimer.setInterval(33);
     connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
 
-    connect(&m_sniffer, &CanSniffer::newFrame, this, &MainWindow::onNewFrame, Qt::QueuedConnection);
+    connect(&m_sniffer, &CanSniffer::newFrame, this, &MainWindow::onNewFrame);  // direct — ring buffer decouples threads
     connect(&m_sniffer, &CanSniffer::errorOccurred, this, [this](const QString &msg) {
         QMessageBox::warning(this, "Błąd CAN", msg);
         Logger::log(QString("Błąd CAN: %1").arg(msg));
@@ -187,7 +189,7 @@ void MainWindow::toggleSniffing() {
     } else {
         m_sniffer.stop(); m_sniffing = false;
         m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true); m_batchTimer.stop();
-        m_frameBuffer.clear();
+        m_frameBuffer.resize(0);  // keep capacity
     }
 }
 
@@ -195,9 +197,21 @@ void MainWindow::onNewFrame(const CanFrame &frame) {
     m_frameBuffer.append(frame);
     m_totalFrameCount++;
     m_uniqueIdsSinceLastStats.insert(frame.id);
+
+    // Per-ID stats
+    auto &st = m_idStats[frame.id];
+    if (st.lastTs > 0 && frame.timestamp > st.lastTs) {
+        double dt = double(frame.timestamp - st.lastTs) / 1'000'000.0;
+        st.avgInterval = st.count > 1 ? (st.avgInterval * (st.count - 1) + dt) / st.count : dt;
+    }
+    st.count++;
+    st.lastTs = frame.timestamp;
 }
 
 void MainWindow::updateTableBatch() {
+    // Drain the lock-free ring buffer (populates m_frameBuffer via onNewFrame)
+    m_sniffer.drainAndEmit();
+
     if (m_frameBuffer.isEmpty()) return;
     if (m_canPaused) return; // buforuj w tle, nie odświeżaj tabeli
 
@@ -206,7 +220,7 @@ void MainWindow::updateTableBatch() {
         emit frameProcessed(frame);
 
     m_model->processIncomingFrames(m_frameBuffer);
-    m_frameBuffer.clear();
+    m_frameBuffer.resize(0);  // keep capacity
     if (m_autoScroll) m_tableView->scrollToBottom();
 }
 
@@ -419,9 +433,52 @@ void MainWindow::updateCanStats() {
     double busLoad = (delta * 8 * 8.0) / (500'000 * 0.5) * 100.0;
     if (busLoad > 100) busLoad = 100;
 
-    m_canStatsLabel->setText(QString("Ramki: %1 | FPS: %2 | Unikalne ID: %3 | Obc.: %4%")
+    // --- Per-ID top 3 ---
+    QVector<QPair<uint32_t, uint64_t>> sortedIds;
+    sortedIds.reserve(m_idStats.size());
+    for (auto it = m_idStats.begin(); it != m_idStats.end(); ++it)
+        sortedIds.append({it.key(), it->count});
+    std::sort(sortedIds.begin(), sortedIds.end(),
+              [](auto &a, auto &b) { return a.second > b.second; });
+
+    QString topIds;
+    for (int i = 0; i < 3 && i < sortedIds.size(); ++i)
+        topIds += QString("%1 0x%2(%3) ")
+                     .arg(i > 0 ? "|" : "")
+                     .arg(sortedIds[i].first, 3, 16, QChar('0'))
+                     .arg(sortedIds[i].second);
+
+    // --- Burst detection ---
+    m_fpsWindow.append(fps);
+    if (m_fpsWindow.size() > BURST_WINDOW)
+        m_fpsWindow.removeFirst();
+
+    bool burst = false;
+    if (m_fpsWindow.size() >= BURST_WINDOW) {
+        double sum = 0, sq = 0;
+        for (double f : m_fpsWindow) { sum += f; sq += f * f; }
+        m_fpsMean = sum / m_fpsWindow.size();
+        m_fpsStd = std::sqrt(sq / m_fpsWindow.size() - m_fpsMean * m_fpsMean);
+        if (m_fpsStd < 0.1) m_fpsStd = 0.1;
+        burst = (fps > m_fpsMean + BURST_SIGMA * m_fpsStd);
+    }
+
+    QString burstMarker = burst ? " ⚡BURST" : "";
+
+    m_canStatsLabel->setText(QString("Ramki: %1 | FPS: %2 | Unikalne ID: %3 | Obc.: %4%%5 | Top: %6")
                              .arg(m_totalFrameCount).arg(fps, 0, 'f', 0).arg(uniqueIds)
-                             .arg(busLoad, 0, 'f', 1));
+                             .arg(busLoad, 0, 'f', 1).arg(burstMarker).arg(topIds));
+    m_canStatsLabel->setToolTip(burst ? "Wykryto wybuch ruchu CAN — FPS powyżej 3σ od średniej!" : "");
+
+    if (burst) {
+        m_canStatsLabel->setStyleSheet("color: #ff4444; font-weight: bold; font-size: 11px; "
+                                        "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
+        QTimer::singleShot(1500, this, [this]() {
+            m_canStatsLabel->setStyleSheet("color: #ffaa00; font-weight: bold; font-size: 11px; "
+                                            "background: #1a1a2e; padding: 4px 10px; border-radius: 4px;");
+        });
+    }
+
     m_lastStatsFrameCount = m_totalFrameCount;
     m_uniqueIdsSinceLastStats.clear();
 
@@ -468,7 +525,7 @@ void MainWindow::toggleCanPause() {
         // Wznów – przetwórz zbuforowane ramki
         if (!m_frameBuffer.isEmpty()) {
             m_model->processIncomingFrames(m_frameBuffer);
-            m_frameBuffer.clear();
+            m_frameBuffer.resize(0);  // keep capacity
         }
     }
 }

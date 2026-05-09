@@ -121,6 +121,15 @@ private:
     QLineSeries   *m_fpsSeries;
     int            m_fpsHistoryCount = 0;
 
+    // Per-ID stats + burst detection
+    struct IdStats { uint64_t count = 0; uint64_t lastTs = 0; double avgInterval = 0; };
+    QHash<uint32_t, IdStats> m_idStats;
+    QVector<double> m_fpsWindow;        // rolling fps for burst detection
+    double          m_fpsMean = 0.0;
+    double          m_fpsStd  = 0.0;
+    static constexpr int BURST_WINDOW = 30;  // 30 samples = 15s
+    static constexpr double BURST_SIGMA = 3.0;
+
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;
     bool m_sniffing = false;
