@@ -2,6 +2,8 @@
 #include "AssociativeLearner.h"
 #include "DbcParser.h"
 #include "J1939Parser.h"
+#include <QOpenGLWidget>
+#include <QDir>
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -79,7 +81,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
         mainLayout->addWidget(tbl);
     };
 
-    makeTable(m_correlationTable, {"CAN ID","Bajt","Korelacja","p-value","Istotna?"});
+    makeTable(m_correlationTable, {"CAN ID","Bajt","Korelacja","p-value","Istotna?","Sygnał DBC"});
     m_significanceFilter = new QCheckBox("Tylko istotne statystycznie (p < 0.05)");
     m_significanceFilter->setStyleSheet("color: #ffaa00; font-weight: bold;");
     connect(m_significanceFilter, &QCheckBox::toggled, this, &AssociativeLearner::applySignificanceFilter);
@@ -160,6 +162,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_pcaChart->addSeries(m_pcaSeries);
     m_pcaChart->createDefaultAxes();
     m_pcaChartView = new QChartView(m_pcaChart);
+    m_pcaChartView->setViewport(new QOpenGLWidget());
     m_pcaChartView->setRenderHint(QPainter::Antialiasing);
     m_pcaChartView->setMinimumHeight(300);
     mainLayout->addWidget(m_pcaChartView);
@@ -222,6 +225,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_elbowChart->addSeries(m_elbowSeries);
     m_elbowChart->createDefaultAxes();
     m_elbowChartView = new QChartView(m_elbowChart);
+    m_elbowChartView->setViewport(new QOpenGLWidget());
     m_elbowChartView->setRenderHint(QPainter::Antialiasing);
     m_elbowChartView->setMinimumHeight(250);
     mainLayout->addWidget(m_elbowChartView);
@@ -296,7 +300,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     });
     m_scatterSeries = new QScatterSeries(); m_scatterSeries->setMarkerSize(8.0); m_scatterSeries->setColor(QColor("#00ffaa"));
     m_chart->addSeries(m_scatterSeries); m_chart->createDefaultAxes();
-    m_chartView = new QChartView(m_chart); m_chartView->setRenderHint(QPainter::Antialiasing);
+    m_chartView = new QChartView(m_chart); m_chartView->setViewport(new QOpenGLWidget()); m_chartView->setRenderHint(QPainter::Antialiasing);
     m_chartView->setMinimumHeight(300);
     mainLayout->addWidget(m_chartView);
 
@@ -319,12 +323,29 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     m_timeChart->addSeries(m_varTimeSeries);
     m_timeChart->addSeries(m_byteTimeSeries);
     m_timeChart->createDefaultAxes();
-    m_timeChartView = new QChartView(m_timeChart); m_timeChartView->setRenderHint(QPainter::Antialiasing);
+    m_timeChartView = new QChartView(m_timeChart); m_timeChartView->setViewport(new QOpenGLWidget()); m_timeChartView->setRenderHint(QPainter::Antialiasing);
     m_timeChartView->setMinimumHeight(300);
     mainLayout->addWidget(m_timeChartView);
 
     connect(m_timeIdCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int) { updateTimeChart(); });
     connect(m_timeByteCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int) { updateTimeChart(); });
+
+    // --- Auto-save ---
+    auto *autoSaveLayout = new QHBoxLayout;
+    m_autoSaveCheck = new QCheckBox("Auto-zapis co 5 min");
+    m_autoSaveCheck->setStyleSheet("color: #00ffaa; font-weight: bold;");
+    autoSaveLayout->addWidget(m_autoSaveCheck);
+    autoSaveLayout->addStretch();
+    mainLayout->addLayout(autoSaveLayout);
+
+    m_autoSaveTimer = new QTimer(this);
+    m_autoSaveTimer->setInterval(5 * 60 * 1000);  // 5 minut
+    connect(m_autoSaveTimer, &QTimer::timeout, this, &AssociativeLearner::autoSave);
+    connect(m_autoSaveCheck, &QCheckBox::toggled, this, [this](bool on) {
+        if (on) m_autoSaveTimer->start();
+        else m_autoSaveTimer->stop();
+    });
+    m_autoSavePath = QDir::currentPath() + "/autosave_learner.json";
 
     auto *serLayout = new QHBoxLayout;
     m_saveBtn = new QPushButton("💾 Zapisz sesję"); m_loadBtn = new QPushButton("📂 Wczytaj sesję");
@@ -363,7 +384,13 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     addVariable("temperatura");
 }
 
-AssociativeLearner::~AssociativeLearner() { m_predictionTimer->stop(); m_anomalyTimer->stop(); }
+AssociativeLearner::~AssociativeLearner() {
+    m_predictionTimer->stop();
+    m_anomalyTimer->stop();
+    m_autoSaveTimer->stop();
+    if (m_autoSaveCheck->isChecked())
+        autoSave();  // final save on exit
+}
 
 void AssociativeLearner::addVariable(const QString &name) {
     QString key = name.toLower().trimmed();
@@ -583,12 +610,29 @@ void AssociativeLearner::updateCorrelationTable() {
         auto *sigItem = new QTableWidgetItem(sig ? "TAK" : "nie");
         m_correlationTable->setItem(i, 4, sigItem);
 
+        // DBC signal name
+        QString dbcSig;
+        if (m_dbc) {
+            DbcMessage dm = m_dbc->messageForId(e.id);
+            if (dm.id != 0) {
+                for (const auto &sig : dm.sigList) {
+                    if (sig.startBit / 8 == e.b) {  // rough byte match
+                        dbcSig = sig.name;
+                        break;
+                    }
+                }
+                if (dbcSig.isEmpty()) dbcSig = dm.name;
+            }
+        }
+        m_correlationTable->setItem(i, 5, new QTableWidgetItem(dbcSig));
+
         QColor corrCol = (fabs(e.corr)>0.7)?QColor("#00ffaa"):(fabs(e.corr)>0.4)?QColor("#ffaa00"):QColor("#ff66cc");
         QColor pCol = sig ? QColor("#00ffaa") : QColor("#ff4444");
         m_correlationTable->item(i,0)->setForeground(QColor("#c0c0c0")); m_correlationTable->item(i,1)->setForeground(QColor("#c0c0c0"));
         m_correlationTable->item(i,2)->setForeground(corrCol);
         m_correlationTable->item(i,3)->setForeground(pCol);
         m_correlationTable->item(i,4)->setForeground(pCol);
+        if (!dbcSig.isEmpty()) m_correlationTable->item(i,5)->setForeground(QColor("#ff66cc"));
     }
 }
 
@@ -827,6 +871,41 @@ void AssociativeLearner::updateTimeChart() {
 }
 
 // ---------- Serializacja ----------
+void AssociativeLearner::autoSave() {
+    if (m_events.isEmpty() && m_observationsMap.isEmpty()) return;
+
+    QJsonObject root;
+    root["iteration"] = m_iteration;
+    root["adaptiveBefore"] = (qint64)m_adaptiveBefore;
+    root["adaptiveAfter"] = (qint64)m_adaptiveAfter;
+
+    QJsonArray eventsArr;
+    for (const auto &ev : m_events) {
+        QJsonObject evObj;
+        QJsonArray framesArr;
+        for (const auto &f : ev.windowFrames) {
+            QJsonObject fObj;
+            fObj["id"] = (int)f.id;
+            fObj["dlc"] = f.dlc;
+            QJsonArray dataArr;
+            for (int i = 0; i < f.dlc; ++i) dataArr.append(f.data[i]);
+            fObj["data"] = dataArr;
+            fObj["timestamp"] = (qint64)f.timestamp;
+            framesArr.append(fObj);
+        }
+        evObj["windowFrames"] = framesArr;
+        eventsArr.append(evObj);
+    }
+    root["events"] = eventsArr;
+
+    QFile file(m_autoSavePath);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(QJsonDocument(root).toJson());
+        file.close();
+        Logger::log("Model asocjacyjny auto-zapisany.");
+    }
+}
+
 void AssociativeLearner::saveSession() {
     QString path = QFileDialog::getSaveFileName(this, "Zapisz sesję", "", "JSON (*.json)");
     if(path.isEmpty()) return;
@@ -1394,18 +1473,18 @@ void AssociativeLearner::runPcaClustering() {
     QVector<QVector<float>> centered(N, QVector<float>(dim));
     for (int i = 0; i < N; ++i) for (int d = 0; d < dim; ++d) centered[i][d] = features[i][d] - mean[d];
 
-    // 3. Macierz kowariancji (przybliżenie z użyciem QtConcurrent)
+    // 3. Macierz korelacji feature×feature (5×5) — GPU / CPU fallback
+    // Transpose: dla każdego z 'dim' feature'ów tworzymy wektor długości N
+    QVector<QVector<float>> transposed(dim, QVector<float>(N));
+    for (int d = 0; d < dim; ++d)
+        for (int i = 0; i < N; ++i)
+            transposed[d][i] = centered[i][d];
+
+    QVector<QVector<float>> corrMat = m_correlator.computeCorrelationMatrix(transposed);
     QVector<QVector<double>> cov(dim, QVector<double>(dim, 0.0));
-    // Równoległe obliczenie tylko górnej trójkątnej
-    // Tradycyjna pętla (akceptowalne dla małego dim)
-    for (int i = 0; i < dim; ++i) {
-        for (int j = i; j < dim; ++j) {
-            double sum = 0.0;
-            for (int k = 0; k < N; ++k) sum += centered[k][i] * centered[k][j];
-            cov[i][j] = sum / (N - 1);
-            cov[j][i] = cov[i][j];
-        }
-    }
+    for (int i = 0; i < dim; ++i)
+        for (int j = 0; j < dim; ++j)
+            cov[i][j] = corrMat[i][j];  // correlation PCA (standardized)
 
     // 4. Metoda potęgowa do znalezienia dwóch pierwszych wektorów własnych
     auto powerIteration = [&](QVector<double> initVec, int maxIter = 100) -> QPair<double, QVector<double>> {

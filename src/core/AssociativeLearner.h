@@ -52,6 +52,7 @@ public slots:
     void setDbcParser(const DbcParser *dbc) { m_dbc = dbc; }
     void setJ1939Parser(const J1939Parser *j1939) { m_j1939 = j1939; }
     void saveSession();
+    void autoSave();
     void loadSession();
     void exportModels();
     void importModels();
@@ -147,6 +148,10 @@ private:
     QVector<float> m_normalStd;
 
     QPushButton  *m_saveBtn;
+    QCheckBox    *m_autoSaveCheck;
+    QTimer       *m_autoSaveTimer;
+    QString       m_autoSavePath;
+
     QPushButton  *m_exportModelsBtn;
     QPushButton  *m_importModelsBtn;
     QPushButton  *m_generateLuaBtn;

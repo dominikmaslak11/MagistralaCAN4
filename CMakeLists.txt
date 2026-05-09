@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(MagistralaCAN4 VERSION 2.0.0 LANGUAGES CXX)
+project(MagistralaCAN4 VERSION 2.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -105,6 +105,7 @@ set(HEADERS
     src/core/ProtocolPlugin.h
     src/core/PluginLoader.h
     src/core/HttpRestServer.h
+    src/core/RingBuffer.h
     src/core/UdsFrame.h
     src/core/UdsParser.h
     src/core/UdsWidget.h
@@ -169,4 +170,13 @@ if(WIN32 OR MINGW)
     target_sources(${PROJECT_NAME} PRIVATE app.rc)
     # Statyczne linkowanie MinGW runtime (brak zależności od libgcc_s_seh-1.dll itp.)
     target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
+
+    # ── Post-build: copy binary to dist/ ──
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/dist"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:${PROJECT_NAME}>"
+            "${CMAKE_SOURCE_DIR}/dist/${PROJECT_NAME}.exe"
+        COMMENT "Copying ${PROJECT_NAME}.exe to dist/"
+    )
 endif()

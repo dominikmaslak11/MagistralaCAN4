@@ -4,6 +4,7 @@
 #include <QString>
 #include <atomic>
 #include "CanFrame.h"
+#include "RingBuffer.h"
 
 class ICanDriver;
 
@@ -23,6 +24,13 @@ public:
     /// Wysyła ramkę CAN przez sterownik.
     void writeFrame(const CanFrame &frame);
 
+    /// Drains the ring buffer and emits newFrame for each buffered frame.
+    /// Called by the GUI thread periodically.
+    void drainAndEmit();
+
+    /// Size of the ring buffer.
+    int bufferSize() const { return m_ringBuffer.size(); }
+
 signals:
     void newFrame(const CanFrame &frame);
     void statusChanged(bool running);
@@ -38,4 +46,5 @@ private:
     ICanDriver *m_driver = nullptr;
     std::atomic<bool> m_running{false};
     QString m_interface;
+    RingBuffer<CanFrame> m_ringBuffer;
 };

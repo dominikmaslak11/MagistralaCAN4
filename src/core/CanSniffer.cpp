@@ -40,6 +40,7 @@ void CanSniffer::start(const QString &interface) {
 
     m_interface = interface;
     m_running = true;
+    m_ringBuffer.reserve(8192);  // pre-alloc 8192 slotów (8191 usable)
     emit statusChanged(true);
     QThreadPool::globalInstance()->start([this] { doWork(); });
 }
@@ -61,6 +62,19 @@ void CanSniffer::doWork() {
             if (!m_driver->isValid()) break;
             continue;  // pusta ramka, czytaj dalej
         }
-        emit newFrame(frame);
+        // Lock-free push to ring buffer — bez blokowania GUI
+        while (!m_ringBuffer.tryPush(frame) && m_running) {
+            // Ring buffer pełny — consumer (GUI) nie nadąża,
+            // czekamy chwilę na zwolnienie miejsca
+            QThread::usleep(10);
+        }
     }
+}
+
+void CanSniffer::drainAndEmit() {
+    // Called from GUI thread — drains all buffered frames and emits them
+    QVector<CanFrame> batch;
+    int n = m_ringBuffer.drain(batch);
+    for (int i = 0; i < n; ++i)
+        emit newFrame(batch[i]);
 }
