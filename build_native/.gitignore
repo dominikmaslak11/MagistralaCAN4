@@ -1,0 +1,13 @@
+# Ignoruj artefakty budowania — tylko finalne binarki
+.ninja*
+CMakeCache.txt
+CMakeFiles/
+*.obj
+*.o
+*.d
+*.cmake
+*.ninja
+cmake_install.cmake
+MagistralaCAN4_autogen/
+.qt/
+magistrala_debug.log
