@@ -144,6 +144,22 @@ void SlCanDriver::writeFrame(const CanFrame &frame) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// Baud rate (interfejs ICanDriver)
+// ═══════════════════════════════════════════════════════════════
+
+void SlCanDriver::setBaudRate(const QString &baudStr) {
+    static const QHash<QString, qint32> map = {
+        {"1M",   1000000}, {"800K",  800000}, {"500K",  500000},
+        {"250K",  250000}, {"125K",  125000}, {"100K",  100000},
+        {"50K",    50000}, {"20K",    20000}, {"10K",    10000},
+    };
+    if (map.contains(baudStr)) {
+        m_baudRate = map[baudStr];
+        qDebug() << "SlCanDriver: baud rate set to" << baudStr << "(" << m_baudRate << ")";
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
 // Lista urządzeń – pusta (używamy autodetekcji)
 // ═══════════════════════════════════════════════════════════════
 

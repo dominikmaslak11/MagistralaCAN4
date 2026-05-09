@@ -33,6 +33,9 @@ public:
     /// Wysyła ramkę CAN na magistralę.
     virtual void writeFrame(const CanFrame &frame) = 0;
 
+    /// Ustawia prędkość magistrali CAN. Domyślna implementacja: nic nie robi.
+    virtual void setBaudRate(const QString &baudStr) { Q_UNUSED(baudStr); }
+
     /// Zwraca listę dostępnych nazw urządzeń CAN.
     virtual QStringList availableDevices() const = 0;
 

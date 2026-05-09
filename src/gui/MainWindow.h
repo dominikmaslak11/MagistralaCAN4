@@ -102,6 +102,7 @@ private:
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
     QComboBox *m_interfaceCombo;
+    QComboBox *m_baudCombo;
     QCheckBox *m_overwriteCheck;
     QLabel *m_statusLabel;
     QSystemTrayIcon *m_trayIcon = nullptr;

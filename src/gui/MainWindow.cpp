@@ -80,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 #endif
     // SLCAN – zawsze dostępny (porty szeregowe), cross-platform
     m_slCanDriver = new SlCanDriver();
+    m_canDriver->setBaudRate("500K");
+    m_slCanDriver->setBaudRate("500K");
     m_sniffer.setDriver(m_canDriver);
 
     setWindowIcon(QIcon(":/ico.png"));
@@ -190,21 +192,29 @@ void MainWindow::toggleSniffing() {
 
         // Inteligentny wybór drivera po nazwie urządzenia
         ICanDriver *active = m_canDriver;
-        if (m_slCanDriver && (iface.startsWith("COM", Qt::CaseInsensitive) ||
-                               iface.startsWith("tty") || iface.startsWith("/dev/tty") ||
-                               iface.contains("[SLCAN]") || iface.contains("[Canable]") ||
-                               iface.contains("[candleLight]") || iface.contains("[USBtin]") ||
-                               iface.contains("[CAN232]") || iface.contains("[Lawicel]"))) {
+        bool isSlCan = (iface.startsWith("COM", Qt::CaseInsensitive) ||
+                         iface.startsWith("tty") || iface.startsWith("/dev/tty") ||
+                         iface.contains("[SLCAN]") || iface.contains("[Canable]") ||
+                         iface.contains("[candleLight]") || iface.contains("[USBtin]") ||
+                         iface.contains("[CAN232]") || iface.contains("[Lawicel]"));
+        if (m_slCanDriver && isSlCan) {
             active = m_slCanDriver;
             Logger::log(QString("SLCAN: wybrano sterownik szeregowy dla %1").arg(iface));
         }
+
+        // Ustaw prędkość magistrali
+        QString baudStr = m_baudCombo->currentText();
+        active->setBaudRate(baudStr);
+
         m_sniffer.setDriver(active);
         m_sniffer.start(iface); m_sniffing = true;
         Logger::log(QString("Rozpoczęto sniffing na interfejsie %1").arg(iface));
-        m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false); m_batchTimer.start();
+        m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false);
+        m_baudCombo->setEnabled(false); m_batchTimer.start();
     } else {
         m_sniffer.stop(); m_sniffing = false;
-        m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true); m_batchTimer.stop();
+        m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true);
+        m_baudCombo->setEnabled(true); m_batchTimer.stop();
         m_frameBuffer.resize(0);  // keep capacity
     }
 }
@@ -348,6 +358,12 @@ void MainWindow::setupToolBar() {
     toolbar->addWidget(m_interfaceCombo);
     auto *refreshBtn = new QPushButton("↻"); connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
     toolbar->addWidget(refreshBtn);
+    m_baudCombo = new QComboBox;
+    m_baudCombo->addItems({"1M", "800K", "500K", "250K", "125K", "100K", "50K", "20K", "10K"});
+    m_baudCombo->setCurrentText("500K");
+    m_baudCombo->setToolTip("Prędkość magistrali CAN");
+    m_baudCombo->setMinimumWidth(70);
+    toolbar->addWidget(m_baudCombo);
     toolbar->addSeparator();
     m_btnStartStop = new QPushButton("▶ Start"); connect(m_btnStartStop, &QPushButton::clicked, this, &MainWindow::toggleSniffing);
     toolbar->addWidget(m_btnStartStop);

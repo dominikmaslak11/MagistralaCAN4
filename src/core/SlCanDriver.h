@@ -40,6 +40,9 @@ public:
     /// Ustawia prędkość transmisji UART (domyślnie 921600).
     void setBaudRate(qint32 baud) { m_baudRate = baud; }
 
+    /// Interfejs ICanDriver: akceptuje etykiety "1M", "500K" itp.
+    void setBaudRate(const QString &baudStr) override;
+
 private:
     CanFrame parseIncoming(const QByteArray &line) const;
     QString sendCommand(const QString &cmd, int waitMs = 100);

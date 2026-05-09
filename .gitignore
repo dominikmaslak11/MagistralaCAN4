@@ -1,5 +1,7 @@
 build/
-!build/MagistralaCAN4
+build_native/
+dist/
 *.o
 *.pro.user
 *.autosave
+*.7z

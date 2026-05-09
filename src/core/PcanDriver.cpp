@@ -17,7 +17,15 @@
 #define PCAN_CHANNEL_USBBUS6     0x56
 #define PCAN_CHANNEL_USBBUS7     0x57
 #define PCAN_CHANNEL_USBBUS8     0x58
+#define PCAN_BAUD_1M             0x0014
+#define PCAN_BAUD_800K           0x0016
 #define PCAN_BAUD_500K           0x001C
+#define PCAN_BAUD_250K           0x011C
+#define PCAN_BAUD_125K           0x031C
+#define PCAN_BAUD_100K           0x432F
+#define PCAN_BAUD_50K            0x472F
+#define PCAN_BAUD_20K            0x532F
+#define PCAN_BAUD_10K            0x672F
 #define PCAN_MESSAGE_STANDARD    0x00
 #define PCAN_MESSAGE_EXTENDED    0x02
 #define PCAN_MESSAGE_FD          0x10
@@ -35,6 +43,7 @@ typedef BYTE TPCANHandle;
 struct PcanDriver::Impl {
     QLibrary lib;
     TPCANHandle channel = 0;
+    WORD     baudCode = PCAN_BAUD_500K;
     bool initialized = false;
 
     typedef int (__stdcall *CAN_Init_t)(TPCANHandle, WORD, DWORD, DWORD);
@@ -95,7 +104,7 @@ bool PcanDriver::open(const QString &device) {
     else if (device == "PCAN_USBBUS8") d->channel = PCAN_CHANNEL_USBBUS8;
     else d->channel = PCAN_CHANNEL_USBBUS1;
 
-    int res = d->fnInit(d->channel, PCAN_BAUD_500K, 0, 0);
+    int res = d->fnInit(d->channel, d->baudCode, 0, 0);
     if (res != 0) {
         char buf[256] = {};
         if (d->fnErrTxt) d->fnErrTxt(res, 0x0409, buf);
@@ -184,6 +193,21 @@ void PcanDriver::writeFrame(const CanFrame &frame) {
     }
 }
 
+void PcanDriver::setBaudRate(const QString &baudStr) {
+    if (!d) return;
+    QString b = baudStr.toUpper().trimmed();
+    if (b == "1M" || b == "1000K")      d->baudCode = PCAN_BAUD_1M;
+    else if (b == "800K")               d->baudCode = PCAN_BAUD_800K;
+    else if (b == "500K")               d->baudCode = PCAN_BAUD_500K;
+    else if (b == "250K")               d->baudCode = PCAN_BAUD_250K;
+    else if (b == "125K")               d->baudCode = PCAN_BAUD_125K;
+    else if (b == "100K")               d->baudCode = PCAN_BAUD_100K;
+    else if (b == "50K")                d->baudCode = PCAN_BAUD_50K;
+    else if (b == "20K")                d->baudCode = PCAN_BAUD_20K;
+    else if (b == "10K")                d->baudCode = PCAN_BAUD_10K;
+    qDebug() << "PcanDriver: baud rate set to" << b;
+}
+
 QStringList PcanDriver::availableDevices() const {
     QStringList devices;
 
@@ -247,4 +271,5 @@ CanFrame PcanDriver::readFrame() { return {}; }
 bool PcanDriver::isValid() const { return false; }
 void PcanDriver::writeFrame(const CanFrame &) {}
 QStringList PcanDriver::availableDevices() const { return {}; }
+void PcanDriver::setBaudRate(const QString &) {}
 #endif

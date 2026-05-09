@@ -30,6 +30,15 @@
 - Dodano `.clang-format`, `runAsync<Func>()` template helper (QtConcurrent::run)
 - async button feedback dla dbscanClustering, runPcaClustering, computeMIC
 
+### 1.6 CAN baudrate selector + katalogi scalone
+- **Commit**: (pending)
+- **UI**: `QComboBox` w toolbarze — wybór prędkości CAN (1M, 800K, 500K, 250K, 125K, 100K, 50K, 20K, 10K)
+- **ICanDriver**: dodano wirtualne `setBaudRate(const QString&)` z domyślną pustą implementacją
+- **PcanDriver**: `setBaudRate()` mapuje etykiety na stałe PCAN (0x0014..0x672F)
+- **SlCanDriver**: `setBaudRate()` mapuje etykiety na numeryczne baud rate UART
+- **Katalogi**: usunięto `build/` (stary Linux) i `dist/` (duplikat) — jedyny katalog wyjściowy to `build_native/`
+- **CMakeLists.txt**: post-build już nie kopiuje do `dist/`
+
 ### 1.5 PCAN + SLCAN driver fixes (Windows)
 - **Commit**: `0b384d5`
 - **PcanDriver**: naprawiono krytyczny bug — odwrócona flaga `PCAN_CHANNEL_OCCUPIED` (driver nigdy nie odczytywał ramek)

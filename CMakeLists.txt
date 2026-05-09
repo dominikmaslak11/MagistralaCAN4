@@ -172,14 +172,11 @@ if(WIN32 OR MINGW)
     # Windows resource file (icon + version info)
     target_sources(${PROJECT_NAME} PRIVATE app.rc)
     # Statyczne linkowanie MinGW runtime (brak zależności od libgcc_s_seh-1.dll itp.)
-    target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
+    target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -static)
 
-    # ── Post-build: copy binary to dist/ ──
+    # ── Post-build: sygnalizacja gotowości ──
+    # Binarka i DLL-e pozostają w build_native/ (jeden katalog wyjściowy)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/dist"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "$<TARGET_FILE:${PROJECT_NAME}>"
-            "${CMAKE_SOURCE_DIR}/dist/${PROJECT_NAME}.exe"
-        COMMENT "Copying ${PROJECT_NAME}.exe to dist/"
+        COMMAND ${CMAKE_COMMAND} -E echo "Build complete: $<TARGET_FILE:${PROJECT_NAME}>"
     )
 endif()
