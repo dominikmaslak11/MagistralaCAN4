@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>ico.png</file>
         <file>magistrala.ico</file>
+        <file>resources/style_dark.qss</file>
+        <file>resources/style_light.qss</file>
     </qresource>
 </RCC>

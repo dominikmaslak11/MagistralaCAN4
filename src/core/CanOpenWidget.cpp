@@ -66,12 +66,7 @@ void CanOpenWidget::setupUi() {
     m_table->verticalHeader()->hide(); m_table->horizontalHeader()->setStretchLastSection(true);
     m_table->setShowGrid(false); lay->addWidget(m_table, 1);
     connect(m_clearBtn, &QPushButton::clicked, [this]() { m_model->clear(); m_statusLabel->setText("Ramki CANopen: 0"); });
-    setStyleSheet(R"(
-        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 5px 12px; font-weight: bold; }
-        QPushButton:hover { background: #e94560; color: #0a0e17; }
-        QTableView { background-color: #0a0e17; color: #c0c0c0; gridline-color: #2a2a3c; font-family: Consolas, monospace; font-size: 11px; }
-        QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-    )");
+    // Global QSS (style_dark/light.qss) handles widget styling
 }
 
 void CanOpenWidget::processFrame(const CanFrame &frame) {

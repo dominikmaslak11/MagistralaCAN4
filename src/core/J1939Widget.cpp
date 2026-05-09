@@ -179,20 +179,7 @@ void J1939Widget::setupUi() {
     });
     connect(m_tableView, &QTableView::clicked, this, &J1939Widget::onFrameSelected);
 
-    setStyleSheet(R"(
-        QTableView, QTableWidget { background-color: #0a0e17; color: #c0c0c0;
-            gridline-color: #2a2a3c; selection-background-color: #e94560; selection-color: #ffffff;
-            font-family: Consolas, monospace; font-size: 12px; }
-        QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold;
-            padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-        QComboBox, QLineEdit { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560;
-            border-radius: 4px; padding: 3px 8px; }
-        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560;
-            border-radius: 4px; padding: 5px 15px; font-weight: bold; }
-        QPushButton:hover { background: #e94560; color: #0a0e17; }
-        QComboBox::drop-down { border: none; }
-        QComboBox QAbstractItemView { background: #1a1a2e; color: #00ffaa; selection-background-color: #e94560; }
-    )");
+    // Global QSS (style_dark/light.qss) handles widget styling
 }
 
 void J1939Widget::processFrame(const CanFrame &frame) {

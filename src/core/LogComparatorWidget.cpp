@@ -106,14 +106,7 @@ void LogComparatorWidget::setupUi() {
     connect(m_exportBtn, &QPushButton::clicked, this, &LogComparatorWidget::exportReport);
     connect(m_filterApplyBtn, &QPushButton::clicked, this, &LogComparatorWidget::applyFilter);
 
-    setStyleSheet(R"(
-        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 5px 12px; font-weight: bold; }
-        QPushButton:hover { background: #e94560; color: #0a0e17; }
-        QLineEdit { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 3px 6px; }
-        QTableWidget { background-color: #0a0e17; color: #c0c0c0; gridline-color: #2a2a3c; font-family: Consolas, monospace; font-size: 11px; }
-        QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-        QLabel { color: #c0c0c0; }
-    )");
+    // Global QSS (style_dark/light.qss) handles widget styling
 }
 
 // ── Ładowanie candump ────────────────────────────────────────

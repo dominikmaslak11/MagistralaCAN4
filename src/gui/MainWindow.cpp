@@ -17,6 +17,7 @@
 #include <QApplication>
 #include <QScrollBar>
 #include <QFileDialog>
+#include <QFile>
 #include <QTextStream>
 #include <QStyle>
 #include <QSystemTrayIcon>
@@ -609,36 +610,22 @@ void MainWindow::toggleMqtt() {
 
 void MainWindow::toggleTheme() {
     s_darkTheme = !s_darkTheme;
-    if (s_darkTheme) {
-        setupStyle();
-    } else {
-        qApp->setStyleSheet(R"(
-            QMainWindow { background-color: #f0f0f0; }
-            QToolBar { background: #e8e8e8; border-bottom: 2px solid #ccc; spacing: 8px; padding: 4px; }
-            QPushButton, QToolButton { background: #ddd; color: #333; border: 1px solid #999; border-radius: 4px; padding: 5px 15px; font-weight: bold; }
-            QPushButton:hover, QToolButton:hover { background: #ccc; }
-            QComboBox { background: #fff; color: #333; border: 1px solid #999; border-radius: 4px; padding: 3px 8px; }
-            QCheckBox { color: #333; }
-            QLabel { color: #333; }
-            QTableView, QTableWidget { background-color: #fff; color: #333; gridline-color: #ddd; font-family: Consolas, monospace; font-size: 12px; }
-            QHeaderView::section { background-color: #e0e0e0; color: #333; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #999; }
-        )");
+    const QString qssPath = s_darkTheme
+        ? QStringLiteral(":/resources/style_dark.qss")
+        : QStringLiteral(":/resources/style_light.qss");
+    QFile qssFile(qssPath);
+    if (qssFile.open(QFile::ReadOnly | QFile::Text)) {
+        qApp->setStyleSheet(qssFile.readAll());
+        qssFile.close();
     }
 }
 
 void MainWindow::setupStyle() {
-    qApp->setStyleSheet(R"(
-        QMainWindow { background-color: #0a0e17; }
-        QToolBar { background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1a1a2e, stop:1 #16213e); border-bottom: 2px solid #e94560; spacing: 8px; padding: 4px; }
-        QPushButton, QToolButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 5px 15px; font-weight: bold; }
-        QPushButton:hover, QToolButton:hover { background: #e94560; color: #0a0e17; }
-        QComboBox { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 3px 8px; min-width: 100px; }
-        QComboBox::drop-down { border: none; }
-        QComboBox QAbstractItemView { background: #1a1a2e; color: #00ffaa; selection-background-color: #e94560; }
-        QCheckBox { color: #ff66cc; font-weight: bold; }
-        QCheckBox::indicator { width: 16px; height: 16px; }
-        QLabel { color: #c0c0c0; }
-        QTableView, QTableWidget { background-color: #0a0e17; alternate-background-color: #161b22; color: #c0c0c0; gridline-color: #2a2a3c; selection-background-color: #e94560; selection-color: #ffffff; font-family: "Consolas", "Courier New", monospace; font-size: 12px; }
-        QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold; padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-    )");
+    // Global stylesheet is loaded in main.cpp from resources/style_dark.qss
+    // This method is kept for explicit re-application when needed
+    QFile qssFile(":/resources/style_dark.qss");
+    if (qssFile.open(QFile::ReadOnly | QFile::Text)) {
+        qApp->setStyleSheet(qssFile.readAll());
+        qssFile.close();
+    }
 }

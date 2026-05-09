@@ -160,23 +160,7 @@ void DbcEditorWidget::setupUi() {
         }
     });
 
-    setStyleSheet(R"(
-        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560;
-            border-radius: 4px; padding: 5px 15px; font-weight: bold; }
-        QPushButton:hover { background: #e94560; color: #0a0e17; }
-        QLineEdit, QSpinBox { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560;
-            border-radius: 4px; padding: 3px 8px; }
-        QListWidget { background-color: #0a0e17; color: #c0c0c0; border: 1px solid #2a2a3c;
-            font-family: Consolas, monospace; font-size: 12px; }
-        QListWidget::item:selected { background: #e94560; color: #ffffff; }
-        QTableWidget { background-color: #0a0e17; color: #c0c0c0; gridline-color: #2a2a3c;
-            selection-background-color: #e94560; selection-color: #ffffff;
-            font-family: Consolas, monospace; font-size: 11px; }
-        QHeaderView::section { background-color: #1a1a2e; color: #ff66cc; font-weight: bold;
-            padding: 4px; border: none; border-bottom: 2px solid #e94560; }
-        QGroupBox { color: #ff66cc; }
-        QLabel { color: #c0c0c0; }
-    )");
+    // Global QSS (style_dark/light.qss) handles widget styling
 }
 
 // ── Logika danych ───────────────────────────────────────────

@@ -436,11 +436,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     connect(m_addVariableBtn, &QPushButton::clicked, this, &AssociativeLearner::addNewVariable);
     connect(m_variableCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssociativeLearner::onVariableChanged);
 
-    setStyleSheet(R"(
-        QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 6px 15px; font-weight: bold; }
-        QPushButton:hover { background: #e94560; color: #0a0e17; }
-        QLineEdit, QComboBox { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; border-radius: 4px; padding: 4px 8px; }
-    )");
+    // Global QSS (style_dark/light.qss) handles widget styling
 
     addVariable("temperatura");
 }

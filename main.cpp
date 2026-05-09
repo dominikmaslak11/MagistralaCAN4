@@ -65,6 +65,18 @@ int main(int argc, char *argv[])
     logMsg("Setting Fusion style...");
     app.setStyle("Fusion");
 
+    // Ładowanie arkusza stylów QSS (dark theme domyślnie)
+    logMsg("Loading QSS stylesheet...");
+    QFile qssFile(":/resources/style_dark.qss");
+    if (qssFile.open(QFile::ReadOnly | QFile::Text)) {
+        QString qss = qssFile.readAll();
+        app.setStyleSheet(qss);
+        qssFile.close();
+        logMsg("QSS dark theme loaded");
+    } else {
+        logMsg("WARNING: Could not load style_dark.qss from resources");
+    }
+
     logMsg("Creating MainWindow...");
     MainWindow mainWindow;
     logMsg("MainWindow created");
