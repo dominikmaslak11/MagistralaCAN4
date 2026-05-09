@@ -1,0 +1,90 @@
+name: Build (Windows + Linux)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════
+  # Windows build — MSYS2 UCRT64 + Ninja + Qt6 (shared)
+  # ═══════════════════════════════════════════════════════════════
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSYS2 (UCRT64)
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ucrt64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-qt6-charts
+            mingw-w64-ucrt-x86_64-qt6-websockets
+            mingw-w64-ucrt-x86_64-qt6-serialport
+            mingw-w64-ucrt-x86_64-lua
+            mingw-w64-ucrt-x86_64-opencl-headers
+            mingw-w64-ucrt-x86_64-opencl-icd
+
+      - name: Configure CMake
+        run: |
+          cmake -B build_ci -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_COMPILER=g++
+
+      - name: Build
+        run: ninja -C build_ci -j$(nproc)
+
+  # ═══════════════════════════════════════════════════════════════
+  # Linux build — Ubuntu 24.04 + GCC + Qt6 + Lua + OpenCL
+  # ═══════════════════════════════════════════════════════════════
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            ninja-build \
+            qt6-base-dev \
+            libqt6charts6-dev \
+            libqt6websockets6-dev \
+            libqt6serialport6-dev \
+            liblua5.4-dev \
+            libxcb1-dev \
+            libxcb-icccm4-dev \
+            libxcb-image0-dev \
+            libxcb-keysyms1-dev \
+            libxcb-randr0-dev \
+            libxcb-render-util0-dev \
+            libxcb-shape0-dev \
+            libxcb-util-dev \
+            libxcb-xfixes0-dev \
+            libxcb-xinerama0-dev \
+            libxcb-xkb-dev \
+            libxcb-sync-dev \
+            libxcb-cursor-dev \
+            ocl-icd-opencl-dev \
+            opencl-headers
+
+      - name: Configure CMake
+        run: |
+          cmake -B build_ci -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: ninja -C build_ci -j$(nproc)
