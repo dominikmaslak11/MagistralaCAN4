@@ -31,7 +31,7 @@
 - async button feedback dla dbscanClustering, runPcaClustering, computeMIC
 
 ### 1.6 CAN baudrate selector + katalogi scalone
-- **Commit**: (pending)
+- **Commit**: `e838509`
 - **UI**: `QComboBox` w toolbarze — wybór prędkości CAN (1M, 800K, 500K, 250K, 125K, 100K, 50K, 20K, 10K)
 - **ICanDriver**: dodano wirtualne `setBaudRate(const QString&)` z domyślną pustą implementacją
 - **PcanDriver**: `setBaudRate()` mapuje etykiety na stałe PCAN (0x0014..0x672F)
@@ -159,6 +159,7 @@ Branch: main
 ─────────────────────────────────────────────────────────────
 
 ```
+e838509 feat: CAN baudrate selector UI + consolidate output to build_native
 0b384d5 fix: PCAN inverted OCCUPIED flag + hw detection; SLCAN multi-baud detection
 a244bea docs: session prompt v5 — Faza 1 complete, Faza 2 plan
 2c66879 perf: DFT → Cooley-Tukey FFT (O(N log N)) + DFT→FFT UI labels
