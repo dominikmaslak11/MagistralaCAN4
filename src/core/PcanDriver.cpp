@@ -219,14 +219,15 @@ QStringList PcanDriver::availableDevices() const {
         return devices;
     }
 
-    auto fnGetValue = (Impl::CAN_GetValue_t)lib.resolve("CAN_GetValue");
-    if (!fnGetValue) {
-        qDebug() << "PcanDriver::availableDevices: brak CAN_GetValue w DLL";
+    auto fnInit   = (Impl::CAN_Init_t)  lib.resolve("CAN_Initialize");
+    auto fnUninit = (Impl::CAN_Uninit_t)lib.resolve("CAN_Uninitialize");
+    if (!fnInit || !fnUninit) {
+        qDebug() << "PcanDriver::availableDevices: brak CAN_Initialize/Uninitialize w DLL";
         lib.unload();
         return devices;
     }
 
-    // Sprawdź kanały 1-8 – CAN_GetValue(PCAN_CHANNEL_CONDITION) działa bez inicjalizacji
+    // Sprawdź kanały 1-8 przez próbę inicjalizacji
     static constexpr TPCANHandle channels[] = {
         PCAN_CHANNEL_USBBUS1, PCAN_CHANNEL_USBBUS2,
         PCAN_CHANNEL_USBBUS3, PCAN_CHANNEL_USBBUS4,
@@ -239,16 +240,23 @@ QStringList PcanDriver::availableDevices() const {
     };
 
     for (int i = 0; i < 8; ++i) {
-        DWORD cond = 0;
-        DWORD len  = sizeof(cond);
-        int res = fnGetValue(channels[i], PCAN_CHANNEL_CONDITION, &cond, &len);
-        if (res == 0 && (cond == PCAN_CHANNEL_AVAILABLE || cond == PCAN_CHANNEL_OCCUPIED)) {
-            QString label = QString("%1%2")
-                .arg(names[i])
-                .arg(cond == PCAN_CHANNEL_OCCUPIED ? " [Zajęty]" : "");
-            devices.append(label);
-            qDebug() << "PcanDriver: wykryto" << label
-                     << "(cond=" << cond << ")";
+        int res = fnInit(channels[i], PCAN_BAUD_500K, 0, 0);
+        if (res == 0) {
+            // Hardware present — natychmiast zamknij
+            fnUninit(channels[i]);
+            devices.append(names[i]);
+            qDebug() << "PcanDriver: wykryto sprzęt na" << names[i];
+        } else if (res == 0x200) {  // NODRIVER
+            // brak sterownika — pomiń
+            qDebug() << "PcanDriver:" << names[i] << "— brak sterownika (NODRIVER)";
+        } else if (res == 0x400) {  // HWINUSE
+            devices.append(QString("%1 [Zajęty]").arg(names[i]));
+            fnUninit(channels[i]);
+            qDebug() << "PcanDriver:" << names[i] << "— sprzęt zajęty (HWINUSE)";
+        } else if (res == 0xE00) {  // ILLHW
+            // brak fizycznego sprzętu — pomiń
+        } else {
+            qDebug() << "PcanDriver:" << names[i] << "— kod błędu" << res;
         }
     }
 
