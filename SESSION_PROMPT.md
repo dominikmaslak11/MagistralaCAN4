@@ -23,6 +23,7 @@
 - ✅ **#18 MRU plików DBC/Lua** — QToolButton z menu, max 5, persistencja w QSettings
 - ✅ **#19 Auto-odświeżanie interfejsów** — QTimer co 5s, tylko gdy nie sniffujemy
 - ✅ **#20 Kompresja nagrań zstd** — .mcan → .mcan.zst, level 1, usuwa oryginał
+- ✅ **#21 Undo/Redo modelu** — snapshot przed clear/setOverwriteMode, max 5, Ctrl+Z/Y
 
 ## Pomysły na dalszą modernizację
 
@@ -33,9 +34,8 @@
 - GPU correlator CPU fallback (SSE2/AVX2)
 
 ### 🟢 UX
-- Undo/Redo dla operacji na modelu (clear, delete)
+(wszystkie zrealizowane)
 
 ## Kolejność rekomendowana
-1. Undo/Redo dla modelu ← następny
-2. GPU correlator CPU fallback
-3. Plugin isolation (długoterminowy)
+1. GPU correlator CPU fallback ← następny
+2. Plugin isolation (długoterminowy)

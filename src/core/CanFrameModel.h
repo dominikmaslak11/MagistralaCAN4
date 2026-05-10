@@ -40,6 +40,16 @@ public:
     /// Unieważnia cache dla danego wiersza (wywołaj po zmianie danych ramki).
     void invalidateRowCache(int row);
 
+    // ── Undo/Redo ──
+    /// Czy jest dostępna operacja cofnij.
+    bool canUndo() const { return !m_undoStack.isEmpty(); }
+    /// Czy jest dostępna operacja przywróć.
+    bool canRedo() const { return !m_redoStack.isEmpty(); }
+    /// Cofa ostatnią operację niszczącą (clear, zmiana trybu nadpisywania).
+    void undo();
+    /// Przywraca cofniętą operację.
+    void redo();
+
 signals:
     /// Emitowany po każdej partii ramek — do WebSocket broadcast (batch JSON).
     void frameBatchUpdated(const QVector<CanFrame> &frames);
@@ -74,6 +84,27 @@ private:
     inline int physRow(int logicalRow) const {
         return (m_head + logicalRow) % m_maxFrames;
     }
+
+    // ── Undo/Redo ──
+    static constexpr int MAX_UNDO = 5;
+
+    struct Snapshot {
+        QVector<CanFrame> frames;
+        QVector<uint64_t> deltas;
+        QVector<bool> isBurst;
+        QHash<uint32_t, int> idToRow;
+        QHash<uint32_t, QVector<uint8_t>> previousData;
+        QHash<uint32_t, uint64_t> lastTimestampPerId;
+        QHash<uint32_t, uint64_t> lastBurstTs;
+        int head = 0;
+        int size = 0;
+    };
+    QVector<Snapshot> m_undoStack;
+    QVector<Snapshot> m_redoStack;
+
+    void saveUndoState();
+    void restoreSnapshot(const Snapshot &snap);
+
     const DbcParser   *m_dbc   = nullptr;
     const J1939Parser *m_j1939 = nullptr;
 };

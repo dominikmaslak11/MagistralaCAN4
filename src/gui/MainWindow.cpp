@@ -158,6 +158,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *copyShortcut = new QShortcut(QKeySequence("Ctrl+C"), m_tableView);
     connect(copyShortcut, &QShortcut::activated, this, &MainWindow::copySelectedToClipboard);
 
+    // Ctrl+Z / Ctrl+Y – undo/redo modelu
+    auto *undoShortcut = new QShortcut(QKeySequence("Ctrl+Z"), this);
+    connect(undoShortcut, &QShortcut::activated, this, [this]() { m_model->undo(); });
+    auto *redoShortcut = new QShortcut(QKeySequence("Ctrl+Y"), this);
+    connect(redoShortcut, &QShortcut::activated, this, [this]() { m_model->redo(); });
+
     refreshInterfaces();
     if (m_interfaceCombo->count() > 0)
         m_interfaceCombo->setCurrentIndex(0);

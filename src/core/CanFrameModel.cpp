@@ -330,6 +330,7 @@ void CanFrameModel::setOverwriteMode(bool enabled) {
         if (m_overwrite == enabled) return;
         m_overwrite = enabled;
     }
+    if (m_size > 0) saveUndoState();
     beginResetModel();
     {
         QMutexLocker lock(&m_mutex);
@@ -355,6 +356,7 @@ CanFrame CanFrameModel::frameAt(int row) const {
 }
 
 void CanFrameModel::clear() {
+    if (m_size > 0) saveUndoState();
     beginResetModel();
     {
         QMutexLocker lock(&m_mutex);
@@ -381,4 +383,128 @@ QVector<CanFrame> CanFrameModel::allFrames() const {
 void CanFrameModel::invalidateRowCache(int row) {
     if (row >= 0 && row < m_size)
         m_cache[physRow(row)].valid = false;
+}
+
+// ── Undo/Redo ────────────────────────────────────────────────
+
+void CanFrameModel::saveUndoState() {
+    QMutexLocker lock(&m_mutex);
+    if (m_size == 0) return;
+
+    Snapshot snap;
+    snap.head = m_head;
+    snap.size = m_size;
+
+    // Kopiuj dane w logicznej kolejności
+    snap.frames.reserve(m_size);
+    snap.deltas.reserve(m_size);
+    snap.isBurst.reserve(m_size);
+    for (int i = 0; i < m_size; ++i) {
+        int phys = physRow(i);
+        snap.frames.append(m_frames[phys]);
+        snap.deltas.append(m_deltas[phys]);
+        snap.isBurst.append(m_isBurst[phys]);
+    }
+    snap.idToRow = m_idToRow;
+    snap.previousData = m_previousData;
+    snap.lastTimestampPerId = m_lastTimestampPerId;
+    snap.lastBurstTs = m_lastBurstTs;
+
+    m_undoStack.append(std::move(snap));
+    if (m_undoStack.size() > MAX_UNDO)
+        m_undoStack.erase(m_undoStack.begin());
+
+    m_redoStack.clear(); // nowa operacja → redo traci sens
+}
+
+void CanFrameModel::restoreSnapshot(const Snapshot &snap) {
+    QMutexLocker lock(&m_mutex);
+
+    m_head = snap.head;
+    m_size = snap.size;
+
+    // Zapisz dane w fizycznej kolejności
+    for (int i = 0; i < snap.size; ++i) {
+        int phys = physRow(i);
+        m_frames[phys] = snap.frames[i];
+        m_deltas[phys] = snap.deltas[i];
+        m_isBurst[phys] = snap.isBurst[i];
+    }
+    m_idToRow = snap.idToRow;
+    m_previousData = snap.previousData;
+    m_lastTimestampPerId = snap.lastTimestampPerId;
+    m_lastBurstTs = snap.lastBurstTs;
+
+    // Invalidate cache
+    for (auto &c : m_cache) c.valid = false;
+}
+
+void CanFrameModel::undo() {
+    if (m_undoStack.isEmpty()) return;
+
+    // Zapisz bieżący stan na stosie redo
+    {
+        QMutexLocker lock(&m_mutex);
+        if (m_size == 0) return; // nic do cofnięcia
+    }
+
+    Snapshot current;
+    {
+        QMutexLocker lock(&m_mutex);
+        current.head = m_head;
+        current.size = m_size;
+        current.frames.reserve(m_size);
+        current.deltas.reserve(m_size);
+        current.isBurst.reserve(m_size);
+        for (int i = 0; i < m_size; ++i) {
+            int phys = physRow(i);
+            current.frames.append(m_frames[phys]);
+            current.deltas.append(m_deltas[phys]);
+            current.isBurst.append(m_isBurst[phys]);
+        }
+        current.idToRow = m_idToRow;
+        current.previousData = m_previousData;
+        current.lastTimestampPerId = m_lastTimestampPerId;
+        current.lastBurstTs = m_lastBurstTs;
+    }
+
+    // Pobierz poprzedni stan
+    Snapshot prev = m_undoStack.takeLast();
+    m_redoStack.append(std::move(current));
+
+    beginResetModel();
+    restoreSnapshot(prev);
+    endResetModel();
+}
+
+void CanFrameModel::redo() {
+    if (m_redoStack.isEmpty()) return;
+
+    // Zapisz bieżący stan na stosie undo
+    Snapshot current;
+    {
+        QMutexLocker lock(&m_mutex);
+        current.head = m_head;
+        current.size = m_size;
+        current.frames.reserve(m_size);
+        current.deltas.reserve(m_size);
+        current.isBurst.reserve(m_size);
+        for (int i = 0; i < m_size; ++i) {
+            int phys = physRow(i);
+            current.frames.append(m_frames[phys]);
+            current.deltas.append(m_deltas[phys]);
+            current.isBurst.append(m_isBurst[phys]);
+        }
+        current.idToRow = m_idToRow;
+        current.previousData = m_previousData;
+        current.lastTimestampPerId = m_lastTimestampPerId;
+        current.lastBurstTs = m_lastBurstTs;
+    }
+
+    Snapshot next = m_redoStack.takeLast();
+    m_undoStack.append(std::move(current));
+
+    beginResetModel();
+    restoreSnapshot(next);
+    endResetModel();
 }
