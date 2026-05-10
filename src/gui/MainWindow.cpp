@@ -164,6 +164,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *redoShortcut = new QShortcut(QKeySequence("Ctrl+Y"), this);
     connect(redoShortcut, &QShortcut::activated, this, [this]() { m_model->redo(); });
 
+    // Odtwarzanie nagrań
+    m_player = new CanPlayer(this);
+    connect(m_player, &CanPlayer::frameEmitted, this, &MainWindow::onNewFrame);
+    connect(m_player, &CanPlayer::playbackFinished, this, [this]() {
+        if (m_playPauseBtn) m_playPauseBtn->setText("▶ Odtwórz");
+    });
+
     refreshInterfaces();
     if (m_interfaceCombo->count() > 0)
         m_interfaceCombo->setCurrentIndex(0);
@@ -520,6 +527,34 @@ void MainWindow::setupToolBar() {
     toolbar->addWidget(m_savePresetBtn);
 
     loadFilterPresets();
+
+    // Odtwarzanie nagrań
+    toolbar->addSeparator();
+    QAction *loadRecAction = toolbar->addAction("📂 Wczytaj nagranie");
+    connect(loadRecAction, &QAction::triggered, this, &MainWindow::loadRecording);
+
+    m_playPauseBtn = new QPushButton("▶ Odtwórz");
+    m_playPauseBtn->setFixedWidth(90);
+    connect(m_playPauseBtn, &QPushButton::clicked, this, &MainWindow::togglePlayback);
+    toolbar->addWidget(m_playPauseBtn);
+
+    m_speedCombo = new QComboBox;
+    m_speedCombo->addItems({"0.5x", "1x", "2x", "5x", "10x", "Max"});
+    m_speedCombo->setCurrentIndex(1); // 1x
+    m_speedCombo->setToolTip("Prędkość odtwarzania");
+    m_speedCombo->setFixedWidth(70);
+    connect(m_speedCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
+        if (!m_player) return;
+        switch (idx) {
+        case 0: m_player->setSpeed(0.5f); break;
+        case 1: m_player->setSpeed(1.0f); break;
+        case 2: m_player->setSpeed(2.0f); break;
+        case 3: m_player->setSpeed(5.0f); break;
+        case 4: m_player->setSpeed(10.0f); break;
+        case 5: m_player->setSpeed(0.0f); break; // max
+        }
+    });
+    toolbar->addWidget(m_speedCombo);
 }
 
 void MainWindow::setupCentralWidget() {
@@ -738,6 +773,33 @@ void MainWindow::toggleMdf4Recording() {
 
 void MainWindow::toggleMqtt() {
     m_mqttBridge.setEnabled(!m_mqttBridge.isEnabled());
+}
+
+void MainWindow::loadRecording() {
+    QString path = QFileDialog::getOpenFileName(this, "Wczytaj nagranie CAN", "",
+        "Nagrania (*.mcan *.mcan.zst);;Wszystkie pliki (*)");
+    if (path.isEmpty()) return;
+
+    int count = m_player->loadFile(path);
+    if (count > 0) {
+        if (m_sniffing) { toggleSniffing(); } // zatrzymaj live sniffing
+        if (m_playPauseBtn) m_playPauseBtn->setText("▶ Odtwórz");
+        Logger::log(QString("Wczytano nagranie: %1 (%2 ramek)").arg(path).arg(count));
+    } else {
+        QMessageBox::warning(this, "Błąd", "Nie udało się wczytać nagrania.");
+    }
+}
+
+void MainWindow::togglePlayback() {
+    if (!m_player) return;
+
+    if (m_player->isPlaying()) {
+        m_player->pause();
+        if (m_playPauseBtn) m_playPauseBtn->setText("▶ Odtwórz");
+    } else {
+        m_player->play();
+        if (m_playPauseBtn) m_playPauseBtn->setText("⏸ Pauza");
+    }
 }
 
 void MainWindow::toggleTheme() {

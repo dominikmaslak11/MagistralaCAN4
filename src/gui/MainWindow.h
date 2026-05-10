@@ -31,6 +31,7 @@
 #include "core/HttpRestServer.h"
 #include "core/CanStatsPanel.h"
 #include "core/CanFilterProxy.h"
+#include "core/CanPlayer.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -80,6 +81,8 @@ private slots:
     void saveCurrentFilterPreset();
     void addMruFile(const QString &path, bool isDbc);
     void updateMruMenus();
+    void loadRecording();
+    void togglePlayback();
 
 private:
     void setupStyle();
@@ -160,4 +163,9 @@ private:
 
     // Auto-odświeżanie interfejsów
     QTimer *m_interfaceRefreshTimer = nullptr;
+
+    // Odtwarzanie nagrań
+    CanPlayer *m_player = nullptr;
+    QPushButton *m_playPauseBtn = nullptr;
+    QComboBox *m_speedCombo = nullptr;
 };

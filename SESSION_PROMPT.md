@@ -25,10 +25,8 @@
 - ✅ **#20 Kompresja nagrań zstd** — .mcan → .mcan.zst, level 1, usuwa oryginał
 - ✅ **#21 Undo/Redo modelu** — snapshot przed clear/setOverwriteMode, max 5, Ctrl+Z/Y
 - ✅ **#22 Plugin crash protection** — setjmp/longjmp + SIGSEGV handler, izoluje crashujące pluginy bez QProcess
-
-## Pomysły na dalszą modernizację
+- ✅ **#23 Odtwarzanie nagrań** — CanPlayer, .mcan/.mcan.zst, prędkość 0.5x–10x, UI w toolbarze
 
 ## Wszystkie pozycje zrealizowane ✅
 
-22 optymalizacje wdrożone w ciągu jednej sesji.
-Dalsze kierunki: pełna izolacja procesowa pluginów (QProcess), streaming MDF4, odtwarzanie nagrań.
+23 optymalizacje wdrożone w ciągu jednej sesji.

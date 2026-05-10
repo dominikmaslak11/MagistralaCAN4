@@ -1,0 +1,56 @@
+#pragma once
+#include <QObject>
+#include <QTimer>
+#include <QVector>
+#include "CanFrame.h"
+
+/**
+ * @brief Odtwarzacz nagrań CAN — wczytuje .mcan / .mcan.zst i emituje ramki
+ *        z oryginalnym timingiem (lub przyspieszone).
+ *
+ * Użycie:
+ *   player.loadFile("sesja.mcan.zst");
+ *   connect(&player, &CanPlayer::frameEmitted, ...);
+ *   player.play();
+ */
+class CanPlayer : public QObject {
+    Q_OBJECT
+public:
+    explicit CanPlayer(QObject *parent = nullptr);
+
+    /// Wczytuje plik .mcan lub .mcan.zst.
+    /// Zwraca liczbę wczytanych ramek (0 = błąd).
+    int loadFile(const QString &path);
+
+    /// Rozpoczyna / wznawia odtwarzanie.
+    void play();
+    /// Pauzuje odtwarzanie.
+    void pause();
+    /// Zatrzymuje i przewija na początek.
+    void stop();
+
+    bool isPlaying() const { return m_playing; }
+    bool isPaused() const  { return m_loaded && !m_playing; }
+    int totalFrames() const { return m_frames.size(); }
+    int currentFrame() const { return m_currentIndex; }
+
+    /// Ustawia mnożnik prędkości (0.5 = pół, 2.0 = podwójna, 0 = max).
+    void setSpeed(float multiplier);
+
+signals:
+    void frameEmitted(const CanFrame &frame);
+    void positionChanged(int index, int total);
+    void playbackFinished();
+
+private slots:
+    void emitNextFrame();
+
+private:
+    QVector<CanFrame> m_frames;
+    QTimer m_timer;
+    int m_currentIndex = 0;
+    float m_speed = 1.0f;
+    bool m_loaded = false;
+    bool m_playing = false;
+    uint64_t m_baseTimestamp = 0;  // pierwszy timestamp w nagraniu
+};
