@@ -30,3 +30,68 @@
 ## Wszystkie pozycje zrealizowane ✅
 
 23 optymalizacje wdrożone w ciągu jednej sesji.
+
+---
+
+## Faza 3: Modernizacja uczenia asocjacyjnego (zaplanowane)
+
+### Diagnoza stanu obecnego
+`AssociativeLearner` (2578 LOC .cpp + 258 LOC .h = 2836 LOC) — monolit łączący UI, silnik ML i zarządzanie stanem w jednej klasie QWidget.
+
+**Obecny zestaw metod:** Pearson, MIC, Mutual Information, DBSCAN, k-means, PCA+power iteration, FFT (Cooley-Tukey radix-2), MLP (3-warstwowy), łańcuch Markowa, auto-discovery, detekcja anomalii, eksport/import JSON, generator Lua, raport HTML.
+
+**Problemy architektoniczne:**
+- God-class: 2836 LOC, niemożliwy test jednostkowy
+- Silnik ML wpleciony w QWidget — zero reuse bez GUI
+- Brak incremental learning — każda operacja przelicza wszystko od zera
+- DBSCAN alokuje pełną macierz O(N²) — crash przy >500 oknach
+- K-means: WCSS to placeholder (wykres łokcia nie działa)
+- MLP: brak minibatch, brak regularyzacji (overfitting), stały LR
+- Stały wektor cech (67 dim), brak selekcji/dynamicznych cech
+- Brak temporal decay — stare obserwacje = nowe
+- Tylko jedna zmienna docelowa (`m_currentVariable`)
+
+### Plan modernizacji (6 faz)
+
+#### Faza A: Dekompozycja silnika (fundament)
+- [ ] **#24 `LearningEngine`** — czysta klasa C++ bez Qt, cała logika ML
+- [ ] **#25 `AssociativeLearner` → cienka warstwa UI** — deleguje do LearningEngine
+- [ ] Stan (obserwacje, eventy, modele) przeniesiony do LearningEngine
+- [ ] LearningEngine komunikuje się przez `std::function` callbacki
+- [ ] Testy jednostkowe dla LearningEngine (headless)
+- **Zysk:** testowalność, reuse, separacja concerns
+
+#### Faza B: Online / incremental learning
+- [ ] **#26 Ring buffer dla obserwacji** z configurowalną pojemnością (10k)
+- [ ] **#27 Exponential forgetting** — waga `e^(-λ·Δt)` dla starych obserwacji
+- [ ] **#28 Korelacje online** — Welford's algorithm, aktualizacja przyrostowa
+- [ ] **#29 Anomalie: EWMA + adaptive threshold** zamiast rebuild całego modelu
+- [ ] GUI nigdy się nie blokuje przy uczeniu
+- **Zysk:** ciągłe uczenie, adaptacja do zmieniającego się ruchu
+
+#### Faza C: Unowocześnienie modeli predykcyjnych
+- [ ] **#30 MLP v2** — minibatch SGD + Adam + L2 regularization + early stopping
+- [ ] **#31 Gradient Boosted Trees** (własna implementacja XGBoost-lite) — alternatywa dla regresji liniowej
+- [ ] **#32 Przedziały ufności** dla predykcji (bootstrap residuals)
+- [ ] **#33 Multi-target** — wsparcie dla wielu zmiennych jednocześnie
+- **Zysk:** dokładniejsze predykcje, mniej overfittingu
+
+#### Faza D: Wydajność i skalowalność
+- [ ] **#34 Sparse cross-byte correlation** — pomijaj bajty o zerowej wariancji
+- [ ] **#35 DBSCAN z k-d tree** (nanoflann) zamiast O(N²)
+- [ ] **#36 Poprawny WCSS** + inicjalizacja k-means++
+- [ ] **#37 PCA: pełna eigen-decomposition** (Jacobi dla małych macierzy 5×5)
+- [ ] Cache Pearsona z inteligentną inwalidacją
+- **Zysk:** 10-100x szybsze dla dużych logów
+
+#### Faza E: Zaawansowana analiza
+- [ ] **#38 Granger causality** — przyczynowość CAN → zdarzenie
+- [ ] **#39 Change-point detection** (PELT / Binary Segmentation)
+- [ ] **#40 Cross-correlation z przesunięciem czasowym** — opóźnione zależności
+- [ ] **#41 t-SNE wizualizacja** (opcjonalnie, GPU)
+
+#### Faza F: Trwałość i odtwarzalność
+- [ ] **#42 Model versioning** — checkpointy z timestampem, rollback
+- [ ] **#43 Auto-checkpoint** co N iteracji
+- [ ] **#44 Eksport do ONNX** — własny serializer
+- [ ] **#45 Session resume** — pełne odtworzenie stanu po restarcie
