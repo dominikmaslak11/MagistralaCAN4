@@ -2,6 +2,7 @@
 #include <QMainWindow>
 #include <QTableView>
 #include <QPushButton>
+#include <QToolButton>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QLabel>
@@ -77,6 +78,8 @@ private slots:
     void onTableContextMenu(const QPoint &pos);
     void onFilterPresetSelected(int index);
     void saveCurrentFilterPreset();
+    void addMruFile(const QString &path, bool isDbc);
+    void updateMruMenus();
 
 private:
     void setupStyle();
@@ -132,6 +135,10 @@ private:
     QComboBox *m_filterPresetCombo = nullptr;
     QPushButton *m_savePresetBtn = nullptr;
 
+    // MRU buttons
+    QToolButton *m_dbcToolBtn = nullptr;
+    QToolButton *m_luaToolBtn = nullptr;
+
     // Toolbar przeniesiony do zakładki "Ruch CAN"
     QWidget *m_toolBarWidget = nullptr;
 
@@ -146,4 +153,11 @@ private:
 
     // Stan do persystencji
     bool m_darkTheme = true;
+
+    // MRU: ostatnio otwierane pliki
+    QStringList m_mruDbcFiles;
+    QStringList m_mruLuaFiles;
+
+    // Auto-odświeżanie interfejsów
+    QTimer *m_interfaceRefreshTimer = nullptr;
 };

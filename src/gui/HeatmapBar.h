@@ -95,12 +95,16 @@ private:
     }
 
     static QColor densityToColor(float d) {
-        // d=0 → ciemnoniebieski, d=1 → jaskrawoczerwony
-        if (d <= 0.0f) return QColor(26, 42, 58);       // #1a2a3a
-        if (d >= 1.0f) return QColor(255, 50, 50);        // #ff3232
-        // Interpolacja w HSL: blue (210°) → orange (30°) → red (0°)
-        float hue = 210.0f - d * 210.0f;                  // 210° → 0°
-        return QColor::fromHsvF(hue / 360.0f, 0.9f, 0.5f + d * 0.4f);
+        bool dark = QApplication::palette().color(QPalette::Window).lightness() < 128;
+        // d=0: tło normalne, d=1: maksimum burstów
+        if (d <= 0.0f)
+            return dark ? QColor(26, 42, 58) : QColor(210, 218, 228);   // dark #1a2a3a / light #d2dae4
+        if (d >= 1.0f)
+            return QColor(255, 50, 50); // #ff3232 — uniwersalny czerwony
+        // Interpolacja HSL: blue (210°) → red (0°), brightness adaptowany do motywu
+        float hue = 210.0f - d * 210.0f;
+        float lightness = dark ? 0.5f + d * 0.4f : 0.7f - d * 0.3f;
+        return QColor::fromHsvF(hue / 360.0f, 0.9f, lightness);
     }
 
     void jumpToPos(int y) {

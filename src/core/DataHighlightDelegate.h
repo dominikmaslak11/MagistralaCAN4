@@ -36,10 +36,15 @@ public:
 
         uint64_t mask = index.data(CanFrameModel::ChangedMaskRole).value<uint64_t>();
 
+        // Kolory adaptowane do motywu
+        bool dark = QApplication::palette().color(QPalette::Window).lightness() < 128;
+        const QString normColor = dark ? "#aa44ff" : "#7733cc";   // fiolet
+        const QString chgColor  = dark ? "#ff4444" : "#cc0000";   // czerwony
+
         if (mask == 0) {
             // Brak zmian — rysuj jednolitym tekstem
             painter->save();
-            painter->setPen(QColor("#aa44ff"));
+            painter->setPen(QColor(normColor));
             painter->setFont(opt.font);
             QRect textRect = opt.rect.adjusted(4, 0, -4, 0);
             painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, hexText);
@@ -62,11 +67,11 @@ public:
                               token[1].isLetterOrNumber());
 
             if (isHexByte && i < 64 && (mask & (1ULL << i))) {
-                html += QStringLiteral("<span style='color: #ff4444; font-weight: bold;'>%1</span>")
-                            .arg(token);
+                html += QStringLiteral("<span style='color: %1; font-weight: bold;'>%2</span>")
+                            .arg(chgColor, token);
             } else {
-                html += QStringLiteral("<span style='color: #aa44ff;'>%1</span>")
-                            .arg(token);
+                html += QStringLiteral("<span style='color: %1;'>%2</span>")
+                            .arg(normColor, token);
             }
 
             if (i < tokens.size() - 1)

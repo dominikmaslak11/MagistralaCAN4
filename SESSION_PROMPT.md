@@ -19,6 +19,9 @@
 - ✅ **#14 MDF4Writer async I/O** — RingBuffer 65536 slotów, wątek I/O, finalizacja nagłówka IDBL
 - ✅ **#15 RemoteCanClient exponential backoff** — 1s → 2s → 4s → ... → 30s, reset po auth
 - ✅ **#16 Async export candump/CSV** — QtConcurrent::run + QProgressDialog, GUI nie blokuje się
+- ✅ **#17 Adaptacja do jasnego motywu** — HeatmapBar + DataHighlightDelegate sprawdzają palette
+- ✅ **#18 MRU plików DBC/Lua** — QToolButton z menu, max 5, persistencja w QSettings
+- ✅ **#19 Auto-odświeżanie interfejsów** — QTimer co 5s, tylko gdy nie sniffujemy
 
 ## Pomysły na dalszą modernizację
 
@@ -30,13 +33,10 @@
 - Kompresja nagrań (zstd)
 
 ### 🟢 UX
-- Adaptacja HeatmapBar/DataHighlightDelegate do jasnego motywu
 - Undo/Redo dla operacji na modelu (clear, delete)
-- Ostatnio otwierane pliki DBC/Lua (MRU)
-- Auto-odświeżanie listy interfejsów CAN
 
 ## Kolejność rekomendowana
-1. Async export candump/CSV ← następny
+1. Kompresja nagrań (zstd) ← następny
 2. GPU correlator CPU fallback
-3. Kompresja nagrań (zstd)
+3. Undo/Redo dla modelu
 4. Plugin isolation (długoterminowy)

@@ -18,6 +18,7 @@
 #include <QScrollBar>
 #include <QFileDialog>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QStyle>
 #include <QSystemTrayIcon>
@@ -211,6 +212,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
 
     loadSettings();
+
+    // Auto-odświeżanie listy interfejsów CAN (co 5s, tylko gdy nie sniffujemy)
+    m_interfaceRefreshTimer = new QTimer(this);
+    m_interfaceRefreshTimer->setInterval(5000);
+    connect(m_interfaceRefreshTimer, &QTimer::timeout, this, [this]() {
+        if (!m_sniffing) refreshInterfaces();
+    });
+    m_interfaceRefreshTimer->start();
+
+    updateMruMenus();
 }
 
 MainWindow::~MainWindow() {
@@ -411,7 +422,8 @@ void MainWindow::loadLuaScript() {
     QString fileName = QFileDialog::getOpenFileName(this, "Wczytaj skrypt Lua", "", "Skrypty Lua (*.lua);;Wszystkie pliki (*)");
     if (fileName.isEmpty()) return;
     m_luaEngine->loadScript(fileName);
-        Logger::log(QString("Załadowano skrypt Lua: %1").arg(fileName));
+    addMruFile(fileName, false);
+    Logger::log(QString("Załadowano skrypt Lua: %1").arg(fileName));
 }
 
 void MainWindow::loadDbcFile() {
@@ -423,6 +435,7 @@ void MainWindow::loadDbcFile() {
         m_learner->setDbcParser(&m_dbcParser);
         m_model->setDbcParser(&m_dbcParser);
         m_mqttBridge.setDbcParser(&m_dbcParser);
+        addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
     } else {
@@ -467,8 +480,22 @@ void MainWindow::setupToolBar() {
     QAction *restAction = toolbar->addAction("🌐 REST API"); connect(restAction, &QAction::triggered, this, &MainWindow::toggleRestApi);
     QAction *mqttAction = toolbar->addAction("📡 MQTT"); connect(mqttAction, &QAction::triggered, this, &MainWindow::toggleMqtt);
     QAction *themeAction = toolbar->addAction("☀️ Jasny motyw"); connect(themeAction, &QAction::triggered, this, &MainWindow::toggleTheme);
-    QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
-    QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
+
+    // Lua button z menu MRU
+    m_luaToolBtn = new QToolButton;
+    m_luaToolBtn->setText("📜 Wczytaj skrypt Lua");
+    m_luaToolBtn->setPopupMode(QToolButton::MenuButtonPopup);
+    m_luaToolBtn->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    connect(m_luaToolBtn, &QToolButton::clicked, this, &MainWindow::loadLuaScript);
+    toolbar->addWidget(m_luaToolBtn);
+
+    // DBC button z menu MRU
+    m_dbcToolBtn = new QToolButton;
+    m_dbcToolBtn->setText("🗄️ Wczytaj DBC");
+    m_dbcToolBtn->setPopupMode(QToolButton::MenuButtonPopup);
+    m_dbcToolBtn->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    connect(m_dbcToolBtn, &QToolButton::clicked, this, &MainWindow::loadDbcFile);
+    toolbar->addWidget(m_dbcToolBtn);
 
     // Presety filtrów ID
     toolbar->addSeparator();
@@ -734,6 +761,8 @@ void MainWindow::saveSettings() {
     s.setValue("options/autoscroll", m_autoScroll);
     s.setValue("options/darkTheme", m_darkTheme);
     s.setValue("options/throttleInterval", m_throttleInterval);
+    s.setValue("mru/dbc", m_mruDbcFiles);
+    s.setValue("mru/lua", m_mruLuaFiles);
 }
 
 void MainWindow::loadSettings() {
@@ -766,6 +795,8 @@ void MainWindow::loadSettings() {
     m_autoScroll = s.value("options/autoscroll", true).toBool();
     m_darkTheme = s.value("options/darkTheme", true).toBool();
     m_throttleInterval = s.value("options/throttleInterval", 16).toInt();
+    m_mruDbcFiles = s.value("mru/dbc").toStringList();
+    m_mruLuaFiles = s.value("mru/lua").toStringList();
 
     // Zastosuj motyw
     const QString qssPath = m_darkTheme
@@ -776,6 +807,51 @@ void MainWindow::loadSettings() {
         qApp->setStyleSheet(qssFile.readAll());
         qssFile.close();
     }
+}
+
+void MainWindow::addMruFile(const QString &path, bool isDbc) {
+    QStringList &list = isDbc ? m_mruDbcFiles : m_mruLuaFiles;
+    list.removeAll(path);          // usuń duplikat
+    list.prepend(path);            // wstaw na początek
+    if (list.size() > 5) list.resize(5); // max 5
+    updateMruMenus();
+}
+
+void MainWindow::updateMruMenus() {
+    auto buildMenu = [this](QToolButton *btn, const QStringList &list, bool isDbc) {
+        if (!btn || list.isEmpty()) {
+            if (btn) btn->setMenu(nullptr);
+            return;
+        }
+        auto *menu = new QMenu(btn);
+        for (const QString &path : list) {
+            QAction *act = menu->addAction(QFileInfo(path).fileName());
+            connect(act, &QAction::triggered, this, [this, path, isDbc]() {
+                if (isDbc) {
+                    if (m_dbcParser.load(path)) {
+                        m_frameDetail->setDbcParser(&m_dbcParser);
+                        m_canDashboard->setDbcParser(&m_dbcParser);
+                        m_learner->setDbcParser(&m_dbcParser);
+                        m_model->setDbcParser(&m_dbcParser);
+                        m_mqttBridge.setDbcParser(&m_dbcParser);
+                        addMruFile(path, true);
+                    }
+                } else {
+                    m_luaEngine->loadScript(path);
+                    addMruFile(path, false);
+                }
+            });
+        }
+        menu->addSeparator();
+        menu->addAction("Wyczyść listę")->connect(menu->addAction("Wyczyść listę"), &QAction::triggered, this, [this, isDbc]() {
+            if (isDbc) m_mruDbcFiles.clear(); else m_mruLuaFiles.clear();
+            updateMruMenus();
+        });
+        btn->setMenu(menu);
+    };
+
+    buildMenu(m_dbcToolBtn, m_mruDbcFiles, true);
+    buildMenu(m_luaToolBtn, m_mruLuaFiles, false);
 }
 
 void MainWindow::setupStyle() {
