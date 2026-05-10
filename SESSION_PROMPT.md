@@ -18,6 +18,7 @@
 - ✅ **#13 Testy jednostkowe** — naprawiona kompilacja (usunięty QtConcurrent z PCH, dodany Qt6::Gui, J1939Parser, fix frameUpdated→frameBatchUpdated)
 - ✅ **#14 MDF4Writer async I/O** — RingBuffer 65536 slotów, wątek I/O, finalizacja nagłówka IDBL
 - ✅ **#15 RemoteCanClient exponential backoff** — 1s → 2s → 4s → ... → 30s, reset po auth
+- ✅ **#16 Async export candump/CSV** — QtConcurrent::run + QProgressDialog, GUI nie blokuje się
 
 ## Pomysły na dalszą modernizację
 
@@ -25,7 +26,6 @@
 - Plugin isolation (QProcess per plugin zamiast shared libs)
 
 ### 🟡 Wydajność
-- Async export candump/CSV (QtConcurrent::run + progress bar)
 - GPU correlator CPU fallback (SSE2/AVX2)
 - Kompresja nagrań (zstd)
 

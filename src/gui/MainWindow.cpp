@@ -27,6 +27,9 @@
 #include <QDir>
 #include <QSettings>
 #include <QCloseEvent>
+#include <QProgressDialog>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 #include "core/DataHighlightDelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -322,53 +325,86 @@ void MainWindow::onUserScroll(int value) {
 void MainWindow::exportToCandump() {
     QString fileName = QFileDialog::getSaveFileName(this, "Eksportuj do candump", "", "Pliki candump (*.log *.txt);;Wszystkie pliki (*)");
     if (fileName.isEmpty()) return;
+
     QVector<CanFrame> frames = m_model->allFrames();
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) { QMessageBox::warning(this, "Błąd", "Nie można zapisać pliku."); return; }
-    QTextStream out(&file);
-    QString iface = m_interfaceCombo->currentText().trimmed(); if (iface.isEmpty()) iface = "vcan0";
-    for (const auto &frame : frames) {
-        bool isFd = frame.fd || frame.xl;
-        // candump używa "#" dla klasycznego CAN, "##" dla CAN FD/XL
-        QString sep = isFd ? "##" : "#";
-        QString line = QString("(%1) %2 %3%4%5")
-            .arg(frame.timestamp).arg(iface)
-            .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0'))
-            .arg(sep)
-            .arg(frame.dlc);
-        int maxData = qMin((int)frame.dlc, 64);
-        for (int i = 0; i < maxData; ++i)
-            line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
-        out << line << "\n";
-    }
-    file.close();
-    QMessageBox::information(this, "Eksport", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
-        Logger::log(QString("Wyeksportowano %1 ramek do candump").arg(frames.size()));
+    QString iface = m_interfaceCombo->currentText().trimmed();
+    if (iface.isEmpty()) iface = "vcan0";
+
+    auto *progress = new QProgressDialog("Eksport candump...", QString(), 0, 0, this);
+    progress->setWindowModality(Qt::WindowModal);
+    progress->setCancelButton(nullptr);
+    progress->show();
+
+    auto *watcher = new QFutureWatcher<void>(this);
+    connect(watcher, &QFutureWatcher<void>::finished, this,
+            [this, fileName, progress, watcher, n = frames.size()]() {
+        progress->close();
+        progress->deleteLater();
+        watcher->deleteLater();
+        QMessageBox::information(this, "Eksport", QString("Wyeksportowano %1 ramek.").arg(n));
+        Logger::log(QString("Wyeksportowano %1 ramek do candump").arg(n));
+    });
+
+    watcher->setFuture(QtConcurrent::run([fileName, frames = std::move(frames), iface]() {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+        QTextStream out(&file);
+        for (const auto &frame : frames) {
+            bool isFd = frame.fd || frame.xl;
+            QString sep = isFd ? "##" : "#";
+            QString line = QString("(%1) %2 %3%4%5")
+                .arg(frame.timestamp).arg(iface)
+                .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0'))
+                .arg(sep)
+                .arg(frame.dlc);
+            int maxData = qMin((int)frame.dlc, 64);
+            for (int i = 0; i < maxData; ++i)
+                line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+            out << line << "\n";
+        }
+        file.close();
+    }));
 }
 
 void MainWindow::exportToCsv() {
     QString fileName = QFileDialog::getSaveFileName(this, "Eksportuj do CSV", "", "CSV (*.csv)");
     if (fileName.isEmpty()) return;
+
     QVector<CanFrame> frames = m_model->allFrames();
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
-    QTextStream out(&file);
-    // Nagłówek
-    out << "Index,Timestamp_us,ID(hex),Type,RTR,DLC,Data(hex),FD\n";
-    for (int i = 0; i < frames.size(); ++i) {
-        const auto &f = frames[i];
-        QString data;
-        int maxData = qMin((int)f.dlc, 64);
-        for (int b = 0; b < maxData; ++b)
-            data += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
-        out << i << "," << f.timestamp << ",0x" << QString::number(f.id, 16).toUpper()
-            << "," << (f.extended ? "EXT" : "STD") << "," << (f.rtr ? "RTR" : "Data")
-            << "," << f.dlc << "," << data << ","
-            << (f.xl ? "XL" : f.fd ? "FD" : "CAN") << "\n";
-    }
-    file.close();
-    Logger::log(QString("Wyeksportowano %1 ramek do CSV").arg(frames.size()));
-    QMessageBox::information(this, "Eksport CSV", QString("Wyeksportowano %1 ramek.").arg(frames.size()));
+
+    auto *progress = new QProgressDialog("Eksport CSV...", QString(), 0, 0, this);
+    progress->setWindowModality(Qt::WindowModal);
+    progress->setCancelButton(nullptr);
+    progress->show();
+
+    auto *watcher = new QFutureWatcher<void>(this);
+    connect(watcher, &QFutureWatcher<void>::finished, this,
+            [this, fileName, progress, watcher, n = frames.size()]() {
+        progress->close();
+        progress->deleteLater();
+        watcher->deleteLater();
+        QMessageBox::information(this, "Eksport CSV", QString("Wyeksportowano %1 ramek.").arg(n));
+        Logger::log(QString("Wyeksportowano %1 ramek do CSV").arg(n));
+    });
+
+    watcher->setFuture(QtConcurrent::run([fileName, frames = std::move(frames)]() {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+        QTextStream out(&file);
+        out << "Index,Timestamp_us,ID(hex),Type,RTR,DLC,Data(hex),FD\n";
+        for (int i = 0; i < frames.size(); ++i) {
+            const auto &f = frames[i];
+            QString data;
+            int maxData = qMin((int)f.dlc, 64);
+            for (int b = 0; b < maxData; ++b)
+                data += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
+            out << i << "," << f.timestamp << ",0x" << QString::number(f.id, 16).toUpper()
+                << "," << (f.extended ? "EXT" : "STD") << "," << (f.rtr ? "RTR" : "Data")
+                << "," << f.dlc << "," << data << ","
+                << (f.xl ? "XL" : f.fd ? "FD" : "CAN") << "\n";
+        }
+        file.close();
+    }));
 }
 
 void MainWindow::loadLuaScript() {
