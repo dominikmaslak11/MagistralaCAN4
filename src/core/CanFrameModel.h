@@ -32,10 +32,19 @@ public:
     // NOWE: dostęp do wszystkich ramek (dla eksportu)
     QVector<CanFrame> allFrames() const;
 
+    /// Unieważnia cache dla danego wiersza (wywołaj po zmianie danych ramki).
+    void invalidateRowCache(int row);
+
 signals:
     void frameUpdated(const CanFrame &frame);
 
 private:
+    /// Cache tekstów DisplayRole — unika powtarzalnego formatowania hex i lookupów DBC.
+    struct DisplayCache {
+        QString id, ext, rtr, dlc, data, timestamp, fd, delta, signal;
+        bool valid = false;
+    };
+
     /// Dla podświetlania zmian: przechowuje poprzednie dane dla każdego ID.
     QHash<uint32_t, QVector<uint8_t>> m_previousData;
     /// Do obliczania delty: ostatni timestamp per ID.
@@ -48,6 +57,7 @@ private:
     QVector<bool> m_isBurst;
     mutable QMutex m_mutex;
     QVector<CanFrame> m_frames;
+    mutable QVector<DisplayCache> m_cache;  // cache DisplayRole, równoległy do m_frames
     QHash<uint32_t, int> m_idToRow;
     bool m_overwrite = true;
     int  m_maxFrames = 10000;  // ograniczone przy 2048B/frame (~20MB max)

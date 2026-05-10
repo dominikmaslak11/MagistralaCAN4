@@ -24,28 +24,45 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
     const CanFrame &frame = m_frames.at(index.row());
 
     if (role == Qt::DisplayRole) {
-        switch (index.column()) {
-        case Column::ID:        return QString::number(frame.id, 16).toUpper().rightJustified(3, '0');
-        case Column::EXT:       return frame.extended ? "EXT" : "STD";
-        case Column::RTR:       return frame.rtr ? "RTR" : "Data";
-        case Column::DLC:       return frame.dlc;
-        case Column::DATA: {
+        int row = index.row();
+        // Sprawdź cache
+        if (row < m_cache.size() && m_cache[row].valid) {
+            switch (index.column()) {
+            case Column::ID:        return m_cache[row].id;
+            case Column::EXT:       return m_cache[row].ext;
+            case Column::RTR:       return m_cache[row].rtr;
+            case Column::DLC:       return m_cache[row].dlc;
+            case Column::DATA:      return m_cache[row].data;
+            case Column::TIMESTAMP: return m_cache[row].timestamp;
+            case Column::FD:        return m_cache[row].fd;
+            case Column::DELTA:     return m_cache[row].delta;
+            case Column::SIGNAL:    return m_cache[row].signal;
+            }
+        }
+        // Cache miss — oblicz i zapisz wszystkie kolumny na raz
+        if (row >= m_cache.size())
+            m_cache.resize(row + 1);
+        auto &c = m_cache[row];
+        c.id        = QString::number(frame.id, 16).toUpper().rightJustified(3, '0');
+        c.ext       = frame.extended ? QStringLiteral("EXT") : QStringLiteral("STD");
+        c.rtr       = frame.rtr ? QStringLiteral("RTR") : QStringLiteral("Data");
+        c.dlc       = QString::number(frame.dlc);
+        {
             QString dataHex;
             int maxShow = frame.xl ? 16 : (frame.fd ? 64 : 8);
             for (int i = 0; i < frame.dlc && i < maxShow; ++i)
                 dataHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
             if (frame.dlc > maxShow)
                 dataHex += QString("... (%1 bajtów)").arg(frame.dlc);
-            return dataHex.trimmed();
+            c.data = dataHex.trimmed();
         }
-        case Column::TIMESTAMP: return QString("%1 µs").arg(frame.timestamp);
-        case Column::FD:       return frame.xl ? "XL" : frame.fd ? "FD" : "CAN";
-        case Column::DELTA: {
-            if (index.row() < m_deltas.size() && m_deltas[index.row()] > 0)
-                return QString("%1 µs").arg(m_deltas[index.row()]);
-            return "—";
-        }
-        case Column::SIGNAL: {
+        c.timestamp = QString("%1 µs").arg(frame.timestamp);
+        c.fd        = frame.xl ? QStringLiteral("XL") : frame.fd ? QStringLiteral("FD") : QStringLiteral("CAN");
+        if (row < m_deltas.size() && m_deltas[row] > 0)
+            c.delta = QString("%1 µs").arg(m_deltas[row]);
+        else
+            c.delta = QStringLiteral("\u2014"); // em dash
+        {
             QString desc;
             if (m_dbc && frame.id) {
                 DbcMessage dm = m_dbc->messageForId(frame.id);
@@ -60,9 +77,19 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
                 uint32_t pgn = (r << 17) | (dp << 16) | (pf << 8) | (pf < 240 ? ps : 0);
                 desc = m_j1939->pgnName(pgn);
             }
-            return desc.isEmpty() ? QString() : desc;
+            c.signal = desc;
         }
-        default: break;
+        c.valid = true;
+        switch (index.column()) {
+        case Column::ID:        return c.id;
+        case Column::EXT:       return c.ext;
+        case Column::RTR:       return c.rtr;
+        case Column::DLC:       return c.dlc;
+        case Column::DATA:      return c.data;
+        case Column::TIMESTAMP: return c.timestamp;
+        case Column::FD:        return c.fd;
+        case Column::DELTA:     return c.delta;
+        case Column::SIGNAL:    return c.signal;
         }
     } else if (role == Qt::TextAlignmentRole) {
         return Qt::AlignCenter;
@@ -163,6 +190,7 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
                     changed[i] = (frame.data[i] != prev[i]) ? 1 : 0;
                 // Zapisz zmiany jako metadane w CanFrame (użyj pola error tymczasowo)
                 m_frames[row] = frame;
+                m_cache[row].valid = false;  // invalidate cache
                 changedRows.append(row);
                 // Zapisz poprzednie dane
                 QVector<uint8_t> cur(64, 0);
@@ -237,6 +265,8 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
             m_deltas.erase(m_deltas.begin(), m_deltas.begin() + toRemove);
         if (!m_isBurst.isEmpty())
             m_isBurst.erase(m_isBurst.begin(), m_isBurst.begin() + toRemove);
+        if (!m_cache.isEmpty())
+            m_cache.erase(m_cache.begin(), m_cache.begin() + toRemove);
         m_idToRow.clear(); // odbuduj mapę
         for (int i = 0; i < m_frames.size(); ++i)
             m_idToRow[m_frames[i].id] = i;
@@ -260,6 +290,7 @@ void CanFrameModel::setOverwriteMode(bool enabled) {
         m_previousData.clear();
         m_isBurst.clear();
         m_lastBurstTs.clear();
+        m_cache.clear();
     }
     endResetModel();
 }
@@ -282,6 +313,7 @@ void CanFrameModel::clear() {
         m_previousData.clear();
         m_isBurst.clear();
         m_lastBurstTs.clear();
+        m_cache.clear();
     }
     endResetModel();
 }
@@ -289,6 +321,11 @@ void CanFrameModel::clear() {
 QVector<CanFrame> CanFrameModel::allFrames() const {
     QMutexLocker lock(&m_mutex);
     return m_frames;
+}
+
+void CanFrameModel::invalidateRowCache(int row) {
+    if (row >= 0 && row < m_cache.size())
+        m_cache[row].valid = false;
 }
 
 
