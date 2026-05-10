@@ -5,7 +5,21 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
+# ── Google Test (FetchContent) ──
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.14.0
+)
+FetchContent_MakeAvailable(googletest)
+enable_testing()
+
 # ── Qt6 (wspólne) ──
+# Na Windows wymuszamy statycznego Qt6 (brak zależności od DLL)
+if(WIN32 OR MINGW)
+    set(CMAKE_PREFIX_PATH "C:/msys64/ucrt64/qt6-static" CACHE PATH "Static Qt6 prefix (MSYS2 UCRT64)")
+endif()
 find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort)
 
 # ── Platform-specific dependencies ──
@@ -185,3 +199,40 @@ if(WIN32 OR MINGW)
         COMMAND ${CMAKE_COMMAND} -E echo "Build complete: $<TARGET_FILE:${PROJECT_NAME}>"
     )
 endif()
+
+# ═══════════════════════════════════════════════════════════════
+# ── Testy jednostkowe (Google Test + QTest) ──
+# ═══════════════════════════════════════════════════════════════
+find_package(Qt6 REQUIRED COMPONENTS Test)
+
+set(TEST_SOURCES
+    # Test files
+    tests/test_canframe.cpp
+    tests/test_ringbuffer.cpp
+    tests/test_dbcparser.cpp
+    tests/test_canframemodel.cpp
+    # Sources under test (no hardware/driver deps)
+    src/core/DbcParser.cpp
+    src/core/CanFrameModel.cpp
+)
+
+add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
+target_include_directories(${PROJECT_NAME}_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)
+target_precompile_headers(${PROJECT_NAME}_tests REUSE_FROM ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}_tests PRIVATE
+    gtest_main
+    Qt6::Core
+    Qt6::Test
+)
+target_compile_definitions(${PROJECT_NAME}_tests PRIVATE UNIT_TEST)
+
+if(WIN32 OR MINGW)
+    target_compile_definitions(${PROJECT_NAME}_tests PRIVATE Q_OS_WIN)
+    target_link_options(${PROJECT_NAME}_tests PRIVATE -static-libgcc -static-libstdc++ -static)
+endif()
+
+# Register tests with CTest
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME}_tests)

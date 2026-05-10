@@ -1,6 +1,6 @@
 # MagistralaCAN4 — Sesja Modernizacyjna v5
 
-## Data sesji: 2026-05-09 (aktualizacja)
+## Data sesji: 2026-05-10
 
 ─────────────────────────────────────────────────────────────
 ## ✅ FAZA 1 — ZAKOŃCZONA
@@ -56,32 +56,36 @@
 - Multi-driver (SocketCAN, PCAN, SLCAN)
 
 ─────────────────────────────────────────────────────────────
-## 📋 FAZA 2: Dekompozycja (w toku)
+## 📋 FAZA 2: Dekompozycja (częściowo)
 ─────────────────────────────────────────────────────────────
 
 | # | Zadanie | Priorytet | Status |
 |---|---------|-----------|--------|
-| 2.1 | Rozbicie AssociativeLearner (2500+ linii) na: LearnerUI, CorrelationEngine, ClusterEngine, AnomalyDetector, SessionManager | WYSOKI | ⬜ pending |
+| 2.1 | Rozbicie AssociativeLearner (2500+ linii) na: LearnerUI, CorrelationEngine, ClusterEngine, AnomalyDetector, SessionManager | WYSOKI | ⬜ pending (odłożone) |
 | 2.2 | MainWindow → wydzielić CanStatsPanel (widget) | ŚREDNI | ✅ done |
 | 2.3 | Wydzielić logikę eksportu do CanExporter | NISKI | ⬜ pending |
 | 2.4 | QtConcurrent::run dla kosztownych korelacji | WYSOKI | ✅ done (7 metod + 3 już było = 10) |
 
 ### FAZA 3: Infrastruktura
 
-| # | Zadanie |
-|---|---------|
-| 3.1 | Testy jednostkowe (Google Test + QTest) |
-| 3.2 | CI/CD (GitHub Actions: build Win+Linux, testy, clang-tidy, auto-release) |
-| 3.3 | Precompiled headers (build 2-3× szybszy) |
-| 3.4 | Konfiguracja przez plik (config.toml) zamiast hardcoded wartości |
-| 3.5 | Plugin system — hot-reload, stabilne API |
+| # | Zadanie | Status |
+|---|---------|--------|
+| 3.1 | Testy jednostkowe (Google Test + QTest) | ⬜ pending |
+| 3.2 | CI/CD (GitHub Actions: build Win+Linux) | ✅ done |
+| 3.3 | Precompiled headers (build 2-3× szybszy) | ✅ done |
+| 3.4 | Konfiguracja przez plik (config.toml) zamiast hardcoded wartości | ⬜ pending |
+| 3.5 | Plugin system — hot-reload, stabilne API | ⬜ pending |
+
+### Ukończone modernizacje (sesja v5 2026-05-10):
+
+- **3.3 Precompiled headers** — `12133cc`: `target_precompile_headers` w CMake, `pch.h` rozszerzony do 82 nagłówków STL+Qt, 43/43 TU
+- **3.2 CI/CD** — `5da3b3f`: `.github/workflows/build.yml` — Windows (MSYS2 UCRT64) + Linux (Ubuntu 24.04), Ninja, Qt6, Lua, OpenCL
 
 ### Sugerowana kolejność (następne kroki):
 
-1. **Dekompozycja AssociativeLearner (2.1)** — 2500+ linii w jednym pliku, największy dług
-2. **QtConcurrent dla pozostałych korelacji (2.4)** — uzupełnić async o correlationMatrix, MIC, mutualInformation
-3. **CanStatsPanel (2.2)** — wydzielenie statystyk z MainWindow
-4. **Testy (3.1)** — bezpieczeństwo przed dalszymi zmianami
+1. **Testy (3.1)** — bezpieczeństwo przed dalszymi zmianami
+2. **Dekompozycja AssociativeLearner (2.1)** — 2500+ linii w jednym pliku, największy dług
+3. **Konfiguracja config.toml (3.4)** — zastąpienie hardcoded wartości
 
 ─────────────────────────────────────────────────────────────
 ## 🏗 ARCHITEKTURA
@@ -159,19 +163,19 @@ Branch: main
 ─────────────────────────────────────────────────────────────
 
 ```
+5da3b3f ci: GitHub Actions build workflow (Windows MSYS2 + Ubuntu 24.04)
+12133cc build: PCH via target_precompile_headers
+bb67573 fix: move CanStatsPanel init before setupCentralWidget (fixes SIGSEGV)
+d51c2e6 perf: async all heavy correlation/clustering/ML methods via runAsync (Faza 2.4)
+e264125 refactor: extract CanStatsPanel widget from MainWindow (Faza 2.2)
+3b5c9a6 fix: PCAN auto-detection via CAN_Initialize + push build/ artifacts
+206be55 feat: Git LFS for *.exe/*.dll + precompiled header ready (pch.h)
 e838509 feat: CAN baudrate selector UI + consolidate output to build_native
 0b384d5 fix: PCAN inverted OCCUPIED flag + hw detection; SLCAN multi-baud detection
-a244bea docs: session prompt v5 — Faza 1 complete, Faza 2 plan
 2c66879 perf: DFT → Cooley-Tukey FFT (O(N log N)) + DFT→FFT UI labels
 3ea6916 feat: .clang-format config + async button feedback (QtConcurrent::run ready)
 a068cb1 refactor: extract inline styles to style_dark.qss / style_light.qss
 3369f75 perf: CanFrame downsizing — 2048B→64B payload (40× memory reduction)
-7ca82dc docs: session prompt v4 — modernization roadmap + resume instructions
-23ca2fe feat: event-driven read (1ms idle) + DBC signal decoder (decodeSignals)
-53456f3 feat: FFT frequency analysis for periodic CAN signal detection
-c55b6d8 feat: DBSCAN clustering + CanSniffer QWaitCondition signaling
-edab4fd v2.1.1: SLCAN driver (serial port) with auto-detection
-56a170f v2.1.0: Sniffer ring buffer, per-ID stats, burst detection
 ```
 
 Branch: `main` — zsynchronizowany z `origin/main`
@@ -192,53 +196,23 @@ Token GitHub — użytkownik przekaże go w nowej sesji.
 ─────────────────────────────────────────────────────────────
 
 Wczytaj plik `SESSION_PROMPT.md`, porównaj lokalne pliki z tym co jest na
-githubie (`git fetch && git status`). Chcę kontynuować pracę od Fazy 2.1.
+githubie (`git fetch && git status`). Kontynuuj od **Fazy 3.1 — testy jednostkowe**.
 
-**Faza 2.1 — dekompozycja AssociativeLearner** (plik ~2530 linii):
+**Faza 3.1 — testy jednostkowe (Google Test + QTest):**
 
-Rozbij `src/core/AssociativeLearner.cpp` na 5 modułów:
+1. Dodaj Google Test do CMake (FetchContent lub find_package)
+2. Utwórz testy dla struktur danych:
+   - `test_canframe.cpp` — `CanFrame::byteAt()` bounds-check, domyślne wartości, rozmiar (64B)
+   - `test_ringbuffer.cpp` — `RingBuffer<T>` SPSC lock-free: push/pop, empty, overflow
+   - `test_dbcparser.cpp` — parsowanie pliku DBC, decodeSignals()
+3. Utwórz testy dla logiki (bez sprzętu):
+   - `test_canframemodel.cpp` — model tabeli Qt: rowCount, columnCount, overwrite, sort
+4. Podepnij testy do CMake (`add_executable`, `enable_testing()`, `add_test()`)
+5. Dodaj target `ninja test` lub `ctest`
+6. Zintegruj testy z CI/CD (dodaj krok w `.github/workflows/build.yml`)
 
-1. **LearnerUI** (`.h` + `.cpp`) — konstrukcja widgetów, layout, connecty
-   - Wyciągnij cały konstruktor `AssociativeLearner::AssociativeLearner(QWidget*)`
-   - Wszystkie QPushButton, QComboBox, QTableWidget, QChartView — jako osobna klasa
-
-2. **CorrelationEngine** (`.h` + `.cpp`) — korelacje, regresja, MIC, MI
-   - `updateCorrelationTable()`, `computeMutualInformation()`, `computeMIC()`,
-     `updateCrossByteTable()`, `updateCrossVariableMatrix()`, `applySignificanceFilter()`
-   - `trainPrediction()`, `updatePredictionDisplay()`, `LinearModel`
-
-3. **ClusterEngine** (`.h` + `.cpp`) — klastrowanie, PCA, DBSCAN, uczenie
-   - `clusterWindows()`, `runPcaClustering()`, `dbscanClustering()`, `autoKMeans()`
-   - `markEvent()`, `markNonEvent()`, `updateCandidates()`, `resetLearning()`
-   - `buildFeatureVectors()`, `buildWindowFeatures()`, `recalcAdaptiveWindow()`
-   - `kMeans()`, `dbscan()`
-
-4. **AnomalyDetector** (`.h` + `.cpp`) — anomalie, auto-detekcja, NN, Markov
-   - `startAnomalyMonitoring()`, `stopAnomalyMonitoring()`, `checkAnomaly()`
-   - `buildNormalModel()`, `checkAutoEvent()`
-   - `trainNeuralNetwork()`, `updateNnPrediction()`, `predictNeural()`
-   - `trainMarkovModel()`, `predictNextFrames()`
-
-5. **SessionManager** (`.h` + `.cpp`) — persystencja, eksport
-   - `saveSession()`, `loadSession()`, `autoSave()`
-   - `exportModels()`, `importModels()`
-   - `generateLuaScript()`, `exportHtmlReport()`
-
-Pozostałe w AssociativeLearner (jako fasada):
-- `processFrame()`, `addObservation()`, `addVariable()`, `addNewVariable()`
-- `onVariableChanged()`, `currentObservations()`
-- `updateSequenceTable()`, `updateTimeChart()`, `updateChart()`
-- `runFftAnalysis()`, `computeDft()`
-- Wszystkie member variables (`m_*`) — rozdzielone do odpowiednich modułów
-
-**Zasady**:
-- AssociativeLearner staje się fasadą trzymającą wskaźniki do 5 modułów
-- Każdy moduł dostaje referencję do AssociativeLearner (dostęp do `m_frameHistory` itp.)
-- Zachowaj sygnatury metod publicznych (nie psuj connectów!)
-- Kompiluj po każdej wyodrębnionej klasie: `ninja -C build_native -j8`
-
-Token GitHub jest w sekcji 🔑 CREDENTIALS powyżej. Działaj samodzielnie.
+Token GitHub: użytkownik przekaże w nowej sesji.
 
 ─────────────────────────────────────────────────────────────
-## END OF SESSION PROMPT — sesja v5, 2026-05-09
+## END OF SESSION PROMPT — sesja v5, 2026-05-10
 ─────────────────────────────────────────────────────────────

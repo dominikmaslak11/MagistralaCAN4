@@ -45,6 +45,9 @@ jobs:
       - name: Build
         run: ninja -C build_ci -j$(nproc)
 
+      - name: Test
+        run: ctest --test-dir build_ci --output-on-failure -j$(nproc)
+
   # ═══════════════════════════════════════════════════════════════
   # Linux build — Ubuntu 24.04 + GCC + Qt6 + Lua + OpenCL
   # ═══════════════════════════════════════════════════════════════
@@ -88,3 +91,6 @@ jobs:
 
       - name: Build
         run: ninja -C build_ci -j$(nproc)
+
+      - name: Test
+        run: ctest --test-dir build_ci --output-on-failure -j$(nproc)
