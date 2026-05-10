@@ -19,6 +19,11 @@ public:
     /// Czy filtr jest aktywny.
     bool isFilterActive() const { return m_filterActive; }
 
+    /// Bieżący filtr jako hex string (wielkie litery), pusty gdy brak filtra.
+    QString currentFilterId() const {
+        return m_filterActive ? QString::number(m_filterId, 16).toUpper() : QString();
+    }
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;

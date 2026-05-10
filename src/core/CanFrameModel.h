@@ -16,6 +16,8 @@ public:
 
     /// Niestandardowa rola: bitmask zmienionych bajtów (64-bit, bit i = bajt i się zmienił)
     static constexpr int ChangedMaskRole = Qt::UserRole + 1;
+    /// Niestandardowa rola: czy ramka jest burstem (do heatmap scrollbar)
+    static constexpr int BurstRole = Qt::UserRole + 2;
 
     explicit CanFrameModel(QObject *parent = nullptr);
 

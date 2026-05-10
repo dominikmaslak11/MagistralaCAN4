@@ -158,6 +158,8 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         }
     } else if (role == ChangedMaskRole && index.column() == Column::DATA) {
         return QVariant::fromValue(frame.changedMask);
+    } else if (role == BurstRole) {
+        return m_isBurst[phys];
     }
     return {};
 }

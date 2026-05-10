@@ -131,6 +131,7 @@ set(HEADERS
     src/core/UdsParser.h
     src/core/UdsWidget.h
     src/gui/MainWindow.h
+    src/gui/HeatmapBar.h
 )
 
 if(HAS_XCB)

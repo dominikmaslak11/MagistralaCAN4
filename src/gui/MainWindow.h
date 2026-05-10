@@ -32,6 +32,7 @@
 #include "core/CanFilterProxy.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
+#include "gui/HeatmapBar.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
 
@@ -70,11 +71,15 @@ private slots:
     void toggleRestApi();
     void toggleMqtt();
     void toggleTheme();
+    void onTableContextMenu(const QPoint &pos);
+    void onFilterPresetSelected(int index);
+    void saveCurrentFilterPreset();
 
 private:
     void setupStyle();
     void setupToolBar();
     void setupCentralWidget();
+    void loadFilterPresets();
 
     CanSniffer m_sniffer;
     ICanDriver *m_canDriver = nullptr;
@@ -114,6 +119,13 @@ private:
 
     // Proxy filtrująco-sortujący między CanFrameModel a QTableView
     CanFilterProxy *m_filterProxy = nullptr;
+
+    // Pasek szybkiego skoku (heatmap scrollbar)
+    HeatmapBar *m_heatmapBar = nullptr;
+
+    // Presety filtrów ID
+    QComboBox *m_filterPresetCombo = nullptr;
+    QPushButton *m_savePresetBtn = nullptr;
 
     // Toolbar przeniesiony do zakładki "Ruch CAN"
     QWidget *m_toolBarWidget = nullptr;

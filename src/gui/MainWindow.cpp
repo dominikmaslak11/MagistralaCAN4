@@ -23,6 +23,8 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QClipboard>
+#include <QInputDialog>
+#include <QDir>
 #include "core/DataHighlightDelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -50,6 +52,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Podświetlanie zmienionych bajtów w kolumnie DATA
     m_tableView->setItemDelegateForColumn(CanFrameModel::Column::DATA,
                                           new DataHighlightDelegate(m_tableView));
+
+    // Menu kontekstowe prawego przycisku
+    m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_tableView, &QTableView::customContextMenuRequested,
+            this, &MainWindow::onTableContextMenu);
 
     m_learner = new AssociativeLearner;
     // Lokalne skróty klawiszowe (zawsze działają przy aktywnym oknie)
@@ -421,6 +428,24 @@ void MainWindow::setupToolBar() {
     QAction *themeAction = toolbar->addAction("☀️ Jasny motyw"); connect(themeAction, &QAction::triggered, this, &MainWindow::toggleTheme);
     QAction *luaAction = toolbar->addAction("📜 Wczytaj skrypt Lua"); connect(luaAction, &QAction::triggered, this, &MainWindow::loadLuaScript);
     QAction *dbcAction = toolbar->addAction("🗄️ Wczytaj DBC"); connect(dbcAction, &QAction::triggered, this, &MainWindow::loadDbcFile);
+
+    // Presety filtrów ID
+    toolbar->addSeparator();
+    m_filterPresetCombo = new QComboBox;
+    m_filterPresetCombo->setToolTip("Presety filtrów CAN ID");
+    m_filterPresetCombo->setMinimumWidth(100);
+    m_filterPresetCombo->addItem("— filtry —");
+    connect(m_filterPresetCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &MainWindow::onFilterPresetSelected);
+    toolbar->addWidget(m_filterPresetCombo);
+
+    m_savePresetBtn = new QPushButton("+");
+    m_savePresetBtn->setToolTip("Zapisz bieżący filtr jako preset");
+    m_savePresetBtn->setFixedWidth(28);
+    connect(m_savePresetBtn, &QPushButton::clicked, this, &MainWindow::saveCurrentFilterPreset);
+    toolbar->addWidget(m_savePresetBtn);
+
+    loadFilterPresets();
 }
 
 void MainWindow::setupCentralWidget() {
@@ -434,7 +459,16 @@ void MainWindow::setupCentralWidget() {
 
     canLayout->addWidget(m_toolBarWidget);
     canLayout->addWidget(m_canStatsPanel);
-    canLayout->addWidget(m_tableView);
+
+    // Tabela + pasek heatmap (szybki skok)
+    auto *tableRow = new QHBoxLayout;
+    tableRow->setContentsMargins(0, 0, 0, 0);
+    tableRow->setSpacing(0);
+    tableRow->addWidget(m_tableView);
+    m_heatmapBar = new HeatmapBar(m_filterProxy, canTab);
+    m_heatmapBar->setTableView(m_tableView);
+    tableRow->addWidget(m_heatmapBar);
+    canLayout->addLayout(tableRow);
 
     tabs->addTab(canTab, "Ruch CAN");
     tabs->addTab(m_learner, "Uczenie asocjacyjne");
@@ -470,6 +504,113 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 void MainWindow::applyIdFilter(const QString &text) {
     if (m_filterProxy)
         m_filterProxy->setIdFilter(text);
+}
+
+void MainWindow::loadFilterPresets() {
+    if (!m_filterPresetCombo) return;
+
+    const QString presetsPath = QDir::homePath() + "/.magistrala_can4/filter_presets.txt";
+    QFile file(presetsPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        int sep = line.indexOf('|');
+        if (sep > 0) {
+            QString hexId = line.left(sep).trimmed();
+            QString name  = line.mid(sep + 1).trimmed();
+            m_filterPresetCombo->addItem(
+                QString("0x%1 — %2").arg(hexId.toUpper(), name),
+                hexId); // store raw hex as user data
+        }
+    }
+    file.close();
+}
+
+void MainWindow::saveCurrentFilterPreset() {
+    if (!m_filterProxy || !m_filterProxy->isFilterActive()) return;
+
+    // Pobierz bieżący filtr z proxy
+    QString currentId = m_filterProxy->currentFilterId();  // hex, uppercase
+    if (currentId.isEmpty()) return;
+
+    bool ok = false;
+    QString name = QInputDialog::getText(this, "Zapisz preset filtru",
+        QString("Nazwa dla filtru 0x%1:").arg(currentId),
+        QLineEdit::Normal, QString(), &ok);
+    if (!ok || name.trimmed().isEmpty()) return;
+    name = name.trimmed();
+
+    // Zapisz do pliku
+    const QString presetsPath = QDir::homePath() + "/.magistrala_can4/filter_presets.txt";
+    QDir().mkpath(QDir::homePath() + "/.magistrala_can4");
+    QFile file(presetsPath);
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << currentId << "|" << name << "\n";
+        file.close();
+    }
+
+    // Dodaj do combo
+    m_filterPresetCombo->addItem(
+        QString("0x%1 — %2").arg(currentId, name),
+        currentId);
+}
+
+void MainWindow::onFilterPresetSelected(int index) {
+    if (!m_filterPresetCombo || index <= 0) return; // index 0 = placeholder
+    QString hexId = m_filterPresetCombo->itemData(index).toString();
+    if (!hexId.isEmpty())
+        applyIdFilter(hexId);
+}
+
+void MainWindow::onTableContextMenu(const QPoint &pos) {
+    QModelIndex proxyIndex = m_tableView->indexAt(pos);
+    QModelIndex srcIndex = proxyIndex.isValid() && m_filterProxy
+        ? m_filterProxy->mapToSource(proxyIndex) : QModelIndex();
+    CanFrame frame = srcIndex.isValid() ? m_model->frameAt(srcIndex.row()) : CanFrame();
+    bool hasFrame = srcIndex.isValid() && (frame.dlc > 0 || frame.id != 0);
+
+    QMenu menu(m_tableView);
+
+    if (hasFrame) {
+        QString hexId = QString::number(frame.id, 16).toUpper();
+
+        QAction *copyId = menu.addAction(QString("Kopiuj CAN ID  (0x%1)").arg(hexId));
+        connect(copyId, &QAction::triggered, this, [hexId]() {
+            QApplication::clipboard()->setText(hexId);
+        });
+
+        QAction *copyData = menu.addAction("Kopiuj dane (hex)");
+        connect(copyData, &QAction::triggered, this, [frame]() {
+            QString data;
+            for (int i = 0; i < frame.dlc && i < 64; ++i)
+                data += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+            QApplication::clipboard()->setText(data.trimmed());
+        });
+
+        menu.addSeparator();
+
+        QAction *filterAction = menu.addAction(QString("Filtruj po ID 0x%1").arg(hexId));
+        connect(filterAction, &QAction::triggered, this, [this, hexId]() {
+            applyIdFilter(hexId);
+        });
+    }
+
+    if (m_filterProxy && m_filterProxy->isFilterActive()) {
+        QAction *clearAction = menu.addAction("Wyczyść filtr");
+        connect(clearAction, &QAction::triggered, this, [this]() {
+            applyIdFilter(QString());
+        });
+    }
+
+    menu.addSeparator();
+
+    QAction *copyTsAction = menu.addAction("Kopiuj zaznaczone (TSV)");
+    connect(copyTsAction, &QAction::triggered, this, &MainWindow::copySelectedToClipboard);
+
+    menu.exec(m_tableView->viewport()->mapToGlobal(pos));
 }
 
 void MainWindow::copySelectedToClipboard() {
