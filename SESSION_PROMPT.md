@@ -4,13 +4,15 @@
 - ✅ QToolBar przeniesiony z QMainWindow do layoutu zakładki "Ruch CAN"
 - ✅ CanStatsPanel skompresowany do 26px (maxHeight)
 - ✅ QTableView dosunięty do góry, spacing=0
+- ✅ **#1 QSortFilterProxyModel** (commit `6b44aa3`) — CanFilterProxy, -45 linii z CanFrameModel::sort()
+- ✅ **#2 Cache DisplayRole** (commit `cd3a978`) — lazy-fill cache 9 kolumn, O(1) po pierwszym wyświetleniu
 
 ## Pomysły na optymalizację / modernizację
 
 ### Wysoki priorytet
-1. **QSortFilterProxyModel** zamiast ręcznego `setRowHidden()` + sortowania — filtrowanie O(1), sortowanie bez kopiowania
-2. **Wirtualne scrollowanie** — `canFetchMore()`/`fetchMore()` w CanFrameModel, `setBatchSize(200)`
-3. **Cache'owanie `data()`** — leniwe pola cache w CanFrame (hex string, kolory, nazwy DBC)
+1. ~~QSortFilterProxyModel~~ ✅
+2. ~~Cache'owanie data()~~ ✅
+3. **Wirtualne scrollowanie** — `setBatchSize(200)` + `ScrollPerPixel`
 
 ### Średni priorytet
 4. **Batch'owanie `frameUpdated`** dla WebSocket — wysyłka paczkami JSON zamiast per-ramka
@@ -24,6 +26,8 @@
 10. Presety filtrów ID
 
 ## Kolejność implementacji
-1. QSortFilterProxyModel (największy efekt / najmniej kodu)
-2. Cache data()
-3. Wirtualne scrollowanie
+1. ~~QSortFilterProxyModel~~ ✅
+2. ~~Cache data()~~ ✅
+3. Wirtualne scrollowanie ← teraz
+4. Batch'owanie frameUpdated
+5. Cykliczny bufor
