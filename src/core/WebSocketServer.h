@@ -57,8 +57,8 @@ public slots:
     /// Zatrzymuje serwer.
     void stop();
 
-    /// Rozsyła ramkę CAN jako JSON do autoryzowanych klientów.
-    void broadcastFrame(const CanFrame &frame);
+    /// Rozsyła partię ramek CAN jako tablicę JSON (batch — jedno wywołanie zamiast N).
+    void broadcastFrameBatch(const QVector<CanFrame> &frames);
 
 signals:
     void statusChanged(bool running);
@@ -72,7 +72,6 @@ private slots:
     void checkAuthTimeout();
 
 private:
-    [[nodiscard]] QString frameToJson(const CanFrame &frame) const;
     void setupDirs();
     QString loadOrGenerateToken();
 

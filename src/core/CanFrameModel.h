@@ -36,7 +36,8 @@ public:
     void invalidateRowCache(int row);
 
 signals:
-    void frameUpdated(const CanFrame &frame);
+    /// Emitowany po każdej partii ramek — do WebSocket broadcast (batch JSON).
+    void frameBatchUpdated(const QVector<CanFrame> &frames);
 
 private:
     /// Cache tekstów DisplayRole — unika powtarzalnego formatowania hex i lookupów DBC.

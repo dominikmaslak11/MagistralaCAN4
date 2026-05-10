@@ -225,9 +225,8 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
     }
     lock.unlock();
 
-    // Emituj sygnał do WebSocket broadcast dla każdej nowej/zmienionej ramki
-    for (const CanFrame &frame : newFrames)
-        emit frameUpdated(frame);
+    // Emituj batch ramek do WebSocket broadcast (jedna tablica JSON)
+    emit frameBatchUpdated(newFrames);
 
     int totalInserted = m_frames.size() - oldSize;
     if (totalInserted > 0) {

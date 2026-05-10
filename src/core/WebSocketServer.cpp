@@ -300,8 +300,8 @@ void WebSocketServer::checkAuthTimeout() {
 
 // ── Broadcast ────────────────────────────────────────────────
 
-void WebSocketServer::broadcastFrame(const CanFrame &frame) {
-    if (!m_running) return;
+void WebSocketServer::broadcastFrameBatch(const QVector<CanFrame> &frames) {
+    if (!m_running || frames.isEmpty()) return;
 
     // Usuń martwe sockety
     m_authenticatedClients.erase(
@@ -314,35 +314,34 @@ void WebSocketServer::broadcastFrame(const CanFrame &frame) {
 
     if (m_authenticatedClients.isEmpty()) return;
 
-    const QString json = frameToJson(frame);
-    for (QWebSocket *client : m_authenticatedClients) {
-        client->sendTextMessage(json);
+    // Zbuduj tablicę JSON
+    QJsonArray arr;
+    for (const CanFrame &frame : frames) {
+        QJsonObject obj;
+        obj[QStringLiteral("id")]        = static_cast<int>(frame.id);
+        obj[QStringLiteral("extended")]  = frame.extended;
+        obj[QStringLiteral("rtr")]       = frame.rtr;
+        obj[QStringLiteral("fd")]        = frame.fd;
+        obj[QStringLiteral("dlc")]       = static_cast<int>(frame.dlc);
+        obj[QStringLiteral("timestamp")] = static_cast<qint64>(frame.timestamp);
+        QString hexData;
+        hexData.reserve(frame.dlc * 2);
+        for (int i = 0; i < frame.dlc && i < 64; ++i)
+            hexData += QStringLiteral("%1").arg(frame.data[i], 2, 16, QLatin1Char('0'));
+        obj[QStringLiteral("data")] = hexData;
+        arr.append(obj);
     }
+
+    QJsonObject root;
+    root[QStringLiteral("type")]   = QStringLiteral("frames");
+    root[QStringLiteral("count")]  = arr.size();
+    root[QStringLiteral("frames")] = arr;
+
+    const QString json = QString::fromUtf8(
+        QJsonDocument(root).toJson(QJsonDocument::Compact));
+
+    for (QWebSocket *client : m_authenticatedClients)
+        client->sendTextMessage(json);
 }
 
-// ── JSON ─────────────────────────────────────────────────────
 
-QString WebSocketServer::frameToJson(const CanFrame &frame) const {
-    QJsonObject obj;
-    obj[QStringLiteral("type")]      = QStringLiteral("frame");
-    obj[QStringLiteral("id")]        = static_cast<int>(frame.id);
-    obj[QStringLiteral("extended")]  = frame.extended;
-    obj[QStringLiteral("rtr")]       = frame.rtr;
-    obj[QStringLiteral("error")]     = frame.error;
-    obj[QStringLiteral("fd")]        = frame.fd;
-    obj[QStringLiteral("dlc")]       = static_cast<int>(frame.dlc);
-    obj[QStringLiteral("timestamp")] = static_cast<qint64>(frame.timestamp);
-
-    QString hexData;
-    hexData.reserve(frame.dlc * 2);
-    for (int i = 0; i < frame.dlc && i < 64; ++i)
-        hexData += QStringLiteral("%1").arg(frame.data[i], 2, 16, QLatin1Char('0'));
-    obj[QStringLiteral("data")] = hexData;
-
-    QJsonArray dataBytes;
-    for (int i = 0; i < frame.dlc && i < 64; ++i)
-        dataBytes.append(static_cast<int>(frame.data[i]));
-    obj[QStringLiteral("dataBytes")] = dataBytes;
-
-    return QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact));
-}

@@ -171,8 +171,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_tableView, &QTableView::clicked, this, &MainWindow::onFrameSelected);
 
     // Zdalny CAN – serwer: broadcast lokalnych ramek do klientów WSS
-    connect(m_model, &CanFrameModel::frameUpdated,
-            m_remoteCanWidget->server(), &WebSocketServer::broadcastFrame);
+    connect(m_model, &CanFrameModel::frameBatchUpdated,
+            m_remoteCanWidget->server(), &WebSocketServer::broadcastFrameBatch);
 
     // Zdalny CAN – klient: wstrzykiwanie odebranych ramek do pipeline'u
     connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,

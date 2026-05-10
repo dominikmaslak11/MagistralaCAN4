@@ -28,6 +28,6 @@
 ## Kolejność implementacji
 1. ~~QSortFilterProxyModel~~ ✅
 2. ~~Cache data()~~ ✅
-3. Wirtualne scrollowanie ← teraz
-4. Batch'owanie frameUpdated
+3. ~~Wirtualne scrollowanie~~ ✅
+4. Batch'owanie frameUpdated ← teraz
 5. Cykliczny bufor
