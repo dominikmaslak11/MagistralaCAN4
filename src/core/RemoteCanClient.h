@@ -52,4 +52,6 @@ private:
     uint64_t   m_frameCount     = 0;
     QTimer     m_reconnectTimer;
     bool       m_intentionalDisconnect = false;
+    int        m_reconnectDelayMs = 1000;   // start: 1s, exponential do 30s
+    static constexpr int MAX_RECONNECT_DELAY_MS = 30000;
 };

@@ -16,16 +16,15 @@
 - ✅ **#11 QSettings persistence** — geometria okna, ostatni interfejs, baud, opcje, motyw
 - ✅ **#12 Async I/O CanRecorder** — RingBuffer 65536 slotów, dedykowany wątek I/O, zero blokowania GUI
 - ✅ **#13 Testy jednostkowe** — naprawiona kompilacja (usunięty QtConcurrent z PCH, dodany Qt6::Gui, J1939Parser, fix frameUpdated→frameBatchUpdated)
+- ✅ **#14 MDF4Writer async I/O** — RingBuffer 65536 slotów, wątek I/O, finalizacja nagłówka IDBL
+- ✅ **#15 RemoteCanClient exponential backoff** — 1s → 2s → 4s → ... → 30s, reset po auth
 
 ## Pomysły na dalszą modernizację
 
 ### 🔴 Krytyczne (stabilność)
 - Plugin isolation (QProcess per plugin zamiast shared libs)
-- MDF4Writer async I/O (jak CanRecorder)
-- RemoteCanClient reconnection z exponential backoff
 
 ### 🟡 Wydajność
-- DBC hash lookup zamiast liniowego skanowania w messageForId()
 - Async export candump/CSV (QtConcurrent::run + progress bar)
 - GPU correlator CPU fallback (SSE2/AVX2)
 - Kompresja nagrań (zstd)
@@ -37,8 +36,7 @@
 - Auto-odświeżanie listy interfejsów CAN
 
 ## Kolejność rekomendowana
-1. DBC hash lookup ← następny
-2. MDF4Writer async I/O
-3. RemoteCanClient reconnection
-4. Async export
-5. Plugin isolation (długoterminowy)
+1. Async export candump/CSV ← następny
+2. GPU correlator CPU fallback
+3. Kompresja nagrań (zstd)
+4. Plugin isolation (długoterminowy)

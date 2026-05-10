@@ -19,7 +19,7 @@ RemoteCanClient::RemoteCanClient(QObject *parent) : QObject(parent) {
 
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
         if (!m_intentionalDisconnect && !isConnected()) {
-            qDebug() << "RemoteCanClient: próba ponownego połączenia...";
+            qDebug() << "RemoteCanClient: ponawianie połączenia (backoff" << m_reconnectDelayMs << "ms)...";
             m_socket.open(QUrl(m_url));
         }
     });
@@ -37,6 +37,7 @@ void RemoteCanClient::connectToServer(const QString &url, const QString &token) 
     m_intentionalDisconnect = false;
     m_authenticated = false;
     m_frameCount = 0;
+    m_reconnectDelayMs = 1000;  // reset backoff
 
     qDebug() << "RemoteCanClient: łączę z" << url;
     m_socket.open(QUrl(url));
@@ -73,8 +74,11 @@ void RemoteCanClient::onDisconnected() {
     qDebug() << "RemoteCanClient: rozłączono";
 
     if (!m_intentionalDisconnect) {
-        emit statusChanged(false, "Rozłączono – ponawianie...");
+        emit statusChanged(false, QString("Rozłączono – ponawianie za %1s...").arg(m_reconnectDelayMs / 1000.0, 0, 'f', 1));
+        m_reconnectTimer.setInterval(m_reconnectDelayMs);
         m_reconnectTimer.start();
+        // Exponential backoff: podwój delay, maks. 30s
+        m_reconnectDelayMs = std::min(m_reconnectDelayMs * 2, MAX_RECONNECT_DELAY_MS);
     } else {
         emit statusChanged(false, "Rozłączono");
     }
@@ -90,6 +94,7 @@ void RemoteCanClient::onTextMessageReceived(const QString &message) {
     if (type == "auth_ok") {
         m_authenticated = true;
         m_reconnectTimer.stop();
+        m_reconnectDelayMs = 1000;  // reset backoff po udanym połączeniu
         qDebug() << "RemoteCanClient: autoryzacja OK, odbieram ramki";
         emit statusChanged(true, "Połączono i autoryzowano");
         return;
