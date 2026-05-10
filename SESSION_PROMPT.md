@@ -9,6 +9,7 @@
 - ✅ **#3 Wirtualne scrollowanie** (commit `4d6f843`) — ScrollPerPixel, smooth scrolling
 - ✅ **#4 Batch'owanie frameUpdated** (commit `900cfcb`) — WebSocket wysyła paczkami JSON zamiast per-ramka
 - ✅ **#5 Cykliczny bufor** — pre-alokacja m_maxFrames, m_head + m_size, zero kopiowania przy przepełnieniu
+- ✅ **#6 Throttling slotów analizy** — frameProcessedThrottled (co 16-tą ramkę), osobny sygnał dla ciężkich widgetów
 
 ## Pomysły na optymalizację / modernizację
 
@@ -20,7 +21,7 @@
 ### Średni priorytet
 4. ~~Batch'owanie `frameUpdated`~~ ✅
 5. ~~Cykliczny bufor w modelu~~ ✅
-6. **Throttling slotów analizy** — pomijanie co N-tej ramki dla dashboardu, plug-in loader
+6. ~~Throttling slotów analizy~~ ✅ — drugi sygnał frameProcessedThrottled, co 16-tą ramkę do widgetów
 
 ### Niski priorytet (UX)
 7. Live podświetlanie zmienionych bajtów w tabeli
@@ -34,3 +35,4 @@
 3. ~~Wirtualne scrollowanie~~ ✅
 4. ~~Batch'owanie frameUpdated~~ ✅
 5. ~~Cykliczny bufor~~ ✅
+6. ~~Throttling slotów analizy~~ ✅

@@ -145,18 +145,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_interfaceCombo->setCurrentIndex(0);
 
     // Analiza ramek po przetworzeniu przez model (Direct, główny wątek)
+    // Krytyczne sloty — każda ramka: nagrywanie, uczenie, forwarding
     connect(this, &MainWindow::frameProcessed, m_learner, &AssociativeLearner::processFrame);
     connect(this, &MainWindow::frameProcessed, m_luaEngine, &LuaScriptEngine::onNewFrame);
-    connect(this, &MainWindow::frameProcessed, m_canDashboard, &CanDashboard::updateSignal);
-    connect(this, &MainWindow::frameProcessed, m_j1939Widget, &J1939Widget::processFrame);
     connect(this, &MainWindow::frameProcessed, m_canSimWidget->simulator(), &CanNodeSimulator::onNewFrame);
-    connect(this, &MainWindow::frameProcessed, m_udsWidget, &UdsWidget::processFrame);
-    connect(this, &MainWindow::frameProcessed, m_obdWidget, &ObdWidget::processFrame);
-    connect(this, &MainWindow::frameProcessed, m_canOpenWidget, &CanOpenWidget::processFrame);
     connect(this, &MainWindow::frameProcessed, &m_recorder, &CanRecorder::recordFrame);
     connect(this, &MainWindow::frameProcessed, &m_mdf4Writer, &Mdf4Writer::recordFrame);
     connect(this, &MainWindow::frameProcessed, &m_mqttBridge, &MqttBridge::onNewFrame);
-    connect(this, &MainWindow::frameProcessed, &m_pluginLoader, &PluginLoader::broadcastFrame);
+    // Throttlowane sloty — co N-tą ramkę: dashboard, widgety diagnostyczne, pluginy
+    connect(this, &MainWindow::frameProcessedThrottled, m_canDashboard, &CanDashboard::updateSignal);
+    connect(this, &MainWindow::frameProcessedThrottled, m_j1939Widget, &J1939Widget::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_udsWidget, &UdsWidget::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_obdWidget, &ObdWidget::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_canOpenWidget, &CanOpenWidget::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -255,9 +257,15 @@ void MainWindow::updateTableBatch() {
         m_frameBuffer.reserve(4096);
     }
 
-    // Emituj ramki do slotów analizy (DirectConnection, zero nadmiarowych kopii)
-    for (const CanFrame &frame : batch)
+    // Emituj ramki do slotów analizy:
+    // frameProcessed          → krytyczne sloty (każda ramka)
+    // frameProcessedThrottled → co N-tą (widgety wizualne, pluginy)
+    for (const CanFrame &frame : batch) {
         emit frameProcessed(frame);
+        ++m_frameCounter;
+        if (m_frameCounter % m_throttleInterval == 0)
+            emit frameProcessedThrottled(frame);
+    }
 
     m_model->processIncomingFrames(batch);
     if (m_autoScroll) m_tableView->scrollToBottom();

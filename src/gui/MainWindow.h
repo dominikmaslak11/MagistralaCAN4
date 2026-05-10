@@ -45,8 +45,11 @@ public:
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
 
 signals:
-    /// Ramka po przetworzeniu przez model (DirectConnection do slotów analizy)
+    /// Ramka po przetworzeniu przez model (DirectConnection do krytycznych slotów: nagrywanie, uczenie, forwarding)
     void frameProcessed(const CanFrame &frame);
+
+    /// Ramka throttlowana (co N-tą) dla ciężkich slotów wizualnych: dashboard, widgety, pluginy
+    void frameProcessedThrottled(const CanFrame &frame);
 
 private slots:
     void toggleSniffing();
@@ -119,4 +122,8 @@ private:
     QVector<CanFrame> m_frameBuffer;
     bool m_sniffing = false;
     bool m_autoScroll = true;
+
+    // Throttling slotów analizy (co N-tą ramkę do ciężkich widgetów)
+    uint64_t m_frameCounter = 0;
+    int m_throttleInterval = 16;  // ~30 fps wizualnych przy 500 fps wejściu
 };
