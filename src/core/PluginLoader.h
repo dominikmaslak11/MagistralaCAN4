@@ -29,4 +29,5 @@ public slots:
 private:
     QVector<QLibrary *> m_libraries;
     QVector<ProtocolPlugin *> m_plugins;
+    QSet<ProtocolPlugin *> m_crashedPlugins;  // pluginy, które crashowały — pomijane
 };

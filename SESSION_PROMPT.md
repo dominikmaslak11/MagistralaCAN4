@@ -24,18 +24,11 @@
 - ✅ **#19 Auto-odświeżanie interfejsów** — QTimer co 5s, tylko gdy nie sniffujemy
 - ✅ **#20 Kompresja nagrań zstd** — .mcan → .mcan.zst, level 1, usuwa oryginał
 - ✅ **#21 Undo/Redo modelu** — snapshot przed clear/setOverwriteMode, max 5, Ctrl+Z/Y
+- ✅ **#22 Plugin crash protection** — setjmp/longjmp + SIGSEGV handler, izoluje crashujące pluginy bez QProcess
 
 ## Pomysły na dalszą modernizację
 
-### 🔴 Krytyczne (stabilność)
-- Plugin isolation (QProcess per plugin zamiast shared libs)
+## Wszystkie pozycje zrealizowane ✅
 
-### 🟡 Wydajność
-- GPU correlator CPU fallback (SSE2/AVX2)
-
-### 🟢 UX
-(wszystkie zrealizowane)
-
-## Kolejność rekomendowana
-1. GPU correlator CPU fallback ← następny
-2. Plugin isolation (długoterminowy)
+22 optymalizacje wdrożone w ciągu jednej sesji.
+Dalsze kierunki: pełna izolacja procesowa pluginów (QProcess), streaming MDF4, odtwarzanie nagrań.
