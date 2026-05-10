@@ -108,6 +108,9 @@ private:
     // Panel statystyk CAN (Faza 2.2 — wydzielony widget)
     CanStatsPanel *m_canStatsPanel;
 
+    // Toolbar przeniesiony do zakładki "Ruch CAN"
+    QWidget *m_toolBarWidget = nullptr;
+
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;
     bool m_sniffing = false;

@@ -120,10 +120,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_canStatsPanel = new CanStatsPanel(this);
     connect(m_canStatsPanel, &CanStatsPanel::filterChanged, this, &MainWindow::applyIdFilter);
     connect(m_canStatsPanel, &CanStatsPanel::pauseToggled, this, [this](bool paused) {
-        if (!paused && !m_frameBuffer.isEmpty()) {
-            m_model->processIncomingFrames(m_frameBuffer);
-            m_frameBuffer.resize(0);
-        }
+        // Bufor jest stopniowo opróżniany przez updateTableBatch() (timer 33ms, batch 500 ramek)
+        // po odblokowaniu pauzy — nie czyścimy go tutaj.
+        Q_UNUSED(paused);
     });
     connect(m_canStatsPanel, &CanStatsPanel::statsUpdated, this, [this](double fps, int uniqueIds) {
         m_restServer.fps = fps;
@@ -241,12 +240,23 @@ void MainWindow::updateTableBatch() {
     if (m_frameBuffer.isEmpty()) return;
     if (m_canStatsPanel && m_canStatsPanel->isPaused()) return; // buforuj w tle
 
+    // Batch processing: ogranicz liczbę ramek na tick, by uniknąć zamrożenia GUI
+    // przy długiej pauzie (draining bufora stopniowo, max ~500 ramek / 33ms)
+    static const int MAX_BATCH = 500;
+    QVector<CanFrame> batch;
+    if (m_frameBuffer.size() > MAX_BATCH) {
+        batch = m_frameBuffer.mid(0, MAX_BATCH);
+        m_frameBuffer.erase(m_frameBuffer.begin(), m_frameBuffer.begin() + MAX_BATCH);
+    } else {
+        batch.swap(m_frameBuffer);
+        m_frameBuffer.reserve(4096);
+    }
+
     // Emituj ramki do slotów analizy (DirectConnection, zero nadmiarowych kopii)
-    for (const CanFrame &frame : m_frameBuffer)
+    for (const CanFrame &frame : batch)
         emit frameProcessed(frame);
 
-    m_model->processIncomingFrames(m_frameBuffer);
-    m_frameBuffer.resize(0);  // keep capacity
+    m_model->processIncomingFrames(batch);
     if (m_autoScroll) m_tableView->scrollToBottom();
 }
 
@@ -290,8 +300,17 @@ void MainWindow::exportToCandump() {
     QTextStream out(&file);
     QString iface = m_interfaceCombo->currentText().trimmed(); if (iface.isEmpty()) iface = "vcan0";
     for (const auto &frame : frames) {
-        QString line = QString("(%1) %2 %3#%4").arg(frame.timestamp).arg(iface).arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0')).arg(frame.dlc < 8 ? QString::number(frame.dlc) : "8");
-        for (int i = 0; i < frame.dlc && i < 8; ++i) line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+        bool isFd = frame.fd || frame.xl;
+        // candump używa "#" dla klasycznego CAN, "##" dla CAN FD/XL
+        QString sep = isFd ? "##" : "#";
+        QString line = QString("(%1) %2 %3%4%5")
+            .arg(frame.timestamp).arg(iface)
+            .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0'))
+            .arg(sep)
+            .arg(frame.dlc);
+        int maxData = qMin((int)frame.dlc, 64);
+        for (int i = 0; i < maxData; ++i)
+            line += QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
         out << line << "\n";
     }
     file.close();
@@ -311,7 +330,8 @@ void MainWindow::exportToCsv() {
     for (int i = 0; i < frames.size(); ++i) {
         const auto &f = frames[i];
         QString data;
-        for (int b = 0; b < f.dlc && b < 8; ++b)
+        int maxData = qMin((int)f.dlc, 64);
+        for (int b = 0; b < maxData; ++b)
             data += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
         out << i << "," << f.timestamp << ",0x" << QString::number(f.id, 16).toUpper()
             << "," << (f.extended ? "EXT" : "STD") << "," << (f.rtr ? "RTR" : "Data")
@@ -353,7 +373,8 @@ void MainWindow::onFrameSelected(const QModelIndex &index) {
 }
 
 void MainWindow::setupToolBar() {
-    auto *toolbar = addToolBar("Główne"); toolbar->setMovable(false);
+    auto *toolbar = new QToolBar("Główne", this); toolbar->setMovable(false);
+    m_toolBarWidget = toolbar;
     m_interfaceCombo = new QComboBox; m_interfaceCombo->setEditable(true); m_interfaceCombo->setMinimumWidth(120);
     toolbar->addWidget(m_interfaceCombo);
     auto *refreshBtn = new QPushButton("↻"); connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
@@ -392,7 +413,9 @@ void MainWindow::setupCentralWidget() {
     auto *canTab = new QWidget;
     auto *canLayout = new QVBoxLayout(canTab);
     canLayout->setContentsMargins(0, 0, 0, 0);
+    canLayout->setSpacing(0);
 
+    canLayout->addWidget(m_toolBarWidget);
     canLayout->addWidget(m_canStatsPanel);
     canLayout->addWidget(m_tableView);
 

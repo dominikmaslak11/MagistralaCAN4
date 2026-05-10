@@ -67,6 +67,9 @@ private:
     struct IdStats { uint64_t count = 0; uint64_t lastTs = 0; double avgInterval = 0; };
     QHash<uint32_t, IdStats> m_idStats;
 
+    // Łączny zbiór wszystkich unikalnych ID od początku sesji (nigdy nie czyszczony)
+    QSet<uint32_t> m_totalUniqueIds;
+
     // Burst detection
     QVector<double> m_fpsWindow;
     double          m_fpsMean = 0.0;
