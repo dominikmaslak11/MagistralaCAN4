@@ -10,6 +10,7 @@
 - ✅ **#4 Batch'owanie frameUpdated** (commit `900cfcb`) — WebSocket wysyła paczkami JSON zamiast per-ramka
 - ✅ **#5 Cykliczny bufor** — pre-alokacja m_maxFrames, m_head + m_size, zero kopiowania przy przepełnieniu
 - ✅ **#6 Throttling slotów analizy** — frameProcessedThrottled (co 16-tą ramkę), osobny sygnał dla ciężkich widgetów
+- ✅ **#7 Live podświetlanie zmienionych bajtów** — changedMask (64-bit) w CanFrame + DataHighlightDelegate
 
 ## Pomysły na optymalizację / modernizację
 
@@ -24,7 +25,7 @@
 6. ~~Throttling slotów analizy~~ ✅ — drugi sygnał frameProcessedThrottled, co 16-tą ramkę do widgetów
 
 ### Niski priorytet (UX)
-7. Live podświetlanie zmienionych bajtów w tabeli
+7. ~~Live podświetlanie zmienionych bajtów w tabeli~~ ✅
 8. Menu kontekstowe prawego przycisku
 9. Pasek szybkiego skoku (heatmap scrollbar)
 10. Presety filtrów ID
@@ -36,3 +37,4 @@
 4. ~~Batch'owanie frameUpdated~~ ✅
 5. ~~Cykliczny bufor~~ ✅
 6. ~~Throttling slotów analizy~~ ✅
+7. ~~Live podświetlanie zmienionych bajtów~~ ✅

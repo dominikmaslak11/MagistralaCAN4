@@ -14,6 +14,9 @@ public:
         ID, EXT, RTR, DLC, DATA, TIMESTAMP, FD, DELTA, SIGNAL, _COUNT
     };
 
+    /// Niestandardowa rola: bitmask zmienionych bajtów (64-bit, bit i = bajt i się zmienił)
+    static constexpr int ChangedMaskRole = Qt::UserRole + 1;
+
     explicit CanFrameModel(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

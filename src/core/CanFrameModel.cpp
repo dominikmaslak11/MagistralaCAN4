@@ -156,6 +156,8 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::DELTA:     return QVariant::fromValue(m_deltas[phys]);
         default: return {};
         }
+    } else if (role == ChangedMaskRole && index.column() == Column::DATA) {
+        return QVariant::fromValue(frame.changedMask);
     }
     return {};
 }
@@ -200,12 +202,16 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
             if (it != m_idToRow.end()) {
                 int logicalRow = it.value();
                 int phys = physRow(logicalRow);
-                // Śledź zmiany bajtów
+                // Śledź zmiany bajtów — zapisz jako bitmask (64 bity)
+                uint64_t mask = 0;
                 QVector<uint8_t> prev = m_previousData.value(frame.id);
-                QVector<uint8_t> changed(64, 0);
-                for (int i = 0; i < frame.dlc && i < prev.size(); ++i)
-                    changed[i] = (frame.data[i] != prev[i]) ? 1 : 0;
-                m_frames[phys] = frame;
+                for (int i = 0; i < frame.dlc && i < prev.size() && i < 64; ++i) {
+                    if (frame.data[i] != prev[i])
+                        mask |= (1ULL << i);
+                }
+                CanFrame f = frame;
+                f.changedMask = mask;
+                m_frames[phys] = f;
                 m_cache[phys].valid = false;
                 changedRows.append(logicalRow);
                 // Zapisz poprzednie dane

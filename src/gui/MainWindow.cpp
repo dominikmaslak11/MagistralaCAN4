@@ -23,6 +23,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QClipboard>
+#include "core/DataHighlightDelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("MagistralaCAN4 - Sniffer CAN");
@@ -45,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_tableView->setSortingEnabled(true);
     m_tableView->horizontalHeader()->setSortIndicatorShown(true);
     m_tableView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel); // smooth scrolling
+
+    // Podświetlanie zmienionych bajtów w kolumnie DATA
+    m_tableView->setItemDelegateForColumn(CanFrameModel::Column::DATA,
+                                          new DataHighlightDelegate(m_tableView));
 
     m_learner = new AssociativeLearner;
     // Lokalne skróty klawiszowe (zawsze działają przy aktywnym oknie)

@@ -15,6 +15,7 @@ struct CanFrame {
     uint32_t af = 0;                      // acceptance field (CAN XL only)
     uint8_t  dlc = 0;                     // 0-8 classic, 0-64 FD, 0-2047 XL
     std::array<uint8_t, 64> data{};       // inline payload (CAN 2.0 + FD; XL truncated)
+    uint64_t changedMask = 0;             // bitmask: bit i = 1 jeśli bajt i zmienił się (highlight)
     uint64_t timestamp = 0;
 
     /// Dostęp do bajtu payload — z bounds-check dla CAN XL.
