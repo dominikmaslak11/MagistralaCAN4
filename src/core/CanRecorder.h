@@ -39,7 +39,8 @@ signals:
     void recordingStopped(uint64_t frameCount);
 
 private:
-    void ioWorker();   // uruchamiane w m_ioThread
+    void ioWorker();            // uruchamiane w m_ioThread
+    void compressAndReplace(const QString &path);  // kompresja zstd po nagraniu
 
     QFile m_file;
     QDataStream m_stream;

@@ -1,5 +1,6 @@
 #include "CanRecorder.h"
 #include <QDebug>
+#include <zstd.h>
 
 CanRecorder::CanRecorder(QObject *parent) : QObject(parent) {
     m_buffer.reserve(BUFFER_CAPACITY);
@@ -38,19 +39,17 @@ void CanRecorder::stopRecording() {
     // Zatrzymaj producera
     m_recording = false;
 
-    // Obudź wątek I/O i poczekaj aż dokończy
+    // Obudź wątek I/O i poczekaj aż dokończy (zamknięcie pliku, kompresja, sygnał)
     m_ioRunning = false;
     m_bufferNotEmpty.wakeAll();
 
     if (m_ioThread) {
-        m_ioThread->wait(3000); // max 3s na dokończenie zapisu
+        m_ioThread->wait(5000); // max 5s na dokończenie + kompresję
         delete m_ioThread;
         m_ioThread = nullptr;
     }
 
-    m_file.close();
     qDebug() << "Nagrywanie zatrzymane (async). Ramki:" << m_frameCount;
-    emit recordingStopped(m_frameCount);
 }
 
 void CanRecorder::recordFrame(const CanFrame &frame) {
@@ -106,4 +105,50 @@ void CanRecorder::ioWorker() {
                 m_bufferNotEmpty.wait(&m_waitMutex, 10); // max 10ms wait
         }
     }
+
+    // Finalizacja: zamknij plik i skompresuj
+    QString origPath = m_file.fileName();
+    m_file.close();
+
+    // Kompresja zstd
+    compressAndReplace(origPath);
+
+    emit recordingStopped(m_frameCount);
+}
+
+void CanRecorder::compressAndReplace(const QString &path) {
+    QFile inFile(path);
+    if (!inFile.open(QIODevice::ReadOnly)) return;
+
+    QByteArray raw = inFile.readAll();
+    inFile.close();
+
+    if (raw.size() < 512) return; // za małe na sensowną kompresję
+
+    size_t bound = ZSTD_compressBound(raw.size());
+    QByteArray compressed(bound, '\0');
+    size_t cSize = ZSTD_compress(compressed.data(), bound, raw.constData(), raw.size(), 1);
+
+    if (ZSTD_isError(cSize)) {
+        qWarning() << "CanRecorder: błąd kompresji zstd:" << ZSTD_getErrorName(cSize);
+        return;
+    }
+
+    compressed.resize(cSize);
+    float ratio = raw.size() > 0 ? (float)cSize / raw.size() * 100.0f : 100.0f;
+
+    QString zstPath = path + ".zst";
+    QFile outFile(zstPath);
+    if (!outFile.open(QIODevice::WriteOnly)) return;
+    outFile.write(compressed);
+    outFile.close();
+
+    // Usuń niekompresowany oryginał
+    inFile.remove();
+
+    qDebug() << "CanRecorder: skompresowano" << path << "→" << zstPath
+             << QString("(%1 KB → %2 KB, %3%)")
+                    .arg(raw.size() / 1024)
+                    .arg(cSize / 1024)
+                    .arg(ratio, 0, 'f', 1);
 }

@@ -22,6 +22,7 @@
 - ✅ **#17 Adaptacja do jasnego motywu** — HeatmapBar + DataHighlightDelegate sprawdzają palette
 - ✅ **#18 MRU plików DBC/Lua** — QToolButton z menu, max 5, persistencja w QSettings
 - ✅ **#19 Auto-odświeżanie interfejsów** — QTimer co 5s, tylko gdy nie sniffujemy
+- ✅ **#20 Kompresja nagrań zstd** — .mcan → .mcan.zst, level 1, usuwa oryginał
 
 ## Pomysły na dalszą modernizację
 
@@ -30,13 +31,11 @@
 
 ### 🟡 Wydajność
 - GPU correlator CPU fallback (SSE2/AVX2)
-- Kompresja nagrań (zstd)
 
 ### 🟢 UX
 - Undo/Redo dla operacji na modelu (clear, delete)
 
 ## Kolejność rekomendowana
-1. Kompresja nagrań (zstd) ← następny
+1. Undo/Redo dla modelu ← następny
 2. GPU correlator CPU fallback
-3. Undo/Redo dla modelu
-4. Plugin isolation (długoterminowy)
+3. Plugin isolation (długoterminowy)

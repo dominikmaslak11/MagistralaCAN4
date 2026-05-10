@@ -22,6 +22,14 @@ if(WIN32 OR MINGW)
 endif()
 find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort)
 
+# ── zstd (kompresja nagrań) ──
+if(WIN32 OR MINGW)
+    find_package(PkgConfig)
+    pkg_check_modules(ZSTD IMPORTED_TARGET libzstd)
+else()
+    find_package(zstd)
+endif()
+
 # ── Platform-specific dependencies ──
 if(UNIX AND NOT APPLE)
     find_package(XCB REQUIRED)
@@ -162,6 +170,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::WebSockets
     Qt6::OpenGLWidgets
     Qt6::SerialPort
+    $<$<BOOL:${ZSTD_FOUND}>:PkgConfig::ZSTD>
 )
 
 if(HAS_XCB)
