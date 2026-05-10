@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QMap>
 #include <QHash>
+#include <QReadWriteLock>
 #include <deque>
 #include <vector>
 #include <utility>
@@ -192,7 +193,8 @@ private:
     GpuCorrelator   m_correlator;
 
     std::deque<CanFrame> m_frameHistory;
-    static constexpr int HISTORY_MAX = 20000;
+    static constexpr int HISTORY_MAX = 10000;
+    mutable QReadWriteLock m_historyLock;
 
     QVector<EventRecord> m_events;
     QVector<EventRecord> m_nonEvents;   // okna bez zdarzenia (tło)

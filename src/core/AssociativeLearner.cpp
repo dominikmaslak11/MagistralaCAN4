@@ -490,6 +490,7 @@ QVector<ValueObservation> AssociativeLearner::currentObservations() const {
 }
 
 void AssociativeLearner::processFrame(const CanFrame &frame) {
+    QWriteLocker lock(&m_historyLock);
     m_frameHistory.push_back(frame);
     if (m_frameHistory.size() > HISTORY_MAX) m_frameHistory.pop_front();
 }
@@ -797,6 +798,7 @@ int AssociativeLearner::kMeans(const QVector<QVector<float>> &data, int K, QVect
 }
 
 void AssociativeLearner::clusterWindows() {
+    QReadLocker lock(&m_historyLock);
     if(m_frameHistory.empty()) return;
     QVector<QVector<CanFrame>> windows; int64_t winSize=500000;
     int64_t start=m_frameHistory.front().timestamp, end=m_frameHistory.back().timestamp;
@@ -876,6 +878,7 @@ int AssociativeLearner::dbscan(const QVector<QVector<float>> &data, float eps, i
 void AssociativeLearner::dbscanClustering() {
     m_dbscanBtn->setEnabled(false);
     m_dbscanBtn->setText("Obliczanie...");
+    QReadLocker lock(&m_historyLock);
     if (m_frameHistory.empty()) return;
 
     bool ok;
@@ -1454,6 +1457,7 @@ void AssociativeLearner::computeMutualInformation() {
 
 // ---------- Automatyczny dobór K (metoda łokcia) ----------
 void AssociativeLearner::autoKMeans() {
+    QReadLocker lock(&m_historyLock);
     if (m_frameHistory.empty()) return;
 
     QVector<QVector<CanFrame>> windows;
@@ -1651,6 +1655,7 @@ void AssociativeLearner::importModels() {
 void AssociativeLearner::runPcaClustering() {
     m_pcaBtn->setEnabled(false);
     m_pcaBtn->setText("Obliczanie...");
+    QReadLocker lock(&m_historyLock);
     if (m_frameHistory.empty()) return;
 
     // Tworzenie okien i cech (tak samo jak w clusterWindows)
@@ -2434,6 +2439,7 @@ void AssociativeLearner::computeDft(const QVector<double> &signal, double fs,
 }
 
 void AssociativeLearner::runFftAnalysis() {
+    QReadLocker lock(&m_historyLock);
     if (m_frameHistory.empty()) return;
 
     // Get selected CAN ID
