@@ -62,6 +62,13 @@ private:
     QHash<uint32_t, int> m_idToRow;
     bool m_overwrite = true;
     int  m_maxFrames = 10000;  // ograniczone przy 2048B/frame (~20MB max)
+    int  m_head = 0;           // fizyczny indeks logicznego wiersza 0 (bufor cykliczny)
+    int  m_size = 0;           // bieżąca liczba ramek (≤ m_maxFrames)
+
+    /// Mapuje wiersz logiczny na fizyczny indeks w buforze cyklicznym.
+    inline int physRow(int logicalRow) const {
+        return (m_head + logicalRow) % m_maxFrames;
+    }
     const DbcParser   *m_dbc   = nullptr;
     const J1939Parser *m_j1939 = nullptr;
 };

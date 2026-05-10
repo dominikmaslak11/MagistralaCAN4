@@ -2,13 +2,23 @@
 #include "DbcParser.h"
 #include "J1939Parser.h"
 #include <QColor>
+#include <algorithm>
 
-CanFrameModel::CanFrameModel(QObject *parent) : QAbstractTableModel(parent) {}
+CanFrameModel::CanFrameModel(QObject *parent) : QAbstractTableModel(parent) {
+    // Pre-alokuj wektory do m_maxFrames — zero realokacji w runtime,
+    // dostęp przez m_head + m_size (bufor cykliczny).
+    if (m_maxFrames > 0) {
+        m_frames.resize(m_maxFrames);
+        m_deltas.resize(m_maxFrames);
+        m_isBurst.resize(m_maxFrames);
+        m_cache.resize(m_maxFrames);
+    }
+}
 
 int CanFrameModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) return 0;
     QMutexLocker lock(&m_mutex);
-    return m_frames.size();
+    return m_size;
 }
 
 int CanFrameModel::columnCount(const QModelIndex &parent) const {
@@ -17,32 +27,31 @@ int CanFrameModel::columnCount(const QModelIndex &parent) const {
 }
 
 QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
-    if (!index.isValid() || index.row() >= m_frames.size())
+    if (!index.isValid() || index.row() >= m_size)
         return {};
 
     QMutexLocker lock(&m_mutex);
-    const CanFrame &frame = m_frames.at(index.row());
+    int phys = physRow(index.row());
+    const CanFrame &frame = m_frames.at(phys);
 
     if (role == Qt::DisplayRole) {
         int row = index.row();
         // Sprawdź cache
-        if (row < m_cache.size() && m_cache[row].valid) {
+        auto &c = m_cache[phys];
+        if (c.valid) {
             switch (index.column()) {
-            case Column::ID:        return m_cache[row].id;
-            case Column::EXT:       return m_cache[row].ext;
-            case Column::RTR:       return m_cache[row].rtr;
-            case Column::DLC:       return m_cache[row].dlc;
-            case Column::DATA:      return m_cache[row].data;
-            case Column::TIMESTAMP: return m_cache[row].timestamp;
-            case Column::FD:        return m_cache[row].fd;
-            case Column::DELTA:     return m_cache[row].delta;
-            case Column::SIGNAL:    return m_cache[row].signal;
+            case Column::ID:        return c.id;
+            case Column::EXT:       return c.ext;
+            case Column::RTR:       return c.rtr;
+            case Column::DLC:       return c.dlc;
+            case Column::DATA:      return c.data;
+            case Column::TIMESTAMP: return c.timestamp;
+            case Column::FD:        return c.fd;
+            case Column::DELTA:     return c.delta;
+            case Column::SIGNAL:    return c.signal;
             }
         }
         // Cache miss — oblicz i zapisz wszystkie kolumny na raz
-        if (row >= m_cache.size())
-            m_cache.resize(row + 1);
-        auto &c = m_cache[row];
         c.id        = QString::number(frame.id, 16).toUpper().rightJustified(3, '0');
         c.ext       = frame.extended ? QStringLiteral("EXT") : QStringLiteral("STD");
         c.rtr       = frame.rtr ? QStringLiteral("RTR") : QStringLiteral("Data");
@@ -58,8 +67,8 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         }
         c.timestamp = QString("%1 µs").arg(frame.timestamp);
         c.fd        = frame.xl ? QStringLiteral("XL") : frame.fd ? QStringLiteral("FD") : QStringLiteral("CAN");
-        if (row < m_deltas.size() && m_deltas[row] > 0)
-            c.delta = QString("%1 µs").arg(m_deltas[row]);
+        if (m_deltas[phys] > 0)
+            c.delta = QString("%1 µs").arg(m_deltas[phys]);
         else
             c.delta = QStringLiteral("\u2014"); // em dash
         {
@@ -129,7 +138,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         }
         return tip.isEmpty() ? QVariant() : tip;
     } else if (role == Qt::BackgroundRole) {
-        if (index.row() < m_isBurst.size() && m_isBurst[index.row()])
+        if (m_isBurst[phys])
             return QColor("#2e1a0a"); // ciemnopomarańczowe dla burstów
         // Kolorowanie wg zakresu ID
         static const QColor idColors[] = {
@@ -144,10 +153,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         case Column::ID:        return frame.id;
         case Column::DLC:       return frame.dlc;
         case Column::TIMESTAMP: return QVariant::fromValue(frame.timestamp);
-        case Column::DELTA: {
-            if (index.row() < m_deltas.size()) return QVariant::fromValue(m_deltas[index.row()]);
-            return QVariant::fromValue(0ULL);
-        }
+        case Column::DELTA:     return QVariant::fromValue(m_deltas[phys]);
         default: return {};
         }
     }
@@ -175,23 +181,33 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
     if (newFrames.isEmpty()) return;
 
     QMutexLocker lock(&m_mutex);
+
+    // Pierwsze wywołanie — pre-alokuj jeśli jeszcze nie zrobione
+    if (m_maxFrames > 0 && m_frames.size() < m_maxFrames) {
+        m_frames.resize(m_maxFrames);
+        m_deltas.resize(m_maxFrames);
+        m_isBurst.resize(m_maxFrames);
+        m_cache.resize(m_maxFrames);
+    }
+
     QVector<int> changedRows;
-    int oldSize = m_frames.size();
+    const int oldSize = m_size;
+    int appendedCount = 0;
 
     for (const CanFrame &frame : newFrames) {
         if (m_overwrite) {
             auto it = m_idToRow.find(frame.id);
             if (it != m_idToRow.end()) {
-                int row = it.value();
+                int logicalRow = it.value();
+                int phys = physRow(logicalRow);
                 // Śledź zmiany bajtów
                 QVector<uint8_t> prev = m_previousData.value(frame.id);
                 QVector<uint8_t> changed(64, 0);
                 for (int i = 0; i < frame.dlc && i < prev.size(); ++i)
                     changed[i] = (frame.data[i] != prev[i]) ? 1 : 0;
-                // Zapisz zmiany jako metadane w CanFrame (użyj pola error tymczasowo)
-                m_frames[row] = frame;
-                m_cache[row].valid = false;  // invalidate cache
-                changedRows.append(row);
+                m_frames[phys] = frame;
+                m_cache[phys].valid = false;
+                changedRows.append(logicalRow);
                 // Zapisz poprzednie dane
                 QVector<uint8_t> cur(64, 0);
                 for (int i = 0; i < frame.dlc && i < 64; ++i) cur[i] = frame.data[i];
@@ -199,14 +215,17 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
                 continue;
             }
         }
-        int newRow = m_frames.size();
+        // Append nowej ramki
+        int logicalRow = m_size + appendedCount;
+        int phys = physRow(logicalRow);
+
         // Oblicz deltę czasu
         uint64_t delta = 0;
         auto lastIt = m_lastTimestampPerId.find(frame.id);
         if (lastIt != m_lastTimestampPerId.end() && frame.timestamp > lastIt.value())
             delta = frame.timestamp - lastIt.value();
         m_lastTimestampPerId[frame.id] = frame.timestamp;
-        m_deltas.append(delta);
+        m_deltas[phys] = delta;
 
         // Burst detection: < 1000µs od poprzedniej ramki tego ID
         bool burst = false;
@@ -217,23 +236,64 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
             burst = (burstDelta < 1000);
         }
         m_lastBurstTs[frame.id] = frame.timestamp;
-        m_isBurst.append(burst);
+        m_isBurst[phys] = burst;
 
-        m_frames.append(frame);
+        m_frames[phys] = frame;
         if (m_overwrite)
-            m_idToRow.insert(frame.id, newRow);
+            m_idToRow.insert(frame.id, logicalRow);
+
+        ++appendedCount;
     }
     lock.unlock();
 
     // Emituj batch ramek do WebSocket broadcast (jedna tablica JSON)
     emit frameBatchUpdated(newFrames);
 
-    int totalInserted = m_frames.size() - oldSize;
-    if (totalInserted > 0) {
-        beginInsertRows(QModelIndex(), oldSize, oldSize + totalInserted - 1);
+    // --- Obsługa przepełnienia: usuń najstarsze wiersze (bez kopiowania!) ---
+    int overflow = 0;
+    if (m_maxFrames > 0 && m_size + appendedCount > m_maxFrames)
+        overflow = m_size + appendedCount - m_maxFrames;
+
+    if (overflow > 0) {
+        beginRemoveRows(QModelIndex(), 0, overflow - 1);
+        {
+            QMutexLocker lock2(&m_mutex);
+            // Przesuń głowę — najstarsze ramki są logicznie usunięte, zero kopiowania
+            m_head = (m_head + overflow) % m_maxFrames;
+            m_size -= overflow;
+            // Przebuduj mapę ID→wiersz (indeksy logiczne przesunęły się)
+            m_idToRow.clear();
+            for (int i = 0; i < m_size; ++i) {
+                int phys = physRow(i);
+                if (m_frames[phys].id != 0)
+                    m_idToRow[m_frames[phys].id] = i;
+            }
+        }
+        endRemoveRows();
+    }
+
+    // --- Wstaw nowe wiersze ---
+    if (appendedCount > 0) {
+        int insertStart = m_size;
+        beginInsertRows(QModelIndex(), insertStart, insertStart + appendedCount - 1);
+        {
+            QMutexLocker lock3(&m_mutex);
+            m_size += appendedCount;
+        }
         endInsertRows();
     }
 
+    // --- Skoryguj changedRows po przesunięciu głowy ---
+    if (overflow > 0 && !changedRows.isEmpty()) {
+        QVector<int> adjusted;
+        for (int row : changedRows) {
+            int adj = row - overflow;
+            if (adj >= 0) adjusted.append(adj);
+        }
+        changedRows = adjusted;
+    }
+
+    // --- Emituj dataChanged dla nadpisanych wierszy ---
     if (!changedRows.isEmpty()) {
         std::sort(changedRows.begin(), changedRows.end());
         changedRows.erase(std::unique(changedRows.begin(), changedRows.end()), changedRows.end());
@@ -254,23 +314,6 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
             emit dataChanged(index(r.first, 0), index(r.second, Column::_COUNT - 1));
         }
     }
-
-    // Auto-cleanup: usuń najstarsze jeśli przekroczono limit
-    if (m_maxFrames > 0 && m_frames.size() > m_maxFrames) {
-        int toRemove = m_frames.size() - m_maxFrames;
-        beginRemoveRows(QModelIndex(), 0, toRemove - 1);
-        m_frames.erase(m_frames.begin(), m_frames.begin() + toRemove);
-        if (!m_deltas.isEmpty())
-            m_deltas.erase(m_deltas.begin(), m_deltas.begin() + toRemove);
-        if (!m_isBurst.isEmpty())
-            m_isBurst.erase(m_isBurst.begin(), m_isBurst.begin() + toRemove);
-        if (!m_cache.isEmpty())
-            m_cache.erase(m_cache.begin(), m_cache.begin() + toRemove);
-        m_idToRow.clear(); // odbuduj mapę
-        for (int i = 0; i < m_frames.size(); ++i)
-            m_idToRow[m_frames[i].id] = i;
-        endRemoveRows();
-    }
 }
 
 void CanFrameModel::setOverwriteMode(bool enabled) {
@@ -282,22 +325,24 @@ void CanFrameModel::setOverwriteMode(bool enabled) {
     beginResetModel();
     {
         QMutexLocker lock(&m_mutex);
-        m_frames.clear();
+        m_head = 0;
+        m_size = 0;
         m_idToRow.clear();
-        m_deltas.clear();
         m_lastTimestampPerId.clear();
         m_previousData.clear();
-        m_isBurst.clear();
         m_lastBurstTs.clear();
-        m_cache.clear();
+        // Wektory pozostają z pre-alokowaną pojemnością — tylko
+        // czyścimy cache (valid=false). Danych nie trzeba zerować,
+        // bo m_size=0 — są logicznie puste.
+        for (auto &c : m_cache) c.valid = false;
     }
     endResetModel();
 }
 
 CanFrame CanFrameModel::frameAt(int row) const {
     QMutexLocker lock(&m_mutex);
-    if (row >= 0 && row < m_frames.size())
-        return m_frames.at(row);
+    if (row >= 0 && row < m_size)
+        return m_frames.at(physRow(row));
     return CanFrame();
 }
 
@@ -305,26 +350,27 @@ void CanFrameModel::clear() {
     beginResetModel();
     {
         QMutexLocker lock(&m_mutex);
-        m_frames.clear();
+        m_head = 0;
+        m_size = 0;
         m_idToRow.clear();
-        m_deltas.clear();
         m_lastTimestampPerId.clear();
         m_previousData.clear();
-        m_isBurst.clear();
         m_lastBurstTs.clear();
-        m_cache.clear();
+        for (auto &c : m_cache) c.valid = false;
     }
     endResetModel();
 }
 
 QVector<CanFrame> CanFrameModel::allFrames() const {
     QMutexLocker lock(&m_mutex);
-    return m_frames;
+    QVector<CanFrame> result;
+    result.reserve(m_size);
+    for (int i = 0; i < m_size; ++i)
+        result.append(m_frames.at(physRow(i)));
+    return result;
 }
 
 void CanFrameModel::invalidateRowCache(int row) {
-    if (row >= 0 && row < m_cache.size())
-        m_cache[row].valid = false;
+    if (row >= 0 && row < m_size)
+        m_cache[physRow(row)].valid = false;
 }
-
-

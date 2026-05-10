@@ -6,17 +6,20 @@
 - ✅ QTableView dosunięty do góry, spacing=0
 - ✅ **#1 QSortFilterProxyModel** (commit `6b44aa3`) — CanFilterProxy, -45 linii z CanFrameModel::sort()
 - ✅ **#2 Cache DisplayRole** (commit `cd3a978`) — lazy-fill cache 9 kolumn, O(1) po pierwszym wyświetleniu
+- ✅ **#3 Wirtualne scrollowanie** (commit `4d6f843`) — ScrollPerPixel, smooth scrolling
+- ✅ **#4 Batch'owanie frameUpdated** (commit `900cfcb`) — WebSocket wysyła paczkami JSON zamiast per-ramka
+- ✅ **#5 Cykliczny bufor** — pre-alokacja m_maxFrames, m_head + m_size, zero kopiowania przy przepełnieniu
 
 ## Pomysły na optymalizację / modernizację
 
 ### Wysoki priorytet
 1. ~~QSortFilterProxyModel~~ ✅
 2. ~~Cache'owanie data()~~ ✅
-3. **Wirtualne scrollowanie** — `setBatchSize(200)` + `ScrollPerPixel`
+3. ~~Wirtualne scrollowanie~~ ✅
 
 ### Średni priorytet
-4. **Batch'owanie `frameUpdated`** dla WebSocket — wysyłka paczkami JSON zamiast per-ramka
-5. **Cykliczny bufor w modelu** zamiast `m_frames.erase(begin(), N)` — zero kopiowania
+4. ~~Batch'owanie `frameUpdated`~~ ✅
+5. ~~Cykliczny bufor w modelu~~ ✅
 6. **Throttling slotów analizy** — pomijanie co N-tej ramki dla dashboardu, plug-in loader
 
 ### Niski priorytet (UX)
@@ -29,5 +32,5 @@
 1. ~~QSortFilterProxyModel~~ ✅
 2. ~~Cache data()~~ ✅
 3. ~~Wirtualne scrollowanie~~ ✅
-4. Batch'owanie frameUpdated ← teraz
-5. Cykliczny bufor
+4. ~~Batch'owanie frameUpdated~~ ✅
+5. ~~Cykliczny bufor~~ ✅
