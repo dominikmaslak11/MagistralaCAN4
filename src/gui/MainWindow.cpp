@@ -25,6 +25,8 @@
 #include <QClipboard>
 #include <QInputDialog>
 #include <QDir>
+#include <QSettings>
+#include <QCloseEvent>
 #include "core/DataHighlightDelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -204,9 +206,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_learner->setDbcParser(parser);
         m_mqttBridge.setDbcParser(parser);
     });
+
+    loadSettings();
 }
 
 MainWindow::~MainWindow() {
+    saveSettings();
     if (m_sniffing) { m_sniffer.stop(); m_batchTimer.stop(); }
 }
 
@@ -652,8 +657,6 @@ void MainWindow::toggleRestApi() {
     }
 }
 
-static bool s_darkTheme = true;
-
 void MainWindow::toggleMdf4Recording() {
     if (m_mdf4Writer.isRecording()) {
         m_mdf4Writer.stop();
@@ -669,8 +672,67 @@ void MainWindow::toggleMqtt() {
 }
 
 void MainWindow::toggleTheme() {
-    s_darkTheme = !s_darkTheme;
-    const QString qssPath = s_darkTheme
+    m_darkTheme = !m_darkTheme;
+    const QString qssPath = m_darkTheme
+        ? QStringLiteral(":/resources/style_dark.qss")
+        : QStringLiteral(":/resources/style_light.qss");
+    QFile qssFile(qssPath);
+    if (qssFile.open(QFile::ReadOnly | QFile::Text)) {
+        qApp->setStyleSheet(qssFile.readAll());
+        qssFile.close();
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    saveSettings();
+    QMainWindow::closeEvent(event);
+}
+
+void MainWindow::saveSettings() {
+    QSettings s("MagistralaCAN4", "MagistralaCAN4");
+    s.setValue("window/geometry", saveGeometry());
+    s.setValue("window/state", saveState());
+    s.setValue("interface/last", m_interfaceCombo ? m_interfaceCombo->currentText() : QString());
+    s.setValue("interface/baud", m_baudCombo ? m_baudCombo->currentText() : QString());
+    s.setValue("options/overwrite", m_overwriteCheck ? m_overwriteCheck->isChecked() : true);
+    s.setValue("options/autoscroll", m_autoScroll);
+    s.setValue("options/darkTheme", m_darkTheme);
+    s.setValue("options/throttleInterval", m_throttleInterval);
+}
+
+void MainWindow::loadSettings() {
+    QSettings s("MagistralaCAN4", "MagistralaCAN4");
+
+    // Geometria i stan okna
+    if (s.contains("window/geometry"))
+        restoreGeometry(s.value("window/geometry").toByteArray());
+    if (s.contains("window/state"))
+        restoreState(s.value("window/state").toByteArray());
+
+    // Ostatni interfejs
+    QString lastIface = s.value("interface/last").toString();
+    if (!lastIface.isEmpty() && m_interfaceCombo) {
+        int idx = m_interfaceCombo->findText(lastIface);
+        if (idx >= 0) m_interfaceCombo->setCurrentIndex(idx);
+        else m_interfaceCombo->setCurrentText(lastIface);
+    }
+
+    // Baud rate
+    QString lastBaud = s.value("interface/baud").toString();
+    if (!lastBaud.isEmpty() && m_baudCombo) {
+        int idx = m_baudCombo->findText(lastBaud);
+        if (idx >= 0) m_baudCombo->setCurrentIndex(idx);
+    }
+
+    // Opcje
+    if (m_overwriteCheck)
+        m_overwriteCheck->setChecked(s.value("options/overwrite", true).toBool());
+    m_autoScroll = s.value("options/autoscroll", true).toBool();
+    m_darkTheme = s.value("options/darkTheme", true).toBool();
+    m_throttleInterval = s.value("options/throttleInterval", 16).toInt();
+
+    // Zastosuj motyw
+    const QString qssPath = m_darkTheme
         ? QStringLiteral(":/resources/style_dark.qss")
         : QStringLiteral(":/resources/style_light.qss");
     QFile qssFile(qssPath);

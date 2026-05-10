@@ -1,46 +1,44 @@
-# Sesja optymalizacji zakładki "Ruch CAN" — 2026-05-10
+# Sesja optymalizacji — MagistralaCAN4 — 2026-05-10
 
-## Zrealizowane
-- ✅ QToolBar przeniesiony z QMainWindow do layoutu zakładki "Ruch CAN"
-- ✅ CanStatsPanel skompresowany do 26px (maxHeight)
-- ✅ QTableView dosunięty do góry, spacing=0
+## Faza 1: Pipeline "Ruch CAN" (zrealizowane)
 - ✅ **#1 QSortFilterProxyModel** (commit `6b44aa3`) — CanFilterProxy, -45 linii z CanFrameModel::sort()
 - ✅ **#2 Cache DisplayRole** (commit `cd3a978`) — lazy-fill cache 9 kolumn, O(1) po pierwszym wyświetleniu
 - ✅ **#3 Wirtualne scrollowanie** (commit `4d6f843`) — ScrollPerPixel, smooth scrolling
 - ✅ **#4 Batch'owanie frameUpdated** (commit `900cfcb`) — WebSocket wysyła paczkami JSON zamiast per-ramka
-- ✅ **#5 Cykliczny bufor** — pre-alokacja m_maxFrames, m_head + m_size, zero kopiowania przy przepełnieniu
-- ✅ **#6 Throttling slotów analizy** — frameProcessedThrottled (co 16-tą ramkę), osobny sygnał dla ciężkich widgetów
-- ✅ **#7 Live podświetlanie zmienionych bajtów** — changedMask (64-bit) w CanFrame + DataHighlightDelegate
-- ✅ **#8 Menu kontekstowe** — prawy przycisk: kopiuj ID/dane, filtruj po ID, wyczyść filtr
-- ✅ **#9 Pasek szybkiego skoku** — HeatmapBar (14px, gęstość burstów, klik = skok)
-- ✅ **#10 Presety filtrów ID** — zapis/odczyt z ~/.magistrala_can4/filter_presets.txt
+- ✅ **#5 Cykliczny bufor** (commit `ee83427`) — pre-alokacja m_maxFrames, m_head + m_size, zero kopiowania
+- ✅ **#6 Throttling slotów analizy** (commit `d3bae1f`) — frameProcessedThrottled, co 16-tą ramkę do widgetów
+- ✅ **#7 Live podświetlanie zmienionych bajtów** (commit `0fee24b`) — changedMask + DataHighlightDelegate
+- ✅ **#8 Menu kontekstowe** (commit `e1076b1`) — kopiuj ID/dane, filtruj, wyczyść
+- ✅ **#9 Heatmap scrollbar** (commit `e1076b1`) — HeatmapBar, gęstość burstów, klik = skok
+- ✅ **#10 Presety filtrów ID** (commit `e1076b1`) — zapis/odczyt z ~/.magistrala_can4/filter_presets.txt
 
-## Pomysły na optymalizację / modernizację
+## Faza 2: Stabilność i infrastruktura (zrealizowane)
+- ✅ **#11 QSettings persistence** — geometria okna, ostatni interfejs, baud, opcje, motyw
+- ✅ **#12 Async I/O CanRecorder** — RingBuffer 65536 slotów, dedykowany wątek I/O, zero blokowania GUI
+- ✅ **#13 Testy jednostkowe** — naprawiona kompilacja (usunięty QtConcurrent z PCH, dodany Qt6::Gui, J1939Parser, fix frameUpdated→frameBatchUpdated)
 
-### Wysoki priorytet
-1. ~~QSortFilterProxyModel~~ ✅
-2. ~~Cache'owanie data()~~ ✅
-3. ~~Wirtualne scrollowanie~~ ✅
+## Pomysły na dalszą modernizację
 
-### Średni priorytet
-4. ~~Batch'owanie `frameUpdated`~~ ✅
-5. ~~Cykliczny bufor w modelu~~ ✅
-6. ~~Throttling slotów analizy~~ ✅ — drugi sygnał frameProcessedThrottled, co 16-tą ramkę do widgetów
+### 🔴 Krytyczne (stabilność)
+- Plugin isolation (QProcess per plugin zamiast shared libs)
+- MDF4Writer async I/O (jak CanRecorder)
+- RemoteCanClient reconnection z exponential backoff
 
-### Niski priorytet (UX)
-7. ~~Live podświetlanie zmienionych bajtów w tabeli~~ ✅
-8. ~~Menu kontekstowe prawego przycisku~~ ✅
-9. ~~Pasek szybkiego skoku (heatmap scrollbar)~~ ✅
-10. ~~Presety filtrów ID~~ ✅
+### 🟡 Wydajność
+- DBC hash lookup zamiast liniowego skanowania w messageForId()
+- Async export candump/CSV (QtConcurrent::run + progress bar)
+- GPU correlator CPU fallback (SSE2/AVX2)
+- Kompresja nagrań (zstd)
 
-## Kolejność implementacji
-1. ~~QSortFilterProxyModel~~ ✅
-2. ~~Cache data()~~ ✅
-3. ~~Wirtualne scrollowanie~~ ✅
-4. ~~Batch'owanie frameUpdated~~ ✅
-5. ~~Cykliczny bufor~~ ✅
-6. ~~Throttling slotów analizy~~ ✅
-7. ~~Live podświetlanie zmienionych bajtów~~ ✅
-8. ~~Menu kontekstowe~~ ✅
-9. ~~Heatmap scrollbar~~ ✅
-10. ~~Presety filtrów ID~~ ✅
+### 🟢 UX
+- Adaptacja HeatmapBar/DataHighlightDelegate do jasnego motywu
+- Undo/Redo dla operacji na modelu (clear, delete)
+- Ostatnio otwierane pliki DBC/Lua (MRU)
+- Auto-odświeżanie listy interfejsów CAN
+
+## Kolejność rekomendowana
+1. DBC hash lookup ← następny
+2. MDF4Writer async I/O
+3. RemoteCanClient reconnection
+4. Async export
+5. Plugin isolation (długoterminowy)

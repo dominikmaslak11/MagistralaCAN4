@@ -218,16 +218,17 @@ set(TEST_SOURCES
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
+    src/core/J1939Parser.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
 target_include_directories(${PROJECT_NAME}_tests PRIVATE
     ${CMAKE_SOURCE_DIR}/src
 )
-target_precompile_headers(${PROJECT_NAME}_tests REUSE_FROM ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_tests PRIVATE
     gtest_main
     Qt6::Core
+    Qt6::Gui
     Qt6::Test
 )
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE UNIT_TEST)

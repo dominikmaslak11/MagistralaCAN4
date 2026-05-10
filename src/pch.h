@@ -42,8 +42,6 @@
 #include <QWaitCondition>
 #include <QThread>
 #include <QThreadPool>
-#include <QtConcurrent>
-#include <QFutureWatcher>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>

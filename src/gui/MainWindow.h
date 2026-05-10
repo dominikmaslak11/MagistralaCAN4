@@ -45,6 +45,9 @@ public:
     void showTrayNotification(const QString &title, const QString &message);
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 signals:
     /// Ramka po przetworzeniu przez model (DirectConnection do krytycznych slotów: nagrywanie, uczenie, forwarding)
     void frameProcessed(const CanFrame &frame);
@@ -80,6 +83,8 @@ private:
     void setupToolBar();
     void setupCentralWidget();
     void loadFilterPresets();
+    void saveSettings();
+    void loadSettings();
 
     CanSniffer m_sniffer;
     ICanDriver *m_canDriver = nullptr;
@@ -138,4 +143,7 @@ private:
     // Throttling slotów analizy (co N-tą ramkę do ciężkich widgetów)
     uint64_t m_frameCounter = 0;
     int m_throttleInterval = 16;  // ~30 fps wizualnych przy 500 fps wejściu
+
+    // Stan do persystencji
+    bool m_darkTheme = true;
 };
