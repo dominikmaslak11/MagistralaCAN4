@@ -32,8 +32,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_frameBuffer.reserve(4096);  // pre-alloc, unikamy realokacji
 
     m_model = new CanFrameModel(this);
+    m_filterProxy = new CanFilterProxy(this);
+    m_filterProxy->setSourceModel(m_model);
     m_tableView = new QTableView;
-    m_tableView->setModel(m_model);
+    m_tableView->setModel(m_filterProxy);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     m_tableView->verticalHeader()->hide();
@@ -368,7 +370,8 @@ void MainWindow::loadDbcFile() {
 
 void MainWindow::onFrameSelected(const QModelIndex &index) {
     if (!index.isValid()) return;
-    CanFrame frame = m_model->frameAt(index.row());
+    QModelIndex srcIdx = m_filterProxy ? m_filterProxy->mapToSource(index) : index;
+    CanFrame frame = m_model->frameAt(srcIdx.row());
     m_frameDetail->loadFrame(frame);
 }
 
@@ -451,17 +454,8 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 }
 
 void MainWindow::applyIdFilter(const QString &text) {
-    QString filter = text.trimmed();
-    if (filter.startsWith("0x", Qt::CaseInsensitive))
-        filter = filter.mid(2);
-    bool filterActive = !filter.isEmpty();
-    uint32_t filterId = filterActive ? filter.toUInt(nullptr, 16) : 0;
-
-    for (int i = 0; i < m_model->rowCount(); ++i) {
-        CanFrame f = m_model->frameAt(i);
-        bool show = !filterActive || (f.id == filterId);
-        m_tableView->setRowHidden(i, !show);
-    }
+    if (m_filterProxy)
+        m_filterProxy->setIdFilter(text);
 }
 
 void MainWindow::copySelectedToClipboard() {
@@ -475,10 +469,11 @@ void MainWindow::copySelectedToClipboard() {
         hdr << m_model->headerData(c, Qt::Horizontal).toString();
     lines << hdr.join('\t');
 
-    for (const auto &idx : sel) {
+    for (const auto &proxyIdx : sel) {
+        QModelIndex srcIdx = m_filterProxy ? m_filterProxy->mapToSource(proxyIdx) : proxyIdx;
         QStringList cols;
         for (int c = 0; c < m_model->columnCount(); ++c)
-            cols << m_model->data(m_model->index(idx.row(), c)).toString();
+            cols << m_model->data(m_model->index(srcIdx.row(), c)).toString();
         lines << cols.join('\t');
     }
     QApplication::clipboard()->setText(lines.join('\n'));

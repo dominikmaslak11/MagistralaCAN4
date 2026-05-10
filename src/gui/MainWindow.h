@@ -29,6 +29,7 @@
 #include "core/PluginLoader.h"
 #include "core/HttpRestServer.h"
 #include "core/CanStatsPanel.h"
+#include "core/CanFilterProxy.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include <QSystemTrayIcon>
@@ -107,6 +108,9 @@ private:
 
     // Panel statystyk CAN (Faza 2.2 — wydzielony widget)
     CanStatsPanel *m_canStatsPanel;
+
+    // Proxy filtrująco-sortujący między CanFrameModel a QTableView
+    CanFilterProxy *m_filterProxy = nullptr;
 
     // Toolbar przeniesiony do zakładki "Ruch CAN"
     QWidget *m_toolBarWidget = nullptr;

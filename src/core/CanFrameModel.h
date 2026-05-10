@@ -25,7 +25,6 @@ public:
     void setOverwriteMode(bool enabled);
     void clear();
     CanFrame frameAt(int row) const;
-    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
     void setDbcParser(const DbcParser *dbc) { m_dbc = dbc; }
     void setJ1939Parser(const J1939Parser *j1939) { m_j1939 = j1939; }
     void setMaxFrames(int max) { m_maxFrames = max; }
