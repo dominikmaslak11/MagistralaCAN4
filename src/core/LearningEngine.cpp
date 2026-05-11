@@ -405,11 +405,36 @@ LearningEngine::computeCrossByte(const std::string &variableKey) const {
         }
     }
 
+    // #34: Pre-compute variance per (ID, byte) to skip zero-variance pairs
+    std::unordered_map<uint64_t, double> varCache;
+    for (uint32_t id : common) {
+        for (int b = 0; b < 8; ++b) {
+            double sum = 0, sq = 0; int cnt = 0;
+            for (const auto &o : obs) {
+                auto it = o.idAverageBytes.find(id);
+                if (it != o.idAverageBytes.end()) {
+                    double v = it->second[b];
+                    sum += v; sq += v * v; cnt++;
+                }
+            }
+            if (cnt >= 3) {
+                double v = sq / cnt - (sum / cnt) * (sum / cnt);
+                varCache[(static_cast<uint64_t>(id) << 8) | b] = v;
+            }
+        }
+    }
+
     std::vector<uint32_t> idList(common.begin(), common.end());
     for (size_t i = 0; i < idList.size(); ++i) {
+        uint64_t ki = static_cast<uint64_t>(idList[i]) << 8;
         for (size_t j = 0; j < idList.size(); ++j) {
+            uint64_t kj = static_cast<uint64_t>(idList[j]) << 8;
             for (int b1 = 0; b1 < 8; ++b1) {
+                double v1 = varCache[ki | b1];
+                if (v1 < 1e-9) continue;  // #34: skip zero-variance bytes
                 for (int b2 = 0; b2 < 8; ++b2) {
+                    double v2 = varCache[kj | b2];
+                    if (v2 < 1e-9) continue;  // #34: skip zero-variance bytes
                     std::vector<double> vb1, vb2;
                     std::vector<uint64_t> timestamps;
                     for (const auto &o : obs) {
@@ -495,28 +520,159 @@ int LearningEngine::kMeans(const std::vector<std::vector<float>> &data,
     return K;
 }
 
-// ── DBSCAN ──────────────────────────────────────────────────
+// ── #36 k-means++ initialization ────────────────────────────
+
+int LearningEngine::kMeansPP(const std::vector<std::vector<float>> &data,
+                              int K, std::vector<int> &assignments) {
+    int N = static_cast<int>(data.size());
+    if (N == 0) return 0;
+    int dim = static_cast<int>(data[0].size());
+    assignments.resize(N, 0);
+
+    std::vector<std::vector<float>> centroids(K, std::vector<float>(dim));
+    std::mt19937 rng(42);
+
+    // 1. Choose first centroid uniformly at random
+    std::uniform_int_distribution<int> dist(0, N - 1);
+    centroids[0] = data[dist(rng)];
+
+    // 2. For each subsequent centroid, choose with probability proportional to D(x)^2
+    std::vector<double> minDistSq(N, std::numeric_limits<double>::max());
+    for (int k = 1; k < K; ++k) {
+        double totalDist = 0.0;
+        for (int i = 0; i < N; ++i) {
+            double d2 = 0.0;
+            for (int d = 0; d < dim; ++d) {
+                double diff = data[i][d] - centroids[k-1][d];
+                d2 += diff * diff;
+            }
+            if (d2 < minDistSq[i]) minDistSq[i] = d2;
+            totalDist += minDistSq[i];
+        }
+        if (totalDist < 1e-9) {
+            // All points are the same; pick random
+            centroids[k] = data[dist(rng)];
+            continue;
+        }
+        std::uniform_real_distribution<double> urd(0.0, totalDist);
+        double r = urd(rng);
+        double accum = 0.0;
+        int chosen = 0;
+        for (int i = 0; i < N; ++i) {
+            accum += minDistSq[i];
+            if (accum >= r) { chosen = i; break; }
+        }
+        centroids[k] = data[chosen];
+    }
+
+    // 3. Run standard k-means from these initial centroids
+    int iter = 0, maxIter = 100;
+    while (iter++ < maxIter) {
+        std::vector<int> counts(K, 0);
+        std::vector<std::vector<float>> newCtr(K, std::vector<float>(dim, 0.0f));
+        for (int i = 0; i < N; ++i) {
+            int bestIdx = 0;
+            double bestDist = std::numeric_limits<double>::max();
+            for (int k = 0; k < K; ++k) {
+                double d2 = 0.0;
+                for (int d = 0; d < dim; ++d) {
+                    double diff = data[i][d] - centroids[k][d];
+                    d2 += diff * diff;
+                }
+                if (d2 < bestDist) { bestDist = d2; bestIdx = k; }
+            }
+            assignments[i] = bestIdx;
+            counts[bestIdx]++;
+            for (int d = 0; d < dim; ++d) newCtr[bestIdx][d] += data[i][d];
+        }
+        bool changed = false;
+        for (int k = 0; k < K; ++k) {
+            if (counts[k] > 0)
+                for (int d = 0; d < dim; ++d) newCtr[k][d] /= counts[k];
+            double diff = 0.0;
+            for (int d = 0; d < dim; ++d)
+                diff += (centroids[k][d] - newCtr[k][d]) * (centroids[k][d] - newCtr[k][d]);
+            if (diff > 0.001) changed = true;
+            centroids[k] = newCtr[k];
+        }
+        if (!changed) break;
+    }
+    return K;
+}
+
+// ── DBSCAN with k-d tree (#35) ─────────────────────────────
+
+// Simple k-d tree for 5D float data (no external dependencies)
+struct KdNode {
+    int pointIdx;
+    int splitDim;
+    float splitVal;
+    KdNode *left = nullptr;
+    KdNode *right = nullptr;
+    ~KdNode() { delete left; delete right; }
+};
+
+static KdNode* buildKdTree(const std::vector<std::vector<float>> &data,
+                           std::vector<int> indices, int depth = 0) {
+    if (indices.empty()) return nullptr;
+    int dim = static_cast<int>(data[0].size());
+    int axis = depth % dim;
+
+    // Sort indices by axis
+    std::sort(indices.begin(), indices.end(),
+              [&](int a, int b) { return data[a][axis] < data[b][axis]; });
+    int mid = static_cast<int>(indices.size()) / 2;
+
+    auto *node = new KdNode;
+    node->pointIdx = indices[mid];
+    node->splitDim = axis;
+    node->splitVal = data[indices[mid]][axis];
+    node->left = buildKdTree(data, {indices.begin(), indices.begin() + mid}, depth + 1);
+    node->right = buildKdTree(data, {indices.begin() + mid + 1, indices.end()}, depth + 1);
+    return node;
+}
+
+static void kdRangeQuery(KdNode *node, const std::vector<std::vector<float>> &data,
+                         const std::vector<float> &query, float eps2,
+                         std::vector<int> &result) {
+    if (!node) return;
+    int dim = static_cast<int>(data[0].size());
+    const auto &pt = data[node->pointIdx];
+
+    // Check this point
+    float d2 = 0.0f;
+    for (int d = 0; d < dim; ++d) {
+        float diff = pt[d] - query[d];
+        d2 += diff * diff;
+    }
+    if (d2 <= eps2) result.push_back(node->pointIdx);
+
+    // Decide which side to explore
+    int axis = node->splitDim;
+    float diff = query[axis] - node->splitVal;
+
+    if (diff < 0) {
+        kdRangeQuery(node->left, data, query, eps2, result);
+        if (diff * diff <= eps2)
+            kdRangeQuery(node->right, data, query, eps2, result);
+    } else {
+        kdRangeQuery(node->right, data, query, eps2, result);
+        if (diff * diff <= eps2)
+            kdRangeQuery(node->left, data, query, eps2, result);
+    }
+}
 
 int LearningEngine::dbscan(const std::vector<std::vector<float>> &data,
                             float eps, int minPts,
                             std::vector<int> &assignments) {
     int N = static_cast<int>(data.size());
     if (N == 0) return 0;
-    int dim = static_cast<int>(data[0].size());
     assignments.resize(N, -1);
 
-    // Build distance matrix
-    std::vector<std::vector<float>> dist(N, std::vector<float>(N, 0.0f));
-    for (int i = 0; i < N; ++i)
-        for (int j = i + 1; j < N; ++j) {
-            float d2 = 0.0f;
-            for (int k = 0; k < dim; ++k) {
-                float diff = data[i][k] - data[j][k];
-                d2 += diff * diff;
-            }
-            dist[i][j] = d2;
-            dist[j][i] = d2;
-        }
+    // #35: Build k-d tree instead of O(N²) distance matrix
+    std::vector<int> allIdx(N);
+    std::iota(allIdx.begin(), allIdx.end(), 0);
+    KdNode *tree = buildKdTree(data, allIdx);
 
     float eps2 = eps * eps;
     int clusterId = 0;
@@ -525,9 +681,7 @@ int LearningEngine::dbscan(const std::vector<std::vector<float>> &data,
         if (assignments[p] != -1) continue;
 
         std::vector<int> neighbors;
-        for (int q = 0; q < N; ++q)
-            if (dist[p][q] <= eps2)
-                neighbors.push_back(q);
+        kdRangeQuery(tree, data, data[p], eps2, neighbors);
 
         if (static_cast<int>(neighbors.size()) < minPts) continue;
 
@@ -538,8 +692,7 @@ int LearningEngine::dbscan(const std::vector<std::vector<float>> &data,
             assignments[q] = clusterId;
 
             std::vector<int> qn;
-            for (int r = 0; r < N; ++r)
-                if (dist[q][r] <= eps2) qn.push_back(r);
+            kdRangeQuery(tree, data, data[q], eps2, qn);
             if (static_cast<int>(qn.size()) >= minPts)
                 for (int r : qn)
                     if (std::find(neighbors.begin(), neighbors.end(), r) ==
@@ -548,6 +701,7 @@ int LearningEngine::dbscan(const std::vector<std::vector<float>> &data,
         }
         clusterId++;
     }
+    delete tree;
     return clusterId;
 }
 
@@ -595,7 +749,7 @@ LearningEngine::clusterWindows(int K) const {
         features.push_back(buildWindowFeatures(w));
 
     std::vector<int> assignments;
-    kMeans(features, K, assignments);
+    kMeansPP(features, K, assignments);  // #36
 
     struct Stats { int cnt = 0; double avg = 0;
         std::unordered_map<uint32_t, int> freq; };
@@ -683,7 +837,7 @@ LearningEngine::autoKMeans(int maxK) const {
 
     for (int k = 1; k <= maxK && k < N; ++k) {
         std::vector<int> assignments;
-        kMeans(features, k, assignments);
+        kMeansPP(features, k, assignments);  // #36
 
         // Compute true WCSS
         std::vector<std::vector<double>> cents(k, std::vector<double>(dim, 0.0));
@@ -755,52 +909,29 @@ LearningEngine::PcaResult LearningEngine::runPcaClustering() const {
     double origTrace = 0.0;
     for (int d = 0; d < dim; ++d) origTrace += cov[d][d];
 
-    // 4. Power iteration for first two eigenvectors
-    auto powerIteration = [&](std::vector<double> initVec, int maxIter = 100)
-        -> std::pair<double, std::vector<double>> {
-        std::vector<double> vec = initVec;
-        double eigenvalue = 0.0;
-        for (int iter = 0; iter < maxIter; ++iter) {
-            std::vector<double> newVec(dim, 0.0);
-            for (int i = 0; i < dim; ++i)
-                for (int j = 0; j < dim; ++j)
-                    newVec[i] += cov[i][j] * vec[j];
-            double norm = 0.0;
-            for (int i = 0; i < dim; ++i) norm += newVec[i] * newVec[i];
-            norm = std::sqrt(norm);
-            if (norm < 1e-12) break;
-            for (int i = 0; i < dim; ++i) newVec[i] /= norm;
-            eigenvalue = 0.0;
-            for (int i = 0; i < dim; ++i) eigenvalue += vec[i] * newVec[i];
-            vec = newVec;
-        }
-        return {eigenvalue, vec};
-    };
+    // #37: Jacobi eigen-decomposition (full, for 5×5 matrix)
+    std::vector<double> eigenvalues;
+    std::vector<std::vector<double>> eigenvectors;
+    jacobiEigen(cov, eigenvalues, eigenvectors, 50);
 
-    std::mt19937 rng(42);
-    std::uniform_real_distribution<double> urd(0.0, 1.0);
-    std::vector<double> initVec(dim);
-    for (int i = 0; i < dim; ++i) initVec[i] = urd(rng);
-
-    auto [eig1, pc1] = powerIteration(initVec);
-    // Deflate
-    for (int i = 0; i < dim; ++i)
-        for (int j = 0; j < dim; ++j)
-            cov[i][j] -= eig1 * pc1[i] * pc1[j];
-    auto [eig2, pc2] = powerIteration(initVec);
-
-    result.pc1 = pc1;
-    result.pc2 = pc2;
-    result.eig1 = eig1;
-    result.eig2 = eig2;
-    result.varianceExplained = (eig1 + eig2) / origTrace;
+    result.pc1.resize(dim);
+    result.pc2.resize(dim);
+    for (int d = 0; d < dim; ++d) {
+        result.pc1[d] = eigenvectors[d][0];  // first eigenvector (column 0)
+        result.pc2[d] = eigenvectors[d][1];  // second eigenvector (column 1)
+    }
+    result.eig1 = eigenvalues[0];
+    result.eig2 = eigenvalues[1];
+    double totalVar = 0.0;
+    for (double e : eigenvalues) totalVar += e;
+    result.varianceExplained = (eigenvalues[0] + eigenvalues[1]) / (totalVar > 0 ? totalVar : origTrace);
 
     // 5. Project to 2D
     for (int i = 0; i < N; ++i) {
         double x = 0.0, y = 0.0;
         for (int d = 0; d < dim; ++d) {
-            x += centered[i][d] * pc1[d];
-            y += centered[i][d] * pc2[d];
+            x += centered[i][d] * result.pc1[d];
+            y += centered[i][d] * result.pc2[d];
         }
         result.projected.push_back({x, y});
     }
@@ -811,7 +942,7 @@ LearningEngine::PcaResult LearningEngine::runPcaClustering() const {
         data2D[i][0] = static_cast<float>(result.projected[i].first);
         data2D[i][1] = static_cast<float>(result.projected[i].second);
     }
-    kMeans(data2D, 3, result.clusterAssignments);
+    kMeansPP(data2D, 3, result.clusterAssignments);  // #36
 
     return result;
 }
@@ -1968,6 +2099,75 @@ LearningEngine::predictRealtimeAll() const {
             result.push_back(std::move(mp));
     }
     return result;
+}
+
+
+// ── #37 Jacobi eigen-decomposition for small matrices ──────
+
+void LearningEngine::jacobiEigen(const std::vector<std::vector<double>> &mat,
+                                  std::vector<double> &eigenvalues,
+                                  std::vector<std::vector<double>> &eigenvectors,
+                                  int maxIter) {
+    int n = static_cast<int>(mat.size());
+    eigenvalues.resize(n);
+    eigenvectors.assign(n, std::vector<double>(n, 0.0));
+    for (int i = 0; i < n; ++i) eigenvectors[i][i] = 1.0;
+
+    std::vector<std::vector<double>> A = mat; // working copy
+
+    for (int iter = 0; iter < maxIter; ++iter) {
+        // Find largest off-diagonal element
+        int p = 0, q = 1;
+        double maxOff = 0.0;
+        for (int i = 0; i < n; ++i)
+            for (int j = i + 1; j < n; ++j)
+                if (std::abs(A[i][j]) > maxOff) {
+                    maxOff = std::abs(A[i][j]);
+                    p = i; q = j;
+                }
+        if (maxOff < 1e-10) break;
+
+        // Compute Jacobi rotation
+        double theta = 0.5 * std::atan2(2.0 * A[p][q], A[p][p] - A[q][q]);
+        double c = std::cos(theta), s = std::sin(theta);
+
+        // Apply rotation to A
+        std::vector<std::vector<double>> Anew = A;
+        for (int i = 0; i < n; ++i) {
+            if (i != p && i != q) {
+                Anew[i][p] = Anew[p][i] = c * A[i][p] - s * A[i][q];
+                Anew[i][q] = Anew[q][i] = s * A[i][p] + c * A[i][q];
+            }
+        }
+        Anew[p][p] = c * c * A[p][p] + s * s * A[q][q] - 2.0 * s * c * A[p][q];
+        Anew[q][q] = s * s * A[p][p] + c * c * A[q][q] + 2.0 * s * c * A[p][q];
+        Anew[p][q] = Anew[q][p] = 0.0;
+        A = Anew;
+
+        // Update eigenvectors
+        for (int i = 0; i < n; ++i) {
+            double ei_p = eigenvectors[i][p];
+            double ei_q = eigenvectors[i][q];
+            eigenvectors[i][p] = c * ei_p - s * ei_q;
+            eigenvectors[i][q] = s * ei_p + c * ei_q;
+        }
+    }
+
+    // Extract eigenvalues from diagonal
+    for (int i = 0; i < n; ++i)
+        eigenvalues[i] = A[i][i];
+
+    // Sort by eigenvalue descending
+    for (int i = 0; i < n - 1; ++i) {
+        int best = i;
+        for (int j = i + 1; j < n; ++j)
+            if (eigenvalues[j] > eigenvalues[best]) best = j;
+        if (best != i) {
+            std::swap(eigenvalues[i], eigenvalues[best]);
+            for (int k = 0; k < n; ++k)
+                std::swap(eigenvectors[k][i], eigenvectors[k][best]);
+        }
+    }
 }
 
 // ── Serialization (stub) ────────────────────────────────────

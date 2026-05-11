@@ -176,6 +176,8 @@ public:
     // ── Clustering ─────────────────────────────────────────
     static int kMeans(const std::vector<std::vector<float>> &data,
                       int K, std::vector<int> &assignments);
+    static int kMeansPP(const std::vector<std::vector<float>> &data,
+                        int K, std::vector<int> &assignments);  // #36 k-means++
     static int dbscan(const std::vector<std::vector<float>> &data,
                       float eps, int minPts, std::vector<int> &assignments);
 
@@ -378,6 +380,12 @@ private:
     };
     NnWeights m_nnWeights;
     int m_nnInputDim = 16;
+
+    // ── #37 PCA helpers ──────────────────────────────────
+    static void jacobiEigen(const std::vector<std::vector<double>> &mat,
+                            std::vector<double> &eigenvalues,
+                            std::vector<std::vector<double>> &eigenvectors,
+                            int maxIter = 50);
 
     // ── Internal helpers ──────────────────────────────────
     std::vector<CanFrame> extractWindow() const;
