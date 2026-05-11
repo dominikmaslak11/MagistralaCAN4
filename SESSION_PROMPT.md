@@ -74,3 +74,33 @@
 - Integer division w addObservation (uint8_t / size_t → 0)
 - Korelacje: majority threshold zamiast strict intersection
 - readFrame: classic CAN przed FD (FD = ILLOPERATION na PCAN-USB)
+
+
+---
+
+## Naprawione bugi (2026-05-11)
+
+| Bug | Przyczyna | Rozwiązanie |
+|-----|-----------|-------------|
+| Crash przy "Zarejestruj zdarzenie" | Deadlock: `markEvent`(lock) → `recalcAdaptiveWindow`(lock) na tym samym `std::shared_mutex` | Dodane `recalcAdaptiveWindowLocked()` wewnętrzne, nie-lockujące |
+| Korelacje puste mimo 10+ obserwacji | Dzielenie całkowite (`data[i] / frames.size()`) → średnie = 0 | Poprawione na `float sum = ...; avg[i] = sum / n` |
+| Korelacje puste — filtr ID | Ścisłe przecięcie zbiorów ID eliminowało wszystkie ID | Zmiana na próg większościowy (≥50% obserwacji) |
+| Candump pusty plik | `QTextStream` nie flushowany przed zamknięciem | Dodany `flush()` co 100 ramek |
+| Odtwarzanie offline nie wysyła na CAN | `OfflineAnalyzer` nie auto-startował sniffera | Dodane `m_sniffer->start(m_sniffInterface)` przed `writeFrame` |
+| "Wyślij zmodyfikowaną ramkę" nie działa | `FrameDetailWidget` wymagał otwartego sniffera | Auto-open `PCAN_USBBUS1` jeśli sniffer nieaktywny |
+| PCAN readFrame: 0 ramek mimo aktywnej magistrali | `PCAN_CHANNEL_OCCUPIED` sprawdzany przed odczytem, ale z błędnym bitem `0x100` | Usunięto status check — czytaj bezpośrednio `CAN_Read`/`CAN_ReadFD` |
+| Pusty plik candump | Dzielenie całkowite, brak flush | Poprawiony format, flush co 100 ramek |
+
+## Nowe funkcje UI (w trakcie)
+
+| Funkcja | Status |
+|---------|--------|
+| Przyczynowość Granger | ✅ UI dodane |
+| Wykrywanie punktów zmiany | ✅ UI dodane |
+| Korelacja z przesunięciem czasowym | ✅ UI dodane |
+| Gradient Boosted Trees | ✅ UI dodane |
+| Online learning (Welford) | ✅ checkbox |
+| EWMA anomaly detection | ✅ checkbox |
+| Nagrywanie candump na dysk | ✅ checkbox, auto-start, C:\candump |
+| Wysyłanie ramek na CAN w offline analyzer | ✅ checkbox + auto-start sniffera |
+| Auto-inkrement filtr bajtów | ✅ dodany do computeCorrelations |
