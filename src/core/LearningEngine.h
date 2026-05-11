@@ -18,6 +18,7 @@ struct LeEventRecord {
 
 struct LeValueObservation {
     double value;
+    uint64_t timestamp;  // #26: microseconds, for ring buffer age + temporal decay
     std::unordered_map<uint32_t, std::vector<uint8_t>> idAverageBytes;
 };
 
@@ -69,7 +70,7 @@ struct LeMiEntry {
     int byte;
     double mi;
     double pearson;
-    std::string comparison; // "Nieliniowa", "Silna", "Slaba"
+    std::string comparison;
 };
 
 struct LeMicEntry {
@@ -133,6 +134,20 @@ public:
     std::vector<std::string> variableNames() const;
     bool hasVariable(const std::string &key) const;
 
+    // ── #26 Ring buffer capacity ────────────────────────────
+    void setMaxObservations(size_t n) { m_maxObservations = n; }
+    size_t maxObservations() const { return m_maxObservations; }
+
+    // ── #27 Temporal decay ─────────────────────────────────
+    void setDecayLambda(double lambda) { m_decayLambda = lambda; }
+    double decayLambda() const { return m_decayLambda; }
+
+    // ── #28 Online learning ────────────────────────────────
+    void setOnlineLearning(bool on) { m_onlineLearning = on; }
+    bool onlineLearning() const { return m_onlineLearning; }
+    std::vector<LeCorrelationEntry>
+        computeCorrelationsOnline(const std::string &variableKey) const;
+
     // ── Feature extraction ─────────────────────────────────
     std::unordered_map<uint32_t, std::vector<float>>
         buildFeatureVectors(const std::vector<CanFrame> &window) const;
@@ -171,12 +186,12 @@ public:
 
     // ── PCA clustering ─────────────────────────────────────
     struct PcaResult {
-        std::vector<double> pc1;       // first principal component
-        std::vector<double> pc2;       // second principal component
-        double eig1, eig2;             // eigenvalues
+        std::vector<double> pc1;
+        std::vector<double> pc2;
+        double eig1, eig2;
         double varianceExplained;
-        std::vector<std::pair<double,double>> projected; // (x,y) points
-        std::vector<int> clusterAssignments;             // k-means on 2D
+        std::vector<std::pair<double,double>> projected;
+        std::vector<int> clusterAssignments;
     };
     PcaResult runPcaClustering() const;
 
@@ -189,7 +204,11 @@ public:
     // ── Anomaly detection ─────────────────────────────────
     void buildNormalModel();
     double checkAnomaly(double threshold) const;
-    bool  modelBuilt() const { return !m_normalMean.empty(); }
+    bool modelBuilt() const { return !m_normalMean.empty(); }
+
+    // ── #29 EWMA anomaly ──────────────────────────────────
+    void setEwmaAnomaly(bool on) { m_ewmaAnomaly = on; }
+    double checkAnomalyEwma() const;
 
     // ── Markov chain ───────────────────────────────────────
     void trainMarkovModel();
@@ -245,15 +264,15 @@ public:
     int64_t adaptiveBefore() const { return m_adaptiveBefore; }
     int64_t adaptiveAfter()  const { return m_adaptiveAfter;  }
 
-    // ── Serialization (return JSON-compatible strings) ────
-    std::string serializeSession() const;   // full state → JSON string
-    bool deserializeSession(const std::string &json);          // JSON → full state
+    // ── Serialization ──────────────────────────────────────
+    std::string serializeSession() const;
+    bool deserializeSession(const std::string &json);
 
     // ── Getters for UI ────────────────────────────────────
     const std::vector<LeEventRecord> &events() const { return m_events; }
     const std::vector<LeEventRecord> &nonEvents() const { return m_nonEvents; }
     const std::unordered_map<std::string,
-        std::unordered_map<uint32_t, std::pair<double,double>>> &
+        std::unordered_map<uint64_t, std::pair<double,double>>> &
         linearModels() const { return m_linearModels; }
 
 private:
@@ -273,24 +292,47 @@ private:
     int64_t m_adaptiveBefore = 500000;
     int64_t m_adaptiveAfter  = 200000;
 
-    // ── Observations (variable → observations) ────────────
+    // ── #26 Ring buffer ────────────────────────────────────
     std::unordered_map<std::string, std::vector<LeValueObservation>> m_observations;
+    size_t m_maxObservations = 10000;
+
+    // ── #27 Temporal decay ─────────────────────────────────
+    double m_decayLambda = 0.0;
+
+    // ── #28 Online learning (Welford) ──────────────────────
+    bool m_onlineLearning = false;
+    struct WelfordAccum {
+        size_t n = 0;
+        double meanX = 0, M2x = 0;  // for variable value
+        double meanY = 0, M2y = 0;  // for byte value
+        double Cxy = 0;             // covariance accumulator
+    };
+    // key: composite (variableHash << 40) | (id << 8) | byte
+    std::unordered_map<uint64_t, WelfordAccum> m_welford;
+    void updateWelford(const std::string &variableKey, uint32_t id, int byteIdx,
+                       double valX, double valY);
+
+    // ── #29 EWMA anomaly ──────────────────────────────────
+    bool m_ewmaAnomaly = false;
+    struct EwmaState {
+        std::vector<double> mean;    // EWMA of window features
+        std::vector<double> var;     // EWMA of squared deviations
+        double alpha = 0.1;          // smoothing factor
+    };
+    mutable EwmaState m_ewma;
+    void updateEwma(const std::vector<float> &features);
 
     // ── Models ────────────────────────────────────────────
-    // linearModels: variableKey → (id,byte) → (a,b)
     std::unordered_map<std::string,
-        std::unordered_map<uint32_t, std::pair<double,double>>> m_linearModels;
+        std::unordered_map<uint64_t, std::pair<double,double>>> m_linearModels;
 
-    // Markov: fromId → toId → count
     std::unordered_map<uint32_t, std::unordered_map<uint32_t, int>> m_transitions;
     std::unordered_map<uint32_t, uint32_t> m_markovBestNext;
     std::unordered_map<uint32_t, double> m_markovProb;
 
-    // Anomaly normal model
     std::vector<float> m_normalMean;
     std::vector<float> m_normalStd;
 
-    // Neural network weights (same structure as original)
     struct NnWeights {
         std::vector<std::vector<double>> w1, w2, w3;
         std::vector<double> b1, b2;
@@ -306,4 +348,7 @@ private:
                                      const std::vector<double> &y);
     static double correlationPearson(const std::vector<float> &x,
                                      const std::vector<float> &y);
+    static double correlationPearsonWeighted(
+        const std::vector<double> &x, const std::vector<double> &y,
+        const std::vector<uint64_t> &timestamps, double lambda);
 };
