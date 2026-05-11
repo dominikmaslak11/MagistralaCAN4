@@ -228,7 +228,7 @@ void OfflineAnalyzer::nextFrame() {
             // Ask user
             int rangeSize = m_bsRight - m_bsLeft + 1;
             QString msg;
-            if (m_bsPlayingFirstHalf)
+            if (true)
                 msg = QString("Odtworzono PIERWSZĄ połowę zakresu [%1–%2] (%3 ramek).\n\n"
                               "Czy zjawisko WYSTĄPIŁO?")
                           .arg(m_bsLeft).arg(m_bsMid).arg(rangeSize / 2);
@@ -259,13 +259,23 @@ void OfflineAnalyzer::nextFrame() {
         m_sniffer->writeFrame(frame);
     }
 
-    // Binary search: check if we reached the end of the current half
+    // Binary search: half finished? Ask user NOW (before timer)
     if (m_bsState == BsState::PlayingHalf && m_currentIndex >= m_bsPlayEnd - 1) {
-        // We'll stop after this frame; signal via m_currentIndex >= m_frames.size() on next call
-        m_currentIndex = m_frames.size(); // force end-of-file on next nextFrame()
-    } else {
-        m_currentIndex++;
+        m_timer.stop();
+        m_playing = false;
+        m_bsState = BsState::AwaitingResponse;
+        m_playPauseBtn->setText("▶ Odtwarzaj");
+
+        int halfSize = m_bsMid - m_bsLeft + 1;
+        auto answer = QMessageBox::question(this, "Wyszukiwanie binarne",
+            QString("Odtworzono ramki [%1-%2] (%3 ramek).\n\nCzy zjawisko WYSTAPILO?")
+                .arg(m_bsLeft).arg(m_bsMid).arg(halfSize),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+        onBinarySearchResponse(answer == QMessageBox::Yes);
+        return;
     }
+    m_currentIndex++;
 
     m_progressBar->setValue(m_currentIndex >= m_frames.size() ? m_frames.size() : m_currentIndex);
 

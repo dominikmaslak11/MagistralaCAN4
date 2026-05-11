@@ -49,11 +49,9 @@ private:
     int m_bsLeft = 0;
     int m_bsRight = 0;
     int m_bsMid = 0;
-    int m_bsPlayEnd = 0;  // exclusive end index for current half
-    bool m_bsPlayingFirstHalf = true;
+    int m_bsPlayEnd = 0;
 
     void bsPlayHalf();
-    void bsContinue();
 
     // ── Frame log (last 20 before pause) ────────────────────
     QListWidget *m_frameLog;
