@@ -103,6 +103,7 @@ void LearningEngine::addObservation(const std::string &variableKey, double value
 
     LeValueObservation obs;
     obs.value = value;
+    obs.timestamp = latestTs;
     for (auto &kv : grouped) {
         std::vector<uint8_t> avg(64, 0);
         const auto &frames = kv.second;
@@ -112,6 +113,16 @@ void LearningEngine::addObservation(const std::string &variableKey, double value
         obs.idAverageBytes[kv.first] = std::move(avg);
     }
     m_observations[variableKey].push_back(std::move(obs));
+    // Ring buffer trim (#26)
+    auto &vec = m_observations[variableKey];
+    while (vec.size() > m_maxObservations) vec.erase(vec.begin());
+    // Online Welford update (#28)
+    if (m_onlineLearning) {
+        for (const auto &kv : vec.back().idAverageBytes)
+            for (int b = 0; b < 64; ++b)
+                updateWelford(variableKey, kv.first, b,
+                              value, static_cast<double>(kv.second[b]));
+    }
 }
 
 const std::vector<LeValueObservation> &
@@ -314,16 +325,20 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
     for (uint32_t id : common) {
         for (int b = 0; b < 64; ++b) {
             std::vector<double> vx, vy;
+            std::vector<uint64_t> timestamps;
             for (const auto &o : obs) {
                 auto it = o.idAverageBytes.find(id);
                 if (it != o.idAverageBytes.end()) {
                     vx.push_back(o.value);
                     vy.push_back(static_cast<double>(it->second[b]));
+                    timestamps.push_back(o.timestamp);
                 }
             }
             int N = static_cast<int>(vx.size());
             if (N < 3) continue;
-            double corr = correlationPearson(vx, vy);
+            double corr = (m_decayLambda > 0.0)
+                ? correlationPearsonWeighted(vx, vy, timestamps, m_decayLambda)
+                : correlationPearson(vx, vy);
             double pv = pearsonPValue(corr, N);
             entries.push_back({id, b, corr, pv, pv < 0.05});
         }
@@ -396,6 +411,7 @@ LearningEngine::computeCrossByte(const std::string &variableKey) const {
             for (int b1 = 0; b1 < 8; ++b1) {
                 for (int b2 = 0; b2 < 8; ++b2) {
                     std::vector<double> vb1, vb2;
+                    std::vector<uint64_t> timestamps;
                     for (const auto &o : obs) {
                         auto it1 = o.idAverageBytes.find(idList[i]);
                         auto it2 = o.idAverageBytes.find(idList[j]);
@@ -403,10 +419,13 @@ LearningEngine::computeCrossByte(const std::string &variableKey) const {
                             it2 != o.idAverageBytes.end()) {
                             vb1.push_back(static_cast<double>(it1->second[b1]));
                             vb2.push_back(static_cast<double>(it2->second[b2]));
+                            timestamps.push_back(o.timestamp);
                         }
                     }
                     if (vb1.size() < 3) continue;
-                    double corr = correlationPearson(vb1, vb2);
+                    double corr = (m_decayLambda > 0.0)
+                        ? correlationPearsonWeighted(vb1, vb2, timestamps, m_decayLambda)
+                        : correlationPearson(vb1, vb2);
                     entries.push_back({idList[i], b1, idList[j], b2, corr});
                 }
             }
@@ -818,11 +837,13 @@ LearningEngine::trainPrediction(const std::string &variableKey) {
         uint32_t id = static_cast<uint32_t>(key / 100);
         int byteIdx = static_cast<int>(key % 100);
         std::vector<double> X, Y;
+        std::vector<uint64_t> timestamps;
         for (const auto &o : obs) {
             auto it = o.idAverageBytes.find(id);
             if (it != o.idAverageBytes.end()) {
                 X.push_back(static_cast<double>(it->second[byteIdx]));
                 Y.push_back(o.value);
+                timestamps.push_back(o.timestamp);
             }
         }
         int N = static_cast<int>(X.size());
@@ -840,8 +861,10 @@ LearningEngine::trainPrediction(const std::string &variableKey) {
 
         double sy2 = 0;
         for (double y : Y) sy2 += y * y;
-        double corr = (N * sxy - sx * sy) /
-                      std::sqrt((N * sx2 - sx * sx) * (N * sy2 - sy * sy) + 1e-9);
+        double corr = (m_decayLambda > 0.0)
+            ? correlationPearsonWeighted(X, Y, timestamps, m_decayLambda)
+            : (N * sxy - sx * sy) /
+              std::sqrt((N * sx2 - sx * sx) * (N * sy2 - sy * sy) + 1e-9);
         if (std::abs(corr) < 0.8) continue;
 
         modelsForVar[id * 100 + byteIdx] = {a, b};
@@ -1408,30 +1431,55 @@ LearningEngine::trainNeuralNetwork(
     for (int i = 0; i < H2; ++i)
         w3[i][0] = wdist(rng);
 
-    // SGD training
-    double lr = 0.01;
-    int epochs = 200;
+    // ── #30 MLP v2: Adam + L2 regularization + early stopping ──
+    double lr = 0.001;
+    double l2_lambda = 0.0001;  // L2 regularization strength
+    int epochs = 500;
     int batchSize = 16;
+    int patience = 20;          // early stopping patience
+    const double beta1 = 0.9, beta2 = 0.999, eps_adam = 1e-8;
+
+    // Split: 80% train, 20% validation
+    int trainN = static_cast<int>(X.size() * 0.8);
+    if (trainN < 10) trainN = static_cast<int>(X.size());
+
+    // Initialize Adam state
+    auto &m_w1 = m_nnWeights.m_w1; m_w1.assign(D, std::vector<double>(H1, 0));
+    auto &v_w1 = m_nnWeights.v_w1; v_w1.assign(D, std::vector<double>(H1, 0));
+    auto &m_w2 = m_nnWeights.m_w2; m_w2.assign(H1, std::vector<double>(H2, 0));
+    auto &v_w2 = m_nnWeights.v_w2; v_w2.assign(H1, std::vector<double>(H2, 0));
+    auto &m_w3 = m_nnWeights.m_w3; m_w3.assign(H2, std::vector<double>(1, 0));
+    auto &v_w3 = m_nnWeights.v_w3; v_w3.assign(H2, std::vector<double>(1, 0));
+    m_nnWeights.m_b1.assign(H1, 0); m_nnWeights.v_b1.assign(H1, 0);
+    m_nnWeights.m_b2.assign(H2, 0); m_nnWeights.v_b2.assign(H2, 0);
+    m_nnWeights.m_b3 = 0; m_nnWeights.v_b3 = 0;
+
+    double bestValLoss = std::numeric_limits<double>::max();
+    int epochsNoImprove = 0;
 
     for (int epoch = 0; epoch < epochs; ++epoch) {
-        // Shuffle
-        for (int i = static_cast<int>(X.size()) - 1; i > 0; --i) {
+        // Shuffle training data
+        for (int i = trainN - 1; i > 0; --i) {
             std::uniform_int_distribution<int> idist(0, i);
             int j = idist(rng);
             std::swap(X[i], X[j]);
             std::swap(Y[i], Y[j]);
         }
 
-        for (size_t start = 0; start < X.size(); start += batchSize) {
-            size_t end = std::min(start + batchSize, X.size());
-            // Gradients
+        double trainLoss = 0.0;
+        int trainCount = 0;
+
+        for (int start = 0; start < trainN; start += batchSize) {
+            int end = std::min(start + batchSize, trainN);
+            m_nnWeights.adamStep++;
+
             std::vector<std::vector<double>> dw1(D, std::vector<double>(H1, 0));
             std::vector<std::vector<double>> dw2(H1, std::vector<double>(H2, 0));
             std::vector<std::vector<double>> dw3(H2, std::vector<double>(1, 0));
             std::vector<double> db1(H1, 0), db2(H2, 0);
             double db3 = 0;
 
-            for (size_t s = start; s < end; ++s) {
+            for (int s = start; s < end; ++s) {
                 // Forward
                 std::vector<double> h1(H1), h2(H2);
                 for (int j = 0; j < H1; ++j) {
@@ -1449,6 +1497,8 @@ LearningEngine::trainNeuralNetwork(
                 out = sigmoid(out);
 
                 double error = out - Y[s];
+                trainLoss += error * error;
+                trainCount++;
 
                 // Backward
                 double dOut = error * out * (1.0 - out);
@@ -1459,7 +1509,7 @@ LearningEngine::trainNeuralNetwork(
                     for (int j = 0; j < H2; ++j)
                         dH1[i] += dH2[j] * w2[i][j] * reluDeriv(h1[i]);
 
-                // Accumulate
+                // Accumulate gradients
                 db3 += dOut;
                 for (int i = 0; i < H2; ++i) {
                     dw3[i][0] += dOut * h2[i];
@@ -1475,21 +1525,88 @@ LearningEngine::trainNeuralNetwork(
                         dw1[i][j] += dH1[j] * X[s][i];
             }
 
-            // Update
-            int bs = static_cast<int>(end - start);
-            for (int i = 0; i < D; ++i)
-                for (int j = 0; j < H1; ++j)
-                    w1[i][j] -= lr * dw1[i][j] / bs;
-            for (int i = 0; i < H1; ++i)
-                for (int j = 0; j < H2; ++j)
-                    w2[i][j] -= lr * dw2[i][j] / bs;
-            for (int i = 0; i < H2; ++i)
-                w3[i][0] -= lr * dw3[i][0] / bs;
-            for (int i = 0; i < H1; ++i)
-                b1[i] -= lr * db1[i] / bs;
-            for (int i = 0; i < H2; ++i)
-                b2[i] -= lr * db2[i] / bs;
-            m_nnWeights.b3 -= lr * db3 / bs;
+            int bs = end - start;
+            double inv_bs = 1.0 / bs;
+            double step = m_nnWeights.adamStep;
+            double bc1 = 1.0 / (1.0 - std::pow(beta1, step));
+            double bc2 = 1.0 / (1.0 - std::pow(beta2, step));
+
+            // Adam update for w1
+            for (int i = 0; i < D; ++i) {
+                for (int j = 0; j < H1; ++j) {
+                    double g = dw1[i][j] * inv_bs + l2_lambda * w1[i][j]; // L2 grad
+                    m_w1[i][j] = beta1 * m_w1[i][j] + (1.0 - beta1) * g;
+                    v_w1[i][j] = beta2 * v_w1[i][j] + (1.0 - beta2) * g * g;
+                    w1[i][j] -= lr * (m_w1[i][j] * bc1) / (std::sqrt(v_w1[i][j] * bc2) + eps_adam);
+                }
+            }
+            // Adam update for w2
+            for (int i = 0; i < H1; ++i) {
+                for (int j = 0; j < H2; ++j) {
+                    double g = dw2[i][j] * inv_bs + l2_lambda * w2[i][j];
+                    m_w2[i][j] = beta1 * m_w2[i][j] + (1.0 - beta1) * g;
+                    v_w2[i][j] = beta2 * v_w2[i][j] + (1.0 - beta2) * g * g;
+                    w2[i][j] -= lr * (m_w2[i][j] * bc1) / (std::sqrt(v_w2[i][j] * bc2) + eps_adam);
+                }
+            }
+            // Adam update for w3
+            for (int i = 0; i < H2; ++i) {
+                double g = dw3[i][0] * inv_bs + l2_lambda * w3[i][0];
+                m_w3[i][0] = beta1 * m_w3[i][0] + (1.0 - beta1) * g;
+                v_w3[i][0] = beta2 * v_w3[i][0] + (1.0 - beta2) * g * g;
+                w3[i][0] -= lr * (m_w3[i][0] * bc1) / (std::sqrt(v_w3[i][0] * bc2) + eps_adam);
+            }
+            // Adam update for biases (no L2 on biases)
+            for (int i = 0; i < H1; ++i) {
+                double g = db1[i] * inv_bs;
+                m_nnWeights.m_b1[i] = beta1 * m_nnWeights.m_b1[i] + (1.0 - beta1) * g;
+                m_nnWeights.v_b1[i] = beta2 * m_nnWeights.v_b1[i] + (1.0 - beta2) * g * g;
+                b1[i] -= lr * (m_nnWeights.m_b1[i] * bc1) / (std::sqrt(m_nnWeights.v_b1[i] * bc2) + eps_adam);
+            }
+            for (int i = 0; i < H2; ++i) {
+                double g = db2[i] * inv_bs;
+                m_nnWeights.m_b2[i] = beta1 * m_nnWeights.m_b2[i] + (1.0 - beta1) * g;
+                m_nnWeights.v_b2[i] = beta2 * m_nnWeights.v_b2[i] + (1.0 - beta2) * g * g;
+                b2[i] -= lr * (m_nnWeights.m_b2[i] * bc1) / (std::sqrt(m_nnWeights.v_b2[i] * bc2) + eps_adam);
+            }
+            {
+                double g = db3 * inv_bs;
+                m_nnWeights.m_b3 = beta1 * m_nnWeights.m_b3 + (1.0 - beta1) * g;
+                m_nnWeights.v_b3 = beta2 * m_nnWeights.v_b3 + (1.0 - beta2) * g * g;
+                m_nnWeights.b3 -= lr * (m_nnWeights.m_b3 * bc1) / (std::sqrt(m_nnWeights.v_b3 * bc2) + eps_adam);
+            }
+        }
+
+        // Validation loss (early stopping)
+        if (trainN < static_cast<int>(X.size())) {
+            double valLoss = 0.0;
+            for (int s = trainN; s < static_cast<int>(X.size()); ++s) {
+                std::vector<double> h1(H1), h2(H2);
+                for (int j = 0; j < H1; ++j) {
+                    double z = b1[j];
+                    for (int i = 0; i < D; ++i) z += w1[i][j] * X[s][i];
+                    h1[j] = relu(z);
+                }
+                for (int j = 0; j < H2; ++j) {
+                    double z = b2[j];
+                    for (int i = 0; i < H1; ++i) z += w2[i][j] * h1[i];
+                    h2[j] = relu(z);
+                }
+                double out = m_nnWeights.b3;
+                for (int i = 0; i < H2; ++i) out += w3[i][0] * h2[i];
+                out = sigmoid(out);
+                double err = out - Y[s];
+                valLoss += err * err;
+            }
+            valLoss /= (X.size() - trainN);
+
+            if (valLoss < bestValLoss) {
+                bestValLoss = valLoss;
+                epochsNoImprove = 0;
+            } else {
+                epochsNoImprove++;
+                if (epochsNoImprove >= patience) break;
+            }
         }
     }
 
@@ -1551,16 +1668,20 @@ LearningEngine::autoDiscovery(const std::string &variableKey) const {
     for (uint32_t id : recentIds) {
         for (int b = 0; b < 64; ++b) {
             std::vector<double> bx, by;
+            std::vector<uint64_t> timestamps;
             for (const auto &o : obs) {
                 auto it = o.idAverageBytes.find(id);
                 if (it != o.idAverageBytes.end()) {
                     bx.push_back(o.value);
                     by.push_back(static_cast<double>(it->second[b]));
+                    timestamps.push_back(o.timestamp);
                 }
             }
             int N = static_cast<int>(bx.size());
             if (N < 5) continue;
-            double corr = correlationPearson(bx, by);
+            double corr = (m_decayLambda > 0.0)
+                ? correlationPearsonWeighted(bx, by, timestamps, m_decayLambda)
+                : correlationPearson(bx, by);
             if (std::abs(corr) < 0.5) continue;
             double pv = pearsonPValue(corr, N);
             entries.push_back({id, b, corr, pv, pv < 0.05});
@@ -1637,16 +1758,354 @@ void LearningEngine::recalcAdaptiveWindow() {
     m_adaptiveAfter = m_adaptiveBefore / 3;
 }
 
-// ── Serialization (stub — returns empty JSON for now) ───────
+
+// ── #31 Gradient Boosted Trees (XGBoost-lite) ───────────────
+
+LearningEngine::GbtModel
+LearningEngine::trainGbt(const std::string &variableKey,
+                         int maxTrees, int maxDepth) const {
+    GbtModel model;
+    model.learningRate = 0.1;
+    std::shared_lock lock(m_mutex);
+    const auto &obs = observations(variableKey);
+    if (obs.size() < 10) return model;
+
+    // Build feature matrix: for each observation, extract all (id,byte) averages
+    struct Feature { uint32_t id; int b; };
+    std::vector<Feature> featureList;
+    std::unordered_set<uint32_t> seenIds;
+    for (const auto &o : obs)
+        for (const auto &kv : o.idAverageBytes)
+            if (!seenIds.count(kv.first)) {
+                seenIds.insert(kv.first);
+                for (int b = 0; b < 64; ++b)
+                    featureList.push_back({kv.first, b});
+            }
+
+    int N = static_cast<int>(obs.size());
+    int F = static_cast<int>(featureList.size());
+    if (F == 0) return model;
+
+    // Build feature matrix
+    std::vector<std::vector<double>> X(N, std::vector<double>(F));
+    std::vector<double> Y(N);
+    for (int i = 0; i < N; ++i) {
+        Y[i] = obs[i].value;
+        for (int f = 0; f < F; ++f) {
+            auto it = obs[i].idAverageBytes.find(featureList[f].id);
+            X[i][f] = (it != obs[i].idAverageBytes.end())
+                ? static_cast<double>(it->second[featureList[f].b]) : 0.0;
+        }
+    }
+
+    // Base prediction = mean
+    double base = 0;
+    for (double y : Y) base += y;
+    base /= N;
+    model.basePrediction = base;
+
+    // Residuals
+    std::vector<double> residuals(N);
+    for (int i = 0; i < N; ++i) residuals[i] = Y[i] - base;
+
+    // Greedy tree building
+    std::mt19937 rng(42);
+    for (int t = 0; t < maxTrees; ++t) {
+        // Subsample features
+        int sampledF = std::min(F, std::max(4, F / 3));
+        std::vector<int> featIdx(F);
+        std::iota(featIdx.begin(), featIdx.end(), 0);
+        std::shuffle(featIdx.begin(), featIdx.end(), rng);
+        featIdx.resize(sampledF);
+
+        // Find best split
+        double bestGain = 0;
+        int bestFeat = -1;
+        double bestThresh = 0;
+        double bestLeftVal = 0, bestRightVal = 0;
+
+        for (int fi : featIdx) {
+            // Sort values for this feature
+            std::vector<std::pair<double, double>> sorted(N);
+            for (int i = 0; i < N; ++i)
+                sorted[i] = {X[i][fi], residuals[i]};
+            std::sort(sorted.begin(), sorted.end());
+
+            // Scan thresholds
+            double sumL = 0, sumR = 0;
+            for (int i = 0; i < N; ++i) sumR += sorted[i].second;
+            int cntL = 0, cntR = N;
+
+            for (int i = 0; i < N - 1; ++i) {
+                sumL += sorted[i].second;
+                cntL++;
+                sumR -= sorted[i].second;
+                cntR--;
+                if (cntL < 1 || cntR < 1) continue;
+                if (sorted[i].first >= sorted[i+1].first) continue;
+
+                double leftVal = sumL / cntL;
+                double rightVal = sumR / cntR;
+                double gain = sumL * sumL / cntL + sumR * sumR / cntR;
+
+                if (gain > bestGain) {
+                    bestGain = gain;
+                    bestFeat = fi;
+                    bestThresh = (sorted[i].first + sorted[i+1].first) / 2.0;
+                    bestLeftVal = leftVal;
+                    bestRightVal = rightVal;
+                }
+            }
+        }
+
+        if (bestFeat < 0) break;
+
+        GbtTree tree;
+        tree.featureIdx = bestFeat;
+        tree.threshold = bestThresh;
+        tree.leftValue = bestLeftVal * model.learningRate;
+        tree.rightValue = bestRightVal * model.learningRate;
+        model.trees.push_back(tree);
+
+        // Update residuals
+        for (int i = 0; i < N; ++i) {
+            double pred = (X[i][bestFeat] < bestThresh)
+                ? tree.leftValue : tree.rightValue;
+            residuals[i] -= pred;
+        }
+    }
+    return model;
+}
+
+double LearningEngine::predictGbt(const GbtModel &model,
+                                  const std::vector<double> &features) const {
+    double pred = model.basePrediction;
+    for (const auto &tree : model.trees) {
+        if (tree.featureIdx < static_cast<int>(features.size()))
+            pred += (features[tree.featureIdx] < tree.threshold)
+                ? tree.leftValue : tree.rightValue;
+    }
+    return pred;
+}
+
+// ── #32 Confidence intervals (bootstrap residuals) ──────────
+
+std::vector<LePredictionModel>
+LearningEngine::trainPredictionWithCI(const std::string &variableKey,
+                                       int bootstrapSamples) {
+    std::unique_lock lock(m_mutex);
+    std::vector<LePredictionModel> models;
+    const auto &obs = observations(variableKey);
+    if (obs.size() < 5) return models;
+
+    // First, train normally
+    models = trainPrediction(variableKey);
+
+    // For each model, compute bootstrap confidence intervals
+    std::mt19937 rng(42);
+    for (auto &model : models) {
+        // Collect (x, y) pairs for this model
+        std::vector<double> X, Y;
+        for (const auto &o : obs) {
+            auto it = o.idAverageBytes.find(model.id);
+            if (it != o.idAverageBytes.end() && model.byte < 64) {
+                X.push_back(static_cast<double>(it->second[model.byte]));
+                Y.push_back(o.value);
+            }
+        }
+        if (X.size() < 5) continue;
+
+        // Compute point predictions and residuals
+        std::vector<double> residuals;
+        for (size_t i = 0; i < X.size(); ++i) {
+            double pred = model.a * X[i] + model.b;
+            residuals.push_back(Y[i] - pred);
+        }
+
+        // Bootstrap residuals
+        std::vector<double> bootPreds(bootstrapSamples);
+        std::uniform_int_distribution<int> dist(0, static_cast<int>(residuals.size()) - 1);
+        for (int b = 0; b < bootstrapSamples; ++b) {
+            double sum = 0;
+            int n = std::min(20, static_cast<int>(residuals.size()));
+            for (int i = 0; i < n; ++i)
+                sum += residuals[dist(rng)];
+            bootPreds[b] = sum / n;
+        }
+
+        std::sort(bootPreds.begin(), bootPreds.end());
+        double meanPred = 0;
+        for (double p : bootPreds) meanPred += p;
+        meanPred /= bootstrapSamples;
+
+        // 95% CI
+        int loIdx = static_cast<int>(bootstrapSamples * 0.025);
+        int hiIdx = static_cast<int>(bootstrapSamples * 0.975);
+        model.lowerBound = bootPreds[std::max(0, loIdx)];
+        model.upperBound = bootPreds[std::min(bootstrapSamples - 1, hiIdx)];
+    }
+    return models;
+}
+
+
+// ── #33 Multi-target ────────────────────────────────────────
+
+void LearningEngine::trainAllPredictions() {
+    auto names = variableNames();
+    for (const auto &name : names)
+        trainPrediction(name);
+}
+
+std::vector<LearningEngine::MultiPrediction>
+LearningEngine::predictRealtimeAll() const {
+    std::vector<MultiPrediction> result;
+    auto names = variableNames();
+    for (const auto &name : names) {
+        MultiPrediction mp;
+        mp.variableName = name;
+        mp.predictions = predictRealtime(name);
+        if (!mp.predictions.empty())
+            result.push_back(std::move(mp));
+    }
+    return result;
+}
+
+// ── Serialization (stub) ────────────────────────────────────
 
 std::string LearningEngine::serializeSession() const {
-    // TODO: full JSON serialization with STL types (Phase F task)
     std::shared_lock lock(m_mutex);
     return "{\"iteration\":" + std::to_string(m_iteration) + "}";
 }
 
 bool LearningEngine::deserializeSession(const std::string &json) {
-    // TODO: full JSON deserialization (Phase F task)
     (void)json;
     return false;
+}
+
+// ── #27 Exponential forgetting: weighted Pearson ────────────
+
+double LearningEngine::correlationPearsonWeighted(
+    const std::vector<double> &x, const std::vector<double> &y,
+    const std::vector<uint64_t> &timestamps, double lambda) {
+    int N = std::min({static_cast<int>(x.size()),
+                      static_cast<int>(y.size()),
+                      static_cast<int>(timestamps.size())});
+    if (N < 3 || lambda <= 0.0) return correlationPearson(x, y);
+
+    uint64_t newest = *std::max_element(timestamps.begin(),
+                                         timestamps.begin() + N);
+    double sw = 0, swx = 0, swy = 0, swxy = 0, swx2 = 0, swy2 = 0;
+    for (int i = 0; i < N; ++i) {
+        double age_us = static_cast<double>(newest - timestamps[i]);
+        double w = std::exp(-lambda * age_us / 1'000'000.0);
+        double xi = x[i], yi = y[i];
+        sw += w;
+        swx += w * xi;
+        swy += w * yi;
+        swxy += w * xi * yi;
+        swx2 += w * xi * xi;
+        swy2 += w * yi * yi;
+    }
+    if (sw < 1e-9) return 0.0;
+    double num = sw * swxy - swx * swy;
+    double den = std::sqrt((sw * swx2 - swx * swx) * (sw * swy2 - swy * swy));
+    return den != 0.0 ? num / den : 0.0;
+}
+
+// ── #28 Welford's online algorithm ──────────────────────────
+
+static uint64_t welfordKey(const std::string &var, uint32_t id, int byteIdx) {
+    std::hash<std::string> hs;
+    return (static_cast<uint64_t>(hs(var)) << 40) |
+           (static_cast<uint64_t>(id) << 8) | static_cast<uint64_t>(byteIdx);
+}
+
+void LearningEngine::updateWelford(const std::string &variableKey,
+                                   uint32_t id, int byteIdx,
+                                   double valX, double valY) {
+    uint64_t key = welfordKey(variableKey, id, byteIdx);
+    auto &a = m_welford[key];
+    a.n++;
+    double dx = valX - a.meanX;
+    a.meanX += dx / a.n;
+    double dy = valY - a.meanY;
+    a.meanY += dy / a.n;
+    a.M2x += dx * (valX - a.meanX);
+    a.M2y += dy * (valY - a.meanY);
+    a.Cxy += dx * (valY - a.meanY);
+}
+
+std::vector<LeCorrelationEntry>
+LearningEngine::computeCorrelationsOnline(const std::string &variableKey) const {
+    std::shared_lock lock(m_mutex);
+    std::vector<LeCorrelationEntry> entries;
+    const auto &obs = observations(variableKey);
+    if (obs.size() < 3) return entries;
+
+    std::hash<std::string> hs;
+    uint64_t varHash = hs(variableKey);
+
+    for (const auto &kv : m_welford) {
+        uint64_t key = kv.first;
+        if ((key >> 40) != varHash) continue;
+        uint32_t id = static_cast<uint32_t>((key >> 8) & 0xFFFFFFFF);
+        int byteIdx = static_cast<int>(key & 0xFF);
+        const auto &a = kv.second;
+        if (a.n < 3) continue;
+
+        double varX = a.M2x / (a.n - 1);
+        double varY = a.M2y / (a.n - 1);
+        double cov  = a.Cxy / (a.n - 1);
+        double denom = std::sqrt(varX * varY);
+        double corr = denom > 0 ? cov / denom : 0.0;
+        double pv = pearsonPValue(corr, static_cast<int>(a.n));
+        entries.push_back({id, byteIdx, corr, pv, pv < 0.05});
+    }
+
+    std::sort(entries.begin(), entries.end(),
+              [](const LeCorrelationEntry &a, const LeCorrelationEntry &b) {
+                  return std::abs(a.correlation) > std::abs(b.correlation);
+              });
+    return entries;
+}
+
+// ── #29 EWMA anomaly detection ──────────────────────────────
+
+void LearningEngine::updateEwma(const std::vector<float> &features) {
+    if (m_ewma.mean.empty()) {
+        m_ewma.mean.assign(features.begin(), features.end());
+        m_ewma.var.resize(features.size(), 0.0);
+        return;
+    }
+    double a = m_ewma.alpha;
+    for (size_t d = 0; d < features.size(); ++d) {
+        double oldMean = m_ewma.mean[d];
+        m_ewma.mean[d] = a * features[d] + (1.0 - a) * oldMean;
+        double dev = features[d] - m_ewma.mean[d];
+        m_ewma.var[d] = a * dev * dev + (1.0 - a) * m_ewma.var[d];
+    }
+}
+
+double LearningEngine::checkAnomalyEwma() const {
+    std::shared_lock lock(m_mutex);
+    if (m_frameHistory.empty() || m_ewma.mean.empty()) return 0.0;
+    uint64_t now = m_frameHistory.back().timestamp;
+    std::vector<CanFrame> win;
+    for (auto ri = m_frameHistory.rbegin(); ri != m_frameHistory.rend(); ++ri) {
+        if (ri->timestamp >= now - 1'000'000)
+            win.push_back(*ri);
+        else break;
+    }
+    if (win.size() < 3) return 0.0;
+    std::reverse(win.begin(), win.end());
+    std::vector<float> feat = buildWindowFeatures(win);
+    const_cast<LearningEngine*>(this)->updateEwma(feat);
+
+    double score = 0.0;
+    for (size_t d = 0; d < feat.size() && d < m_ewma.mean.size(); ++d) {
+        double var = m_ewma.var[d] + 1e-6;
+        double z = (feat[d] - m_ewma.mean[d]) / std::sqrt(var);
+        score += z * z;
+    }
+    return score;
 }

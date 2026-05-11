@@ -63,6 +63,8 @@ struct LePredictionModel {
     int byte;
     double a;
     double b;
+    double lowerBound = 0;   // #32: 95% confidence lower bound
+    double upperBound = 0;   // #32: 95% confidence upper bound
 };
 
 struct LeMiEntry {
@@ -201,6 +203,14 @@ public:
     std::vector<LeRealtimePrediction>
         predictRealtime(const std::string &variableKey) const;
 
+    // ── #33 Multi-target ─────────────────────────────────
+    void trainAllPredictions();
+    struct MultiPrediction {
+        std::string variableName;
+        std::vector<LeRealtimePrediction> predictions;
+    };
+    std::vector<MultiPrediction> predictRealtimeAll() const;
+
     // ── Anomaly detection ─────────────────────────────────
     void buildNormalModel();
     double checkAnomaly(double threshold) const;
@@ -237,6 +247,28 @@ public:
         int sampleCount;
     };
     FftResult runFftAnalysis(uint32_t targetId, int byteIdx) const;
+
+    // ── #31 Gradient Boosted Trees ────────────────────────
+    struct GbtTree {
+        int featureIdx;
+        double threshold;
+        double leftValue;
+        double rightValue;
+    };
+    struct GbtModel {
+        std::vector<GbtTree> trees;
+        double basePrediction = 0;
+        double learningRate = 0.1;
+    };
+    GbtModel trainGbt(const std::string &variableKey,
+                      int maxTrees = 50, int maxDepth = 3) const;
+    double predictGbt(const GbtModel &model,
+                      const std::vector<double> &features) const;
+
+    // ── #32 Confidence intervals ───────────────────────────
+    std::vector<LePredictionModel>
+        trainPredictionWithCI(const std::string &variableKey,
+                              int bootstrapSamples = 100);
 
     // ── Neural network ────────────────────────────────────
     struct NnTrainingResult {
@@ -338,6 +370,11 @@ private:
         std::vector<double> b1, b2;
         double b3 = 0;
         bool trained = false;
+        // Adam optimizer state (#30)
+        std::vector<std::vector<double>> m_w1, m_w2, m_w3, v_w1, v_w2, v_w3;
+        std::vector<double> m_b1, m_b2, v_b1, v_b2;
+        double m_b3 = 0, v_b3 = 0;
+        int adamStep = 0;
     };
     NnWeights m_nnWeights;
     int m_nnInputDim = 16;
