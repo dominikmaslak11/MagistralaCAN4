@@ -319,19 +319,22 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
     const auto &obs = observations(variableKey);
     if (obs.size() < 3) return entries;
 
-    // Find common IDs
-    std::unordered_set<uint32_t> common;
-    bool first = true;
+    // Find IDs present in majority of observations (>= 50%)
+    std::unordered_map<uint32_t, int> idCount;
     for (const auto &o : obs) {
-        std::unordered_set<uint32_t> ids;
-        for (const auto &kv : o.idAverageBytes) ids.insert(kv.first);
-        if (first) { common = ids; first = false; }
-        else {
-            std::unordered_set<uint32_t> inter;
-            for (auto id : common) if (ids.count(id)) inter.insert(id);
-            common = std::move(inter);
+        std::unordered_set<uint32_t> seen;
+        for (const auto &kv : o.idAverageBytes) {
+            if (!seen.count(kv.first)) {
+                seen.insert(kv.first);
+                idCount[kv.first]++;
+            }
         }
     }
+    int threshold = std::max(3, static_cast<int>(obs.size()) / 2);
+    std::unordered_set<uint32_t> common;
+    for (const auto &kv : idCount)
+        if (kv.second >= threshold)
+            common.insert(kv.first);
 
     for (uint32_t id : common) {
         for (int b = 0; b < 64; ++b) {
@@ -1216,18 +1219,22 @@ LearningEngine::computeMutualInformation(const std::string &variableKey) const {
     std::vector<double> values;
     for (const auto &o : obs) values.push_back(o.value);
 
-    std::unordered_set<uint32_t> commonIds;
-    bool first = true;
+    // Find IDs present in majority of observations (>= 50%)
+    std::unordered_map<uint32_t, int> idCount;
     for (const auto &o : obs) {
-        std::unordered_set<uint32_t> ids;
-        for (const auto &kv : o.idAverageBytes) ids.insert(kv.first);
-        if (first) { commonIds = ids; first = false; }
-        else {
-            std::unordered_set<uint32_t> inter;
-            for (auto id : commonIds) if (ids.count(id)) inter.insert(id);
-            commonIds = std::move(inter);
+        std::unordered_set<uint32_t> seen;
+        for (const auto &kv : o.idAverageBytes) {
+            if (!seen.count(kv.first)) {
+                seen.insert(kv.first);
+                idCount[kv.first]++;
+            }
         }
     }
+    int threshold = std::max(3, static_cast<int>(obs.size()) / 2);
+    std::unordered_set<uint32_t> commonIds;
+    for (const auto &kv : idCount)
+        if (kv.second >= threshold)
+            commonIds.insert(kv.first);
 
     for (uint32_t id : commonIds) {
         for (int b = 0; b < 64; ++b) {
@@ -1311,18 +1318,22 @@ LearningEngine::computeMIC(const std::string &variableKey) const {
     std::vector<double> values;
     for (const auto &o : obs) values.push_back(o.value);
 
-    std::unordered_set<uint32_t> commonIds;
-    bool first = true;
+    // Find IDs present in majority of observations (>= 50%)
+    std::unordered_map<uint32_t, int> idCount;
     for (const auto &o : obs) {
-        std::unordered_set<uint32_t> ids;
-        for (const auto &kv : o.idAverageBytes) ids.insert(kv.first);
-        if (first) { commonIds = ids; first = false; }
-        else {
-            std::unordered_set<uint32_t> inter;
-            for (auto id : commonIds) if (ids.count(id)) inter.insert(id);
-            commonIds = std::move(inter);
+        std::unordered_set<uint32_t> seen;
+        for (const auto &kv : o.idAverageBytes) {
+            if (!seen.count(kv.first)) {
+                seen.insert(kv.first);
+                idCount[kv.first]++;
+            }
         }
     }
+    int threshold = std::max(3, static_cast<int>(obs.size()) / 2);
+    std::unordered_set<uint32_t> commonIds;
+    for (const auto &kv : idCount)
+        if (kv.second >= threshold)
+            commonIds.insert(kv.first);
 
     auto computeMI = [&](const std::vector<double> &xvals,
                          const std::vector<double> &yvals,
