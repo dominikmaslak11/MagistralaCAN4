@@ -1,5 +1,6 @@
 #pragma once
 #include "CanFrame.h"
+#include "GpuCompute.h"
 #include <cstdint>
 #include <deque>
 #include <string>
@@ -423,6 +424,9 @@ private:
                             std::vector<double> &eigenvalues,
                             std::vector<std::vector<double>> &eigenvectors,
                             int maxIter = 50);
+
+    // ── GPU accelerator ──────────────────────────────────
+    static GpuCompute m_gpu;   // shared GPU accelerator
 
     // ── Internal helpers ──────────────────────────────────
     std::vector<CanFrame> extractWindow() const;

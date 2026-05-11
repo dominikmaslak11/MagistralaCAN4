@@ -62,6 +62,7 @@ set(SOURCES
     src/core/CandidateModel.cpp
     src/core/LearningEngine.cpp
     src/core/LuaScriptEngine.cpp
+    src/core/GpuCompute.cpp
     src/core/GpuCorrelator.cpp
     src/core/WebSocketServer.cpp
     src/core/J1939Parser.cpp

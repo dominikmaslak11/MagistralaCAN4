@@ -8,6 +8,8 @@
 #include <sstream>
 #include <fstream>
 #include <mutex>
+
+GpuCompute LearningEngine::m_gpu;
 #include <thread>
 
 #ifndef M_PI
@@ -487,13 +489,23 @@ int LearningEngine::kMeans(const std::vector<std::vector<float>> &data,
         std::vector<std::vector<float>> newCtr(K, std::vector<float>(dim, 0.0f));
 
         for (int i = 0; i < N; ++i) {
+            // GPU-accelerated distance (#kMeans-GPU)
+            std::vector<std::vector<float>> gpuDists;
+            if (m_gpu.isAvailable() && N * K > 200) {
+                gpuDists = m_gpu.kmeansDistances(data, centroids);
+            }
             int bestIdx = 0;
             double bestDist = std::numeric_limits<double>::max();
             for (int k = 0; k < K; ++k) {
-                double d2 = 0.0;
-                for (int d = 0; d < dim; ++d) {
-                    double diff = data[i][d] - centroids[k][d];
-                    d2 += diff * diff;
+                double d2;
+                if (!gpuDists.empty())
+                    d2 = gpuDists[i][k];
+                else {
+                    d2 = 0.0;
+                    for (int d = 0; d < dim; ++d) {
+                        double diff = data[i][d] - centroids[k][d];
+                        d2 += diff * diff;
+                    }
                 }
                 if (d2 < bestDist) { bestDist = d2; bestIdx = k; }
             }
@@ -572,13 +584,23 @@ int LearningEngine::kMeansPP(const std::vector<std::vector<float>> &data,
         std::vector<int> counts(K, 0);
         std::vector<std::vector<float>> newCtr(K, std::vector<float>(dim, 0.0f));
         for (int i = 0; i < N; ++i) {
+            // GPU-accelerated distance (#kMeans-GPU)
+            std::vector<std::vector<float>> gpuDists;
+            if (m_gpu.isAvailable() && N * K > 200) {
+                gpuDists = m_gpu.kmeansDistances(data, centroids);
+            }
             int bestIdx = 0;
             double bestDist = std::numeric_limits<double>::max();
             for (int k = 0; k < K; ++k) {
-                double d2 = 0.0;
-                for (int d = 0; d < dim; ++d) {
-                    double diff = data[i][d] - centroids[k][d];
-                    d2 += diff * diff;
+                double d2;
+                if (!gpuDists.empty())
+                    d2 = gpuDists[i][k];
+                else {
+                    d2 = 0.0;
+                    for (int d = 0; d < dim; ++d) {
+                        double diff = data[i][d] - centroids[k][d];
+                        d2 += diff * diff;
+                    }
                 }
                 if (d2 < bestDist) { bestDist = d2; bestIdx = k; }
             }
@@ -896,18 +918,20 @@ LearningEngine::PcaResult LearningEngine::runPcaClustering() const {
         for (int d = 0; d < dim; ++d)
             centered[i][d] = features[i][d] - mean[d];
 
-    // 3. Build correlation matrix (dim × dim)
-    std::vector<std::vector<double>> cov(dim, std::vector<double>(dim, 0.0));
-    for (int i = 0; i < dim; ++i) {
-        for (int j = 0; j < dim; ++j) {
-            double sum = 0.0;
-            for (int k = 0; k < N; ++k)
-                sum += centered[k][i] * centered[k][j];
-            cov[i][j] = sum / (N - 1);
-        }
-    }
+        // 3. Build correlation matrix via GPU (#PCA-GPU)
+    // Transpose: features[dim][N] for GPU correlation
+    std::vector<std::vector<float>> transposed(dim, std::vector<float>(N));
+    for (int d = 0; d < dim; ++d)
+        for (int i = 0; i < N; ++i)
+            transposed[d][i] = centered[i][d];
 
-    double origTrace = 0.0;
+    auto corrMat = m_gpu.correlationMatrix(transposed);
+    std::vector<std::vector<double>> cov(dim, std::vector<double>(dim, 0.0));
+    for (int i = 0; i < dim; ++i)
+        for (int j = 0; j < dim; ++j)
+            cov[i][j] = corrMat[i][j];
+
+double origTrace = 0.0;
     for (int d = 0; d < dim; ++d) origTrace += cov[d][d];
 
     // #37: Jacobi eigen-decomposition (full, for 5×5 matrix)
