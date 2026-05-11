@@ -22,6 +22,7 @@ public:
                              QWidget *parent = nullptr);
 
     void setSniffer(CanSniffer *sniffer) { m_sniffer = sniffer; }
+    void setInterface(const QString &iface) { m_sniffInterface = iface; }
 
 public slots:
     void loadFile();
@@ -76,4 +77,5 @@ private:
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;
     CanSniffer *m_sniffer = nullptr;
+    QString m_sniffInterface;
 };

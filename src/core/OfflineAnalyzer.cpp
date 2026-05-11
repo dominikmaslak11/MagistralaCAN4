@@ -253,8 +253,11 @@ void OfflineAnalyzer::nextFrame() {
 
     if (m_learner) m_learner->processFrame(frame);
     if (m_luaEngine) m_luaEngine->onNewFrame(frame);
-    if (m_sniffer && m_sendToBusCheck && m_sendToBusCheck->isChecked())
+    if (m_sniffer && m_sendToBusCheck && m_sendToBusCheck->isChecked()) {
+        if (!m_sniffer->isSocketValid() && !m_sniffInterface.isEmpty())
+            m_sniffer->start(m_sniffInterface);
         m_sniffer->writeFrame(frame);
+    }
 
     // Binary search: check if we reached the end of the current half
     if (m_bsState == BsState::PlayingHalf && m_currentIndex >= m_bsPlayEnd - 1) {

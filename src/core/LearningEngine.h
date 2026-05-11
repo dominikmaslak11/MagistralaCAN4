@@ -162,6 +162,11 @@ public:
         computeCandidates(const std::string *dbcDescription = nullptr,
                           const std::string *j1939Name = nullptr) const;
 
+    // ── Auto-increment byte filter ─────────────────────────
+    // Detects bytes that are counters/timestamps (always changing)
+    std::unordered_set<uint64_t> detectAutoIncrementBytes() const;
+    // key = (id << 8) | byteIdx
+
     // ── Correlation table (Pearson) ────────────────────────
     std::vector<LeCorrelationEntry>
         computeCorrelations(const std::string &variableKey) const;

@@ -310,6 +310,49 @@ LearningEngine::computeCandidates(const std::string *dbcDescription,
     return cands;
 }
 
+// ── Auto-increment byte filter ──────────────────────────────
+
+std::unordered_set<uint64_t> LearningEngine::detectAutoIncrementBytes() const {
+    std::shared_lock lock(m_mutex);
+    std::unordered_set<uint64_t> result;
+    if (m_frameHistory.size() < 10) return result;
+
+    // Group frames by ID
+    std::unordered_map<uint32_t, std::vector<CanFrame>> byId;
+    for (const auto &f : m_frameHistory)
+        byId[f.id].push_back(f);
+
+    for (const auto &kv : byId) {
+        uint32_t id = kv.first;
+        const auto &frames = kv.second;
+        if (frames.size() < 5) continue;
+
+        for (int b = 0; b < 8; ++b) {
+            // Check if byte always changes by +1 (with wrap)
+            int changes = 0;
+            int incByOne = 0;
+            int totalPairs = 0;
+            for (size_t i = 1; i < frames.size(); ++i) {
+                if (b >= frames[i].dlc || b >= frames[i-1].dlc) continue;
+                int prev = frames[i-1].data[b];
+                int curr = frames[i].data[b];
+                totalPairs++;
+                if (prev != curr) {
+                    changes++;
+                    int diff = (curr - prev) & 0xFF;
+                    if (diff == 1 || diff == 0xFF)  // +1 or wrap (255→0)
+                        incByOne++;
+                }
+            }
+            // Auto-increment: >90% of changes are +1, and >80% of pairs change
+            if (totalPairs > 4 && changes > totalPairs * 0.8 && incByOne > changes * 0.9) {
+                result.insert((static_cast<uint64_t>(id) << 8) | b);
+            }
+        }
+    }
+    return result;
+}
+
 // ── Correlation table (Pearson) ────────────────────────────
 
 std::vector<LeCorrelationEntry>
@@ -336,6 +379,9 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
         if (kv.second >= threshold)
             common.insert(kv.first);
 
+    // Detect auto-increment bytes to filter out
+    auto aiBytes = detectAutoIncrementBytes();
+
     for (uint32_t id : common) {
         for (int b = 0; b < 64; ++b) {
             std::vector<double> vx, vy;
@@ -350,6 +396,8 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
             }
             int N = static_cast<int>(vx.size());
             if (N < 3) continue;
+            // Skip auto-increment bytes (counters, timestamps)
+            if (aiBytes.count((static_cast<uint64_t>(id) << 8) | b)) continue;
             double corr = (m_decayLambda > 0.0)
                 ? correlationPearsonWeighted(vx, vy, timestamps, m_decayLambda)
                 : correlationPearson(vx, vy);
