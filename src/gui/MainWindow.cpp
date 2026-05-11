@@ -94,7 +94,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_pluginLoader.loadFromDirectory("./plugins");
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     m_offlineAnalyzer->setSniffer(&m_sniffer);
-    m_offlineAnalyzer->setInterface(m_interfaceCombo->currentText());
 
     // --- CAN Driver ---
 #ifdef Q_OS_WIN
@@ -154,6 +153,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
 
     setupToolBar();
+    if (m_offlineAnalyzer && m_interfaceCombo)
+        m_offlineAnalyzer->setInterface(m_interfaceCombo->currentText());
     setupCentralWidget();
     setupStyle();
 
