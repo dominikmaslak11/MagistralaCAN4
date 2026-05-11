@@ -303,7 +303,6 @@ void OfflineAnalyzer::startBinarySearch() {
     m_bsLeft = 0;
     m_bsRight = static_cast<int>(m_frames.size()) - 1;
     m_bsState = BsState::PlayingHalf;
-    m_bsPlayingFirstHalf = true;
     m_currentIndex = 0;
     m_frameLog->clear();
 
@@ -324,7 +323,7 @@ void OfflineAnalyzer::bsPlayHalf() {
             dataStr += QString("%1 ").arg(f.data[i], 2, 16, QChar('0')).toUpper();
 
         QMessageBox::information(this, "Wyszukiwanie binarne — znaleziono",
-            QString("Znaleziono ramke:\n\n"
+            QString("Znaleziono ramke odpowiedzialna za zdarzenie:\n\n"
                     "Indeks: %1 / %2\n"
                     "Timestamp: %3 us\n"
                     "ID: 0x%4\n"
@@ -340,19 +339,13 @@ void OfflineAnalyzer::bsPlayHalf() {
 
     m_bsMid = m_bsLeft + (m_bsRight - m_bsLeft) / 2;
 
-    if (m_bsPlayingFirstHalf) {
-        m_currentIndex = m_bsLeft;
-        m_bsPlayEnd = m_bsMid + 1;
-        int halfSize = m_bsMid - m_bsLeft + 1;
-        m_bsRangeLabel->setText(QString("▶ 1-sza polowa: ramki [%1–%2]  (%3 ramek)")
-                                .arg(m_bsLeft).arg(m_bsMid).arg(halfSize));
-    } else {
-        m_currentIndex = m_bsMid + 1;
-        m_bsPlayEnd = m_bsRight + 1;
-        int halfSize = m_bsRight - m_bsMid;
-        m_bsRangeLabel->setText(QString("▶ 2-ga polowa: ramki [%1–%2]  (%3 ramek)")
-                                .arg(m_bsMid + 1).arg(m_bsRight).arg(halfSize));
-    }
+    // Always play the FIRST half of the current range
+    m_currentIndex = m_bsLeft;
+    m_bsPlayEnd = m_bsMid + 1;
+    int halfSize = m_bsMid - m_bsLeft + 1;
+    int totalSize = m_bsRight - m_bsLeft + 1;
+    m_bsRangeLabel->setText(QString("▶ Odtwarzam ramki [%1–%2]  (%3 z %4 ramek)")
+                            .arg(m_bsLeft).arg(m_bsMid).arg(halfSize).arg(totalSize));
 
     m_playing = true;
     m_bsState = BsState::PlayingHalf;
@@ -362,21 +355,18 @@ void OfflineAnalyzer::bsPlayHalf() {
 
 void OfflineAnalyzer::onBinarySearchResponse(bool phenomenonOccurred) {
     if (phenomenonOccurred) {
-        if (m_bsPlayingFirstHalf) {
-            m_bsRight = m_bsMid;
-        } else {
-            m_bsLeft = m_bsMid + 1;
-        }
-        m_bsPlayingFirstHalf = true;
+        // Zjawisko wystapilo w odtwarzanej polowie → zawęź do niej
+        m_bsRight = m_bsMid;
     } else {
-        if (m_bsPlayingFirstHalf) {
-            m_bsPlayingFirstHalf = false;
-        } else {
+        // Zjawisko NIE wystapilo → przejdź do drugiej polowy
+        m_bsLeft = m_bsMid + 1;
+        // Sprawdz czy nie wyszliśmy poza zakres
+        if (m_bsLeft > m_bsRight) {
             QMessageBox::warning(this, "Wyszukiwanie binarne",
-                "Zjawisko nie wystapilo w zadnej polowie.\n"
-                "Upewnij sie, ze plik candump zawiera ramke odpowiedzialna za zdarzenie.");
+                "Zjawisko nie wystapilo w drugiej polowie.\n"
+                "Upewnij sie ze plik zawiera ramke odpowiedzialna za zdarzenie.");
             m_bsState = BsState::Idle;
-            m_bsRangeLabel->setText("Przerwano — zjawisko nie znalezione");
+            m_bsRangeLabel->setText("Przerwano");
             return;
         }
     }
