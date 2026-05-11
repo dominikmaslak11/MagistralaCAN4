@@ -68,7 +68,7 @@
 
 ---
 
-## Naprawione bugi
+---
 - PcanDriver::readFrame — usunięty martwy warunek CAN_GetStatus & 0x100
 - Deadlock w markEvent → recalcAdaptiveWindow (reentrant mutex)
 - Integer division w addObservation (uint8_t / size_t → 0)
