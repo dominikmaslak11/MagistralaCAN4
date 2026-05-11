@@ -560,11 +560,22 @@ void AssociativeLearner::addObservation() {
     if (m_currentVariable.isEmpty()) return;
     bool ok;
     double v = m_valueInput->text().toDouble(&ok);
-    if (!ok) return;
+    if (!ok) {
+        m_iterationLabel->setText("Blad: wpisz liczbe (np. 25.5)");
+        return;
+    }
 
     m_engine.addObservation(m_currentVariable.toStdString(), v,
                             m_engine.adaptiveBefore(), m_engine.adaptiveAfter());
     m_valueInput->clear();
+
+    // Show observation count
+    auto obs = m_engine.observations(m_currentVariable.toStdString());
+    m_iterationLabel->setText(QString("%1: %2 obs. (ostatnia: %3)")
+        .arg(m_currentVariable)
+        .arg(obs.size())
+        .arg(v, 0, 'f', 1));
+
     updateCorrelationTable();
     updateCrossByteTable();
     updateChart();
@@ -606,8 +617,15 @@ void AssociativeLearner::updateCandidates() {
 // ── Correlation table (Pearson) UI ─────────────────────────
 
 void AssociativeLearner::updateCorrelationTable() {
+    auto obs = m_engine.observations(m_currentVariable.toStdString());
     auto entries = m_engine.computeCorrelations(m_currentVariable.toStdString());
     m_correlationTable->setRowCount(static_cast<int>(entries.size()));
+
+    // Show diagnostic info
+    if (obs.size() >= 3 && entries.empty()) {
+        m_iterationLabel->setText(m_iterationLabel->text() +
+            " | Brak wspolnych ID miedzy obserwacjami!");
+    }
     for (int i = 0; i < static_cast<int>(entries.size()); ++i) {
         const auto &e = entries[i];
         m_correlationTable->setItem(i, 0, new QTableWidgetItem(
