@@ -173,6 +173,40 @@ public:
     std::vector<LeCrossByteEntry>
         computeCrossByte(const std::string &variableKey) const;
 
+    // ── #40 Cross-correlation with time lag ────────────────
+    struct LagCorrEntry {
+        uint32_t id; int byte;
+        int lag;               // negative = byte leads, positive = byte lags
+        double correlation;
+    };
+    std::vector<LagCorrEntry>
+        computeCrossCorrelationLag(const std::string &variableKey,
+                                   int maxLag = 10) const;
+
+    // ── #38 Granger causality ──────────────────────────────
+    struct GrangerResult {
+        uint32_t id; int byte;
+        double fStatistic;
+        double pValue;
+        bool isCausal;         // p < 0.05
+        int bestLag;
+    };
+    std::vector<GrangerResult>
+        computeGrangerCausality(const std::string &variableKey,
+                                int maxLag = 5) const;
+
+    // ── #39 Change-point detection ─────────────────────────
+    struct ChangePoint {
+        int index;
+        double costReduction;
+        double meanBefore;
+        double meanAfter;
+    };
+    std::vector<ChangePoint>
+        detectChangePoints(const std::string &variableKey,
+                           uint32_t targetId, int targetByte,
+                           int minSegmentSize = 10) const;
+
     // ── Clustering ─────────────────────────────────────────
     static int kMeans(const std::vector<std::vector<float>> &data,
                       int K, std::vector<int> &assignments);
@@ -298,9 +332,12 @@ public:
     int64_t adaptiveBefore() const { return m_adaptiveBefore; }
     int64_t adaptiveAfter()  const { return m_adaptiveAfter;  }
 
-    // ── Serialization ──────────────────────────────────────
+    // ── #42-45 Serialization & persistence ─────────────────
     std::string serializeSession() const;
     bool deserializeSession(const std::string &json);
+    bool saveCheckpoint(const std::string &path) const;        // #43
+    bool loadCheckpoint(const std::string &path);              // #45
+    std::string exportOnnx(const std::string &variableKey) const; // #44 stub
 
     // ── Getters for UI ────────────────────────────────────
     const std::vector<LeEventRecord> &events() const { return m_events; }

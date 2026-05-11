@@ -6,6 +6,7 @@
 #include <random>
 #include <set>
 #include <sstream>
+#include <fstream>
 #include <mutex>
 #include <thread>
 
@@ -2170,16 +2171,413 @@ void LearningEngine::jacobiEigen(const std::vector<std::vector<double>> &mat,
     }
 }
 
-// ── Serialization (stub) ────────────────────────────────────
+
+// ── #40 Cross-correlation with time lag ────────────────────
+
+std::vector<LearningEngine::LagCorrEntry>
+LearningEngine::computeCrossCorrelationLag(const std::string &variableKey,
+                                           int maxLag) const {
+    std::shared_lock lock(m_mutex);
+    std::vector<LagCorrEntry> entries;
+    const auto &obs = observations(variableKey);
+    if (obs.size() < maxLag + 3) return entries;
+
+    // Build time series: variable values and per-(ID,byte) byte values
+    std::vector<double> values;
+    for (const auto &o : obs) values.push_back(o.value);
+
+    // Find all (ID, byte) pairs
+    std::unordered_set<uint32_t> ids;
+    for (const auto &o : obs)
+        for (const auto &kv : o.idAverageBytes)
+            ids.insert(kv.first);
+
+    for (uint32_t id : ids) {
+        for (int b = 0; b < 8; ++b) {
+            std::vector<double> bytes;
+            for (const auto &o : obs) {
+                auto it = o.idAverageBytes.find(id);
+                bytes.push_back((it != o.idAverageBytes.end())
+                    ? static_cast<double>(it->second[b]) : 0.0);
+            }
+
+            int N = std::min(static_cast<int>(values.size()),
+                             static_cast<int>(bytes.size()));
+
+            for (int lag = -maxLag; lag <= maxLag; ++lag) {
+                std::vector<double> x, y;
+                for (int i = 0; i < N; ++i) {
+                    int j = i + lag;
+                    if (j >= 0 && j < N) {
+                        x.push_back(bytes[i]);   // byte at time i
+                        y.push_back(values[j]);  // variable at time i+lag
+                    }
+                }
+                if (x.size() < 5) continue;
+                double corr = correlationPearson(x, y);
+                if (std::abs(corr) > 0.3)  // filter weak correlations
+                    entries.push_back({id, b, lag, corr});
+            }
+        }
+    }
+
+    std::sort(entries.begin(), entries.end(),
+        [](const LagCorrEntry &a, const LagCorrEntry &b) {
+            return std::abs(a.correlation) > std::abs(b.correlation);
+        });
+    return entries;
+}
+
+// ── #38 Granger causality ──────────────────────────────────
+
+std::vector<LearningEngine::GrangerResult>
+LearningEngine::computeGrangerCausality(const std::string &variableKey,
+                                         int maxLag) const {
+    std::shared_lock lock(m_mutex);
+    std::vector<GrangerResult> results;
+    const auto &obs = observations(variableKey);
+    if (obs.size() < maxLag + 10) return results;
+
+    std::vector<double> Y;
+    for (const auto &o : obs) Y.push_back(o.value);
+    int T = static_cast<int>(Y.size());
+
+    // Find all (ID, byte) pairs with enough data
+    std::unordered_set<uint32_t> ids;
+    for (const auto &o : obs)
+        for (const auto &kv : o.idAverageBytes)
+            ids.insert(kv.first);
+
+    for (uint32_t id : ids) {
+        for (int b = 0; b < 8; ++b) {
+            std::vector<double> X;
+            for (const auto &o : obs) {
+                auto it = o.idAverageBytes.find(id);
+                X.push_back((it != o.idAverageBytes.end())
+                    ? static_cast<double>(it->second[b]) : 0.0);
+            }
+
+            double bestF = 0.0;
+            int bestLag = 1;
+
+            for (int lag = 1; lag <= maxLag; ++lag) {
+                // Restricted model: Y_t = a0 + a1*Y_{t-1} + ... + a_lag*Y_{t-lag}
+                // Unrestricted:  Y_t = a0 + a1*Y_{t-1} + ... + b1*X_{t-1} + ... + b_lag*X_{t-lag}
+                int usable = T - lag;
+                if (usable < 10) continue;
+
+                // Restricted: linear regression Y[t] ~ Y[t-1..t-lag]
+                // Simple OLS via normal equations
+                int p = lag + 1; // params: intercept + lag Y terms
+                std::vector<double> A_rest(p * p, 0), b_rest(p, 0);
+                for (int t = lag; t < T; ++t) {
+                    std::vector<double> row(p);
+                    row[0] = 1.0; // intercept
+                    for (int l = 1; l <= lag; ++l) row[l] = Y[t - l];
+                    for (int i = 0; i < p; ++i) {
+                        for (int j = 0; j < p; ++j) A_rest[i*p+j] += row[i] * row[j];
+                        b_rest[i] += row[i] * Y[t];
+                    }
+                }
+                // Solve A*x = b via Gaussian elimination
+                auto gauss = [](std::vector<double> &A, std::vector<double> &b, int n) -> std::vector<double> {
+                    std::vector<double> x(n, 0);
+                    for (int i = 0; i < n; ++i) {
+                        int pivot = i;
+                        for (int j = i+1; j < n; ++j)
+                            if (std::abs(A[j*n+i]) > std::abs(A[pivot*n+i])) pivot = j;
+                        if (pivot != i) {
+                            for (int j = 0; j < n; ++j) std::swap(A[i*n+j], A[pivot*n+j]);
+                            std::swap(b[i], b[pivot]);
+                        }
+                        for (int j = i+1; j < n; ++j) {
+                            double f = A[j*n+i] / (A[i*n+i] + 1e-12);
+                            for (int k = i; k < n; ++k) A[j*n+k] -= f * A[i*n+k];
+                            b[j] -= f * b[i];
+                        }
+                    }
+                    for (int i = n-1; i >= 0; --i) {
+                        double s = b[i];
+                        for (int j = i+1; j < n; ++j) s -= A[i*n+j] * x[j];
+                        x[i] = s / (A[i*n+i] + 1e-12);
+                    }
+                    return x;
+                };
+
+                auto x_rest = gauss(A_rest, b_rest, p);
+                double rss_rest = 0;
+                for (int t = lag; t < T; ++t) {
+                    double pred = x_rest[0];
+                    for (int l = 1; l <= lag; ++l) pred += x_rest[l] * Y[t-l];
+                    double err = Y[t] - pred;
+                    rss_rest += err * err;
+                }
+
+                // Unrestricted: Y[t] ~ Y[t-1..t-lag] + X[t-1..t-lag]
+                int q = 2*lag + 1; // intercept + lag Y + lag X
+                std::vector<double> A_unr(q * q, 0), b_unr(q, 0);
+                for (int t = lag; t < T; ++t) {
+                    std::vector<double> row(q);
+                    int idx = 0;
+                    row[idx++] = 1.0; // intercept
+                    for (int l = 1; l <= lag; ++l) row[idx++] = Y[t - l];
+                    for (int l = 1; l <= lag; ++l) row[idx++] = X[t - l];
+                    for (int i = 0; i < q; ++i) {
+                        for (int j = 0; j < q; ++j) A_unr[i*q+j] += row[i] * row[j];
+                        b_unr[i] += row[i] * Y[t];
+                    }
+                }
+                auto x_unr = gauss(A_unr, b_unr, q);
+                double rss_unr = 0;
+                for (int t = lag; t < T; ++t) {
+                    double pred = x_unr[0];
+                    int idx = 1;
+                    for (int l = 1; l <= lag; ++l) pred += x_unr[idx++] * Y[t-l];
+                    for (int l = 1; l <= lag; ++l) pred += x_unr[idx++] * X[t-l];
+                    double err = Y[t] - pred;
+                    rss_unr += err * err;
+                }
+
+                int df1 = lag;           // extra params in unrestricted
+                int df2 = usable - q;    // residual df unrestricted
+                if (df2 <= 0) continue;
+                double F = ((rss_rest - rss_unr) / df1) / (rss_unr / (df2 + 1e-9));
+                if (F > bestF && F > 0) { bestF = F; bestLag = lag; }
+            }
+
+            if (bestF > 0) {
+                // F-test p-value approximation
+                int df1 = bestLag, df2 = T - 2*bestLag - 1;
+                double pv = df2 > 0 ? pearsonPValue(std::sqrt(bestF / (bestF + df2)), T) : 1.0;
+                results.push_back({id, b, bestF, pv, pv < 0.05, bestLag});
+            }
+        }
+    }
+
+    std::sort(results.begin(), results.end(),
+        [](const GrangerResult &a, const GrangerResult &b) {
+            return a.fStatistic > b.fStatistic;
+        });
+    return results;
+}
+
+// ── #39 Change-point detection (Binary Segmentation) ───────
+
+std::vector<LearningEngine::ChangePoint>
+LearningEngine::detectChangePoints(const std::string &variableKey,
+                                    uint32_t targetId, int targetByte,
+                                    int minSegmentSize) const {
+    std::shared_lock lock(m_mutex);
+    std::vector<ChangePoint> result;
+    const auto &obs = observations(variableKey);
+    if (obs.size() < minSegmentSize * 2) return result;
+
+    // Extract byte time series
+    std::vector<double> series;
+    for (const auto &o : obs) {
+        auto it = o.idAverageBytes.find(targetId);
+        series.push_back((it != o.idAverageBytes.end() && targetByte < 64)
+            ? static_cast<double>(it->second[targetByte]) : 0.0);
+    }
+    int N = static_cast<int>(series.size());
+
+    // Recursive binary segmentation
+    std::function<void(int,int)> split = [&](int left, int right) {
+        int segLen = right - left;
+        if (segLen < minSegmentSize * 2) return;
+
+        // Compute total cost (variance * length)
+        double totalMean = 0, totalSq = 0;
+        for (int i = left; i < right; ++i) {
+            totalMean += series[i];
+            totalSq += series[i] * series[i];
+        }
+        totalMean /= segLen;
+        double totalVar = totalSq / segLen - totalMean * totalMean;
+
+        // Find best split point
+        double bestReduction = 0;
+        int bestSplit = -1;
+        double leftSum = 0, leftSq = 0;
+
+        for (int s = left + minSegmentSize; s < right - minSegmentSize; ++s) {
+            double x = series[s - 1];
+            leftSum += x; leftSq += x * x;
+            int leftLen = s - left;
+            double leftMean = leftSum / leftLen;
+            double leftVar = leftSq / leftLen - leftMean * leftMean;
+
+            double rightSum = totalMean * segLen - leftSum;
+            double rightSq = totalSq - leftSq;
+            int rightLen = segLen - leftLen;
+            double rightMean = rightSum / rightLen;
+            double rightVar = rightSq / rightLen - rightMean * rightMean;
+
+            double reduction = totalVar - (leftVar * leftLen + rightVar * rightLen) / segLen;
+            if (reduction > bestReduction) {
+                bestReduction = reduction;
+                bestSplit = s;
+            }
+        }
+
+        if (bestSplit >= 0 && bestReduction > 0.01) {
+            double lm = 0, rm = 0;
+            for (int i = left; i < bestSplit; ++i) lm += series[i];
+            for (int i = bestSplit; i < right; ++i) rm += series[i];
+            lm /= (bestSplit - left);
+            rm /= (right - bestSplit);
+            result.push_back({bestSplit, bestReduction, lm, rm});
+
+            split(left, bestSplit);
+            split(bestSplit, right);
+        }
+    };
+
+    split(0, N);
+    std::sort(result.begin(), result.end(),
+        [](const ChangePoint &a, const ChangePoint &b) {
+            return a.index < b.index;
+        });
+    return result;
+}
+
+
+// ── #42-45 Serialization & persistence ────────────────────
+
+// Simple JSON builder (no external library needed for basic types)
+static void jsonObj(std::ostringstream &os,
+                    const std::vector<std::pair<std::string,std::string>> &fields) {
+    os << "{";
+    for (size_t i = 0; i < fields.size(); ++i) {
+        if (i > 0) os << ",";
+        os << "\"" << fields[i].first << "\":" << fields[i].second;
+    }
+    os << "}";
+}
+
+static std::string jsonString(const std::string &s) {
+    std::string out = "\"";
+    for (char c : s) {
+        if (c == '"' || c == '\\') out += '\\';
+        out += c;
+    }
+    out += '"';
+    return out;
+}
 
 std::string LearningEngine::serializeSession() const {
     std::shared_lock lock(m_mutex);
-    return "{\"iteration\":" + std::to_string(m_iteration) + "}";
+    std::ostringstream os;
+    os << "{";
+    os << "\"iteration\":" << m_iteration << ",";
+    os << "\"adaptiveBefore\":" << m_adaptiveBefore << ",";
+    os << "\"adaptiveAfter\":" << m_adaptiveAfter << ",";
+    os << "\"decayLambda\":" << m_decayLambda << ",";
+    os << "\"maxObservations\":" << m_maxObservations << ",";
+
+    // Observations
+    os << "\"observations\":{";
+    bool firstVar = true;
+    for (const auto &vkv : m_observations) {
+        if (!firstVar) os << ",";
+        firstVar = false;
+        os << jsonString(vkv.first) << ":[";
+        bool firstObs = true;
+        for (const auto &o : vkv.second) {
+            if (!firstObs) os << ",";
+            firstObs = false;
+            os << "{\"v\":" << o.value << ",\"ts\":" << o.timestamp << ",\"bytes\":{";
+            bool firstB = true;
+            for (const auto &bkv : o.idAverageBytes) {
+                if (!firstB) os << ",";
+                firstB = false;
+                os << "\"" << bkv.first << "\":[";
+                for (size_t i = 0; i < bkv.second.size(); ++i) {
+                    if (i > 0) os << ",";
+                    os << (int)bkv.second[i];
+                }
+                os << "]";
+            }
+            os << "}}";
+        }
+        os << "]";
+    }
+    os << "},";
+
+    // Events (summary only — full frames would be too large)
+    os << "\"eventCount\":" << m_events.size() << ",";
+    os << "\"nonEventCount\":" << m_nonEvents.size() << ",";
+
+    // Markov
+    os << "\"markovTransitions\":" << m_transitions.size();
+
+    os << "}";
+    return os.str();
 }
 
 bool LearningEngine::deserializeSession(const std::string &json) {
-    (void)json;
-    return false;
+    std::unique_lock lock(m_mutex);
+    // Simple string-based parser for our JSON format
+    auto findInt = [&](const std::string &key) -> int64_t {
+        auto pos = json.find("\"" + key + "\":");
+        if (pos == std::string::npos) return 0;
+        pos += key.length() + 3;
+        return std::stoll(json.substr(pos));
+    };
+    auto findDouble = [&](const std::string &key) -> double {
+        auto pos = json.find("\"" + key + "\":");
+        if (pos == std::string::npos) return 0.0;
+        pos += key.length() + 3;
+        return std::stod(json.substr(pos));
+    };
+
+    m_iteration = static_cast<int>(findInt("iteration"));
+    m_adaptiveBefore = findInt("adaptiveBefore");
+    m_adaptiveAfter = findInt("adaptiveAfter");
+    m_decayLambda = findDouble("decayLambda");
+    m_maxObservations = static_cast<size_t>(findInt("maxObservations"));
+
+    return true;
+}
+
+bool LearningEngine::saveCheckpoint(const std::string &path) const {
+    std::string data = serializeSession();
+    std::ofstream f(path, std::ios::binary);
+    if (!f) return false;
+    f << data;
+    return f.good();
+}
+
+bool LearningEngine::loadCheckpoint(const std::string &path) {
+    std::ifstream f(path, std::ios::binary);
+    if (!f) return false;
+    std::string data((std::istreambuf_iterator<char>(f)),
+                      std::istreambuf_iterator<char>());
+    return deserializeSession(data);
+}
+
+std::string LearningEngine::exportOnnx(const std::string &variableKey) const {
+    // Stub: ONNX export would require protobuf serialization
+    // Returns JSON description of the model instead
+    std::shared_lock lock(m_mutex);
+    std::ostringstream os;
+    os << "{\"type\":\"linear_regression\",\"variable\":\"" << variableKey << "\"";
+    auto it = m_linearModels.find(variableKey);
+    if (it != m_linearModels.end()) {
+        os << ",\"models\":[";
+        bool first = true;
+        for (const auto &kv : it->second) {
+            if (!first) os << ",";
+            first = false;
+            uint32_t id = static_cast<uint32_t>(kv.first / 100);
+            int byte = static_cast<int>(kv.first % 100);
+            os << "{\"id\":" << id << ",\"byte\":" << byte
+               << ",\"a\":" << kv.second.first << ",\"b\":" << kv.second.second << "}";
+        }
+        os << "]";
+    }
+    os << "}";
+    return os.str();
 }
 
 // ── #27 Exponential forgetting: weighted Pearson ────────────
