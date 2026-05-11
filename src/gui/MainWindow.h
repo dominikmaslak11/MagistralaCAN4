@@ -169,6 +169,15 @@ private:
     int m_totalFrames = 0;
     void checkNoData();
 
+    // Ciągłe nagrywanie candump na dysk
+    QCheckBox *m_autoCandumpCheck = nullptr;
+    QFile *m_candumpFile = nullptr;
+    QTextStream *m_candumpStream = nullptr;
+    QString m_candumpIface;
+    void startCandumpRecording();
+    void stopCandumpRecording();
+    void writeFrameToCandump(const CanFrame &frame);
+
     // Odtwarzanie nagrań
     CanPlayer *m_player = nullptr;
     QPushButton *m_playPauseBtn = nullptr;

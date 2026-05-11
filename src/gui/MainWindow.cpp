@@ -19,6 +19,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QFileInfo>
+#include <QDateTime>
 #include <QTextStream>
 #include <QStyle>
 #include <QSystemTrayIcon>
@@ -266,16 +267,19 @@ void MainWindow::toggleSniffing() {
         m_sniffer.setDriver(active);
         m_sniffer.start(iface);
         if (!m_sniffer.isSocketValid()) {
-            // Error already emitted by CanSniffer::start()
             return;
         }
         m_sniffing = true;
+        m_candumpIface = iface;
         Logger::log(QString("Rozpoczęto sniffing na interfejsie %1 (%2, %3)")
                     .arg(iface, active->backendName(), baudStr));
         m_totalFrames = 0;
         m_statusLabel->setText(QString("Nasłuchuje... (%1, %2)").arg(active->backendName(), baudStr));
         m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false);
         m_baudCombo->setEnabled(false); m_batchTimer.start();
+
+        if (m_autoCandumpCheck && m_autoCandumpCheck->isChecked())
+            startCandumpRecording();
 
         // No-data timeout: warn if no frames after 5 seconds
         if (!m_noDataTimer) {
@@ -286,6 +290,7 @@ void MainWindow::toggleSniffing() {
         m_noDataTimer->start(5000);
     } else {
         m_sniffer.stop(); m_sniffing = false;
+        stopCandumpRecording();
         m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true);
         m_baudCombo->setEnabled(true); m_batchTimer.stop();
         m_statusLabel->setText("Rozłączony");
@@ -297,6 +302,8 @@ void MainWindow::toggleSniffing() {
 void MainWindow::onNewFrame(const CanFrame &frame) {
     m_totalFrames++;
     m_frameBuffer.append(frame);
+    if (m_candumpStream)
+        writeFrameToCandump(frame);
     if (m_canStatsPanel)
         m_canStatsPanel->onNewFrame(frame.id, frame.timestamp);
 }
@@ -500,6 +507,11 @@ void MainWindow::setupToolBar() {
     toolbar->addWidget(m_btnStartStop);
     m_overwriteCheck = new QCheckBox("Nadpisywanie"); m_overwriteCheck->setChecked(true); connect(m_overwriteCheck, &QCheckBox::toggled, this, &MainWindow::applyOverwriteMode);
     toolbar->addWidget(m_overwriteCheck);
+
+    m_autoCandumpCheck = new QCheckBox("Nagrywaj candump"); m_autoCandumpCheck->setChecked(true);
+    m_autoCandumpCheck->setToolTip("Ciągłe nagrywanie ramek do C:\\candump");
+    m_autoCandumpCheck->setStyleSheet("color: #00ffaa; font-weight: bold;");
+    toolbar->addWidget(m_autoCandumpCheck);
     toolbar->addSeparator();
     m_statusLabel = new QLabel("Rozłączony"); m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
     toolbar->addWidget(m_statusLabel);
@@ -816,6 +828,57 @@ void MainWindow::loadRecording() {
     } else {
         QMessageBox::warning(this, "Błąd", "Nie udało się wczytać nagrania.");
     }
+}
+
+// ── Ciągłe nagrywanie candump ──────────────────────────────
+
+void MainWindow::startCandumpRecording() {
+    QString dirPath = "C:/candump";
+    QDir dir(dirPath);
+    if (!dir.exists())
+        dir.mkpath(".");
+
+    QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+    QString filePath = dirPath + "/candump_" + timestamp + ".log";
+
+    m_candumpFile = new QFile(filePath);
+    if (!m_candumpFile->open(QIODevice::WriteOnly | QIODevice::Text)) {
+        delete m_candumpFile;
+        m_candumpFile = nullptr;
+        Logger::log("Blad: nie mozna utworzyc pliku candump: " + filePath);
+        return;
+    }
+    m_candumpStream = new QTextStream(m_candumpFile);
+    Logger::log("Nagrywanie candump: " + filePath);
+}
+
+void MainWindow::stopCandumpRecording() {
+    if (m_candumpStream) {
+        m_candumpStream->flush();
+        delete m_candumpStream;
+        m_candumpStream = nullptr;
+    }
+    if (m_candumpFile) {
+        m_candumpFile->close();
+        Logger::log("Zakonczono nagrywanie candump: " + m_candumpFile->fileName());
+        delete m_candumpFile;
+        m_candumpFile = nullptr;
+    }
+}
+
+void MainWindow::writeFrameToCandump(const CanFrame &frame) {
+    if (!m_candumpStream) return;
+    bool isFd = frame.fd || frame.xl;
+    QString sep = isFd ? "##" : "#";
+    (*m_candumpStream) << "(" << frame.timestamp << ") "
+                       << m_candumpIface << " "
+                       << QString::number(frame.id, 16).toUpper()
+                       << sep
+                       << QString::number(frame.dlc);
+    int maxData = qMin((int)frame.dlc, 64);
+    for (int i = 0; i < maxData; ++i)
+        (*m_candumpStream) << QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+    (*m_candumpStream) << "\n";
 }
 
 void MainWindow::togglePlayback() {
