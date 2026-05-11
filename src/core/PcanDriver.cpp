@@ -129,7 +129,24 @@ bool PcanDriver::isValid() const { return d && d->initialized; }
 CanFrame PcanDriver::readFrame() {
     if (!d || !d->initialized) return {};
 
-    // Try FD read first
+    // Try classic CAN read first
+    if (d->fnRead) {
+        TPCANMsg msg; memset(&msg, 0, sizeof(msg));
+        TPCANTimestamp ts = 0;
+        int res = d->fnRead(d->channel, &msg, &ts);
+        if (res == 0) {
+            CanFrame f;
+            f.id = msg.ID & 0x1FFFFFFF;
+            f.extended = msg.MSGTYPE & PCAN_MESSAGE_EXTENDED;
+            f.rtr      = msg.MSGTYPE & PCAN_MESSAGE_RTR;
+            f.dlc = msg.LEN > 8 ? 8 : msg.LEN;
+            memcpy(f.data.data(), msg.DATA, f.dlc);
+            f.timestamp = ts;
+            return f;
+        }
+    }
+
+    // Try FD read if classic returned no data
     if (d->fnReadFD) {
         TPCANMsgFD msg; memset(&msg, 0, sizeof(msg));
         TPCANTimestamp ts = 0;
@@ -141,23 +158,6 @@ CanFrame PcanDriver::readFrame() {
             f.rtr      = msg.MSGTYPE & PCAN_MESSAGE_RTR;
             f.fd       = msg.MSGTYPE & PCAN_MESSAGE_FD;
             f.dlc = msg.DLC > 64 ? 64 : msg.DLC;
-            memcpy(f.data.data(), msg.DATA, f.dlc);
-            f.timestamp = ts;
-            return f;
-        }
-    }
-
-    // Classic CAN read
-    if (d->fnRead) {
-        TPCANMsg msg; memset(&msg, 0, sizeof(msg));
-        TPCANTimestamp ts = 0;
-        int res = d->fnRead(d->channel, &msg, &ts);
-        if (res == 0) {
-            CanFrame f;
-            f.id = msg.ID & 0x1FFFFFFF;
-            f.extended = msg.MSGTYPE & PCAN_MESSAGE_EXTENDED;
-            f.rtr      = msg.MSGTYPE & PCAN_MESSAGE_RTR;
-            f.dlc = msg.LEN > 8 ? 8 : msg.LEN;
             memcpy(f.data.data(), msg.DATA, f.dlc);
             f.timestamp = ts;
             return f;
