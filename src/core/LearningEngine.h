@@ -148,6 +148,8 @@ public:
     // ── #28 Online learning ────────────────────────────────
     void setOnlineLearning(bool on) { m_onlineLearning = on; }
     bool onlineLearning() const { return m_onlineLearning; }
+    void setEwmaAnomaly(bool on) { m_useEwmaAnomaly = on; }
+    bool ewmaAnomaly() const { return m_useEwmaAnomaly; }
     std::vector<LeCorrelationEntry>
         computeCorrelationsOnline(const std::string &variableKey) const;
 
@@ -259,7 +261,6 @@ public:
     bool modelBuilt() const { return !m_normalMean.empty(); }
 
     // ── #29 EWMA anomaly ──────────────────────────────────
-    void setEwmaAnomaly(bool on) { m_ewmaAnomaly = on; }
     double checkAnomalyEwma() const;
 
     // ── Markov chain ───────────────────────────────────────
@@ -379,6 +380,7 @@ private:
 
     // ── #28 Online learning (Welford) ──────────────────────
     bool m_onlineLearning = false;
+    bool m_useEwmaAnomaly = false;
     struct WelfordAccum {
         size_t n = 0;
         double meanX = 0, M2x = 0;  // for variable value
