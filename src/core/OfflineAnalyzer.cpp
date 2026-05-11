@@ -300,7 +300,6 @@ void OfflineAnalyzer::keyPressEvent(QKeyEvent *event) {
 void OfflineAnalyzer::startBinarySearch() {
     if (m_frames.isEmpty()) return;
 
-    // Reset binary search state
     m_bsLeft = 0;
     m_bsRight = static_cast<int>(m_frames.size()) - 1;
     m_bsState = BsState::PlayingHalf;
@@ -308,54 +307,51 @@ void OfflineAnalyzer::startBinarySearch() {
     m_currentIndex = 0;
     m_frameLog->clear();
 
-    m_bsRangeLabel->setText(QString("Szukam w [0–%1]").arg(m_bsRight));
-
+    m_bsRangeLabel->setText(QString("Szukam w [0–%1] (%2 ramek)")
+                            .arg(m_bsRight).arg(m_frames.size()));
     bsPlayHalf();
 }
 
 void OfflineAnalyzer::bsPlayHalf() {
     int rangeSize = m_bsRight - m_bsLeft + 1;
     if (rangeSize <= 1) {
-        // FOUND: single frame
         m_bsState = BsState::Found;
-        m_bsRangeLabel->setText(QString("✅ Znaleziono! Ramka indeks=%1").arg(m_bsLeft));
+        m_bsRangeLabel->setText(QString("✅ Znaleziono! Ramka #%1").arg(m_bsLeft));
 
-        // Show the frame
         const CanFrame &f = m_frames.at(m_bsLeft);
-        QString msg = QString("Znaleziono ramkę:\n\n"
-                              "Indeks: %1\n"
-                              "Timestamp: %2 µs\n"
-                              "ID: 0x%3\n"
-                              "DLC: %4\n"
-                              "Data: %5")
-            .arg(m_bsLeft)
-            .arg(f.timestamp)
-            .arg(f.id, 3, 16, QChar('0'))
-            .arg(f.dlc);
-
         QString dataStr;
         for (int i = 0; i < f.dlc && i < 8; ++i)
             dataStr += QString("%1 ").arg(f.data[i], 2, 16, QChar('0')).toUpper();
-        msg = msg.arg(dataStr.trimmed());
 
-        QMessageBox::information(this, "Wyszukiwanie binarne — znaleziono", msg);
+        QMessageBox::information(this, "Wyszukiwanie binarne — znaleziono",
+            QString("Znaleziono ramke:\n\n"
+                    "Indeks: %1 / %2\n"
+                    "Timestamp: %3 us\n"
+                    "ID: 0x%4\n"
+                    "DLC: %5\n"
+                    "Data: %6")
+                .arg(m_bsLeft).arg(m_frames.size())
+                .arg(f.timestamp)
+                .arg(f.id, 3, 16, QChar('0'))
+                .arg(f.dlc)
+                .arg(dataStr.trimmed()));
         return;
     }
 
     m_bsMid = m_bsLeft + (m_bsRight - m_bsLeft) / 2;
 
     if (m_bsPlayingFirstHalf) {
-        // Play first half: [bsLeft, bsMid]
         m_currentIndex = m_bsLeft;
-        m_bsPlayEnd = m_bsMid + 1; // exclusive
-        m_bsRangeLabel->setText(QString("▶ 1-sza połowa: [%1–%2] z [%3–%4]")
-                                .arg(m_bsLeft).arg(m_bsMid).arg(m_bsLeft).arg(m_bsRight));
+        m_bsPlayEnd = m_bsMid + 1;
+        int halfSize = m_bsMid - m_bsLeft + 1;
+        m_bsRangeLabel->setText(QString("▶ 1-sza polowa: ramki [%1–%2]  (%3 ramek)")
+                                .arg(m_bsLeft).arg(m_bsMid).arg(halfSize));
     } else {
-        // Play second half: [bsMid+1, bsRight]
         m_currentIndex = m_bsMid + 1;
-        m_bsPlayEnd = m_bsRight + 1; // exclusive
-        m_bsRangeLabel->setText(QString("▶ 2-ga połowa: [%1–%2] z [%3–%4]")
-                                .arg(m_bsMid + 1).arg(m_bsRight).arg(m_bsLeft).arg(m_bsRight));
+        m_bsPlayEnd = m_bsRight + 1;
+        int halfSize = m_bsRight - m_bsMid;
+        m_bsRangeLabel->setText(QString("▶ 2-ga polowa: ramki [%1–%2]  (%3 ramek)")
+                                .arg(m_bsMid + 1).arg(m_bsRight).arg(halfSize));
     }
 
     m_playing = true;
@@ -366,25 +362,22 @@ void OfflineAnalyzer::bsPlayHalf() {
 
 void OfflineAnalyzer::onBinarySearchResponse(bool phenomenonOccurred) {
     if (phenomenonOccurred) {
-        // Zjawisko wystąpiło — zawęź do pierwszej połowy
         if (m_bsPlayingFirstHalf) {
             m_bsRight = m_bsMid;
-            m_bsPlayingFirstHalf = true;
         } else {
-            // In second-half mode, this shouldn't normally happen
-            // but handle gracefully: narrow to the second half range
             m_bsLeft = m_bsMid + 1;
-            m_bsPlayingFirstHalf = true;
         }
+        m_bsPlayingFirstHalf = true;
     } else {
-        // Zjawisko NIE wystąpiło — przeszukaj drugą połowę
         if (m_bsPlayingFirstHalf) {
-            m_bsLeft = m_bsMid + 1;
-            m_bsPlayingFirstHalf = true;  // play first half of the new range
+            m_bsPlayingFirstHalf = false;
         } else {
-            // Second half also didn't have it — shouldn't happen with proper user input
-            m_bsRight = m_bsMid;
-            m_bsPlayingFirstHalf = true;
+            QMessageBox::warning(this, "Wyszukiwanie binarne",
+                "Zjawisko nie wystapilo w zadnej polowie.\n"
+                "Upewnij sie, ze plik candump zawiera ramke odpowiedzialna za zdarzenie.");
+            m_bsState = BsState::Idle;
+            m_bsRangeLabel->setText("Przerwano — zjawisko nie znalezione");
+            return;
         }
     }
 
