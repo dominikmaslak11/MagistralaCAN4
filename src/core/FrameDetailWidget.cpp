@@ -136,11 +136,15 @@ void FrameDetailWidget::onBitClicked(int byteIndex, int bitIndex) {
 
 void FrameDetailWidget::sendModifiedFrame() {
     if (!m_sniffer) {
-        QMessageBox::warning(this, "Brak sniffera", "Sniffer nie jest podłączony. Nie można wysłać ramki.");
+        QMessageBox::warning(this, "Brak sniffera", "Sniffer nie jest podlaczony.");
         return;
     }
+    // Auto-open driver if needed (for manual frame sending without live sniffing)
     if (!m_sniffer->isSocketValid()) {
-        QMessageBox::warning(this, "Socket zamknięty", "Socket CAN nie jest otwarty.");
+        m_sniffer->start("PCAN_USBBUS1");  // uses default, or last interface from QSettings
+    }
+    if (!m_sniffer->isSocketValid()) {
+        QMessageBox::warning(this, "Blad CAN", "Nie mozna otworzyc sterownika CAN.\nUruchom sniffing w zakladce Ruch CAN.");
         return;
     }
     m_sniffer->writeFrame(m_currentFrame);
