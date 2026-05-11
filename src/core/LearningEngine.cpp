@@ -9,8 +9,9 @@
 #include <fstream>
 #include <mutex>
 
-GpuCompute LearningEngine::m_gpu;
 #include <thread>
+
+GpuCompute LearningEngine::m_gpu;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -35,6 +36,7 @@ std::vector<CanFrame> LearningEngine::frameHistorySnapshot() const {
 void LearningEngine::markEvent(int64_t adaptiveBefore, int64_t adaptiveAfter) {
     std::unique_lock lock(m_mutex);
     if (m_frameHistory.empty()) return;
+    if (m_frameHistory.back().timestamp == 0) return;
     uint64_t latestTs = m_frameHistory.back().timestamp;
     std::vector<CanFrame> window;
     for (const auto &f : m_frameHistory)
@@ -53,6 +55,7 @@ void LearningEngine::markEvent(int64_t adaptiveBefore, int64_t adaptiveAfter) {
 void LearningEngine::markNonEvent(int64_t adaptiveBefore, int64_t adaptiveAfter) {
     std::unique_lock lock(m_mutex);
     if (m_frameHistory.empty()) return;
+    if (m_frameHistory.back().timestamp == 0) return;
     uint64_t latestTs = m_frameHistory.back().timestamp;
     std::vector<CanFrame> window;
     for (const auto &f : m_frameHistory)
@@ -280,8 +283,9 @@ LearningEngine::computeCandidates(const std::string *dbcDescription,
                     float dot = 0, nA = 0, nB = 0;
                     const auto &v1 = it->second;
                     const auto &v2 = itEv->second;
-                    for (size_t k = 0; k < v1.size(); ++k) {
-                        float a = v1[k], b = v2[k];
+                    size_t K = std::min(v1.size(), v2.size());
+                for (size_t k = 0; k < K; ++k) {
+                    float a = v1[k], b = v2[k];
                         dot += a * b; nA += a * a; nB += b * b;
                     }
                     bgSim += dot / (std::sqrt(nA) * std::sqrt(nB) + 1e-6f);
