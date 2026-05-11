@@ -264,19 +264,38 @@ void MainWindow::toggleSniffing() {
         active->setBaudRate(baudStr);
 
         m_sniffer.setDriver(active);
-        m_sniffer.start(iface); m_sniffing = true;
-        Logger::log(QString("Rozpoczęto sniffing na interfejsie %1").arg(iface));
+        m_sniffer.start(iface);
+        if (!m_sniffer.isSocketValid()) {
+            // Error already emitted by CanSniffer::start()
+            return;
+        }
+        m_sniffing = true;
+        Logger::log(QString("Rozpoczęto sniffing na interfejsie %1 (%2, %3)")
+                    .arg(iface, active->backendName(), baudStr));
+        m_totalFrames = 0;
+        m_statusLabel->setText(QString("Nasłuchuje... (%1, %2)").arg(active->backendName(), baudStr));
         m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false);
         m_baudCombo->setEnabled(false); m_batchTimer.start();
+
+        // No-data timeout: warn if no frames after 5 seconds
+        if (!m_noDataTimer) {
+            m_noDataTimer = new QTimer(this);
+            m_noDataTimer->setSingleShot(true);
+            connect(m_noDataTimer, &QTimer::timeout, this, &MainWindow::checkNoData);
+        }
+        m_noDataTimer->start(5000);
     } else {
         m_sniffer.stop(); m_sniffing = false;
         m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true);
         m_baudCombo->setEnabled(true); m_batchTimer.stop();
+        m_statusLabel->setText("Rozłączony");
+        m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
         m_frameBuffer.resize(0);  // keep capacity
     }
 }
 
 void MainWindow::onNewFrame(const CanFrame &frame) {
+    m_totalFrames++;
     m_frameBuffer.append(frame);
     if (m_canStatsPanel)
         m_canStatsPanel->onNewFrame(frame.id, frame.timestamp);
@@ -607,6 +626,15 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     if (reason == QSystemTrayIcon::DoubleClick || reason == QSystemTrayIcon::Trigger) {
         show();
         activateWindow();
+    }
+}
+
+void MainWindow::checkNoData() {
+    if (!m_sniffing) return;
+    if (m_totalFrames == 0) {
+        m_statusLabel->setText(m_statusLabel->text() + " ⚠ brak ramek — sprawdź magistralę/baud");
+        m_statusLabel->setStyleSheet("color: #ffaa00; font-weight: bold;");
+        Logger::log("⚠ Brak ramek CAN po 5s — sprawdź czy magistrala jest aktywna i baud rate poprawny");
     }
 }
 

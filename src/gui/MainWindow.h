@@ -164,6 +164,11 @@ private:
     // Auto-odświeżanie interfejsów
     QTimer *m_interfaceRefreshTimer = nullptr;
 
+    // Diagnostyka CAN
+    QTimer *m_noDataTimer = nullptr;
+    int m_totalFrames = 0;
+    void checkNoData();
+
     // Odtwarzanie nagrań
     CanPlayer *m_player = nullptr;
     QPushButton *m_playPauseBtn = nullptr;
