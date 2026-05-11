@@ -129,17 +129,12 @@ bool PcanDriver::isValid() const { return d && d->initialized; }
 CanFrame PcanDriver::readFrame() {
     if (!d || !d->initialized) return {};
 
-    //  Sprawdź czy są dane w kolejce (PCAN_CHANNEL_OCCUPIED = 0x100)
-    if (d->fnStatus) {
-        int st = d->fnStatus(d->channel);
-        if (!(st & 0x100)) return {}; // brak danych → wyjdź
-    }
-
-    //  FD
+    // Try FD read first
     if (d->fnReadFD) {
         TPCANMsgFD msg; memset(&msg, 0, sizeof(msg));
         TPCANTimestamp ts = 0;
-        if (d->fnReadFD(d->channel, &msg, &ts) == 0) {
+        int res = d->fnReadFD(d->channel, &msg, &ts);
+        if (res == 0) {
             CanFrame f;
             f.id = msg.ID & 0x1FFFFFFF;
             f.extended = msg.MSGTYPE & PCAN_MESSAGE_EXTENDED;
@@ -152,11 +147,12 @@ CanFrame PcanDriver::readFrame() {
         }
     }
 
-    //  Klasyczne CAN
+    // Classic CAN read
     if (d->fnRead) {
         TPCANMsg msg; memset(&msg, 0, sizeof(msg));
         TPCANTimestamp ts = 0;
-        if (d->fnRead(d->channel, &msg, &ts) == 0) {
+        int res = d->fnRead(d->channel, &msg, &ts);
+        if (res == 0) {
             CanFrame f;
             f.id = msg.ID & 0x1FFFFFFF;
             f.extended = msg.MSGTYPE & PCAN_MESSAGE_EXTENDED;
