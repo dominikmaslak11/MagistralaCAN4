@@ -12,6 +12,7 @@
 
 class AssociativeLearner;
 class LuaScriptEngine;
+class CanSniffer;
 
 class OfflineAnalyzer : public QWidget {
     Q_OBJECT
@@ -19,6 +20,8 @@ public:
     explicit OfflineAnalyzer(AssociativeLearner *learner,
                              LuaScriptEngine *lua = nullptr,
                              QWidget *parent = nullptr);
+
+    void setSniffer(CanSniffer *sniffer) { m_sniffer = sniffer; }
 
 public slots:
     void loadFile();
@@ -64,6 +67,7 @@ private:
     QPushButton *m_binarySearchBtn;
     QSlider *m_speedSlider;
     QCheckBox *m_originalTimestampsCheck;
+    QCheckBox *m_sendToBusCheck;
     QLabel *m_statusLabel;
     QLabel *m_bsRangeLabel;
     QProgressBar *m_progressBar;
@@ -71,4 +75,5 @@ private:
 
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;
+    CanSniffer *m_sniffer = nullptr;
 };

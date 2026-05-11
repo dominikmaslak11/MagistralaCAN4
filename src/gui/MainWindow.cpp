@@ -93,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
     m_pluginLoader.loadFromDirectory("./plugins");
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
+    m_offlineAnalyzer->setSniffer(&m_sniffer);
 
     // --- CAN Driver ---
 #ifdef Q_OS_WIN

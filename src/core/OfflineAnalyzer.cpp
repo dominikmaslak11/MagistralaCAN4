@@ -1,6 +1,7 @@
 #include "OfflineAnalyzer.h"
 #include "AssociativeLearner.h"
 #include "LuaScriptEngine.h"
+#include "CanSniffer.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFileDialog>
@@ -44,6 +45,12 @@ OfflineAnalyzer::OfflineAnalyzer(AssociativeLearner *learner,
     m_originalTimestampsCheck->setChecked(true);
     m_originalTimestampsCheck->setStyleSheet("color: #ff66cc; font-weight: bold;");
     layout->addWidget(m_originalTimestampsCheck);
+
+    m_sendToBusCheck = new QCheckBox("Wysylaj ramki na magistrale CAN");
+    m_sendToBusCheck->setChecked(true);
+    m_sendToBusCheck->setToolTip("Fizycznie wysyla odtwarzane ramki przez PCAN");
+    m_sendToBusCheck->setStyleSheet("color: #00ffaa; font-weight: bold;");
+    layout->addWidget(m_sendToBusCheck);
 
     m_progressBar = new QProgressBar;
     m_progressBar->setMinimum(0);
@@ -246,6 +253,8 @@ void OfflineAnalyzer::nextFrame() {
 
     if (m_learner) m_learner->processFrame(frame);
     if (m_luaEngine) m_luaEngine->onNewFrame(frame);
+    if (m_sniffer && m_sendToBusCheck && m_sendToBusCheck->isChecked())
+        m_sniffer->writeFrame(frame);
 
     // Binary search: check if we reached the end of the current half
     if (m_bsState == BsState::PlayingHalf && m_currentIndex >= m_bsPlayEnd - 1) {
