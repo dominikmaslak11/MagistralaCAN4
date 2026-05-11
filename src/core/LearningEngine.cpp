@@ -49,7 +49,7 @@ void LearningEngine::markEvent(int64_t adaptiveBefore, int64_t adaptiveAfter) {
     rec.idFeatures = buildFeatureVectors(window);
     m_events.push_back(rec);
     m_iteration++;
-    if (m_iteration == 1) recalcAdaptiveWindow();
+    if (m_iteration == 1) recalcAdaptiveWindowLocked();
 }
 
 void LearningEngine::markNonEvent(int64_t adaptiveBefore, int64_t adaptiveAfter) {
@@ -1903,8 +1903,8 @@ double LearningEngine::correlationPearson(const std::vector<float> &x,
 
 // ── Adaptive window ─────────────────────────────────────────
 
-void LearningEngine::recalcAdaptiveWindow() {
-    std::unique_lock lock(m_mutex);
+void LearningEngine::recalcAdaptiveWindowLocked() {
+    // Caller must hold m_mutex
     if (m_events.empty()) return;
     const auto &win = m_events[0].windowFrames;
     if (win.size() < 2) return;
@@ -1916,6 +1916,11 @@ void LearningEngine::recalcAdaptiveWindow() {
     m_adaptiveBefore = std::max<int64_t>(100000,
         std::min<int64_t>(2000000, static_cast<int64_t>(3 * mean)));
     m_adaptiveAfter = m_adaptiveBefore / 3;
+}
+
+void LearningEngine::recalcAdaptiveWindow() {
+    std::unique_lock lock(m_mutex);
+    recalcAdaptiveWindowLocked();
 }
 
 

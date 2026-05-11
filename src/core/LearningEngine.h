@@ -330,6 +330,7 @@ public:
 
     // ── Adaptive window ───────────────────────────────────
     void recalcAdaptiveWindow();
+    void recalcAdaptiveWindowLocked();  // internal: assumes mutex already held
     int64_t adaptiveBefore() const { return m_adaptiveBefore; }
     int64_t adaptiveAfter()  const { return m_adaptiveAfter;  }
 
