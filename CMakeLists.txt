@@ -60,6 +60,7 @@ set(SOURCES
     src/core/FrameDetailWidget.cpp
     src/core/AssociativeLearner.cpp
     src/core/CandidateModel.cpp
+    src/core/LearningEngine.cpp
     src/core/LuaScriptEngine.cpp
     src/core/GpuCorrelator.cpp
     src/core/WebSocketServer.cpp
@@ -114,6 +115,7 @@ set(HEADERS
     src/core/WebSocketServer.h
     src/core/J1939Frame.h
     src/core/J1939Parser.h
+    src/core/LearningEngine.h
     src/core/J1939Widget.h
     src/core/DbcEditorWidget.h
     src/core/CanNodeSimulator.h

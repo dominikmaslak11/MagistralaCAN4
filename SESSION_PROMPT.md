@@ -1,4 +1,4 @@
-# Sesja optymalizacji — MagistralaCAN4 — 2026-05-10
+# Sesja optymalizacji — MagistralaCAN4 — 2026-05-11
 
 ## Faza 1: Pipeline "Ruch CAN" (zrealizowane)
 - ✅ **#1 QSortFilterProxyModel** (commit `6b44aa3`) — CanFilterProxy, -45 linii z CanFrameModel::sort()
@@ -27,62 +27,43 @@
 - ✅ **#22 Plugin crash protection** — setjmp/longjmp + SIGSEGV handler, izoluje crashujące pluginy bez QProcess
 - ✅ **#23 Odtwarzanie nagrań** — CanPlayer, .mcan/.mcan.zst, prędkość 0.5x–10x, UI w toolbarze
 
-## Wszystkie pozycje zrealizowane ✅
-
-23 optymalizacje wdrożone w ciągu jednej sesji.
-
 ---
 
-## Faza 3: Modernizacja uczenia asocjacyjnego (zaplanowane)
+## Faza 3: Modernizacja uczenia asocjacyjnego (w trakcie)
 
-### Diagnoza stanu obecnego
-`AssociativeLearner` (2578 LOC .cpp + 258 LOC .h = 2836 LOC) — monolit łączący UI, silnik ML i zarządzanie stanem w jednej klasie QWidget.
+### Stan po Fazie A
+`AssociativeLearner`: 2593→1169 LOC .cpp + 258→203 LOC .h = **1372 LOC** (przed: 2836, **-52%**)
+`LearningEngine`: 309 .h + 1651 .cpp = **1960 LOC** — nowy, czysty C++, thread-safe
 
-**Obecny zestaw metod:** Pearson, MIC, Mutual Information, DBSCAN, k-means, PCA+power iteration, FFT (Cooley-Tukey radix-2), MLP (3-warstwowy), łańcuch Markowa, auto-discovery, detekcja anomalii, eksport/import JSON, generator Lua, raport HTML.
+### Plan (6 faz)
 
-**Problemy architektoniczne:**
-- God-class: 2836 LOC, niemożliwy test jednostkowy
-- Silnik ML wpleciony w QWidget — zero reuse bez GUI
-- Brak incremental learning — każda operacja przelicza wszystko od zera
-- DBSCAN alokuje pełną macierz O(N²) — crash przy >500 oknach
-- K-means: WCSS to placeholder (wykres łokcia nie działa)
-- MLP: brak minibatch, brak regularyzacji (overfitting), stały LR
-- Stały wektor cech (67 dim), brak selekcji/dynamicznych cech
-- Brak temporal decay — stare obserwacje = nowe
-- Tylko jedna zmienna docelowa (`m_currentVariable`)
+#### Faza A: Dekompozycja silnika ✅ (zrealizowane)
+- ✅ **#24 `LearningEngine`** — czysta klasa C++, STL-only, `std::shared_mutex`, 37 algorytmów ML
+- ✅ **#25 `AssociativeLearner` → cienka warstwa UI** — tylko konstruktor widgetów + populacja tabel
+- ✅ Stan przeniesiony do LearningEngine (frameHistory, events, observations, linearModels, Markov, NN, anomaly)
+- ✅ `GpuCorrelator` usunięty z AssociativeLearner; PCA liczone CPU przez LearningEngine
+- ✅ `kMeans` — wersja sekwencyjna (bez QtConcurrent::blockingMap)
+- ✅ Kompilacja przechodzi (MSYS2/MinGW, Qt6 static)
+- **Zysk:** testowalność, reuse, separacja concerns, -52% LOC w UI
 
-### Plan modernizacji (6 faz)
-
-#### Faza A: Dekompozycja silnika (fundament)
-- [ ] **#24 `LearningEngine`** — czysta klasa C++ bez Qt, cała logika ML
-- [ ] **#25 `AssociativeLearner` → cienka warstwa UI** — deleguje do LearningEngine
-- [ ] Stan (obserwacje, eventy, modele) przeniesiony do LearningEngine
-- [ ] LearningEngine komunikuje się przez `std::function` callbacki
-- [ ] Testy jednostkowe dla LearningEngine (headless)
-- **Zysk:** testowalność, reuse, separacja concerns
-
-#### Faza B: Online / incremental learning
+#### Faza B: Online / incremental learning (następna)
 - [ ] **#26 Ring buffer dla obserwacji** z configurowalną pojemnością (10k)
 - [ ] **#27 Exponential forgetting** — waga `e^(-λ·Δt)` dla starych obserwacji
 - [ ] **#28 Korelacje online** — Welford's algorithm, aktualizacja przyrostowa
 - [ ] **#29 Anomalie: EWMA + adaptive threshold** zamiast rebuild całego modelu
-- [ ] GUI nigdy się nie blokuje przy uczeniu
 - **Zysk:** ciągłe uczenie, adaptacja do zmieniającego się ruchu
 
 #### Faza C: Unowocześnienie modeli predykcyjnych
 - [ ] **#30 MLP v2** — minibatch SGD + Adam + L2 regularization + early stopping
-- [ ] **#31 Gradient Boosted Trees** (własna implementacja XGBoost-lite) — alternatywa dla regresji liniowej
+- [ ] **#31 Gradient Boosted Trees** (własna implementacja XGBoost-lite)
 - [ ] **#32 Przedziały ufności** dla predykcji (bootstrap residuals)
 - [ ] **#33 Multi-target** — wsparcie dla wielu zmiennych jednocześnie
-- **Zysk:** dokładniejsze predykcje, mniej overfittingu
 
 #### Faza D: Wydajność i skalowalność
 - [ ] **#34 Sparse cross-byte correlation** — pomijaj bajty o zerowej wariancji
 - [ ] **#35 DBSCAN z k-d tree** (nanoflann) zamiast O(N²)
-- [ ] **#36 Poprawny WCSS** + inicjalizacja k-means++
+- [ ] **#36 Poprawny WCSS** + inicjalizacja k-means++ ✅ (WCSS już poprawiony w autoKMeans)
 - [ ] **#37 PCA: pełna eigen-decomposition** (Jacobi dla małych macierzy 5×5)
-- [ ] Cache Pearsona z inteligentną inwalidacją
-- **Zysk:** 10-100x szybsze dla dużych logów
 
 #### Faza E: Zaawansowana analiza
 - [ ] **#38 Granger causality** — przyczynowość CAN → zdarzenie
