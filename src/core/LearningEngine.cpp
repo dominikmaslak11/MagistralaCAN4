@@ -113,9 +113,13 @@ void LearningEngine::addObservation(const std::string &variableKey, double value
     for (auto &kv : grouped) {
         std::vector<uint8_t> avg(64, 0);
         const auto &frames = kv.second;
-        for (const auto &f : frames)
-            for (int i = 0; i < f.dlc; ++i)
-                avg[i] += static_cast<uint8_t>(f.data[i] / frames.size());
+        float n = static_cast<float>(frames.size());
+        for (int i = 0; i < 64; ++i) {
+            float sum = 0;
+            for (const auto &f : frames)
+                if (i < f.dlc) sum += f.data[i];
+            avg[i] = static_cast<uint8_t>(sum / n);
+        }
         obs.idAverageBytes[kv.first] = std::move(avg);
     }
     m_observations[variableKey].push_back(std::move(obs));
