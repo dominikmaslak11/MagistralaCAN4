@@ -38,6 +38,7 @@
 #include "core/DbcAutoWidget.h"
 #include "core/CanBusLoadWidget.h"
 #include "core/CanFrameSenderWidget.h"
+#include "core/CanGatewayWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -122,6 +123,7 @@ private:
     DbcAutoWidget       *m_dbcAutoWidget;
     CanBusLoadWidget      *m_busLoadWidget;
     CanFrameSenderWidget  *m_frameSender;
+    CanGatewayWidget      *m_gatewayWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;
