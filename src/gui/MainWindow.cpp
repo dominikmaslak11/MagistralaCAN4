@@ -105,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_xcpWidget           = new XcpWidget;
     m_replayFilterWidget   = new CanReplayFilterWidget(&m_sniffer);
     m_signalMonitorWidget  = new CanSignalMonitorWidget;
+    m_periodicSenderWidget = new CanPeriodicSenderWidget(&m_sniffer);
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -669,7 +670,8 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_kwp2000Widget,      "KWP2000");
     tabs->addTab(m_xcpWidget,          "XCP");
     tabs->addTab(m_replayFilterWidget,  "Replay Filter");
-    tabs->addTab(m_signalMonitorWidget, "Live Signals");
+    tabs->addTab(m_signalMonitorWidget,  "Live Signals");
+    tabs->addTab(m_periodicSenderWidget, "Periodic Sender");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())

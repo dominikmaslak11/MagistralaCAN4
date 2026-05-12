@@ -107,6 +107,8 @@ set(SOURCES
     src/core/CanReplayFilterWidget.cpp
     src/core/CanSignalMonitor.cpp
     src/core/CanSignalMonitorWidget.cpp
+    src/core/CanPeriodicSender.cpp
+    src/core/CanPeriodicSenderWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
@@ -277,6 +279,7 @@ set(TEST_SOURCES
     tests/test_xcpparser.cpp
     tests/test_canreplayfilter.cpp
     tests/test_cansignalmonitor.cpp
+    tests/test_canperiodicsender.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -303,6 +306,7 @@ set(TEST_SOURCES
     src/core/XcpParser.cpp
     src/core/CanReplayFilter.cpp
     src/core/CanSignalMonitor.cpp
+    src/core/CanPeriodicSender.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
