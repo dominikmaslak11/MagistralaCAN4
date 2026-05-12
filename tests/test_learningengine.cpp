@@ -401,3 +401,31 @@ TEST(LearningEngine, Serialization) {
     EXPECT_TRUE(ok);
     EXPECT_EQ(eng.iterationCount(), eng2.iterationCount());
 }
+
+// ── Cyclic noise filter ─────────────────────────────────────
+
+TEST(LearningEngine, CyclicNoiseBytesDetected) {
+    LearningEngine eng;
+    // Generate frames where byte 0 bit 0 alternates 0/1 every frame
+    for (int i = 0; i < 20; ++i) {
+        uint8_t noiseByte = (i % 2 == 0) ? 0x01 : 0x00;  // bit 0 toggles every frame
+        CanFrame f = makeFrame(0x400, static_cast<uint64_t>(1000000 + i * 10000),
+                               {noiseByte, 0x42, 0, 0, 0, 0, 0, 0});
+        eng.processFrame(f);
+    }
+    auto noiseBytes = eng.detectCyclicNoiseBytes();
+    uint64_t key = (static_cast<uint64_t>(0x400) << 8) | 0;
+    EXPECT_TRUE(noiseBytes.count(key)) << "Byte 0 of ID 0x400 should be cyclic noise";
+    // Byte 1 (constant 0x42) should NOT be noise
+    uint64_t key1 = (static_cast<uint64_t>(0x400) << 8) | 1;
+    EXPECT_FALSE(noiseBytes.count(key1)) << "Constant byte 1 should not be noise";
+}
+
+TEST(LearningEngine, NoiseFilterToggle) {
+    LearningEngine eng;
+    EXPECT_TRUE(eng.noiseFilterEnabled());  // default on
+    eng.setNoiseFilterEnabled(false);
+    EXPECT_FALSE(eng.noiseFilterEnabled());
+    eng.setNoiseFilterEnabled(true);
+    EXPECT_TRUE(eng.noiseFilterEnabled());
+}

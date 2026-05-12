@@ -160,3 +160,21 @@
 3. **t-SNE (#41)** — Barnes-Hut, GPU, wizualizacja 2D/3D
 4. **Dekompozycja LearningEngine.cpp** — 2800 LOC → 6 modułów
 5. **CI/CD** — GitHub Actions (Win+Linux), clang-tidy, ASan
+
+---
+
+## Sesja 2026-05-12 (część 3): Filtr zaszumienia cyklicznego ✅
+
+### Implementacja
+- ✅ `LearningEngine::detectCyclicNoiseBytes()` — wykrywanie bajtów gdzie dowolny bit toggleuje >40% par ramek
+- ✅ `setNoiseFilterEnabled(bool)` / `noiseFilterEnabled()` — włączanie/wyłączanie filtru
+- ✅ `bool m_noiseFilterEnabled = true` — domyślnie włączony
+- ✅ Integracja w `computeCorrelations()` — noisy bytes pomijane przy Pearsonie
+- ✅ Integracja w `computeCorrelationsOnline()` — noisy bytes pomijane w Welford
+- ✅ Integracja w `computeCrossByte()` — noisy bytes pomijane w cross-byte
+- ✅ `AssociativeLearner`: checkbox "Filtr zaszumienia cyklicznego (bity 0↔1)", domyślnie ✓
+- ✅ 2 nowe testy: `CyclicNoiseBytesDetected`, `NoiseFilterToggle` → 17/17 OK
+
+### Algorytm
+Dla każdego bajtu każdego CAN ID: zlicz ile razy każdy bit (0-7) zmienia wartość
+w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → bajt = szum cykliczny.

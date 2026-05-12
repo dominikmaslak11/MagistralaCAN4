@@ -169,6 +169,13 @@ public:
     std::unordered_set<uint64_t> detectAutoIncrementBytes() const;
     // key = (id << 8) | byteIdx
 
+    // ── Cyclic noise filter ───────────────────────────────
+    // Detects bytes where any bit toggles 0↔1 at high frequency
+    std::unordered_set<uint64_t> detectCyclicNoiseBytes() const;
+    // key = (id << 8) | byteIdx
+    void setNoiseFilterEnabled(bool on) { m_noiseFilterEnabled = on; }
+    bool noiseFilterEnabled() const { return m_noiseFilterEnabled; }
+
     // ── Correlation table (Pearson) ────────────────────────
     std::vector<LeCorrelationEntry>
         computeCorrelations(const std::string &variableKey) const;
@@ -381,6 +388,7 @@ private:
     // ── #28 Online learning (Welford) ──────────────────────
     bool m_onlineLearning = false;
     bool m_useEwmaAnomaly = false;
+    bool m_noiseFilterEnabled = true;
     struct WelfordAccum {
         size_t n = 0;
         double meanX = 0, M2x = 0;  // for variable value

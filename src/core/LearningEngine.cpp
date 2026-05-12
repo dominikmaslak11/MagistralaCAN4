@@ -353,6 +353,46 @@ std::unordered_set<uint64_t> LearningEngine::detectAutoIncrementBytes() const {
     return result;
 }
 
+// ── Cyclic noise filter ────────────────────────────────────
+
+std::unordered_set<uint64_t> LearningEngine::detectCyclicNoiseBytes() const {
+    std::shared_lock lock(m_mutex);
+    std::unordered_set<uint64_t> result;
+    if (m_frameHistory.size() < 10) return result;
+
+    std::unordered_map<uint32_t, std::vector<CanFrame>> byId;
+    for (const auto &f : m_frameHistory)
+        byId[f.id].push_back(f);
+
+    for (const auto &kv : byId) {
+        uint32_t id = kv.first;
+        const auto &frames = kv.second;
+        if (frames.size() < 5) continue;
+
+        for (int b = 0; b < 8; ++b) {
+            int bitToggles[8] = {};
+            int totalPairs = 0;
+            for (size_t i = 1; i < frames.size(); ++i) {
+                if (b >= (int)frames[i].dlc || b >= (int)frames[i-1].dlc) continue;
+                uint8_t changed = frames[i-1].data[b] ^ frames[i].data[b];
+                totalPairs++;
+                for (int bit = 0; bit < 8; ++bit)
+                    if (changed & (1u << bit))
+                        bitToggles[bit]++;
+            }
+            if (totalPairs < 4) continue;
+            // Any single bit toggling in >40% of consecutive pairs = cyclic noise
+            for (int bit = 0; bit < 8; ++bit) {
+                if (bitToggles[bit] > totalPairs * 0.4) {
+                    result.insert((static_cast<uint64_t>(id) << 8) | b);
+                    break;
+                }
+            }
+        }
+    }
+    return result;
+}
+
 // ── Correlation table (Pearson) ────────────────────────────
 
 std::vector<LeCorrelationEntry>
@@ -379,8 +419,9 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
         if (kv.second >= threshold)
             common.insert(kv.first);
 
-    // Detect auto-increment bytes to filter out
+    // Detect auto-increment and cyclic noise bytes to filter out
     auto aiBytes = detectAutoIncrementBytes();
+    auto noiseBytes = m_noiseFilterEnabled ? detectCyclicNoiseBytes() : std::unordered_set<uint64_t>{};
 
     for (uint32_t id : common) {
         for (int b = 0; b < 64; ++b) {
@@ -398,6 +439,8 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
             if (N < 3) continue;
             // Skip auto-increment bytes (counters, timestamps)
             if (aiBytes.count((static_cast<uint64_t>(id) << 8) | b)) continue;
+            // Skip cyclic noise bytes (bits toggling at high frequency)
+            if (m_noiseFilterEnabled && noiseBytes.count((static_cast<uint64_t>(id) << 8) | b)) continue;
             double corr = (m_decayLambda > 0.0)
                 ? correlationPearsonWeighted(vx, vy, timestamps, m_decayLambda)
                 : correlationPearson(vx, vy);
@@ -472,6 +515,7 @@ LearningEngine::computeCrossByte(const std::string &variableKey) const {
             common.insert(kv.first);
 
     // #34: Pre-compute variance per (ID, byte) to skip zero-variance pairs
+    auto noiseBytes = m_noiseFilterEnabled ? detectCyclicNoiseBytes() : std::unordered_set<uint64_t>{};
     std::unordered_map<uint64_t, double> varCache;
     for (uint32_t id : common) {
         for (int b = 0; b < 8; ++b) {
@@ -498,9 +542,11 @@ LearningEngine::computeCrossByte(const std::string &variableKey) const {
             for (int b1 = 0; b1 < 8; ++b1) {
                 double v1 = varCache[ki | b1];
                 if (v1 < 1e-9) continue;  // #34: skip zero-variance bytes
+                if (m_noiseFilterEnabled && noiseBytes.count(ki | b1)) continue;
                 for (int b2 = 0; b2 < 8; ++b2) {
                     double v2 = varCache[kj | b2];
                     if (v2 < 1e-9) continue;  // #34: skip zero-variance bytes
+                    if (m_noiseFilterEnabled && noiseBytes.count(kj | b2)) continue;
                     std::vector<double> vb1, vb2;
                     std::vector<uint64_t> timestamps;
                     for (const auto &o : obs) {
@@ -2759,6 +2805,7 @@ LearningEngine::computeCorrelationsOnline(const std::string &variableKey) const 
 
     std::hash<std::string> hs;
     uint64_t varHash = hs(variableKey) & 0xFFFFFFULL;  // match welfordKey truncation
+    auto noiseBytes = m_noiseFilterEnabled ? detectCyclicNoiseBytes() : std::unordered_set<uint64_t>{};
 
     for (const auto &kv : m_welford) {
         uint64_t key = kv.first;
@@ -2767,6 +2814,7 @@ LearningEngine::computeCorrelationsOnline(const std::string &variableKey) const 
         int byteIdx = static_cast<int>(key & 0xFF);
         const auto &a = kv.second;
         if (a.n < 3) continue;
+        if (m_noiseFilterEnabled && noiseBytes.count((static_cast<uint64_t>(id) << 8) | byteIdx)) continue;
 
         double varX = a.M2x / (a.n - 1);
         double varY = a.M2y / (a.n - 1);

@@ -504,6 +504,17 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
         m_engine.setEwmaAnomaly(on);
     });
 
+    // ── Cyclic noise filter checkbox ──────────────────────
+    auto *noiseFilterLayout = new QHBoxLayout;
+    m_noiseFilterCheck = new QCheckBox("Filtr zaszumienia cyklicznego (bity 0↔1)");
+    m_noiseFilterCheck->setChecked(true);
+    m_noiseFilterCheck->setStyleSheet("color: #ff6688; font-weight: bold;");
+    noiseFilterLayout->addWidget(m_noiseFilterCheck);
+    noiseFilterLayout->addStretch();
+    mainLayout->addLayout(noiseFilterLayout);
+    connect(m_noiseFilterCheck, &QCheckBox::toggled, this, [this](bool on) {
+        m_engine.setNoiseFilterEnabled(on);
+    });
 
     // ── FFT / analiza częstotliwości ──
     addHLine();

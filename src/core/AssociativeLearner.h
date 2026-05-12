@@ -216,6 +216,7 @@ private:
     QTableWidget *m_gbtPredTable;
     QCheckBox    *m_onlineLearningCheck;
     QCheckBox    *m_ewmaAnomalyCheck;
+    QCheckBox    *m_noiseFilterCheck;
 
     // ── Async helper ──────────────────────────────────────
     template<typename Func>
