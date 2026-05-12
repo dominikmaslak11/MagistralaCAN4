@@ -41,6 +41,7 @@
 #include "core/CanGatewayWidget.h"
 #include "core/UdsSequenceWidget.h"
 #include "core/LinWidget.h"
+#include "core/CanIdStatsWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -128,6 +129,7 @@ private:
     CanGatewayWidget      *m_gatewayWidget;
     UdsSequenceWidget     *m_udsSequenceWidget;
     LinWidget             *m_linWidget;
+    CanIdStatsWidget      *m_idStatsWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;
