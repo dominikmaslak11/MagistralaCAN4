@@ -61,6 +61,9 @@ set(SOURCES
     src/core/AssociativeLearner.cpp
     src/core/CandidateModel.cpp
     src/core/LearningEngine.cpp
+    src/core/LearningEngine_filters.cpp
+    src/core/LearningEngine_clustering.cpp
+    src/core/LearningEngine_persistence.cpp
     src/core/LuaScriptEngine.cpp
     src/core/GpuCompute.cpp
     src/core/GpuCorrelator.cpp
@@ -235,6 +238,9 @@ set(TEST_SOURCES
     src/core/CanFrameModel.cpp
     src/core/J1939Parser.cpp
     src/core/LearningEngine.cpp
+    src/core/LearningEngine_filters.cpp
+    src/core/LearningEngine_clustering.cpp
+    src/core/LearningEngine_persistence.cpp
     src/core/GpuCompute.cpp
 )
 
