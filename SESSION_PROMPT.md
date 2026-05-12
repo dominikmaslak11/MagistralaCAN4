@@ -283,8 +283,26 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 3. ~~Filtr szumu domyślnie wyłączony~~ ✅ — checkbox opt-in, `m_noiseFilterEnabled = false`
 4. ~~Isolation Forest~~ ✅ — `trainIsolationForest` + `scoreIsolationForest`, 4 testy, 83/83
 5. ~~SOME/IP parser~~ ✅ — `SomeIpParser` + `SomeIpWidget`, 16 testów, 99/99
-6. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
-7. **Python binding (pybind11)** — eksport LearningEngine jako moduł Python
+6. ~~Signal Plotter~~ ✅ — `SignalPlotterWidget`, 4 kanały, DBC decode, rolling window, PNG export
+7. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
+8. **Python binding (pybind11)** — eksport LearningEngine jako moduł Python
+
+---
+
+## Sesja 2026-05-12 (część 11): Signal Plotter Widget ✅
+
+### Implementacja (commit a89bcdf)
+- ✅ `SignalPlotterWidget.h/cpp` — Qt Charts widget z 4 kanałami, rolling time window
+- ✅ `QSplitter`: drzewo sygnałów DBC (lewo) + wykres liniowy (prawo)
+- ✅ `processFrame()` → `DbcParser::decodeSignals()` → append do `QLineSeries`
+- ✅ 4 kanały (czerwony/niebieski/zielony/pomarańczowy), przycisk ✕ per kanał
+- ✅ Rolling window: 5/10/30/60/120 s (konfigurowalne)
+- ✅ Tryb normalizacji [0–1] per kanał (checkbox)
+- ✅ Auto-skalowanie osi Y, eksport PNG
+- ✅ Podpięty do wszystkich 3 ścieżek ładowania DBC (dialog, MRU, edytor)
+- ✅ Throttlowany (co N-tą ramkę) — jak inne widgety diagnostyczne
+- ✅ Nowa zakładka "Przebiegi sygnałów" w MainWindow
+- ✅ 99/99 testów bez regresji
 
 ---
 

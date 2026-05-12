@@ -90,6 +90,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_canOpenWidget = new CanOpenWidget;
     m_someIpWidget   = new SomeIpWidget;
     m_signalPlotter  = new SignalPlotterWidget;
+    m_doIpWidget     = new DoIpWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -633,6 +634,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_canOpenWidget, "CANopen");
     tabs->addTab(m_someIpWidget,   "SOME/IP");
     tabs->addTab(m_signalPlotter,  "Przebiegi sygnałów");
+    tabs->addTab(m_doIpWidget,     "DoIP");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
