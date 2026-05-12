@@ -254,3 +254,35 @@
 ### Algorytm
 Dla każdego bajtu każdego CAN ID: zlicz ile razy każdy bit (0-7) zmienia wartość
 w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → bajt = szum cykliczny.
+
+---
+
+## Sesja 2026-05-12 (część 7): Filtry dla całego uczenia + checkbox auto-incr ✅
+
+### Zakres zmian
+- ✅ `m_autoIncrFilterEnabled = true` + getter/setter w `LearningEngine.h`
+- ✅ Oba filtry (auto-incr + noise) działają we **wszystkich 8 metodach** uczenia:
+  `computeCorrelations`, `computeCrossByte`, `computeCorrelationsOnline`,
+  `computeMutualInformation`, `computeMIC`, `computeCrossCorrelationLag`,
+  `computeGrangerCausality`, `trainPrediction`
+- ✅ UI: pomarańczowy checkbox "Filtr autoinkrementacji (liczniki, timestampy)", domyślnie ✓
+- ✅ Testy Granger/CrossCorrelationLag: `setAutoIncrFilterEnabled(false)` + `setNoiseFilterEnabled(false)` — testy sprawdzają algorytm, nie filtry
+- ✅ 67/67 testów, commit `15aa24e`
+
+### Infrastruktura
+- ✅ `build_native/MagistralaCAN4.exe` śledzony przez Git LFS (`*.exe filter=lfs`)
+- ✅ Push 124 MB przez LFS na GitHub
+
+---
+
+## Sesja 2026-05-12 (część 8): Roadmapa dalszej modernizacji
+
+### Plan (priorytet malejący)
+1. **ASan + code coverage w CI** — AddressSanitizer na Linuxie, lcov/gcov raport, badge pokrycia
+2. **ISO 15765 (CAN TP)** — transport wieloramkowy: SF/FF/CF/FC, reassembly, 4095-bajtowe payload
+3. **Isolation Forest** — anomalia wielowymiarowa, lepsze niż EWMA dla wielowymiarowych danych CAN
+4. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
+5. **SOME/IP parser** — Service Discovery, Events, Methods dla nowoczesnych ECU
+6. **Python binding (pybind11)** — eksport LearningEngine jako moduł Python
+
+### Bieżąca sesja: #1 ASan + coverage → #2 CAN TP

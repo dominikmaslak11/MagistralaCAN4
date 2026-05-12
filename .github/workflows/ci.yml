@@ -6,8 +6,19 @@ on:
   pull_request:
     branches: [ main ]
 
+# Shared dependency install script (reused across jobs via env)
+env:
+  QT_PACKAGES: >-
+    cmake ninja-build
+    qt6-base-dev qt6-charts-dev
+    libqt6websockets6-dev libqt6serialport6-dev
+    libqt6opengl6-dev
+    libzstd-dev liblua5.4-dev
+    libxcb-xinerama0-dev libxcb-cursor-dev
+    opencl-headers ocl-icd-opencl-dev
+
 jobs:
-  # ── Linux build + tests ──────────────────────────────────────
+  # ── Linux build + tests (Release) ───────────────────────────
   linux:
     runs-on: ubuntu-24.04
     steps:
@@ -16,16 +27,9 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y \
-            cmake ninja-build \
-            qt6-base-dev qt6-charts-dev \
-            libqt6websockets6-dev libqt6serialport6-dev \
-            libqt6opengl6-dev \
-            libzstd-dev liblua5.4-dev \
-            libxcb-xinerama0-dev libxcb-cursor-dev \
-            opencl-headers ocl-icd-opencl-dev
+          sudo apt-get install -y ${{ env.QT_PACKAGES }}
 
-      - name: Configure (Linux)
+      - name: Configure
         run: |
           cmake -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
@@ -35,6 +39,8 @@ jobs:
         run: cmake --build build --target MagistralaCAN4_tests -j$(nproc)
 
       - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
           cd build
           ./MagistralaCAN4_tests --gtest_output=xml:test_results.xml
@@ -45,6 +51,114 @@ jobs:
         with:
           name: linux-test-results
           path: build/test_results.xml
+
+  # ── AddressSanitizer + UndefinedBehaviorSanitizer ───────────
+  asan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y ${{ env.QT_PACKAGES }}
+
+      - name: Configure (ASan + UBSan)
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+
+      - name: Build tests
+        run: cmake --build build --target MagistralaCAN4_tests -j$(nproc)
+
+      - name: Run tests (ASan + UBSan)
+        env:
+          QT_QPA_PLATFORM: offscreen
+          ASAN_OPTIONS: "detect_leaks=1:abort_on_error=1:print_stats=1"
+          UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+        run: |
+          cd build
+          ./MagistralaCAN4_tests --gtest_output=xml:asan_results.xml
+
+      - name: Upload ASan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: asan-test-results
+          path: build/asan_results.xml
+
+  # ── Code coverage (gcov + lcov + HTML report) ───────────────
+  coverage:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y ${{ env.QT_PACKAGES }} lcov
+
+      - name: Configure (coverage)
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="--coverage"
+
+      - name: Build tests
+        run: cmake --build build --target MagistralaCAN4_tests -j$(nproc)
+
+      - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          cd build
+          ./MagistralaCAN4_tests
+
+      - name: Collect coverage data
+        run: |
+          lcov --capture \
+               --directory build \
+               --output-file coverage_raw.info \
+               --no-external \
+               --ignore-errors mismatch,empty
+
+      - name: Filter coverage (remove tests + generated files)
+        run: |
+          lcov --remove coverage_raw.info \
+               '*/tests/*' \
+               '*/googletest/*' \
+               '*/_deps/*' \
+               '*/moc_*' \
+               '*/qrc_*' \
+               --output-file coverage.info \
+               --ignore-errors unused
+          lcov --list coverage.info
+
+      - name: Generate HTML report
+        run: |
+          genhtml coverage.info \
+                  --output-directory coverage-html \
+                  --title "MagistralaCAN4 — Code Coverage" \
+                  --legend \
+                  --demangle-cpp \
+                  --prefix $(pwd)
+
+      - name: Upload coverage HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage-html/
+          retention-days: 30
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.info
+          fail_ci_if_error: false
+          verbose: false
 
   # ── Windows build + tests ────────────────────────────────────
   windows:
@@ -78,6 +192,8 @@ jobs:
         run: cmake --build build --target MagistralaCAN4_tests -j4
 
       - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
           cd build
           ./MagistralaCAN4_tests.exe --gtest_output=xml:test_results.xml
@@ -107,12 +223,15 @@ jobs:
             libxcb-xinerama0-dev \
             opencl-headers ocl-icd-opencl-dev
 
-      - name: Configure with compile_commands.json
+      - name: Configure (compile_commands.json)
         run: |
           cmake -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_CXX_COMPILER=clang++
+
+      - name: Build (generate MOC files)
+        run: cmake --build build --target MagistralaCAN4_tests -j$(nproc)
 
       - name: Run clang-tidy on LearningEngine modules
         run: |
@@ -127,8 +246,7 @@ jobs:
             src/core/LearningEngine_models.cpp \
             src/core/LearningEngine_persistence.cpp \
             2>&1 | tee clang-tidy-report.txt
-          # Report warnings but don't fail the build on tidy issues
-          echo "clang-tidy done"
+          echo "clang-tidy complete"
 
       - name: Upload tidy report
         if: always()
