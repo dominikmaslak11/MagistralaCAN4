@@ -44,6 +44,7 @@
 #include "core/CanIdStatsWidget.h"
 #include "core/Kwp2000Widget.h"
 #include "core/XcpWidget.h"
+#include "core/CanReplayFilterWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -134,6 +135,7 @@ private:
     CanIdStatsWidget      *m_idStatsWidget;
     Kwp2000Widget         *m_kwp2000Widget;
     XcpWidget             *m_xcpWidget;
+    CanReplayFilterWidget *m_replayFilterWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;
