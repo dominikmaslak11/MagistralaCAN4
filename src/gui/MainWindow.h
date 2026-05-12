@@ -39,6 +39,7 @@
 #include "core/CanBusLoadWidget.h"
 #include "core/CanFrameSenderWidget.h"
 #include "core/CanGatewayWidget.h"
+#include "core/UdsSequenceWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -124,6 +125,7 @@ private:
     CanBusLoadWidget      *m_busLoadWidget;
     CanFrameSenderWidget  *m_frameSender;
     CanGatewayWidget      *m_gatewayWidget;
+    UdsSequenceWidget     *m_udsSequenceWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

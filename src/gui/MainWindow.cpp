@@ -98,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_gatewayWidget  = new CanGatewayWidget;
     if (m_canDriver)   m_gatewayWidget->addDriver("PCAN/SocketCAN", m_canDriver);
     if (m_slCanDriver) m_gatewayWidget->addDriver("SLCAN", m_slCanDriver);
+    m_udsSequenceWidget = new UdsSequenceWidget(&m_sniffer);
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -206,7 +207,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter,  &SignalPlotterWidget::processFrame);
     connect(this, &MainWindow::frameProcessed,          m_dbcAutoWidget,  &DbcAutoWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_busLoadWidget,  &CanBusLoadWidget::processFrame);
-    connect(this, &MainWindow::frameProcessed,          m_gatewayWidget,  &CanGatewayWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed,          m_gatewayWidget,     &CanGatewayWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed,          m_udsSequenceWidget, &UdsSequenceWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
@@ -650,7 +652,8 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_dbcAutoWidget,  "Auto-DBC");
     tabs->addTab(m_busLoadWidget,  "Obciążenie magistrali");
     tabs->addTab(m_frameSender,    "Nadajnik ramek");
-    tabs->addTab(m_gatewayWidget,  "CAN Gateway");
+    tabs->addTab(m_gatewayWidget,      "CAN Gateway");
+    tabs->addTab(m_udsSequenceWidget,  "Sekwencje UDS");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
