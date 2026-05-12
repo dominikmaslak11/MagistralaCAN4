@@ -1922,22 +1922,39 @@ LearningEngine::autoDiscovery(const std::string &variableKey) const {
     return entries;
 }
 
+
+// ── Regularized incomplete beta (power series + symmetry) ──
+
+static double regIncompleteBeta(double a, double b, double x) {
+    if (x <= 0.0) return 0.0;
+    if (x >= 1.0) return 1.0;
+    // Use symmetry: I_x(a,b) = 1 - I_{1-x}(b,a) when x is large
+    if (x > 0.5) return 1.0 - regIncompleteBeta(b, a, 1.0 - x);
+    // Power series: I_x(a,b) = [x^a (1-x)^b / (a B(a,b))] * sum_{n=0} d_n
+    // where d_0 = 1, d_{n+1} = d_n * (a+b+n)/(a+1+n) * x
+    double lnBeta = std::lgamma(a + b) - std::lgamma(a) - std::lgamma(b);
+    double front = std::exp(lnBeta + a * std::log(x) + b * std::log(1.0 - x));
+    double sum = 1.0;
+    double term = 1.0;
+    for (int n = 0; n < 500; ++n) {
+        term *= (a + b + n) / (a + 1.0 + n) * x;
+        double prev = sum;
+        sum += term;
+        if (sum == prev) break;  // converged
+    }
+    return front * sum / a;
+}
+
 // ── Statistical helpers ─────────────────────────────────────
 
 double LearningEngine::pearsonPValue(double r, int n) {
     if (n <= 2) return 1.0;
     if (std::abs(r) >= 1.0) return 0.0;
-    double t = r * std::sqrt((n - 2) / (1.0 - r * r));
+    double t = std::abs(r) * std::sqrt((n - 2) / (1.0 - r * r));
     double df = n - 2.0;
     double x = df / (df + t * t);
-    double a = df / 2.0, b = 0.5;
-    double bt = (x > 0 && x < 1)
-        ? std::exp(std::lgamma(a + b) - std::lgamma(a) - std::lgamma(b) +
-                   a * std::log(x) + b * std::log(1.0 - x))
-        : 0.0;
-    double p = bt * (x < (a + 1.0) / (a + b + 2.0)
-                     ? (1.0 / a) : (1.0 / b));
-    return std::min(1.0, 2.0 * std::max(p, 1.0 - p));
+    // Two-tailed p-value: p = I_x(df/2, 0.5)
+    return regIncompleteBeta(df / 2.0, 0.5, x);
 }
 
 double LearningEngine::correlationPearson(const std::vector<double> &x,
@@ -2741,7 +2758,7 @@ LearningEngine::computeCorrelationsOnline(const std::string &variableKey) const 
     if (obs.size() < 3) return entries;
 
     std::hash<std::string> hs;
-    uint64_t varHash = hs(variableKey);
+    uint64_t varHash = hs(variableKey) & 0xFFFFFFULL;  // match welfordKey truncation
 
     for (const auto &kv : m_welford) {
         uint64_t key = kv.first;
