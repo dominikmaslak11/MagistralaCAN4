@@ -105,6 +105,8 @@ set(SOURCES
     src/core/XcpWidget.cpp
     src/core/CanReplayFilter.cpp
     src/core/CanReplayFilterWidget.cpp
+    src/core/CanSignalMonitor.cpp
+    src/core/CanSignalMonitorWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
@@ -274,6 +276,7 @@ set(TEST_SOURCES
     tests/test_kwp2000parser.cpp
     tests/test_xcpparser.cpp
     tests/test_canreplayfilter.cpp
+    tests/test_cansignalmonitor.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -299,6 +302,7 @@ set(TEST_SOURCES
     src/core/Kwp2000Parser.cpp
     src/core/XcpParser.cpp
     src/core/CanReplayFilter.cpp
+    src/core/CanSignalMonitor.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

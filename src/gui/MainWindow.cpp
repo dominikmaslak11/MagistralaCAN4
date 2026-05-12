@@ -103,7 +103,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_idStatsWidget  = new CanIdStatsWidget;
     m_kwp2000Widget  = new Kwp2000Widget;
     m_xcpWidget           = new XcpWidget;
-    m_replayFilterWidget  = new CanReplayFilterWidget(&m_sniffer);
+    m_replayFilterWidget   = new CanReplayFilterWidget(&m_sniffer);
+    m_signalMonitorWidget  = new CanSignalMonitorWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -214,7 +215,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessedThrottled, m_busLoadWidget,  &CanBusLoadWidget::processFrame);
     connect(this, &MainWindow::frameProcessed,          m_gatewayWidget,     &CanGatewayWidget::processFrame);
     connect(this, &MainWindow::frameProcessed,          m_udsSequenceWidget, &UdsSequenceWidget::processFrame);
-    connect(this, &MainWindow::frameProcessed,          m_idStatsWidget,     &CanIdStatsWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed,          m_idStatsWidget,         &CanIdStatsWidget::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_signalMonitorWidget,   &CanSignalMonitorWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
@@ -250,6 +252,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_mqttBridge.setDbcParser(parser);
         m_signalPlotter->setDbcParser(parser);
         m_frameSender->setDbcParser(parser);
+        m_signalMonitorWidget->setDbc(parser);
     });
 
     loadSettings();
@@ -503,6 +506,7 @@ void MainWindow::loadDbcFile() {
         m_mqttBridge.setDbcParser(&m_dbcParser);
         m_signalPlotter->setDbcParser(&m_dbcParser);
         m_frameSender->setDbcParser(&m_dbcParser);
+        m_signalMonitorWidget->setDbc(&m_dbcParser);
         addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
@@ -664,7 +668,8 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_idStatsWidget,      "ID Statistics");
     tabs->addTab(m_kwp2000Widget,      "KWP2000");
     tabs->addTab(m_xcpWidget,          "XCP");
-    tabs->addTab(m_replayFilterWidget, "Replay Filter");
+    tabs->addTab(m_replayFilterWidget,  "Replay Filter");
+    tabs->addTab(m_signalMonitorWidget, "Live Signals");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
@@ -1046,6 +1051,7 @@ void MainWindow::updateMruMenus() {
                         m_mqttBridge.setDbcParser(&m_dbcParser);
                         m_signalPlotter->setDbcParser(&m_dbcParser);
                         m_frameSender->setDbcParser(&m_dbcParser);
+                        m_signalMonitorWidget->setDbc(&m_dbcParser);
                         addMruFile(path, true);
                     }
                 } else {
