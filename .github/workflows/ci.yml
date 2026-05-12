@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ── Linux build + tests ──────────────────────────────────────
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y \
+            cmake ninja-build \
+            qt6-base-dev qt6-charts-dev \
+            libqt6websockets6-dev libqt6serialport6-dev \
+            libqt6opengl6-dev \
+            libzstd-dev liblua5.4-dev \
+            libxcb-xinerama0-dev libxcb-cursor-dev \
+            opencl-headers ocl-icd-opencl-dev
+
+      - name: Configure (Linux)
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -Werror=return-type"
+
+      - name: Build tests
+        run: cmake --build build --target MagistralaCAN4_tests -j$(nproc)
+
+      - name: Run tests
+        run: |
+          cd build
+          ./MagistralaCAN4_tests --gtest_output=xml:test_results.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-test-results
+          path: build/test_results.xml
+
+  # ── Windows build + tests ────────────────────────────────────
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-qt6-charts
+            mingw-w64-ucrt-x86_64-qt6-websockets
+            mingw-w64-ucrt-x86_64-qt6-serialport
+
+      - name: Configure (Windows)
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH=/ucrt64/qt6-static
+
+      - name: Build tests
+        run: cmake --build build --target MagistralaCAN4_tests -j4
+
+      - name: Run tests
+        run: |
+          cd build
+          ./MagistralaCAN4_tests.exe --gtest_output=xml:test_results.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-test-results
+          path: build/test_results.xml
+
+  # ── clang-tidy static analysis ───────────────────────────────
+  clang-tidy:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y \
+            cmake ninja-build clang clang-tidy \
+            qt6-base-dev qt6-charts-dev \
+            libqt6websockets6-dev libqt6serialport6-dev \
+            libqt6opengl6-dev \
+            libzstd-dev liblua5.4-dev \
+            libxcb-xinerama0-dev \
+            opencl-headers ocl-icd-opencl-dev
+
+      - name: Configure with compile_commands.json
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCMAKE_CXX_COMPILER=clang++
+
+      - name: Run clang-tidy on LearningEngine modules
+        run: |
+          clang-tidy \
+            -p build \
+            --checks="-*,bugprone-*,modernize-use-override,modernize-use-nullptr,readability-identifier-naming" \
+            --warnings-as-errors="" \
+            src/core/LearningEngine.cpp \
+            src/core/LearningEngine_filters.cpp \
+            src/core/LearningEngine_clustering.cpp \
+            src/core/LearningEngine_correlations.cpp \
+            src/core/LearningEngine_models.cpp \
+            src/core/LearningEngine_persistence.cpp \
+            2>&1 | tee clang-tidy-report.txt
+          # Report warnings but don't fail the build on tidy issues
+          echo "clang-tidy done"
+
+      - name: Upload tidy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang-tidy-report
+          path: clang-tidy-report.txt

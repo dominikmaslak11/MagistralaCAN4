@@ -188,8 +188,27 @@
 1. ~~Serializacja UI~~ ✅
 2. ~~Test hardening~~ ✅ — 67/67
 3. ~~t-SNE (#41)~~ ✅ — 2D, 67/67 testów
-4. **Dekompozycja LearningEngine.cpp** — ~2900 LOC → 6 modułów
+4. ~~Dekompozycja LearningEngine.cpp~~ ✅ — 6 modułów, 67/67 testów
 5. **CI/CD** — GitHub Actions (Win+Linux), clang-tidy, ASan
+
+---
+
+## Sesja 2026-05-12 (część 6): Dekompozycja LearningEngine.cpp ✅
+
+### Wynik: 3048 LOC → 6 modułów
+
+| Plik | LOC | Zawartość |
+|------|-----|-----------|
+| `LearningEngine.cpp` | 313 | Core: frame ingestion, events, observations, features, candidates |
+| `LearningEngine_filters.cpp` | 86 | detectAutoIncrementBytes, detectCyclicNoiseBytes |
+| `LearningEngine_correlations.cpp` | 734 | Pearson, cross-byte, sequence, cross-var, MutInfo, MIC, FFT, Markov |
+| `LearningEngine_models.cpp` | 926 | Neural net, GBT, CI bootstrap, multi-target, Granger, change-point, adaptive window |
+| `LearningEngine_clustering.cpp` | 751 | DBSCAN, k-means++, PCA, t-SNE, k-d tree, Welford online |
+| `LearningEngine_persistence.cpp` | 272 | JSON serialize/deserialize, checkpoint, ONNX stub, EWMA |
+
+- ✅ Wszystkie moduły zarejestrowane w CMakeLists.txt (SOURCES + TEST_SOURCES)
+- ✅ 67/67 testów po dekompozycji
+- ✅ Commit: `c296030` — pushed to main
 
 ---
 
