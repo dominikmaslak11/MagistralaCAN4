@@ -33,6 +33,7 @@
 #include "core/CanFilterProxy.h"
 #include "core/CanPlayer.h"
 #include "core/SomeIpWidget.h"
+#include "core/SignalPlotterWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -112,6 +113,7 @@ private:
     ObdWidget           *m_obdWidget;
     CanOpenWidget       *m_canOpenWidget;
     SomeIpWidget        *m_someIpWidget;
+    SignalPlotterWidget *m_signalPlotter;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

@@ -18,10 +18,8 @@ public slots:
     void clearMessages();
     void parseManualInput();
 
-private slots:
-    void updateDetails(int row);
-
 private:
+    void updateDetails(int row);
     void addMessage(const SomeIpMessage &msg);
 
     QTableWidget *m_msgTable;

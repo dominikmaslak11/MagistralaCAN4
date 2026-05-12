@@ -82,6 +82,7 @@ set(SOURCES
     src/core/CanTpLayer.cpp
     src/core/SomeIpParser.cpp
     src/core/SomeIpWidget.cpp
+    src/core/SignalPlotterWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp

@@ -55,7 +55,8 @@ SomeIpWidget::SomeIpWidget(QWidget *parent) : QWidget(parent) {
     connect(m_parseBtn, &QPushButton::clicked, this, &SomeIpWidget::parseManualInput);
     connect(m_clearBtn, &QPushButton::clicked, this, &SomeIpWidget::clearMessages);
     connect(m_hexInput, &QLineEdit::returnPressed, this, &SomeIpWidget::parseManualInput);
-    connect(m_msgTable, &QTableWidget::currentRowChanged, this, &SomeIpWidget::updateDetails);
+    connect(m_msgTable, &QTableWidget::currentCellChanged,
+            this, [this](int row, int, int, int) { updateDetails(row); });
 }
 
 // ── Slots ──────────────────────────────────────────────────────────────────────

@@ -88,7 +88,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_logComparator = new LogComparatorWidget;
     m_obdWidget = new ObdWidget;
     m_canOpenWidget = new CanOpenWidget;
-    m_someIpWidget  = new SomeIpWidget;
+    m_someIpWidget   = new SomeIpWidget;
+    m_signalPlotter  = new SignalPlotterWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -194,6 +195,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessedThrottled, m_udsWidget, &UdsWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_obdWidget, &ObdWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_canOpenWidget, &CanOpenWidget::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter, &SignalPlotterWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
@@ -227,6 +229,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_canDashboard->setDbcParser(parser);
         m_learner->setDbcParser(parser);
         m_mqttBridge.setDbcParser(parser);
+        m_signalPlotter->setDbcParser(parser);
     });
 
     loadSettings();
@@ -478,6 +481,7 @@ void MainWindow::loadDbcFile() {
         m_learner->setDbcParser(&m_dbcParser);
         m_model->setDbcParser(&m_dbcParser);
         m_mqttBridge.setDbcParser(&m_dbcParser);
+        m_signalPlotter->setDbcParser(&m_dbcParser);
         addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
@@ -627,7 +631,8 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_logComparator, "Porównywarka logów");
     tabs->addTab(m_obdWidget, "Diagnostyka OBD-II");
     tabs->addTab(m_canOpenWidget, "CANopen");
-    tabs->addTab(m_someIpWidget,  "SOME/IP");
+    tabs->addTab(m_someIpWidget,   "SOME/IP");
+    tabs->addTab(m_signalPlotter,  "Przebiegi sygnałów");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
@@ -998,6 +1003,7 @@ void MainWindow::updateMruMenus() {
                         m_learner->setDbcParser(&m_dbcParser);
                         m_model->setDbcParser(&m_dbcParser);
                         m_mqttBridge.setDbcParser(&m_dbcParser);
+                        m_signalPlotter->setDbcParser(&m_dbcParser);
                         addMruFile(path, true);
                     }
                 } else {
