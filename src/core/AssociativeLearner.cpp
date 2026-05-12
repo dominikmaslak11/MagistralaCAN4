@@ -561,7 +561,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     // ── Cyclic noise filter checkbox ──────────────────────
     auto *noiseFilterLayout = new QHBoxLayout;
     m_noiseFilterCheck = new QCheckBox("Filtr zaszumienia cyklicznego (bity 0↔1)");
-    m_noiseFilterCheck->setChecked(true);
+    m_noiseFilterCheck->setChecked(false);
     m_noiseFilterCheck->setStyleSheet("color: #ff6688; font-weight: bold;");
     noiseFilterLayout->addWidget(m_noiseFilterCheck);
     noiseFilterLayout->addStretch();

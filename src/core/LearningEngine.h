@@ -401,7 +401,7 @@ private:
     bool m_onlineLearning = false;
     bool m_useEwmaAnomaly = false;
     bool m_autoIncrFilterEnabled = true;
-    bool m_noiseFilterEnabled = true;
+    bool m_noiseFilterEnabled = false;
     struct WelfordAccum {
         size_t n = 0;
         double meanX = 0, M2x = 0;  // for variable value

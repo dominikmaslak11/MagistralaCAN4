@@ -427,7 +427,7 @@ TEST(LearningEngine, CyclicNoiseBytesDetected) {
 
 TEST(LearningEngine, NoiseFilterToggle) {
     LearningEngine eng;
-    EXPECT_TRUE(eng.noiseFilterEnabled());  // default on
+    EXPECT_FALSE(eng.noiseFilterEnabled()); // default off
     eng.setNoiseFilterEnabled(false);
     EXPECT_FALSE(eng.noiseFilterEnabled());
     eng.setNoiseFilterEnabled(true);
