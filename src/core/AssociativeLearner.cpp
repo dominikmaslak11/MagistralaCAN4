@@ -10,7 +10,10 @@
 #include <QHeaderView>
 #include <QtConcurrent>
 #include <QFutureWatcher>
+#include <QFile>
 #include <QFileDialog>
+#include <QTextStream>
+#include <QDateTime>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -1380,35 +1383,275 @@ void AssociativeLearner::updateGbtDisplay() {
     m_gbtPredTable->setItem(0, 2, new QTableWidgetItem(QString::number(pred, 'f', 2)));
 }
 
-// ── Serialization (stubs — full impl in Phase F) ────────────
+// ── Serialization ────────────────────────────────────────────
+
+// ── autoSave: called by timer or destructor ───────────────
 
 void AssociativeLearner::autoSave() {
-    auto json = m_engine.serializeSession();
-    // Stub: save to file
-    (void)json;
+    QFile file(m_autoSavePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+    QTextStream out(&file);
+    out << QString::fromStdString(m_engine.serializeSession());
+    file.close();
 }
+
+// ── saveSession: interactive save via file dialog ─────────
 
 void AssociativeLearner::saveSession() {
-    // Stub
+    QString path = QFileDialog::getSaveFileName(this, "Zapisz sesje",
+        QDir::homePath() + "/magistrala_session.json",
+        "JSON (*.json);;Wszystkie pliki (*)");
+    if (path.isEmpty()) return;
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Blad", "Nie mozna zapisac pliku: " + path);
+        return;
+    }
+    QTextStream out(&file);
+    out << QString::fromStdString(m_engine.serializeSession());
+    file.close();
+
+    m_autoSavePath = path;
+    m_iterationLabel->setText(m_iterationLabel->text() + " | Sesja zapisana");
 }
+
+// ── loadSession: interactive load + UI refresh ────────────
 
 void AssociativeLearner::loadSession() {
-    // Stub
+    QString path = QFileDialog::getOpenFileName(this, "Wczytaj sesje",
+        QDir::homePath() + "/magistrala_session.json",
+        "JSON (*.json);;Wszystkie pliki (*)");
+    if (path.isEmpty()) return;
+
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Blad", "Nie mozna odczytac pliku: " + path);
+        return;
+    }
+    QTextStream in(&file);
+    QString json = in.readAll();
+    file.close();
+
+    if (!m_engine.deserializeSession(json.toStdString())) {
+        QMessageBox::warning(this, "Blad", "Nieprawidlowy format pliku sesji.");
+        return;
+    }
+
+    // Refresh UI state
+    m_variableCombo->clear();
+    m_currentVariable.clear();
+    auto names = m_engine.variableNames();
+    for (const auto &n : names) {
+        QString qn = QString::fromStdString(n);
+        m_variableCombo->addItem(qn, qn);
+    }
+    if (!names.empty()) {
+        m_variableCombo->setCurrentIndex(0);
+        m_currentVariable = QString::fromStdString(names[0]);
+    }
+
+    int iter = m_engine.iterationCount();
+    m_iterationLabel->setText(QString("Liczba iteracji: %1 (wczytane)").arg(iter));
+
+    m_autoSavePath = path;
+    updateCandidates();
+    updateCorrelationTable();
+    updateSequenceTable();
+    updateCrossByteTable();
+    updateChart();
+    updateTimeChart();
 }
+
+// ── exportModels: export linear models to JSON ────────────
 
 void AssociativeLearner::exportModels() {
-    // Stub
+    auto modelsMap = m_engine.linearModels();
+    QJsonObject root;
+    for (const auto &varKv : modelsMap) {
+        QJsonObject varObj;
+        for (const auto &modelKv : varKv.second) {
+            uint64_t key = modelKv.first;
+            uint32_t id = static_cast<uint32_t>(key >> 8);
+            int byte = static_cast<int>(key & 0xFF);
+            double a = modelKv.second.first;
+            double b = modelKv.second.second;
+            QJsonObject modelObj;
+            modelObj["id"] = static_cast<int>(id);
+            modelObj["byte"] = byte;
+            modelObj["a"] = a;
+            modelObj["b"] = b;
+            varObj[QString::number(key)] = modelObj;
+        }
+        root[QString::fromStdString(varKv.first)] = varObj;
+    }
+
+    QString path = QFileDialog::getSaveFileName(this, "Eksportuj modele",
+        QDir::homePath() + "/magistrala_models.json",
+        "JSON (*.json);;Wszystkie pliki (*)");
+    if (path.isEmpty()) return;
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Blad", "Nie mozna zapisac modeli.");
+        return;
+    }
+    QTextStream out(&file);
+    out << QJsonDocument(root).toJson(QJsonDocument::Indented);
+    file.close();
 }
+
+// ── importModels: import linear models from JSON ──────────
 
 void AssociativeLearner::importModels() {
-    // Stub
+    QString path = QFileDialog::getOpenFileName(this, "Importuj modele",
+        QDir::homePath() + "/magistrala_models.json",
+        "JSON (*.json);;Wszystkie pliki (*)");
+    if (path.isEmpty()) return;
+
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Blad", "Nie mozna odczytac pliku modeli.");
+        return;
+    }
+    QTextStream in(&file);
+    QJsonDocument doc = QJsonDocument::fromJson(in.readAll().toUtf8());
+    file.close();
+
+    if (!doc.isObject()) {
+        QMessageBox::warning(this, "Blad", "Nieprawidlowy format pliku modeli.");
+        return;
+    }
+
+    // Note: linear models are read-only via the getter.
+    // Full import requires manual retraining.
+    QMessageBox::information(this, "Import modeli",
+        QString("Wczytano %1 zmiennych z modelami. Aby zastosowac modele, "
+                "uzyj 'Trenuj predykcje' dla kazdej zmiennej.")
+        .arg(doc.object().size()));
 }
+
+// ── generateLuaScript: generate Lua filter script ─────────
 
 void AssociativeLearner::generateLuaScript() {
-    // Stub — Lua generation uses m_correlationTable, m_candidateModel, m_engine data
-    // Will be implemented when serialization is restored
+    QString path = QFileDialog::getSaveFileName(this, "Generuj skrypt Lua",
+        QDir::homePath() + "/magistrala_filter.lua",
+        "Lua (*.lua);;Wszystkie pliki (*)");
+    if (path.isEmpty()) return;
+
+    auto correlations = m_engine.computeCorrelations(m_currentVariable.toStdString());
+    auto models = m_engine.trainPrediction(m_currentVariable.toStdString());
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Blad", "Nie mozna zapisac skryptu Lua.");
+        return;
+    }
+    QTextStream out(&file);
+
+    out << "-- MagistralaCAN4 auto-generated filter script\n";
+    out << "-- Variable: " << m_currentVariable << "\n";
+    out << "-- Generated: " << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") << "\n\n";
+
+    out << "local filter = {}\n\n";
+    out << "-- Significant CAN IDs (p < 0.05)\n";
+    out << "filter.significantIds = {\n";
+    int count = 0;
+    for (const auto &c : correlations) {
+        if (c.significant && count < 20) {
+            out << QString("    [0x%1] = { byte = %2, corr = %3 },\n")
+                .arg(c.id, 3, 16, QChar('0')).arg(c.byte)
+                .arg(c.correlation, 0, 'f', 3);
+            count++;
+        }
+    }
+    out << "}\n\n";
+
+    out << "-- Prediction models\n";
+    out << "filter.models = {\n";
+    for (const auto &m : models) {
+        out << QString("    { id = 0x%1, byte = %2, a = %3, b = %4 },\n")
+            .arg(m.id, 3, 16, QChar('0')).arg(m.byte)
+            .arg(m.a, 0, 'f', 4).arg(m.b, 0, 'f', 4);
+    }
+    out << "}\n\n";
+
+    out << "-- Apply filter: returns true if frame matches significant pattern\n";
+    out << "function filter:match(frame)\n";
+    out << "    for id, cfg in pairs(self.significantIds) do\n";
+    out << "        if frame.id == id and frame.dlc > cfg.byte then\n";
+    out << "            return true\n";
+    out << "        end\n";
+    out << "    end\n";
+    out << "    return false\n";
+    out << "end\n\n";
+    out << "return filter\n";
+
+    file.close();
 }
 
+// ── exportHtmlReport: generate HTML report ────────────────
+
 void AssociativeLearner::exportHtmlReport() {
-    // Stub
+    QString path = QFileDialog::getSaveFileName(this, "Eksportuj raport HTML",
+        QDir::homePath() + "/magistrala_report.html",
+        "HTML (*.html);;Wszystkie pliki (*)");
+    if (path.isEmpty()) return;
+
+    auto correlations = m_engine.computeCorrelations(m_currentVariable.toStdString());
+    auto models = m_engine.trainPrediction(m_currentVariable.toStdString());
+    auto obs = m_engine.observations(m_currentVariable.toStdString());
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Blad", "Nie mozna zapisac raportu HTML.");
+        return;
+    }
+    QTextStream out(&file);
+
+    out << "<!DOCTYPE html>\n<html><head><meta charset='UTF-8'>\n";
+    out << "<title>MagistralaCAN4 - Raport</title>\n";
+    out << "<style>body{font-family:Arial;margin:20px;background:#1a1a2e;color:#e0e0e0;}"
+        << "h1{color:#e94560;}h2{color:#00ffaa;}"
+        << "table{border-collapse:collapse;width:100%;margin:10px 0;}"
+        << "th{background:#16213e;padding:8px;text-align:left;}"
+        << "td{padding:6px;border-bottom:1px solid #333;}"
+        << ".sig{color:#00ffaa;}.warn{color:#ffaa00;}</style>\n";
+    out << "</head><body>\n";
+
+    out << "<h1>MagistralaCAN4 - Raport analizy</h1>\n";
+    out << "<p>Zmienna: <b>" << m_currentVariable << "</b> | ";
+    out << "Data: " << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm") << " | ";
+    out << "Obserwacje: " << obs.size() << "</p>\n";
+
+    out << "<h2>Tabela korelacji (Pearson)</h2>\n";
+    out << "<table><tr><th>CAN ID</th><th>Bajt</th><th>Korelacja</th><th>p-value</th><th>Istotna?</th></tr>\n";
+    int shown = 0;
+    for (const auto &c : correlations) {
+        if (shown++ >= 50) break;
+        QString sigClass = c.significant ? "sig" : "warn";
+        out << "<tr><td>0x" << QString::number(c.id, 16).toUpper()
+            << "</td><td>" << c.byte
+            << "</td><td>" << QString::number(c.correlation, 'f', 3)
+            << "</td><td>" << QString::number(c.pValue, 'e', 2)
+            << "</td><td class='" << sigClass << "'>" << (c.significant ? "TAK" : "nie")
+            << "</td></tr>\n";
+    }
+    out << "</table>\n";
+
+    out << "<h2>Modele predykcyjne</h2>\n";
+    out << "<table><tr><th>CAN ID</th><th>Bajt</th><th>a (kier.)</th><th>b (wolny)</th></tr>\n";
+    for (const auto &m : models) {
+        out << "<tr><td>0x" << QString::number(m.id, 16).toUpper()
+            << "</td><td>" << m.byte
+            << "</td><td>" << QString::number(m.a, 'f', 4)
+            << "</td><td>" << QString::number(m.b, 'f', 4)
+            << "</td></tr>\n";
+    }
+    out << "</table>\n";
+
+    out << "<p><i>Wygenerowano przez MagistralaCAN4</i></p>\n";
+    out << "</body></html>\n";
+    file.close();
 }
+
