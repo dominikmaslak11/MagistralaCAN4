@@ -420,3 +420,12 @@ void DbcEditorWidget::loadDbc(const QString &path) {
     m_validationLabel->setText(QString("✅ Wczytano: %1 (%2 wiadomości)").arg(path).arg(m_messages.size()));
     Logger::log(QString("Edytor DBC: wczytano %1").arg(path));
 }
+
+void DbcEditorWidget::setMessages(const QVector<DbcMessage> &msgs) {
+    m_messages = msgs;
+    m_currentMsgIdx = -1;
+    rebuildMessageList();
+    rebuildSignalTable();
+    refreshPreview();
+    m_validationLabel->setText(QString("✅ Zaimportowano %1 wiadomości z Auto-Generatora").arg(m_messages.size()));
+}

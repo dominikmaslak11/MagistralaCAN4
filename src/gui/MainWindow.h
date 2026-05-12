@@ -35,6 +35,7 @@
 #include "core/SomeIpWidget.h"
 #include "core/SignalPlotterWidget.h"
 #include "core/DoIpWidget.h"
+#include "core/DbcAutoWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -116,6 +117,7 @@ private:
     SomeIpWidget        *m_someIpWidget;
     SignalPlotterWidget *m_signalPlotter;
     DoIpWidget          *m_doIpWidget;
+    DbcAutoWidget       *m_dbcAutoWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

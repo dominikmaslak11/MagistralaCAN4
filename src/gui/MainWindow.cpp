@@ -91,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_someIpWidget   = new SomeIpWidget;
     m_signalPlotter  = new SignalPlotterWidget;
     m_doIpWidget     = new DoIpWidget;
+    m_dbcAutoWidget  = new DbcAutoWidget;
+    m_dbcAutoWidget->setDbcEditor(m_dbcEditor);
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -196,7 +198,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessedThrottled, m_udsWidget, &UdsWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_obdWidget, &ObdWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_canOpenWidget, &CanOpenWidget::processFrame);
-    connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter, &SignalPlotterWidget::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter,  &SignalPlotterWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed,          m_dbcAutoWidget,  &DbcAutoWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
@@ -635,6 +638,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_someIpWidget,   "SOME/IP");
     tabs->addTab(m_signalPlotter,  "Przebiegi sygnałów");
     tabs->addTab(m_doIpWidget,     "DoIP");
+    tabs->addTab(m_dbcAutoWidget,  "Auto-DBC");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())

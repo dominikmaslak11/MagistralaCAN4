@@ -35,6 +35,9 @@ public:
     /// Zwraca aktualny parser (do podpięcia pod dashboard).
     const DbcParser *parser() const { return &m_parser; }
 
+    /// Importuje wiadomości z zewnątrz (np. z DbcAutoWidget).
+    void setMessages(const QVector<DbcMessage> &msgs);
+
 signals:
     /// Emitowany gdy użytkownik kliknie "Zastosuj" – dashboard powinien się odświeżyć.
     void dbcApplied();

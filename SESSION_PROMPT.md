@@ -282,10 +282,12 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 2. ~~ISO 15765 (CAN TP)~~ ✅ — `CanTpLayer`: SF/FF/CF/FC, reassembly do 4095B, 12 testów, 79/79
 3. ~~Filtr szumu domyślnie wyłączony~~ ✅ — checkbox opt-in, `m_noiseFilterEnabled = false`
 4. ~~Isolation Forest~~ ✅ — `trainIsolationForest` + `scoreIsolationForest`, 4 testy, 83/83
-5. ~~SOME/IP parser~~ ✅ — `SomeIpParser` + `SomeIpWidget`, 16 testów, 99/99
-6. ~~Signal Plotter~~ ✅ — `SignalPlotterWidget`, 4 kanały, DBC decode, rolling window, PNG export
-7. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
-8. **Python binding (pybind11)** — eksport LearningEngine jako moduł Python
+5.  ~~SOME/IP parser~~ ✅ — `SomeIpParser` + `SomeIpWidget`, 16 testów, 99/99
+6.  ~~Signal Plotter~~ ✅ — `SignalPlotterWidget`, 4 kanały, DBC decode, rolling window, PNG export
+7.  ~~DoIP parser~~ ✅ — `DoIpParser` + `DoIpWidget`, ISO 13400-2, 17 testów, 116/116
+8.  ~~DBC Auto-Generator~~ ✅ — `DbcAutoGenerator` reverse-inżynieruje sygnały z ruchu CAN
+9.  **Bus Load Analyzer** — % wykorzystania pasma z wykresem per-ID
+10. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
 
 ---
 
