@@ -330,3 +330,41 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 - `SomeIpParser` jest czystym C++ (bez Qt) — identycznie jak `CanTpLayer`
 - `SomeIpWidget` używa `processPayload(QByteArray)` — można podpiąć do wyjścia `CanTpLayer::m_onMessage`
 - SOME/IP-SD entries: 16 bajtów każdy, parsowane z entries array length field
+
+---
+
+## Sesja 2026-05-12 (część 12): Bus Load Analyzer + Frame Sender ✅
+
+### Bus Load Analyzer (commit 09bfcce)
+- ✅ `BusLoadAnalyzer.h/cpp` — czysty C++, sliding-window bandwidth utilization
+  - `frameBits()`: Classic 11-bit = 44+8*dlc, Extended 29-bit = 64+8*dlc, CAN FD ≈ 60/80+8*dlc
+  - `processFrame()` → `pruneOld()` — sliding window via `std::deque<Record>`
+  - `currentLoad()` = windowBits / (windowSec * baudRate)  [0.0, 1.0]
+  - `peakLoad()`, `framesPerSec()`, `uniqueIdCount()`
+  - `topLoaders(n)` — per-ID load sorted by loadFraction descending
+- ✅ `CanBusLoadWidget.h/cpp` — Qt6 UI:
+  - Load bar z kolorem (zielony<50% / pomarańczowy<80% / czerwony≥80%)
+  - Rolling 60s chart (QLineSeries + QValueAxis, Qt6 Charts bez namespace QtCharts)
+  - Top-10 ID table z per-ID load%, FPS, bitami
+  - Konfiguracja: baud rate (125k/250k/500k/1M), okno [0.1–10s], próg alertu [%]
+  - Timer 250ms tick → refresh wszystkich wskaźników
+- ✅ `tests/test_busloadanalyzer.cpp` — 21 testów (frameBits, sliding window, pruning, topLoaders, reset, guards)
+- ✅ Podpięty do `frameProcessedThrottled` w MainWindow
+- ✅ Nowa zakładka "Obciążenie magistrali"
+- ✅ 159/159 testów po integracji
+
+### Manual Frame Sender (commit TBD)
+- ✅ `CanFrameSenderWidget.h/cpp` — nadajnik ramek CAN:
+  - Hex ID input + Extended/FD checkbox + DLC spinner + 8 byte hex edits
+  - Load from DBC combo (wybór wiadomości z załadowanego pliku DBC)
+  - Send Once + Periodic (konfigurowalne ms) + Stop
+  - Historia 50 ostatnich wysłanych ramek z powrotem do edytora (klik w wiersz)
+- ✅ Podpięty do `CanSniffer::writeFrame()` bezpośrednio
+- ✅ setDbcParser() wołane we wszystkich 3 ścieżkach ładowania DBC
+- ✅ Nowa zakładka "Nadajnik ramek"
+
+### Roadmapa (następna sesja)
+1. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
+2. **CAN gateway/bridge** — mostkowanie między dwoma interfejsami
+3. **UDS automated sequence runner** — sekwencje poleceń UDS z auto-retry
+4. **Protocol sequence diagram** — wizualna oś czasu wymiany komunikatów

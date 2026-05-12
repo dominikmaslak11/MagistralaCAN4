@@ -94,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_dbcAutoWidget  = new DbcAutoWidget;
     m_dbcAutoWidget->setDbcEditor(m_dbcEditor);
     m_busLoadWidget  = new CanBusLoadWidget;
+    m_frameSender    = new CanFrameSenderWidget(&m_sniffer);
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -236,6 +237,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_learner->setDbcParser(parser);
         m_mqttBridge.setDbcParser(parser);
         m_signalPlotter->setDbcParser(parser);
+        m_frameSender->setDbcParser(parser);
     });
 
     loadSettings();
@@ -488,6 +490,7 @@ void MainWindow::loadDbcFile() {
         m_model->setDbcParser(&m_dbcParser);
         m_mqttBridge.setDbcParser(&m_dbcParser);
         m_signalPlotter->setDbcParser(&m_dbcParser);
+        m_frameSender->setDbcParser(&m_dbcParser);
         addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
@@ -642,6 +645,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_doIpWidget,     "DoIP");
     tabs->addTab(m_dbcAutoWidget,  "Auto-DBC");
     tabs->addTab(m_busLoadWidget,  "Obciążenie magistrali");
+    tabs->addTab(m_frameSender,    "Nadajnik ramek");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
@@ -1013,6 +1017,7 @@ void MainWindow::updateMruMenus() {
                         m_model->setDbcParser(&m_dbcParser);
                         m_mqttBridge.setDbcParser(&m_dbcParser);
                         m_signalPlotter->setDbcParser(&m_dbcParser);
+                        m_frameSender->setDbcParser(&m_dbcParser);
                         addMruFile(path, true);
                     }
                 } else {

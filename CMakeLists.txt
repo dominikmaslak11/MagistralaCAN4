@@ -89,6 +89,7 @@ set(SOURCES
     src/core/DbcAutoWidget.cpp
     src/core/BusLoadAnalyzer.cpp
     src/core/CanBusLoadWidget.cpp
+    src/core/CanFrameSenderWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
