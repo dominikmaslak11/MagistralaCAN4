@@ -80,6 +80,8 @@ set(SOURCES
     src/core/UdsParser.cpp
     src/core/UdsWidget.cpp
     src/core/CanTpLayer.cpp
+    src/core/SomeIpParser.cpp
+    src/core/SomeIpWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
@@ -237,6 +239,7 @@ set(TEST_SOURCES
     tests/test_canframemodel.cpp
     tests/test_learningengine.cpp
     tests/test_cantplayer.cpp
+    tests/test_someipparser.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -249,6 +252,7 @@ set(TEST_SOURCES
     src/core/LearningEngine_persistence.cpp
     src/core/GpuCompute.cpp
     src/core/CanTpLayer.cpp
+    src/core/SomeIpParser.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_logComparator = new LogComparatorWidget;
     m_obdWidget = new ObdWidget;
     m_canOpenWidget = new CanOpenWidget;
+    m_someIpWidget  = new SomeIpWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -626,6 +627,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_logComparator, "Porównywarka logów");
     tabs->addTab(m_obdWidget, "Diagnostyka OBD-II");
     tabs->addTab(m_canOpenWidget, "CANopen");
+    tabs->addTab(m_someIpWidget,  "SOME/IP");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
