@@ -363,8 +363,88 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 - ✅ setDbcParser() wołane we wszystkich 3 ścieżkach ładowania DBC
 - ✅ Nowa zakładka "Nadajnik ramek"
 
-### Roadmapa (następna sesja)
+---
+
+## Sesja 2026-05-12 (część 13): Protokoły diagnostyczne + nowe narzędzia ✅
+
+### Test count: 192 → 294 (+102 testów, 20 test suites)
+
+### CAN Gateway (commit 5a0ca16)
+- ✅ `CanGateway.h/cpp` — mostkowanie między dwoma ICanDriver: PassAll / Whitelist / Blacklist
+- ✅ `CanGatewayWidget.h/cpp` — UI z edytorem reguł remappingu ID
+- ✅ 8 testów: PassAll, Whitelist, Blacklist, Remap, ResetStats, NotRunning, ClearRules, NullSink
+- ✅ Bug naprawiony: Blacklist tryb (switch zamiast boolean OR)
+
+### UDS Sequence Runner (commit 483f09f)
+- ✅ `UdsSequenceRunner.h/cpp` — automat stanów: kroki UDS, retry, timeout, positive/negative response
+- ✅ `UdsSequenceWidget.h/cpp` — 3 wbudowane szablony (ECU ID, DTC read/clear, Security Access)
+- ✅ 6 testów: SingleStepPass, NegativeResponseAborts, WrongRxIdIgnored, AbortMarksRemaining, EmptySteps, MultiStepAllPass
+
+### Wireshark-style Filter Expression (commit f2d6f21)
+- ✅ `CanFilterExpr.h/cpp` — recursive descent parser, AST, pola: can.id/dlc/data[N]/ext/fd/err/ts
+- ✅ Integracja w `CanFilterProxy` — wyrażenie zastępuje filtr tekstowy
+- ✅ 19 testów: wszystkie operatory, AND/OR/NOT, nawiasy, pola boolowskie, błędy
+
+### LIN Bus Parser (commit d28d5e2)
+- ✅ `LinFrame.h` + `LinParser.h/cpp` — ISO 17987, PID (P0/P1 parity), Classic/Enhanced checksum
+- ✅ `LinWidget.h/cpp` — tabela ramek z walidacją PID i checksum
+- ✅ 16 testów: computePid, pidValid, oba typy checksum, parse z/bez sync, ClassicFallback, feed, TooShort
+
+### Per-ID Statistics Profiler (commit 278216c)
+- ✅ `CanIdStats.h/cpp` — per-ID: frame count, intervals (min/max/avg), byte stats (min/max/avg per pos), CSV export
+- ✅ `CanIdStatsWidget.h/cpp` — sortowalna tabela z filtrem i eksportem CSV
+- ✅ 17 testów: akumulacja, byte min/max/avg, maxDlc, interwały, freq Hz, timestampy, reset, sort, CSV
+
+### KWP2000 / ISO 14230 Parser (commit 8ea8c1b)
+- ✅ `Kwp2000Parser.h/cpp` — request / positive response / negative response, LRC (XOR), NRC decoder
+- ✅ `Kwp2000Widget.h/cpp` — kolorowe wiersze (zielony/czerwony), NRC opisy
+- ✅ 17 testów: request/response/negative parsing, LRC, serviceNames, NRC descriptions, isRequestSid
+
+### XCP/CCP Calibration Protocol Parser (commit 64502fa)
+- ✅ `XcpParser.h/cpp` — ASAM MCD-1 XCP, komendy (CONNECT/DOWNLOAD/SET_MTA/DAQ/PGM), error codes
+- ✅ `XcpWidget.h/cpp` — decode z wyborem kanału (CMD/RESP/Auto)
+- ✅ 15 testów: komendy, positive/negative response, event/service packets, isCommand, error descriptions
+- ✅ Uwaga architektoniczna: PID 0xFF/0xFE/0xFD/0xFC są jednocześnie komendami i markerami response
+
+### CAN Replay Filter / Transformer (commit 2eee779)
+- ✅ `CanReplayFilter.h/cpp` — reguły per-ID: drop, remap ID, byte transform (scale/offset, clamp 0-255)
+- ✅ `CanReplayFilterWidget.h/cpp` — edytor reguł + tabela podglądu
+- ✅ 13 testów: passthrough, drop, remap, scale, offset, clamp over/underflow, inactive bytes, batch, first-match, clearRules
+
+### Live DBC Signal Monitor (commit 05678b9)
+- ✅ `CanSignalMonitor.h/cpp` — śledzi bieżące wartości fizyczne wszystkich sygnałów DBC, alarmy, stale detection
+- ✅ `CanSignalMonitorWidget.h/cpp` — odświeżana tabela 250ms, filtr nazwy, konfigurowalny próg stale
+- ✅ Podpięty do wszystkich 3 ścieżek ładowania DBC + frameProcessedThrottled
+- ✅ 13 testów: NoDbc, UnknownId, single/multi update, updateCount, latestValue, valueFor, alarm thresholds, staleDetection, reset
+
+### Periodic CAN Frame Scheduler (commit 06b0405)
+- ✅ `CanPeriodicSender.h/cpp` — wiele ramek na niezależnych timerach, tick 10ms, per-entry enable/disable
+- ✅ `CanPeriodicSenderWidget.h/cpp` — tabela harmonogramu, add/remove, Start/Stop, live TX count
+- ✅ 11 testów: empty state, add/remove/update/enable entries, clearAll, running state, out-of-range safety
+
+### Nowe zakładki w MainWindow
+| Zakładka | Klasa | Opis |
+|----------|-------|------|
+| CAN Gateway | CanGatewayWidget | Mostkowanie interfejsów z filtrowaniem |
+| Sekwencje UDS | UdsSequenceWidget | Automatyczne sekwencje diagnostyczne |
+| LIN Bus | LinWidget | Dekoder protokołu LIN |
+| ID Statistics | CanIdStatsWidget | Statystyki per-ID z CSV export |
+| KWP2000 | Kwp2000Widget | Dekoder ISO 14230 diagnostics |
+| XCP | XcpWidget | Dekoder protokołu kalibracyjnego XCP |
+| Replay Filter | CanReplayFilterWidget | Transformacje ramek podczas odtwarzania |
+| Live Signals | CanSignalMonitorWidget | Live dashboard sygnałów DBC |
+| Periodic Sender | CanPeriodicSenderWidget | Harmonogram cyklicznych ramek |
+
+### Łączny stan projektu (2026-05-12)
+- **Testy**: 294/294 w 20 suites
+- **Protokoły**: CAN, CAN FD, LIN, J1939, UDS, KWP2000, XCP, SOME/IP, DoIP, CANopen, OBD-II
+- **Narzędzia**: Bus Load, Frame Sender, Periodic Sender, CAN Gateway, UDS Sequences, Replay Filter, Signal Monitor
+- **ML**: LearningEngine z 37 algorytmami, t-SNE, Isolation Forest, GBT, EWMA
+- **Infrastruktura**: REST API, MQTT, WebSocket, MDF4, zstd, Lua scripting, plugin system
+
+### Roadmapa (następna sesja — priorytety)
 1. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
-2. **CAN gateway/bridge** — mostkowanie między dwoma interfejsami
-3. **UDS automated sequence runner** — sekwencje poleceń UDS z auto-retry
-4. **Protocol sequence diagram** — wizualna oś czasu wymiany komunikatów
+2. **CI/CD GitHub Actions** — Win+Linux build, testy, lcov coverage
+3. **Protocol sequence diagram** — wizualna oś czasu wymiany komunikatów (MSC diagram)
+4. **CAN FD extended stats** — Bit Timing, TDC, ESI tracking
+5. **AUTOSAR ARXML import** — sygnały z ARXML bez DBC (Vehicle Network Designer format)
