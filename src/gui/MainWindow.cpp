@@ -682,8 +682,17 @@ void MainWindow::checkNoData() {
 }
 
 void MainWindow::applyIdFilter(const QString &text) {
-    if (m_filterProxy)
+    if (!m_filterProxy) return;
+    // If text looks like an expression (contains 'can.' or logical ops), use expr filter
+    QString t = text.trimmed();
+    if (t.contains("can.") || t.contains("&&") || t.contains("||") || t.startsWith("!")) {
+        QString err = m_filterProxy->setExpression(t);
+        if (!err.isEmpty())
+            m_statusLabel->setText("Filtr: " + err);
+    } else {
+        m_filterProxy->setExpression(QString()); // clear expression
         m_filterProxy->setIdFilter(text);
+    }
 }
 
 void MainWindow::loadFilterPresets() {

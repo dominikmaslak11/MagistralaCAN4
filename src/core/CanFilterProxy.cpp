@@ -1,10 +1,31 @@
 #include "CanFilterProxy.h"
+#include "CanFrameModel.h"
 #include <QAbstractItemModel>
 
 CanFilterProxy::CanFilterProxy(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
     setDynamicSortFilter(true); // re-filtruj przy zmianie danych
+}
+
+QString CanFilterProxy::setExpression(const QString &expr) {
+    QString trimmed = expr.trimmed();
+    if (trimmed.isEmpty()) {
+        m_exprActive = false;
+        invalidateFilter();
+        return {};
+    }
+    m_expr = CanFilterExpr::parse(trimmed);
+    if (!m_expr.isValid()) {
+        m_exprActive = false;
+        invalidateFilter();
+        return m_expr.errorString();
+    }
+    m_exprActive   = true;
+    m_filterActive = false; // expression takes over
+    m_filterId     = 0;
+    invalidateFilter();
+    return {};
 }
 
 void CanFilterProxy::setIdFilter(const QString &text) {
@@ -21,17 +42,21 @@ void CanFilterProxy::setIdFilter(const QString &text) {
 }
 
 bool CanFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
-    if (!m_filterActive)
+    if (!m_filterActive && !m_exprActive)
         return true;
 
-    // CanFrameModel::Column::ID = 0
+    if (m_exprActive) {
+        auto *model = qobject_cast<CanFrameModel*>(sourceModel());
+        if (!model) return true;
+        CanFrame frame = model->frameAt(sourceRow);
+        return m_expr.matches(frame);
+    }
+
+    // Simple ID filter
     QModelIndex idx = sourceModel()->index(sourceRow, 0, sourceParent);
     if (!idx.isValid()) return false;
-
-    // UserRole zwraca numeryczne ID
     QVariant v = sourceModel()->data(idx, Qt::UserRole);
     if (!v.isValid()) return false;
-
     return v.toUInt() == m_filterId;
 }
 
