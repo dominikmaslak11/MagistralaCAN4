@@ -102,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_linWidget      = new LinWidget;
     m_idStatsWidget  = new CanIdStatsWidget;
     m_kwp2000Widget  = new Kwp2000Widget;
+    m_xcpWidget      = new XcpWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -661,6 +662,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_linWidget,          "LIN Bus");
     tabs->addTab(m_idStatsWidget,      "ID Statistics");
     tabs->addTab(m_kwp2000Widget,      "KWP2000");
+    tabs->addTab(m_xcpWidget,          "XCP");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())

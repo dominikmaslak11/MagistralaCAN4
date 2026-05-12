@@ -101,6 +101,8 @@ set(SOURCES
     src/core/CanIdStatsWidget.cpp
     src/core/Kwp2000Parser.cpp
     src/core/Kwp2000Widget.cpp
+    src/core/XcpParser.cpp
+    src/core/XcpWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
@@ -268,6 +270,7 @@ set(TEST_SOURCES
     tests/test_linparser.cpp
     tests/test_canidstats.cpp
     tests/test_kwp2000parser.cpp
+    tests/test_xcpparser.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -291,6 +294,7 @@ set(TEST_SOURCES
     src/core/LinParser.cpp
     src/core/CanIdStats.cpp
     src/core/Kwp2000Parser.cpp
+    src/core/XcpParser.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

@@ -43,6 +43,7 @@
 #include "core/LinWidget.h"
 #include "core/CanIdStatsWidget.h"
 #include "core/Kwp2000Widget.h"
+#include "core/XcpWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -132,6 +133,7 @@ private:
     LinWidget             *m_linWidget;
     CanIdStatsWidget      *m_idStatsWidget;
     Kwp2000Widget         *m_kwp2000Widget;
+    XcpWidget             *m_xcpWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;
