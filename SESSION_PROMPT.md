@@ -281,9 +281,32 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 1. ~~ASan + code coverage w CI~~ ✅ — 5 jobów CI, lcov HTML artifact, Codecov upload
 2. ~~ISO 15765 (CAN TP)~~ ✅ — `CanTpLayer`: SF/FF/CF/FC, reassembly do 4095B, 12 testów, 79/79
 3. ~~Filtr szumu domyślnie wyłączony~~ ✅ — checkbox opt-in, `m_noiseFilterEnabled = false`
-4. **Isolation Forest** — anomalia wielowymiarowa, czysty C++, lepsze niż EWMA
-5. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
-6. **SOME/IP parser** — Service Discovery, Events, Methods dla nowoczesnych ECU
+4. ~~Isolation Forest~~ ✅ — `trainIsolationForest` + `scoreIsolationForest`, 4 testy, 83/83
+5. ~~SOME/IP parser~~ ✅ — `SomeIpParser` + `SomeIpWidget`, 16 testów, 99/99
+6. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
 7. **Python binding (pybind11)** — eksport LearningEngine jako moduł Python
 
-### Bieżąca sesja: #4 Isolation Forest
+---
+
+## Sesja 2026-05-12 (część 10): SOME/IP parser ✅
+
+### Implementacja (commit 1818562)
+- ✅ `SomeIpFrame.h` — structs: `SomeIpHeader`, `SomeIpSdEntry`, `SomeIpMessage`, stałe (SD=0xFFFF/0x8100, Magic=0xDEAD)
+- ✅ `SomeIpParser.h/cpp` — Qt-free, testable headless:
+  - `parse(vector/pointer+len)` — 16-byte header decode + payload extraction
+  - `parseSdPayload()` — SOME/IP-SD entries array (type, serviceId, instanceId, majorVersion, TTL, minorVersion)
+  - `messageTypeName()` / `returnCodeName()` / `sdEntryTypeName()` — human-readable enum strings
+  - `isServiceDiscovery()` / `isMagicCookie()` — classification helpers
+- ✅ `SomeIpWidget.h/cpp` — Qt UI:
+  - Hex input field z parserem na kliknięcie lub Enter
+  - 8-kolumnowa tabela (ServiceID, MethodID, Typ, ClientID, SessionID, ReturnCode, Bajty, Opis)
+  - Detail pane (ostry preformat z pełnym nagłówkiem + payload hex dump lub SD entries)
+  - `processPayload(QByteArray)` — publiczny slot dla integracji z CanTpLayer
+- ✅ `tests/test_someipparser.cpp` — 16 testów: basic parse, payload, truncated, invalid length, SD empty, SD 1 entry, SD 2 entries, magic cookie, name helpers, raw pointer API
+- ✅ Nowa zakładka "SOME/IP" w MainWindow
+- ✅ 99/99 testów po integracji
+
+### Architektura
+- `SomeIpParser` jest czystym C++ (bez Qt) — identycznie jak `CanTpLayer`
+- `SomeIpWidget` używa `processPayload(QByteArray)` — można podpiąć do wyjścia `CanTpLayer::m_onMessage`
+- SOME/IP-SD entries: 16 bajtów każdy, parsowane z entries array length field
