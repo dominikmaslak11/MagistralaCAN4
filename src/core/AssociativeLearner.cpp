@@ -394,6 +394,113 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
         else m_autoSaveTimer->stop();
     });
     m_autoSavePath = QDir::currentPath() + "/autosave_learner.json";
+    // ── Zaawansowana analiza: Granger causality ──────────
+    addHLine();
+    auto *grangerLayout = new QHBoxLayout;
+    grangerLayout->addWidget(new QLabel("Przyczynowosc Granger:"));
+    m_grangerBtn = new QPushButton("Test przyczynowosci Granger");
+    m_grangerBtn->setStyleSheet("QPushButton { color: #ff66cc; font-size: 13px; }");
+    grangerLayout->addWidget(m_grangerBtn);
+    grangerLayout->addStretch();
+    mainLayout->addLayout(grangerLayout);
+    m_grangerTable = new QTableWidget(0, 5);
+    m_grangerTable->setHorizontalHeaderLabels({"CAN ID","Bajt","F-stat","p-value","Przyczynowy?"});
+    m_grangerTable->verticalHeader()->hide(); m_grangerTable->horizontalHeader()->setStretchLastSection(true);
+    m_grangerTable->setShowGrid(false); m_grangerTable->setAlternatingRowColors(false);
+    m_grangerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_grangerTable->setMinimumHeight(200);
+    mainLayout->addWidget(m_grangerTable);
+    connect(m_grangerBtn, &QPushButton::clicked, this, [this]() {
+        runAsync([this]{ runGrangerCausality(); }, m_grangerBtn, "Test przyczynowosci Granger");
+    });
+
+    // ── Change-point detection ────────────────────────────
+    auto *cpLayout = new QHBoxLayout;
+    cpLayout->addWidget(new QLabel("Punkty zmiany: ID:"));
+    m_cpIdCombo = new QComboBox; m_cpIdCombo->setMinimumWidth(100);
+    m_cpIdCombo->setPlaceholderText("Wybierz ID...");
+    cpLayout->addWidget(m_cpIdCombo);
+    m_cpByteCombo = new QComboBox; m_cpByteCombo->setMinimumWidth(80);
+    for (int b = 0; b < 8; ++b) m_cpByteCombo->addItem(QString("Bajt %1").arg(b), b);
+    cpLayout->addWidget(m_cpByteCombo);
+    m_changePointBtn = new QPushButton("Wykryj punkty zmiany");
+    cpLayout->addWidget(m_changePointBtn);
+    cpLayout->addStretch();
+    mainLayout->addLayout(cpLayout);
+    m_changePointTable = new QTableWidget(0, 4);
+    m_changePointTable->setHorizontalHeaderLabels({"Indeks","Redukcja kosztu","Srednia przed","Srednia po"});
+    m_changePointTable->verticalHeader()->hide(); m_changePointTable->horizontalHeader()->setStretchLastSection(true);
+    m_changePointTable->setShowGrid(false); m_changePointTable->setAlternatingRowColors(false);
+    m_changePointTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_changePointTable->setMinimumHeight(200);
+    mainLayout->addWidget(m_changePointTable);
+    connect(m_changePointBtn, &QPushButton::clicked, this, [this]() {
+        runAsync([this]{ runChangePointDetection(); }, m_changePointBtn, "Wykryj punkty zmiany");
+    });
+
+    // ── Cross-correlation lag ─────────────────────────────
+    auto *lagLayout = new QHBoxLayout;
+    lagLayout->addWidget(new QLabel("Korelacja z przesunieciem:"));
+    m_lagCorrBtn = new QPushButton("Oblicz korelacje z lagiem");
+    lagLayout->addWidget(m_lagCorrBtn);
+    lagLayout->addStretch();
+    mainLayout->addLayout(lagLayout);
+    m_lagCorrTable = new QTableWidget(0, 4);
+    m_lagCorrTable->setHorizontalHeaderLabels({"CAN ID","Bajt","Lag","Korelacja"});
+    m_lagCorrTable->verticalHeader()->hide(); m_lagCorrTable->horizontalHeader()->setStretchLastSection(true);
+    m_lagCorrTable->setShowGrid(false); m_lagCorrTable->setAlternatingRowColors(false);
+    m_lagCorrTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_lagCorrTable->setMinimumHeight(200);
+    mainLayout->addWidget(m_lagCorrTable);
+    connect(m_lagCorrBtn, &QPushButton::clicked, this, [this]() {
+        runAsync([this]{ runCrossCorrelationLag(); }, m_lagCorrBtn, "Oblicz korelacje z lagiem");
+    });
+
+    // ── GBT (Gradient Boosted Trees) ──────────────────────
+    addHLine();
+    auto *gbtLayout = new QHBoxLayout;
+    gbtLayout->addWidget(new QLabel("Gradient Boosted Trees:"));
+    m_gbtBtn = new QPushButton("Trenuj GBT");
+    m_gbtBtn->setStyleSheet("QPushButton { color: #ff66cc; font-size: 13px; }");
+    gbtLayout->addWidget(m_gbtBtn);
+    m_gbtStatusLabel = new QLabel("Model: nie wytrenowany");
+    m_gbtStatusLabel->setStyleSheet("color: #ffaa00; font-weight: bold;");
+    gbtLayout->addWidget(m_gbtStatusLabel);
+    gbtLayout->addStretch();
+    mainLayout->addLayout(gbtLayout);
+    m_gbtPredTable = new QTableWidget(0, 3);
+    m_gbtPredTable->setHorizontalHeaderLabels({"CAN ID","Bajt","Predykcja GBT"});
+    m_gbtPredTable->verticalHeader()->hide(); m_gbtPredTable->horizontalHeader()->setStretchLastSection(true);
+    m_gbtPredTable->setShowGrid(false); m_gbtPredTable->setAlternatingRowColors(false);
+    m_gbtPredTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_gbtPredTable->setMinimumHeight(200);
+    mainLayout->addWidget(m_gbtPredTable);
+    connect(m_gbtBtn, &QPushButton::clicked, this, [this]() {
+        runAsync([this]{ trainGbtModel(); }, m_gbtBtn, "Trenuj GBT");
+    });
+
+    // ── Online learning checkbox ──────────────────────────
+    auto *onlineLayout = new QHBoxLayout;
+    m_onlineLearningCheck = new QCheckBox("Online learning (Welford)");
+    m_onlineLearningCheck->setStyleSheet("color: #00ffaa; font-weight: bold;");
+    onlineLayout->addWidget(m_onlineLearningCheck);
+    onlineLayout->addStretch();
+    mainLayout->addLayout(onlineLayout);
+    connect(m_onlineLearningCheck, &QCheckBox::toggled, this, [this](bool on) {
+        m_engine.setOnlineLearning(on);
+    });
+
+    // ── EWMA anomaly checkbox ─────────────────────────────
+    auto *ewmaLayout = new QHBoxLayout;
+    m_ewmaAnomalyCheck = new QCheckBox("Anomalie EWMA (adaptacyjne)");
+    m_ewmaAnomalyCheck->setStyleSheet("color: #ffaa00; font-weight: bold;");
+    ewmaLayout->addWidget(m_ewmaAnomalyCheck);
+    ewmaLayout->addStretch();
+    mainLayout->addLayout(ewmaLayout);
+    connect(m_ewmaAnomalyCheck, &QCheckBox::toggled, this, [this](bool on) {
+        m_engine.setEwmaAnomaly(on);
+    });
+
 
     // ── FFT / analiza częstotliwości ──
     addHLine();
@@ -1151,6 +1258,126 @@ void AssociativeLearner::updateNnPrediction() {
 
     double predNorm = m_engine.predictNeural(input);
     m_nnPredictionLabel->setText(QString("Predykcja NN: %1").arg(predNorm, 0, 'f', 2));
+}
+
+// ── Granger causality UI ──────────────────────────────────
+
+void AssociativeLearner::runGrangerCausality() {
+    auto results = m_engine.computeGrangerCausality(m_currentVariable.toStdString());
+    m_grangerTable->setRowCount(static_cast<int>(results.size()));
+    for (int i = 0; i < static_cast<int>(results.size()); ++i) {
+        const auto &r = results[i];
+        m_grangerTable->setItem(i, 0, new QTableWidgetItem(
+            QString("0x%1").arg(r.id, 3, 16, QChar('0')).toUpper()));
+        m_grangerTable->setItem(i, 1, new QTableWidgetItem(QString::number(r.byte)));
+        m_grangerTable->setItem(i, 2, new QTableWidgetItem(QString::number(r.fStatistic, 'f', 2)));
+        m_grangerTable->setItem(i, 3, new QTableWidgetItem(QString::number(r.pValue, 'e', 2)));
+        auto *causalItem = new QTableWidgetItem(r.isCausal ? "TAK" : "nie");
+        causalItem->setForeground(r.isCausal ? QColor("#00ffaa") : QColor("#ff66cc"));
+        m_grangerTable->setItem(i, 4, causalItem);
+    }
+}
+
+// ── Change-point detection UI ──────────────────────────────
+
+void AssociativeLearner::runChangePointDetection() {
+    bool ok;
+    QString idText = m_cpIdCombo->currentText().trimmed();
+    if (idText.isEmpty()) return;
+    if (idText.startsWith("0x", Qt::CaseInsensitive)) idText = idText.mid(2);
+    uint32_t targetId = idText.toUInt(&ok, 16);
+    if (!ok) return;
+    int targetByte = m_cpByteCombo->currentData().toInt();
+
+    // Populate ID combo lazily (initially empty, has only placeholder)
+    if (m_cpIdCombo->count() == 0) {
+        auto obs = m_engine.observations(m_currentVariable.toStdString());
+        QSet<uint32_t> ids;
+        for (const auto &o : obs)
+            for (const auto &kv : o.idAverageBytes)
+                ids.insert(kv.first);
+        for (uint32_t id : ids)
+            m_cpIdCombo->addItem(QString("0x%1").arg(id, 3, 16, QChar('0')).toUpper(), id);
+        int idx = m_cpIdCombo->findData(targetId);
+        if (idx >= 0) m_cpIdCombo->setCurrentIndex(idx);
+    }
+
+    auto points = m_engine.detectChangePoints(m_currentVariable.toStdString(), targetId, targetByte);
+    m_changePointTable->setRowCount(static_cast<int>(points.size()));
+    for (int i = 0; i < static_cast<int>(points.size()); ++i) {
+        m_changePointTable->setItem(i, 0, new QTableWidgetItem(QString::number(points[i].index)));
+        m_changePointTable->setItem(i, 1, new QTableWidgetItem(QString::number(points[i].costReduction, 'f', 4)));
+        m_changePointTable->setItem(i, 2, new QTableWidgetItem(QString::number(points[i].meanBefore, 'f', 2)));
+        m_changePointTable->setItem(i, 3, new QTableWidgetItem(QString::number(points[i].meanAfter, 'f', 2)));
+    }
+}
+
+// ── Cross-correlation lag UI ───────────────────────────────
+
+void AssociativeLearner::runCrossCorrelationLag() {
+    auto entries = m_engine.computeCrossCorrelationLag(m_currentVariable.toStdString());
+    m_lagCorrTable->setRowCount(static_cast<int>(entries.size()));
+    for (int i = 0; i < static_cast<int>(entries.size()); ++i) {
+        m_lagCorrTable->setItem(i, 0, new QTableWidgetItem(
+            QString("0x%1").arg(entries[i].id, 3, 16, QChar('0')).toUpper()));
+        m_lagCorrTable->setItem(i, 1, new QTableWidgetItem(QString::number(entries[i].byte)));
+        m_lagCorrTable->setItem(i, 2, new QTableWidgetItem(QString::number(entries[i].lag)));
+        auto *corrItem = new QTableWidgetItem(QString::number(entries[i].correlation, 'f', 3));
+        QColor col = (std::abs(entries[i].correlation) > 0.7) ? QColor("#00ffaa") :
+                     (std::abs(entries[i].correlation) > 0.4) ? QColor("#ffaa00") : QColor("#ff66cc");
+        corrItem->setForeground(col);
+        m_lagCorrTable->setItem(i, 3, corrItem);
+    }
+}
+
+// ── GBT UI ─────────────────────────────────────────────────
+
+void AssociativeLearner::trainGbtModel() {
+    auto model = m_engine.trainGbt(m_currentVariable.toStdString());
+    if (model.trees.empty()) {
+        m_gbtStatusLabel->setText("Za malo danych do GBT");
+        return;
+    }
+    m_gbtStatusLabel->setText(QString("GBT: %1 drzew, base=%2")
+        .arg(model.trees.size())
+        .arg(model.basePrediction, 0, 'f', 2));
+    updateGbtDisplay();
+}
+
+void AssociativeLearner::updateGbtDisplay() {
+    auto obs = m_engine.observations(m_currentVariable.toStdString());
+    if (obs.empty()) return;
+
+    auto model = m_engine.trainGbt(m_currentVariable.toStdString());
+    if (model.trees.empty()) return;
+
+    // Reconstruct feature list matching trainGbt internal ordering
+    std::vector<std::pair<uint32_t, int>> featureList;
+    std::unordered_set<uint32_t> seenIds;
+    for (const auto &o : obs)
+        for (const auto &kv : o.idAverageBytes)
+            if (!seenIds.count(kv.first)) {
+                seenIds.insert(kv.first);
+                for (int b = 0; b < 64; ++b)
+                    featureList.push_back({kv.first, b});
+            }
+
+    if (featureList.empty()) return;
+
+    const auto &lastObs = obs.back();
+    std::vector<double> features(featureList.size());
+    for (size_t f = 0; f < featureList.size(); ++f) {
+        auto it = lastObs.idAverageBytes.find(featureList[f].first);
+        features[f] = (it != lastObs.idAverageBytes.end())
+            ? static_cast<double>(it->second[featureList[f].second]) : 0.0;
+    }
+
+    double pred = m_engine.predictGbt(model, features);
+
+    m_gbtPredTable->setRowCount(1);
+    m_gbtPredTable->setItem(0, 0, new QTableWidgetItem("—"));
+    m_gbtPredTable->setItem(0, 1, new QTableWidgetItem("—"));
+    m_gbtPredTable->setItem(0, 2, new QTableWidgetItem(QString::number(pred, 'f', 2)));
 }
 
 // ── Serialization (stubs — full impl in Phase F) ────────────

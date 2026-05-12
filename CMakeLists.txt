@@ -229,10 +229,13 @@ set(TEST_SOURCES
     tests/test_ringbuffer.cpp
     tests/test_dbcparser.cpp
     tests/test_canframemodel.cpp
+    tests/test_learningengine.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
     src/core/J1939Parser.cpp
+    src/core/LearningEngine.cpp
+    src/core/GpuCompute.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

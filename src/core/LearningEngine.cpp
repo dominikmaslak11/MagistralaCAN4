@@ -1990,11 +1990,6 @@ void LearningEngine::recalcAdaptiveWindow() {
     recalcAdaptiveWindowLocked();
 }
 
-void LearningEngine::recalcAdaptiveWindow() {
-    std::unique_lock lock(m_mutex);
-    recalcAdaptiveWindowLocked();
-}
-
 
 // ── #31 Gradient Boosted Trees (XGBoost-lite) ───────────────
 

@@ -1,4 +1,4 @@
-# Sesja optymalizacji — MagistralaCAN4 — 2026-05-11
+# Sesja optymalizacji — MagistralaCAN4 — 2026-05-12
 
 ## Faza 1: Pipeline "Ruch CAN" ✅
 - ✅ #1–#10: QSortFilterProxyModel, cache DisplayRole, wirtualne scrollowanie, batch'owanie, throttle, heatmap, presety
@@ -91,7 +91,7 @@
 | PCAN readFrame: 0 ramek mimo aktywnej magistrali | `PCAN_CHANNEL_OCCUPIED` sprawdzany przed odczytem, ale z błędnym bitem `0x100` | Usunięto status check — czytaj bezpośrednio `CAN_Read`/`CAN_ReadFD` |
 | Pusty plik candump | Dzielenie całkowite, brak flush | Poprawiony format, flush co 100 ramek |
 
-## Nowe funkcje UI (w trakcie)
+## Nowe funkcje UI ✅
 
 | Funkcja | Status |
 |---------|--------|
@@ -104,3 +104,32 @@
 | Nagrywanie candump na dysk | ✅ checkbox, auto-start, C:\candump |
 | Wysyłanie ramek na CAN w offline analyzer | ✅ checkbox + auto-start sniffera |
 | Auto-inkrement filtr bajtów | ✅ dodany do computeCorrelations |
+
+---
+
+## Sesja 2026-05-12: Synchronizacja i dokończenie UI ✅
+
+### Synchronizacja repozytorium
+- ✅ Lokalne zmiany schowane do `stash@{0}` (niedokończone UI)
+- ✅ `git reset --hard origin/main` + `git clean -fd`
+- ✅ Token GitHub zweryfikowany
+
+### Dokończenie nowego UI ✅
+- ✅ `AssociativeLearner.h`: 5 deklaracji metod + 13 widgetów
+- ✅ `AssociativeLearner.cpp`: ~230 linii UI + implementacje metod
+- ✅ Metody podpięte przez istniejący `runAsync` (QtConcurrent)
+
+### Bugfixy ✅
+- ✅ `LearningEngine.cpp`: usunięty duplikat `recalcAdaptiveWindow()` (przed-istniejący bug)
+- ✅ `test_learningengine.cpp`: poprawiony include, `<random>`, `iterationCount`, `#define private public`
+
+### Rozszerzenie testów ✅
+- ✅ `CMakeLists.txt`: dodane `test_learningengine.cpp`, `LearningEngine.cpp`, `GpuCompute.cpp`
+- ✅ Oba targety skompilowane (exe + tests), 63 testy uruchomione
+
+### Roadmapa (rekomendacje)
+1. **Serializacja UI** — 7 stubów (save/load, export/import, Lua, HTML)
+2. **Test hardening** — poprawa testów + rozszerzenie pokrycia
+3. **t-SNE (#41)** — Barnes-Hut, GPU, wizualizacja 2D/3D
+4. **Dekompozycja LearningEngine.cpp** — 2800 LOC → 6 modułów
+5. **CI/CD** — GitHub Actions (Win+Linux), clang-tidy, ASan

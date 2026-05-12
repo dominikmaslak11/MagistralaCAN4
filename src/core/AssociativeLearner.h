@@ -84,6 +84,11 @@ private:
     void applySignificanceFilter();
     void updateAutoDiscovery();
     void updateNnPrediction();
+    void runGrangerCausality();
+    void runChangePointDetection();
+    void runCrossCorrelationLag();
+    void trainGbtModel();
+    void updateGbtDisplay();
 
     // ── ML engine (pure C++, no Qt) ───────────────────────
     LearningEngine m_engine;
@@ -196,6 +201,21 @@ private:
     QLabel       *m_nnStatusLabel;
     QLabel       *m_nnPredictionLabel;
     QTimer       *m_nnTimer;
+
+    // ── Zaawansowana analiza ────────────────────────────
+    QPushButton  *m_grangerBtn;
+    QTableWidget *m_grangerTable;
+    QPushButton  *m_changePointBtn;
+    QComboBox    *m_cpIdCombo;
+    QComboBox    *m_cpByteCombo;
+    QTableWidget *m_changePointTable;
+    QPushButton  *m_lagCorrBtn;
+    QTableWidget *m_lagCorrTable;
+    QPushButton  *m_gbtBtn;
+    QLabel       *m_gbtStatusLabel;
+    QTableWidget *m_gbtPredTable;
+    QCheckBox    *m_onlineLearningCheck;
+    QCheckBox    *m_ewmaAnomalyCheck;
 
     // ── Async helper ──────────────────────────────────────
     template<typename Func>
