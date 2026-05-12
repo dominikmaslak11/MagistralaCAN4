@@ -99,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     if (m_canDriver)   m_gatewayWidget->addDriver("PCAN/SocketCAN", m_canDriver);
     if (m_slCanDriver) m_gatewayWidget->addDriver("SLCAN", m_slCanDriver);
     m_udsSequenceWidget = new UdsSequenceWidget(&m_sniffer);
+    m_linWidget = new LinWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -654,6 +655,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_frameSender,    "Nadajnik ramek");
     tabs->addTab(m_gatewayWidget,      "CAN Gateway");
     tabs->addTab(m_udsSequenceWidget,  "Sekwencje UDS");
+    tabs->addTab(m_linWidget,          "LIN Bus");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
