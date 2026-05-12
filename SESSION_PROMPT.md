@@ -136,6 +136,36 @@
 
 ---
 
+## Sesja 2026-05-12 (część 4): Test hardening — 65/65 ✅
+
+### Filtr szumu cyklicznego (commit 947e4e9)
+- ✅ `detectCyclicNoiseBytes()`, `setNoiseFilterEnabled()` + integracja w 3 metodach
+- ✅ UI: czerwony checkbox w AssociativeLearner (domyślnie ✓)
+- ✅ +2 testy: CyclicNoiseBytesDetected, NoiseFilterToggle
+
+### Naprawa 4 padających testów DbcParser
+- ✅ Bug: `line.trimmed()` + `startsWith(" SG_ ")` → sygnały nigdy nie parsowane
+  Fix: `startsWith("SG_ ")` (bez wiodącej spacji)
+- ✅ Bug: regex `(\d+)` nie obsługiwał hex ID `0x123`
+  Fix: `(0[xX][0-9a-fA-F]+|\d+)` + `toUInt(nullptr, 0)`
+
+### Integracja nowych plików testów (deepseek)
+- ✅ `test_canframe.cpp` — 14 testów CanFrame (byteAt, defaults, toString, XL)
+- ✅ `test_ringbuffer.cpp` — 12 testów RingBuffer (reserve, push/drain, wrap, SPSC)
+  - Fix: błędne oczekiwanie `reserve(3)→7` → `3`
+  - Fix: SPSC test `QThread` bez event loop → `std::thread` + `std::chrono`
+
+### Wynik: 65/65 testów ✅ (poprzednio ~59 + crash)
+
+### Zaktualizowana roadmapa
+1. ~~Serializacja UI~~ ✅
+2. ~~Test hardening~~ ✅ — 65/65
+3. **t-SNE (#41)** — Barnes-Hut, GPU, wizualizacja 2D/3D
+4. **Dekompozycja LearningEngine.cpp** — 2800 LOC → 6 modułów
+5. **CI/CD** — GitHub Actions (Win+Linux), clang-tidy, ASan
+
+---
+
 ## Sesja 2026-05-12 (część 2): Serializacja UI ✅
 
 ### Implementacja 7 metod (były stuby)

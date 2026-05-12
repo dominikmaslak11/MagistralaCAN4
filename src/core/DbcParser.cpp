@@ -24,15 +24,15 @@ bool DbcParser::load(const QString &fileName) {
             currentMsg = DbcMessage();
             inMessage = true;
 
-            QRegularExpression re(R"(BO_ (\d+)\s+(\w+)\s*:\s*(\d+)\s+\w+)");
+            QRegularExpression re(R"(BO_ (0[xX][0-9a-fA-F]+|\d+)\s+(\w+)\s*:\s*(\d+)\s+\w+)");
             auto match = re.match(line);
             if (match.hasMatch()) {
-                currentMsg.id = match.captured(1).toUInt();
+                currentMsg.id = match.captured(1).toUInt(nullptr, 0);  // handles 0x... and decimal
                 currentMsg.name = match.captured(2);
                 currentMsg.dlc = match.captured(3).toInt();
             }
         }
-        else if (inMessage && line.startsWith(" SG_ ")) {
+        else if (inMessage && line.startsWith("SG_ ")) {
             // SG_ <name> : <start>|<length>@<endian><sign> (<scale>,<offset>) [<min>|<max>] "<unit>" <receivers>
             QRegularExpression re(R"(SG_\s+(\w+)\s*:\s*(\d+)\|(\d+)@([01])([+-])\s*\(([^,]+),([^)]+)\)\s*\[([^|]+)\|([^]]+)\]\s*\"([^\"]*)\")");
             auto match = re.match(line);
