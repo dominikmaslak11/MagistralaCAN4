@@ -63,6 +63,8 @@ set(SOURCES
     src/core/LearningEngine.cpp
     src/core/LearningEngine_filters.cpp
     src/core/LearningEngine_clustering.cpp
+    src/core/LearningEngine_correlations.cpp
+    src/core/LearningEngine_models.cpp
     src/core/LearningEngine_persistence.cpp
     src/core/LuaScriptEngine.cpp
     src/core/GpuCompute.cpp
@@ -240,6 +242,8 @@ set(TEST_SOURCES
     src/core/LearningEngine.cpp
     src/core/LearningEngine_filters.cpp
     src/core/LearningEngine_clustering.cpp
+    src/core/LearningEngine_correlations.cpp
+    src/core/LearningEngine_models.cpp
     src/core/LearningEngine_persistence.cpp
     src/core/GpuCompute.cpp
 )
