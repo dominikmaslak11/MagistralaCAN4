@@ -252,6 +252,43 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     }
     addHLine();
 
+    // ── Isolation Forest ──────────────────────────────────
+    {
+        auto *ifHeader = new QHBoxLayout;
+        ifHeader->addWidget(new QLabel("Isolation Forest:"));
+        ifHeader->addWidget(new QLabel("Drzewa:"));
+        m_iforestTreesEdit = new QLineEdit("100");
+        m_iforestTreesEdit->setMaximumWidth(50);
+        ifHeader->addWidget(m_iforestTreesEdit);
+        ifHeader->addWidget(new QLabel("Próg:"));
+        m_iforestThreshEdit = new QLineEdit("0.60");
+        m_iforestThreshEdit->setMaximumWidth(45);
+        ifHeader->addWidget(m_iforestThreshEdit);
+        m_iforestTrainBtn = new QPushButton("Trenuj");
+        m_iforestScoreBtn = new QPushButton("Wykryj anomalie");
+        m_iforestScoreBtn->setEnabled(false);
+        ifHeader->addWidget(m_iforestTrainBtn);
+        ifHeader->addWidget(m_iforestScoreBtn);
+        ifHeader->addStretch();
+        mainLayout->addLayout(ifHeader);
+
+        m_iforestStatusLabel = new QLabel("Nie wytrenowany");
+        m_iforestStatusLabel->setStyleSheet("color:#aaa;");
+        mainLayout->addWidget(m_iforestStatusLabel);
+
+        makeTable(m_iforestTable, {"Okno #", "Wynik (0-1)", "Anomalia"});
+        m_iforestTable->setMaximumHeight(140);
+        mainLayout->addWidget(m_iforestTable);
+
+        connect(m_iforestTrainBtn, &QPushButton::clicked, this, [this]() {
+            runAsync([this]{ runIforestTrain(); }, m_iforestTrainBtn, "Trenuj");
+        });
+        connect(m_iforestScoreBtn, &QPushButton::clicked, this, [this]() {
+            runAsync([this]{ runIforestScore(); }, m_iforestScoreBtn, "Wykryj anomalie");
+        });
+    }
+    addHLine();
+
     auto *predLayout = new QHBoxLayout;
     predLayout->addWidget(new QLabel("Predykcja wartości"));
     m_trainPredictionBtn = new QPushButton("Trenuj predykcję");
@@ -1744,5 +1781,57 @@ void AssociativeLearner::exportHtmlReport() {
     out << "<p><i>Wygenerowano przez MagistralaCAN4</i></p>\n";
     out << "</body></html>\n";
     file.close();
+}
+
+// ── Isolation Forest ─────────────────────────────────────────
+
+void AssociativeLearner::runIforestTrain() {
+    int nTrees = m_iforestTreesEdit->text().toInt();
+    if (nTrees < 10)  nTrees = 10;
+    if (nTrees > 500) nTrees = 500;
+
+    m_engine.trainIsolationForest(nTrees, 256);
+
+    QMetaObject::invokeMethod(this, [this, nTrees]() {
+        if (m_engine.iforestTrained()) {
+            m_iforestStatusLabel->setText(
+                QString("Wytrenowano (%1 drzew) — kliknij \"Wykryj anomalie\"").arg(nTrees));
+            m_iforestStatusLabel->setStyleSheet("color:#00ffaa;");
+            m_iforestScoreBtn->setEnabled(true);
+        } else {
+            m_iforestStatusLabel->setText("Za mało okien (min. 5) — sniffuj więcej danych");
+            m_iforestStatusLabel->setStyleSheet("color:#e94560;");
+        }
+    }, Qt::QueuedConnection);
+}
+
+void AssociativeLearner::runIforestScore() {
+    double thresh = m_iforestThreshEdit->text().toDouble();
+    if (thresh <= 0.0 || thresh >= 1.0) thresh = 0.6;
+
+    auto results = m_engine.scoreIsolationForest(thresh);
+
+    QMetaObject::invokeMethod(this, [this, results, thresh]() {
+        m_iforestTable->setRowCount(0);
+        int anomalyCount = 0;
+        // Show top 20 by score
+        int show = std::min(static_cast<int>(results.size()), 20);
+        for (int i = 0; i < show; ++i) {
+            const auto &r = results[i];
+            if (r.isAnomaly) ++anomalyCount;
+            int row = m_iforestTable->rowCount();
+            m_iforestTable->insertRow(row);
+            m_iforestTable->setItem(row, 0, new QTableWidgetItem(QString::number(r.windowIndex)));
+            m_iforestTable->setItem(row, 1, new QTableWidgetItem(QString::number(r.score, 'f', 4)));
+            auto *flagItem = new QTableWidgetItem(r.isAnomaly ? "TAK" : "nie");
+            flagItem->setForeground(r.isAnomaly ? QColor("#e94560") : QColor("#aaaaaa"));
+            m_iforestTable->setItem(row, 2, flagItem);
+        }
+        m_iforestStatusLabel->setText(
+            QString("Anomalie: %1 / %2 okien (próg %.2f)")
+                .arg(anomalyCount).arg(results.size()).arg(thresh));
+        m_iforestStatusLabel->setStyleSheet(
+            anomalyCount > 0 ? "color:#e94560; font-weight:bold;" : "color:#00ffaa;");
+    }, Qt::QueuedConnection);
 }
 

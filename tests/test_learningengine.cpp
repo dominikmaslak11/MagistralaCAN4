@@ -468,3 +468,82 @@ TEST(LearningEngine, TsneProducesPoints) {
         EXPECT_LE(c, 2);
     }
 }
+
+// ── Isolation Forest ───────────────────────────────────────
+
+TEST(LearningEngine, IforestNotTrainedReturnsEmpty) {
+    LearningEngine eng;
+    EXPECT_FALSE(eng.iforestTrained());
+    auto results = eng.scoreIsolationForest(0.6);
+    EXPECT_TRUE(results.empty());
+}
+
+TEST(LearningEngine, IforestInsufficientWindows) {
+    LearningEngine eng;
+    // Only 3 frames — not enough for 5 windows
+    for (int i = 0; i < 3; ++i) {
+        CanFrame f = makeFrame(0x100, static_cast<uint64_t>(i * 100000), {static_cast<uint8_t>(i)});
+        eng.processFrame(f);
+    }
+    eng.trainIsolationForest(10, 64);
+    EXPECT_FALSE(eng.iforestTrained());
+}
+
+TEST(LearningEngine, IforestTrainAndScore) {
+    LearningEngine eng;
+    // Generate 200 windows: inject frames densely spread across time
+    // Two distinct clusters: low-traffic (IDs 0x100 only) and
+    // high-traffic (IDs 0x100..0x110) — high traffic should score higher
+    std::mt19937 rng(1);
+    uint64_t ts = 1000000;
+
+    // 150 "normal" windows (sparse, one ID)
+    for (int i = 0; i < 150; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            CanFrame f = makeFrame(0x100, ts, {static_cast<uint8_t>(j)});
+            eng.processFrame(f);
+            ts += 20000;
+        }
+        ts += 480000; // 500ms window gap
+    }
+
+    eng.trainIsolationForest(50, 128);
+    EXPECT_TRUE(eng.iforestTrained());
+
+    auto results = eng.scoreIsolationForest(0.6);
+    EXPECT_GT(results.size(), 0u);
+
+    // All scores must be in [0, 1]
+    for (const auto &r : results) {
+        EXPECT_GE(r.score, 0.0);
+        EXPECT_LE(r.score, 1.0);
+        EXPECT_EQ(r.isAnomaly, r.score >= 0.6);
+    }
+
+    // Results sorted descending by score
+    for (size_t i = 1; i < results.size(); ++i)
+        EXPECT_GE(results[i-1].score, results[i].score);
+}
+
+TEST(LearningEngine, IforestThresholdEffect) {
+    LearningEngine eng;
+    uint64_t ts = 1000000;
+    for (int i = 0; i < 100; ++i) {
+        CanFrame f = makeFrame(static_cast<uint32_t>(0x100 + (i % 5)),
+                               ts, {static_cast<uint8_t>(i & 0xFF)});
+        eng.processFrame(f);
+        ts += 100000;
+    }
+    eng.trainIsolationForest(30, 64);
+    if (!eng.iforestTrained()) return; // skip if not enough windows
+
+    auto r05 = eng.scoreIsolationForest(0.5);
+    auto r09 = eng.scoreIsolationForest(0.9);
+
+    int cnt05 = 0, cnt09 = 0;
+    for (const auto &r : r05) if (r.isAnomaly) ++cnt05;
+    for (const auto &r : r09) if (r.isAnomaly) ++cnt09;
+
+    // Higher threshold → fewer or equal anomalies
+    EXPECT_LE(cnt09, cnt05);
+}

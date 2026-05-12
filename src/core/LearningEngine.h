@@ -282,6 +282,27 @@ public:
     // ── #29 EWMA anomaly ──────────────────────────────────
     double checkAnomalyEwma() const;
 
+    // ── Isolation Forest anomaly detection ────────────────
+    struct IsoNode {                // public: needed by file-static helpers
+        int    featIdx  = -1;
+        double splitVal = 0.0;
+        int    left     = -1;
+        int    right    = -1;
+        int    nodeSize = 1;
+    };
+    struct IsoTree { std::vector<IsoNode> nodes; };
+
+    struct IForestResult {
+        int    windowIndex = 0;
+        double score       = 0.0;  // 0 = normal, 1 = anomaly
+        bool   isAnomaly   = false;
+    };
+    void trainIsolationForest(int nTrees = 100, int sampleSize = 256);
+    std::vector<IForestResult> scoreIsolationForest(double threshold = 0.6) const;
+    bool   iforestTrained()    const { return m_iforest.trained; }
+    void   setIforestThreshold(double t) { m_iforest.threshold = t; }
+    double iforestThreshold()  const { return m_iforest.threshold; }
+
     // ── Markov chain ───────────────────────────────────────
     void trainMarkovModel();
     std::vector<LeMarkovEntry> predictNextFrames() const;
@@ -422,6 +443,16 @@ private:
     };
     mutable EwmaState m_ewma;
     void updateEwma(const std::vector<float> &features);
+
+    // ── Isolation Forest model ───────────────────────────
+    struct IForestModel {
+        std::vector<IsoTree> trees;
+        int    nFeatures  = 0;
+        int    sampleSize = 0;
+        double threshold  = 0.6;
+        bool   trained    = false;
+    };
+    mutable IForestModel m_iforest;
 
     // ── Models ────────────────────────────────────────────
     std::unordered_map<std::string,

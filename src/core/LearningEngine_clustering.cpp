@@ -3,6 +3,8 @@
 #include <cmath>
 #include <numeric>
 #include <random>
+#include <mutex>
+#include <shared_mutex>
 #include <iomanip>
 #include <sstream>
 // ── Clustering (k-means — sequential, no QtConcurrent) ──────
@@ -750,4 +752,167 @@ void LearningEngine::jacobiEigen(const std::vector<std::vector<double>> &mat,
                 std::swap(eigenvectors[k][i], eigenvectors[k][best]);
         }
     }
+}
+
+// ── Isolation Forest ─────────────────────────────────────────
+
+// Average path length in unsuccessful BST search (Liu et al. 2008)
+static double iforestC(double n) {
+    if (n <= 1.0) return 0.0;
+    if (n == 2.0) return 1.0;
+    // c(n) = 2*(ln(n-1) + 0.5772156649) - 2*(n-1)/n
+    return 2.0 * (std::log(n - 1.0) + 0.5772156649) - 2.0 * (n - 1.0) / n;
+}
+
+// Build one isolation tree recursively into tree.nodes; returns node index
+static int iforestBuildNode(
+    LearningEngine::IsoTree &tree,
+    const std::vector<std::vector<float>> &data,
+    std::vector<int> &indices,
+    int depth, int maxDepth,
+    std::mt19937 &rng)
+{
+    int nodeIdx = static_cast<int>(tree.nodes.size());
+    tree.nodes.push_back({});
+    LearningEngine::IsoNode &node = tree.nodes[nodeIdx];
+    node.nodeSize = static_cast<int>(indices.size());
+
+    if (depth >= maxDepth || indices.size() <= 1) {
+        node.featIdx = -1;  // leaf
+        return nodeIdx;
+    }
+
+    int D = static_cast<int>(data[0].size());
+
+    // Pick random feature then random split within [min, max]
+    // Try up to D features to find one with nonzero range
+    std::uniform_int_distribution<int> featDist(0, D - 1);
+    int feat = -1;
+    float fMin = 0, fMax = 0;
+    for (int attempt = 0; attempt < D; ++attempt) {
+        int f = featDist(rng);
+        float mn = data[indices[0]][f], mx = mn;
+        for (int idx : indices) {
+            mn = std::min(mn, data[idx][f]);
+            mx = std::max(mx, data[idx][f]);
+        }
+        if (mx > mn) { feat = f; fMin = mn; fMax = mx; break; }
+    }
+    if (feat == -1) { node.featIdx = -1; return nodeIdx; }  // all same — leaf
+
+    std::uniform_real_distribution<float> splitDist(fMin, fMax);
+    float splitVal = splitDist(rng);
+
+    node.featIdx  = feat;
+    node.splitVal = splitVal;
+
+    std::vector<int> leftIdx, rightIdx;
+    for (int idx : indices)
+        (data[idx][feat] < splitVal ? leftIdx : rightIdx).push_back(idx);
+
+    // Ensure neither side is empty (edge case: all equal to splitVal)
+    if (leftIdx.empty() || rightIdx.empty()) {
+        node.featIdx = -1;
+        return nodeIdx;
+    }
+
+    // Reserve space (prevent reallocations that would invalidate &node)
+    tree.nodes.reserve(tree.nodes.size() + indices.size() * 2);
+
+    node.left  = iforestBuildNode(tree, data, leftIdx,  depth + 1, maxDepth, rng);
+    node.right = iforestBuildNode(tree, data, rightIdx, depth + 1, maxDepth, rng);
+    // Re-fetch reference after possible reallocation
+    tree.nodes[nodeIdx].left  = node.left;
+    tree.nodes[nodeIdx].right = node.right;
+
+    return nodeIdx;
+}
+
+// Path length for point x in one tree
+static double iforestPathLength(
+    const LearningEngine::IsoTree &tree,
+    const std::vector<float> &x,
+    int nodeIdx, int depth)
+{
+    const LearningEngine::IsoNode &node = tree.nodes[nodeIdx];
+    if (node.featIdx == -1)
+        return static_cast<double>(depth) + iforestC(node.nodeSize);
+
+    int next = (x[node.featIdx] < static_cast<float>(node.splitVal))
+               ? node.left : node.right;
+    return iforestPathLength(tree, x, next, depth + 1);
+}
+
+void LearningEngine::trainIsolationForest(int nTrees, int sampleSize) {
+    std::unique_lock lock(m_mutex);
+    auto windows = splitWindows(m_frameHistory, 500000);
+    if (windows.size() < 5) return;
+
+    std::vector<std::vector<float>> features;
+    features.reserve(windows.size());
+    for (const auto &w : windows)
+        features.push_back(buildWindowFeatures(w));
+
+    int N    = static_cast<int>(features.size());
+    int psi  = std::min(sampleSize, N);         // subsample size
+    int maxD = static_cast<int>(std::ceil(std::log2(psi)));
+    int D    = static_cast<int>(features[0].size());
+
+    m_iforest.trees.clear();
+    m_iforest.trees.resize(nTrees);
+    m_iforest.nFeatures  = D;
+    m_iforest.sampleSize = psi;
+
+    std::mt19937 rng(42);
+    std::vector<int> allIdx(N);
+    std::iota(allIdx.begin(), allIdx.end(), 0);
+
+    for (int t = 0; t < nTrees; ++t) {
+        // Subsample without replacement
+        std::vector<int> sample = allIdx;
+        std::shuffle(sample.begin(), sample.end(), rng);
+        sample.resize(psi);
+
+        m_iforest.trees[t].nodes.clear();
+        m_iforest.trees[t].nodes.reserve(psi * 2);
+        iforestBuildNode(m_iforest.trees[t], features, sample, 0, maxD, rng);
+    }
+
+    m_iforest.trained = true;
+}
+
+std::vector<LearningEngine::IForestResult>
+LearningEngine::scoreIsolationForest(double threshold) const {
+    std::shared_lock lock(m_mutex);
+    std::vector<IForestResult> results;
+    if (!m_iforest.trained || m_iforest.trees.empty()) return results;
+
+    auto windows = splitWindows(m_frameHistory, 500000);
+    if (windows.empty()) return results;
+
+    double cn = iforestC(static_cast<double>(m_iforest.sampleSize));
+    if (cn < 1e-9) return results;
+
+    for (int i = 0; i < static_cast<int>(windows.size()); ++i) {
+        auto feat = buildWindowFeatures(windows[i]);
+        if (static_cast<int>(feat.size()) != m_iforest.nFeatures) continue;
+
+        double sumH = 0.0;
+        for (const auto &tree : m_iforest.trees)
+            sumH += iforestPathLength(tree, feat, 0, 0);
+        double avgH = sumH / static_cast<double>(m_iforest.trees.size());
+        double score = std::pow(2.0, -avgH / cn);
+
+        IForestResult r;
+        r.windowIndex = i;
+        r.score       = score;
+        r.isAnomaly   = (score >= threshold);
+        results.push_back(r);
+    }
+
+    std::sort(results.begin(), results.end(),
+        [](const IForestResult &a, const IForestResult &b){
+            return a.score > b.score;
+        });
+    return results;
 }

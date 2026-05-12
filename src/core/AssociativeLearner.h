@@ -230,6 +230,16 @@ private:
     QCheckBox    *m_autoIncrFilterCheck;
     QCheckBox    *m_noiseFilterCheck;
 
+    // ── Isolation Forest ──────────────────────────────────
+    QPushButton  *m_iforestTrainBtn;
+    QPushButton  *m_iforestScoreBtn;
+    QLineEdit    *m_iforestTreesEdit;
+    QLineEdit    *m_iforestThreshEdit;
+    QLabel       *m_iforestStatusLabel;
+    QTableWidget *m_iforestTable;
+    void runIforestTrain();
+    void runIforestScore();
+
     // ── Async helper ──────────────────────────────────────
     template<typename Func>
     void runAsync(Func &&compute, QPushButton *btn, const QString &restoreText);

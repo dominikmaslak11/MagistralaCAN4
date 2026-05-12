@@ -278,11 +278,12 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 ## Sesja 2026-05-12 (część 8): Roadmapa dalszej modernizacji
 
 ### Plan (priorytet malejący)
-1. **ASan + code coverage w CI** — AddressSanitizer na Linuxie, lcov/gcov raport, badge pokrycia
-2. **ISO 15765 (CAN TP)** — transport wieloramkowy: SF/FF/CF/FC, reassembly, 4095-bajtowe payload
-3. **Isolation Forest** — anomalia wielowymiarowa, lepsze niż EWMA dla wielowymiarowych danych CAN
-4. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
-5. **SOME/IP parser** — Service Discovery, Events, Methods dla nowoczesnych ECU
-6. **Python binding (pybind11)** — eksport LearningEngine jako moduł Python
+1. ~~ASan + code coverage w CI~~ ✅ — 5 jobów CI, lcov HTML artifact, Codecov upload
+2. ~~ISO 15765 (CAN TP)~~ ✅ — `CanTpLayer`: SF/FF/CF/FC, reassembly do 4095B, 12 testów, 79/79
+3. ~~Filtr szumu domyślnie wyłączony~~ ✅ — checkbox opt-in, `m_noiseFilterEnabled = false`
+4. **Isolation Forest** — anomalia wielowymiarowa, czysty C++, lepsze niż EWMA
+5. **SQLite dla obserwacji** — persistencja milionów obserwacji, zapytania historyczne
+6. **SOME/IP parser** — Service Discovery, Events, Methods dla nowoczesnych ECU
+7. **Python binding (pybind11)** — eksport LearningEngine jako moduł Python
 
-### Bieżąca sesja: #1 ASan + coverage → #2 CAN TP
+### Bieżąca sesja: #4 Isolation Forest
