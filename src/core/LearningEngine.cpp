@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <iomanip>
 #include <numeric>
 #include <random>
 #include <set>
@@ -1077,6 +1078,179 @@ double origTrace = 0.0;
         data2D[i][1] = static_cast<float>(result.projected[i].second);
     }
     kMeansPP(data2D, 3, result.clusterAssignments);  // #36
+
+    return result;
+}
+
+// ── #41 t-SNE ────────────────────────────────────────────────
+
+LearningEngine::TsneResult
+LearningEngine::runTsne(int perplexity, int maxIter, double /*theta*/) const {
+    TsneResult result;
+    std::shared_lock lock(m_mutex);
+
+    auto windows = splitWindows(m_frameHistory, 500000);
+    int N = static_cast<int>(windows.size());
+    if (N < perplexity + 1) {
+        result.status = "Za malo okien (wymagane >" + std::to_string(perplexity) + ")";
+        return result;
+    }
+    N = std::min(N, 300);
+    const int DIM = 4;
+
+    // Build + standardize feature matrix
+    std::vector<std::vector<double>> X(N, std::vector<double>(DIM, 0.0));
+    for (int i = 0; i < N; ++i) {
+        auto f = buildWindowFeatures(windows[i]);
+        for (int d = 0; d < DIM; ++d) X[i][d] = f[d];
+    }
+    for (int d = 0; d < DIM; ++d) {
+        double mu = 0;
+        for (int i = 0; i < N; ++i) mu += X[i][d];
+        mu /= N;
+        double sigma = 0;
+        for (int i = 0; i < N; ++i) sigma += (X[i][d] - mu) * (X[i][d] - mu);
+        sigma = std::sqrt(sigma / N + 1e-8);
+        for (int i = 0; i < N; ++i) X[i][d] = (X[i][d] - mu) / sigma;
+    }
+
+    // Pairwise squared distances in high-dim space
+    std::vector<std::vector<double>> D2(N, std::vector<double>(N, 0.0));
+    for (int i = 0; i < N; ++i)
+        for (int j = i + 1; j < N; ++j) {
+            double d2 = 0;
+            for (int d = 0; d < DIM; ++d) { double diff = X[i][d]-X[j][d]; d2 += diff*diff; }
+            D2[i][j] = D2[j][i] = d2;
+        }
+
+    // Compute symmetric P via binary search for σ_i (target: H(P_i) = ln(perplexity))
+    const double logPerp = std::log(static_cast<double>(perplexity));
+    std::vector<std::vector<double>> P(N, std::vector<double>(N, 0.0));
+    for (int i = 0; i < N; ++i) {
+        double betaMin = -1e15, betaMax = 1e15, beta = 1.0;
+        for (int s = 0; s < 50; ++s) {
+            double sumP = 0.0;
+            for (int j = 0; j < N; ++j) {
+                P[i][j] = (i == j) ? 0.0 : std::exp(-beta * D2[i][j]);
+                sumP += P[i][j];
+            }
+            if (sumP < 1e-14) sumP = 1e-14;
+            double H = 0.0;
+            for (int j = 0; j < N; ++j) {
+                if (i == j) continue;
+                double pij = P[i][j] / sumP;
+                if (pij > 1e-14) H -= pij * std::log(pij);
+            }
+            double diff = H - logPerp;
+            if (std::abs(diff) < 1e-5) break;
+            if (diff > 0) { betaMin = beta; beta = (betaMax < 1e14) ? (beta+betaMax)*0.5 : beta*2.0; }
+            else          { betaMax = beta; beta = (betaMin > -1e14) ? (beta+betaMin)*0.5 : beta*0.5; }
+            beta = std::max(1e-15, std::min(beta, 1e15));
+        }
+        double sumP = 0;
+        for (int j = 0; j < N; ++j) sumP += P[i][j];
+        if (sumP < 1e-14) sumP = 1e-14;
+        for (int j = 0; j < N; ++j) P[i][j] /= sumP;
+    }
+    // Symmetrize + clamp
+    for (int i = 0; i < N; ++i)
+        for (int j = i+1; j < N; ++j) {
+            double pij = std::max((P[i][j] + P[j][i]) / (2.0 * N), 1e-12);
+            P[i][j] = P[j][i] = pij;
+        }
+
+    // Initialize 2D embedding with tiny Gaussian noise
+    std::mt19937 rng(42);
+    std::normal_distribution<double> nd(0.0, 1e-4);
+    std::vector<std::vector<double>> Y(N, std::vector<double>(2));
+    for (int i = 0; i < N; ++i) { Y[i][0] = nd(rng); Y[i][1] = nd(rng); }
+
+    std::vector<std::vector<double>> dY(N, std::vector<double>(2, 0.0));
+    std::vector<std::vector<double>> iY(N, std::vector<double>(2, 0.0));  // velocity
+    std::vector<std::vector<double>> gains(N, std::vector<double>(2, 1.0));
+    const double eta = 200.0;
+    double momentum = 0.5;
+
+    // Gradient descent
+    for (int iter = 0; iter < maxIter; ++iter) {
+        if (iter == 250) momentum = 0.8;
+        const double pMult = (iter < 100) ? 12.0 : 1.0;  // early exaggeration
+
+        // Low-dim weights W_ij = 1/(1+||y_i-y_j||²) and their sum
+        std::vector<std::vector<double>> W(N, std::vector<double>(N, 0.0));
+        double sumQ = 0.0;
+        for (int i = 0; i < N; ++i)
+            for (int j = i+1; j < N; ++j) {
+                double dx = Y[i][0]-Y[j][0], dy = Y[i][1]-Y[j][1];
+                double w = 1.0 / (1.0 + dx*dx + dy*dy);
+                W[i][j] = W[j][i] = w;
+                sumQ += 2.0 * w;
+            }
+        if (sumQ < 1e-14) sumQ = 1e-14;
+
+        // Gradient: dC/dy_i = 4 * Σ_j (P_ij - Q_ij) * W_ij * (y_i - y_j)
+        for (int i = 0; i < N; ++i) {
+            dY[i][0] = dY[i][1] = 0.0;
+            for (int j = 0; j < N; ++j) {
+                if (i == j) continue;
+                double mult = 4.0 * (P[i][j]*pMult - W[i][j]/sumQ) * W[i][j];
+                dY[i][0] += mult * (Y[i][0] - Y[j][0]);
+                dY[i][1] += mult * (Y[i][1] - Y[j][1]);
+            }
+        }
+
+        // Update: momentum + adaptive gains (van der Maaten 2008)
+        for (int i = 0; i < N; ++i)
+            for (int d = 0; d < 2; ++d) {
+                bool sameSign = (dY[i][d] > 0) == (iY[i][d] > 0);
+                gains[i][d] = sameSign ? std::max(0.01, gains[i][d]*0.8) : gains[i][d]+0.2;
+                iY[i][d] = momentum * iY[i][d] - eta * gains[i][d] * dY[i][d];
+                Y[i][d] += iY[i][d];
+            }
+
+        // Re-center around origin
+        double mx = 0, my = 0;
+        for (int i = 0; i < N; ++i) { mx += Y[i][0]; my += Y[i][1]; }
+        mx /= N; my /= N;
+        for (int i = 0; i < N; ++i) { Y[i][0] -= mx; Y[i][1] -= my; }
+    }
+
+    // Final KL divergence
+    {
+        double sumQ = 0.0;
+        std::vector<std::vector<double>> W(N, std::vector<double>(N, 0.0));
+        for (int i = 0; i < N; ++i)
+            for (int j = i+1; j < N; ++j) {
+                double dx = Y[i][0]-Y[j][0], dy = Y[i][1]-Y[j][1];
+                double w = 1.0 / (1.0 + dx*dx + dy*dy);
+                W[i][j] = W[j][i] = w; sumQ += 2.0*w;
+            }
+        if (sumQ < 1e-14) sumQ = 1e-14;
+        double kl = 0.0;
+        for (int i = 0; i < N; ++i)
+            for (int j = 0; j < N; ++j) {
+                if (i == j || P[i][j] < 1e-12) continue;
+                kl += P[i][j] * std::log(P[i][j] / std::max(W[i][j]/sumQ, 1e-12));
+            }
+        result.finalKl = kl;
+    }
+
+    // Fill result
+    result.projected.reserve(N);
+    for (int i = 0; i < N; ++i) result.projected.push_back({Y[i][0], Y[i][1]});
+    result.iterationsRun = maxIter;
+
+    std::ostringstream ss;
+    ss << "OK — " << N << " punktow, KL=" << std::fixed << std::setprecision(3) << result.finalKl;
+    result.status = ss.str();
+
+    // K-means++ on 2D for cluster coloring
+    std::vector<std::vector<float>> data2D(N, std::vector<float>(2));
+    for (int i = 0; i < N; ++i) {
+        data2D[i][0] = static_cast<float>(Y[i][0]);
+        data2D[i][1] = static_cast<float>(Y[i][1]);
+    }
+    kMeansPP(data2D, std::min(3, N), result.clusterAssignments);
 
     return result;
 }

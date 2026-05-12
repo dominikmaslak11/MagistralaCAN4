@@ -166,6 +166,33 @@
 
 ---
 
+## Sesja 2026-05-12 (część 5): t-SNE 2D ✅
+
+### Implementacja (commit TBD)
+- ✅ `LearningEngine::TsneResult` struct + `runTsne(perplexity, maxIter, theta)` — 140 LOC czystego C++
+- ✅ Wejście: `splitWindows` → `buildWindowFeatures` (4D: size, unique IDs, entropy, duration) — spójne z PCA
+- ✅ Normalizacja: zero mean, unit std per dimesion
+- ✅ Macierz podobieństw P: binary search na σᵢ dla zadanej perplexity (max 50 iter, tol 1e-5)
+- ✅ Symetryzacja P + early exaggeration (12× pierwsze 100 iteracji)
+- ✅ Gradient descent: momentum 0.5→0.8, adaptive gains (van der Maaten), η=200
+- ✅ Re-centering po każdej iteracji
+- ✅ N cap = 300 punktów, iteracje cap = 1000
+- ✅ k-means++ na wynik 2D → 3 kolory klastrów
+- ✅ Końcowa dywergencja KL w status label
+- ✅ UI: button + pola perplexity/iteracji + 3-kolorowy scatter chart (OpenGL)
+- ✅ Obliczenia przez `runAsync` (nie blokuje UI)
+- ✅ 2 nowe testy: `TsneInsufficientData`, `TsneProducesPoints` (137ms)
+- ✅ 67/67 testów
+
+### Zaktualizowana roadmapa
+1. ~~Serializacja UI~~ ✅
+2. ~~Test hardening~~ ✅ — 67/67
+3. ~~t-SNE (#41)~~ ✅ — 2D, 67/67 testów
+4. **Dekompozycja LearningEngine.cpp** — ~2900 LOC → 6 modułów
+5. **CI/CD** — GitHub Actions (Win+Linux), clang-tidy, ASan
+
+---
+
 ## Sesja 2026-05-12 (część 2): Serializacja UI ✅
 
 ### Implementacja 7 metod (były stuby)

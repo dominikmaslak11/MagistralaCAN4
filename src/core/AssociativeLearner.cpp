@@ -210,6 +210,48 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     makeTable(m_clusterTable, {"Klaster","Śr. liczba ramek","Dominujące ID","Liczba okien"});
     addHLine();
 
+    // ── t-SNE (#41) ───────────────────────────────────────
+    {
+        auto *tsneHeader = new QHBoxLayout;
+        tsneHeader->addWidget(new QLabel("t-SNE 2D:"));
+        tsneHeader->addWidget(new QLabel("Perplexity:"));
+        m_tsnePerplexityEdit = new QLineEdit("15"); m_tsnePerplexityEdit->setMaximumWidth(45);
+        tsneHeader->addWidget(m_tsnePerplexityEdit);
+        tsneHeader->addWidget(new QLabel("Iteracje:"));
+        m_tsneIterEdit = new QLineEdit("500"); m_tsneIterEdit->setMaximumWidth(55);
+        tsneHeader->addWidget(m_tsneIterEdit);
+        m_tsneBtn = new QPushButton("Uruchom t-SNE");
+        tsneHeader->addWidget(m_tsneBtn);
+        tsneHeader->addStretch();
+        mainLayout->addLayout(tsneHeader);
+
+        m_tsneStatusLabel = new QLabel("Gotowy");
+        m_tsneStatusLabel->setStyleSheet("color: #aaaaaa;");
+        mainLayout->addWidget(m_tsneStatusLabel);
+
+        m_tsneChart = new QChart();
+        m_tsneChart->setTitle("Wizualizacja t-SNE (2D)");
+        m_tsneChart->setTheme(QChart::ChartThemeDark);
+        const QColor clusterColors[3] = {QColor("#00ffaa"), QColor("#e94560"), QColor("#f5a623")};
+        for (int k = 0; k < 3; ++k) {
+            m_tsneSeries[k] = new QScatterSeries();
+            m_tsneSeries[k]->setName(QString("Klaster %1").arg(k+1));
+            m_tsneSeries[k]->setMarkerSize(8.0);
+            m_tsneSeries[k]->setColor(clusterColors[k]);
+            m_tsneChart->addSeries(m_tsneSeries[k]);
+        }
+        m_tsneChart->createDefaultAxes();
+        m_tsneChartView = new QChartView(m_tsneChart);
+        m_tsneChartView->setViewport(new QOpenGLWidget());
+        m_tsneChartView->setRenderHint(QPainter::Antialiasing);
+        m_tsneChartView->setMinimumHeight(320);
+        mainLayout->addWidget(m_tsneChartView);
+        connect(m_tsneBtn, &QPushButton::clicked, this, [this]() {
+            runAsync([this]{ runTsne(); }, m_tsneBtn, "Uruchom t-SNE");
+        });
+    }
+    addHLine();
+
     auto *predLayout = new QHBoxLayout;
     predLayout->addWidget(new QLabel("Predykcja wartości"));
     m_trainPredictionBtn = new QPushButton("Trenuj predykcję");
@@ -906,6 +948,32 @@ void AssociativeLearner::runPcaClustering() {
     m_pcaSeries->clear();
     for (const auto &pt : result.projected)
         m_pcaSeries->append(pt.first, pt.second);
+}
+
+void AssociativeLearner::runTsne() {
+    int perplexity = m_tsnePerplexityEdit->text().toInt();
+    int maxIter    = m_tsneIterEdit->text().toInt();
+    if (perplexity < 2)  perplexity = 2;
+    if (perplexity > 50) perplexity = 50;
+    if (maxIter < 50)    maxIter = 50;
+    if (maxIter > 1000)  maxIter = 1000;
+
+    auto result = m_engine.runTsne(perplexity, maxIter);
+
+    QMetaObject::invokeMethod(this, [this, result]() {
+        for (int k = 0; k < 3; ++k) m_tsneSeries[k]->clear();
+
+        int N = static_cast<int>(result.projected.size());
+        for (int i = 0; i < N; ++i) {
+            int cluster = (i < (int)result.clusterAssignments.size())
+                          ? std::clamp(result.clusterAssignments[i], 0, 2)
+                          : 0;
+            m_tsneSeries[cluster]->append(result.projected[i].first,
+                                          result.projected[i].second);
+        }
+        m_tsneChart->createDefaultAxes();
+        m_tsneStatusLabel->setText(QString::fromStdString(result.status));
+    }, Qt::QueuedConnection);
 }
 
 // ── Prediction ──────────────────────────────────────────────

@@ -429,3 +429,38 @@ TEST(LearningEngine, NoiseFilterToggle) {
     eng.setNoiseFilterEnabled(true);
     EXPECT_TRUE(eng.noiseFilterEnabled());
 }
+
+// ── t-SNE ──────────────────────────────────────────────────
+
+TEST(LearningEngine, TsneInsufficientData) {
+    LearningEngine eng;
+    // fewer than perplexity+1 windows → status error, no points
+    for (int i = 0; i < 5; ++i) {
+        CanFrame f = makeFrame(0x100, static_cast<uint64_t>(i * 100000),
+                               {static_cast<uint8_t>(i), 0, 0, 0, 0, 0, 0, 0});
+        eng.processFrame(f);
+    }
+    auto result = eng.runTsne(15, 50);
+    EXPECT_TRUE(result.projected.empty());
+    EXPECT_FALSE(result.status.empty());
+}
+
+TEST(LearningEngine, TsneProducesPoints) {
+    LearningEngine eng;
+    // Generate enough frames across multiple 500ms windows
+    for (int i = 0; i < 400; ++i) {
+        CanFrame f = makeFrame(0x100 + (i % 4),
+                               static_cast<uint64_t>(i) * 200000ULL,
+                               {static_cast<uint8_t>(i % 256), 0, 0, 0, 0, 0, 0, 0});
+        eng.processFrame(f);
+    }
+    auto result = eng.runTsne(5, 50);  // low iter for test speed
+    EXPECT_GT(result.projected.size(), 0u);
+    EXPECT_EQ(result.projected.size(), result.clusterAssignments.size());
+    EXPECT_EQ(result.iterationsRun, 50);
+    // All cluster assignments in [0,2]
+    for (int c : result.clusterAssignments) {
+        EXPECT_GE(c, 0);
+        EXPECT_LE(c, 2);
+    }
+}

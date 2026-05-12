@@ -89,6 +89,7 @@ private:
     void runCrossCorrelationLag();
     void trainGbtModel();
     void updateGbtDisplay();
+    void runTsne();
 
     // ── ML engine (pure C++, no Qt) ───────────────────────
     LearningEngine m_engine;
@@ -201,6 +202,16 @@ private:
     QLabel       *m_nnStatusLabel;
     QLabel       *m_nnPredictionLabel;
     QTimer       *m_nnTimer;
+
+    // ── Zaawansowana analiza ────────────────────────────
+    // ── t-SNE (#41) ──────────────────────────────────────
+    QPushButton   *m_tsneBtn;
+    QLabel        *m_tsneStatusLabel;
+    QLineEdit     *m_tsnePerplexityEdit;
+    QLineEdit     *m_tsneIterEdit;
+    QChartView    *m_tsneChartView;
+    QChart        *m_tsneChart;
+    QScatterSeries *m_tsneSeries[3];   // 3 cluster colors
 
     // ── Zaawansowana analiza ────────────────────────────
     QPushButton  *m_grangerBtn;

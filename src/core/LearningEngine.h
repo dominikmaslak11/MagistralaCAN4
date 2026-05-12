@@ -237,6 +237,16 @@ public:
     std::vector<LeWcssPoint>
         autoKMeans(int maxK = 10) const;
 
+    // ── #41 t-SNE (Barnes-Hut, 2D) ────────────────────────
+    struct TsneResult {
+        std::vector<std::pair<double,double>> projected;
+        std::vector<int> clusterAssignments;
+        double finalKl = 0;
+        int iterationsRun = 0;
+        std::string status;
+    };
+    TsneResult runTsne(int perplexity = 15, int maxIter = 500, double theta = 0.5) const;
+
     // ── PCA clustering ─────────────────────────────────────
     struct PcaResult {
         std::vector<double> pc1;
