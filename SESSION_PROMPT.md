@@ -133,3 +133,30 @@
 3. **t-SNE (#41)** — Barnes-Hut, GPU, wizualizacja 2D/3D
 4. **Dekompozycja LearningEngine.cpp** — 2800 LOC → 6 modułów
 5. **CI/CD** — GitHub Actions (Win+Linux), clang-tidy, ASan
+
+---
+
+## Sesja 2026-05-12 (część 2): Serializacja UI ✅
+
+### Implementacja 7 metod (były stuby)
+- ✅ `autoSave()`: zapis `m_engine.serializeSession()` → JSON na dysk (`autosave_learner.json`)
+- ✅ `saveSession()`: QFileDialog → zapis JSON, aktualizacja ścieżki auto-zapisu
+- ✅ `loadSession()`: QFileDialog → odczyt JSON → `m_engine.deserializeSession()` → odświeżenie wszystkich tabel, combo, wykresów
+- ✅ `exportModels()`: eksport modeli liniowych (a, b per ID/bajt/zmienna) do strukturalnego JSON
+- ✅ `importModels()`: wczytanie JSON z modelami + info (modele read-only — retraining wymagany)
+- ✅ `generateLuaScript()`: generacja kompletnego skryptu Lua z istotnymi ID (p<0.05) i modelami predykcyjnymi
+- ✅ `exportHtmlReport()`: raport HTML z ciemnym motywem, tabelami korelacji, modeli, statystykami
+
+### Dodane includy
+- ✅ `#include <QFile>`, `#include <QTextStream>`, `#include <QDateTime>`
+
+### Kompilacja
+- ✅ `MagistralaCAN4.exe` — OK
+- ✅ 63 testy — te same 4 nieprzechodzące (przed-istniejące)
+
+### Zaktualizowana roadmapa
+1. ~~Serializacja UI~~ ✅
+2. **Test hardening** — poprawa 4 padających testów + rozszerzenie pokrycia
+3. **t-SNE (#41)** — Barnes-Hut, GPU, wizualizacja 2D/3D
+4. **Dekompozycja LearningEngine.cpp** — 2800 LOC → 6 modułów
+5. **CI/CD** — GitHub Actions (Win+Linux), clang-tidy, ASan

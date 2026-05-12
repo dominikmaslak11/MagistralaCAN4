@@ -2,7 +2,7 @@
 
 **Wysokowydajny, wielowątkowy sniffer CAN / CAN FD** z zaawansowanym uczeniem asocjacyjnym, silnikiem skryptowym Lua, akceleracją GPU i serwerem WebSocket.
 
-![Version](https://img.shields.io/badge/version-2.0.0-00ffaa)
+![Version](https://img.shields.io/badge/version-2.1.0-00ffaa)
 ![C++](https://img.shields.io/badge/C++-17-blue)
 ![Qt](https://img.shields.io/badge/Qt-6.x-green)
 ![License](https://img.shields.io/badge/license-MIT-red)
@@ -69,7 +69,8 @@ flowchart TB
 | **Sprzętowa** | socketCAN (Linux) | Odczyt i zapis ramek CAN/CAN FD przez `PF_CAN` + `SOCK_RAW` |
 | **Rdzeń** | `CanSniffer` | Wielowątkowy odczyt (`QtConcurrent::run`), emisja `newFrame` |
 | **Rdzeń** | `CanFrameModel` | Model tabeli Qt (6 kolumn), nadpisywanie wg ID, batch co 33 ms |
-| **Rdzeń** | `AssociativeLearner` | Uczenie asocjacyjne, korelacje, klastrowanie, anomalie, predykcja |
+| **Rdzeń** | `AssociativeLearner` | Warstwa UI uczenia asocjacyjnego (tabele, wykresy, widgety) |
+| **Rdzeń** | `LearningEngine` | Czysty C++ silnik ML (37 algorytmów): korelacje, GBT, Granger, k-means, DBSCAN, PCA, FFT |
 | **Rdzeń** | `LuaScriptEngine` | Wykonywanie skryptów `.lua` z API CAN |
 | **Rdzeń** | `DbcParser` | Parsowanie plików `.dbc`, dekompozycja sygnałów |
 | **Rdzeń** | `GpuCorrelator` | Obliczenia macierzy podobieństw (OpenCL z fallbackiem CPU) |
@@ -145,7 +146,7 @@ Zakładka "Uczenie asocjacyjne" to zaawansowany moduł analityczny służący do
 
 ### Filozofia działania
 
-System uczy się powiązań między **zmiennymi użytkownika** (np. temperatura, prędkość) a **ramkami CAN**. Użytkownik rejestruje zdarzenia (wartość zmiennej + okno czasowe ramek CAN), a system znajduje identyfikatory CAN, których charakterystyka koreluje ze zmianami zmiennej. Dodatkowo użytkownik może rejestrować **braki zdarzeń** — okna bez istotnych zmian zmiennej — jako tło kontrastowe.
+System uczy się powiązań między **zmiennymi użytkownika** (np. temperatura, prędkość) a **ramkami CAN**. Wszystkie dane są automatycznie zapisywane co 5 minut (auto-save do `autosave_learner.json`) oraz na żądanie przez przyciski eksportu/importu. Użytkownik rejestruje zdarzenia (wartość zmiennej + okno czasowe ramek CAN), a system znajduje identyfikatory CAN, których charakterystyka koreluje ze zmianami zmiennej. Dodatkowo użytkownik może rejestrować **braki zdarzeń** — okna bez istotnych zmian zmiennej — jako tło kontrastowe.
 
 ### Sekcje interfejsu
 
@@ -205,16 +206,27 @@ Ranking identyfikatorów CAN wg podobieństwa cech między zdarzeniami, z kontra
 
 - Heatmapa korelacji Pearsona między wszystkimi zmiennymi (kolorowane komórki)
 
+#### Zaawansowana analiza ML (NOWE v2.1)
+
+| Funkcja | Opis |
+|---------|------|
+| **Przyczynowość Granger** | Test F (OLS, eliminacja Gaussa) — czy zmiany bajtu CAN przewidują zmiany zmiennej? |
+| **Punkty zmiany** | Binary Segmentation — wykrywanie nagłych zmian w szeregach czasowych CAN |
+| **Korelacja z przesunięciem** | Cross-correlation z lagiem [-10,+10] — które bajty wyprzedzają zmienną? |
+| **Gradient Boosted Trees** | XGBoost-lite — nieliniowa predykcja wartości zmiennej z ramek CAN |
+| **Online learning (Welford)** | Korelacje aktualizowane przyrostowo — O(1) na obserwację, bez przechowywania historii |
+| **EWMA anomaly** | Adaptacyjne wykrywanie anomalii z wygładzaniem wykładniczym |
+
 #### Eksport / Import
 
 | Funkcja | Format |
 |---------|--------|
-| 💾 Zapisz sesję | JSON (wszystkie obserwacje, zdarzenia, parametry) |
-| 📂 Wczytaj sesję | JSON |
-| 📤 Eksportuj modele | JSON (modele liniowe, Markowa, model anomalii) |
-| 📥 Importuj modele | JSON (transfer learning) |
-| 📝 Generuj skrypt Lua | `.lua` (reguły `if` dla top‑5 kandydatów) |
-| 📄 Eksportuj raport HTML | HTML (ciemny motyw, wszystkie tabele + heatmapa) |
+| 💾 Zapisz sesję | JSON (wszystkie obserwacje, zdarzenia, parametry, modele) |
+| 📂 Wczytaj sesję | JSON (pełne odtworzenie stanu — zmienne, tabele, wykresy) |
+| 📤 Eksportuj modele | JSON (modele liniowe per ID/bajt/zmienna) |
+| 📥 Importuj modele | JSON (podgląd zmiennych z modelami) |
+| 📝 Generuj skrypt Lua | `.lua` (istotne ID p<0.05 + modele predykcyjne + funkcja `filter:match`) |
+| 📄 Eksportuj raport HTML | HTML (ciemny motyw, tabela korelacji, modele, statystyki) |
 
 #### Wykres scatter
 
@@ -300,19 +312,33 @@ end
 
 ### Generowanie skryptów z uczenia asocjacyjnego
 
-Przycisk "📝 Generuj skrypt Lua" w zakładce uczenia tworzy skrypt z automatycznie wygenerowanymi regułami dla top–5 kandydatów z najwyższą pewnością:
+Przycisk "📝 Generuj skrypt Lua" tworzy skrypt z istotnymi statystycznie ID (p<0.05), modelami predykcyjnymi i funkcją `filter:match(frame)`:
 
 ```lua
--- Automatycznie wygenerowane reguły asocjacyjne
--- Zmienna: temperatura
+-- MagistralaCAN4 auto-generated filter script
+-- Variable: temperatura
 
-function onFrame(id, data, timestamp)
-    -- Kandydat: 0x18F (pewność: 94%)
-    if id == 0x18F then
-        log(string.format("Zdarzenie: ID 0x18F, bajt 3 = %d", data[4]))
+local filter = {}
+
+filter.significantIds = {
+    [0x18F] = { byte = 3, corr = 0.942 },
+    [0x200] = { byte = 0, corr = 0.871 },
+}
+
+filter.models = {
+    { id = 0x18F, byte = 3, a = 2.3500, b = 15.2000 },
+}
+
+function filter:match(frame)
+    for id, cfg in pairs(self.significantIds) do
+        if frame.id == id and frame.dlc > cfg.byte then
+            return true
+        end
     end
-    -- ... więcej reguł ...
+    return false
 end
+
+return filter
 ```
 
 ---
@@ -427,7 +453,9 @@ MagistralaCAN4/
 │   │   ├── CanFrame.h          # Struktura CanFrame (max 64 B)
 │   │   ├── CanSniffer.h/.cpp   # Odczyt/zapis socketCAN
 │   │   ├── CanFrameModel.h/.cpp # Model tabeli Qt
-│   │   ├── AssociativeLearner.h/.cpp # Uczenie asocjacyjne
+│   │   ├── AssociativeLearner.h/.cpp # UI uczenia asocjacyjnego
+│   │   ├── LearningEngine.h/.cpp  # Czysty C++ silnik ML (37 algorytmów)
+│   │   ├── GpuCompute.h/.cpp      # Akceleracja GPU (OpenCL)
 │   │   ├── CandidateModel.h/.cpp # Model tabeli kandydatów
 │   │   ├── GpuCorrelator.h/.cpp # Korelacje GPU (OpenCL)
 │   │   ├── LuaScriptEngine.h/.cpp # Silnik Lua
@@ -441,6 +469,12 @@ MagistralaCAN4/
 │   │   └── Logger.h/.cpp       # Logger zdarzeń
 │   └── gui/                    # Interfejs użytkownika
 │       └── MainWindow.h/.cpp   # Główne okno (toolbar, zakładki)
+├── tests/                      # Testy jednostkowe (Google Test + QTest)
+│   ├── test_canframe.cpp
+│   ├── test_canframemodel.cpp
+│   ├── test_dbcparser.cpp
+│   ├── test_learningengine.cpp
+│   └── test_ringbuffer.cpp
 └── .ws_backup_*/               # Backupy skryptów wdrożeniowych
 ```
 
