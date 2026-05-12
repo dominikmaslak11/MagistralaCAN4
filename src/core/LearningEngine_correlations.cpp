@@ -36,9 +36,8 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
         if (kv.second >= threshold)
             common.insert(kv.first);
 
-    // Detect auto-increment and cyclic noise bytes to filter out
-    auto aiBytes = detectAutoIncrementBytes();
-    auto noiseBytes = m_noiseFilterEnabled ? detectCyclicNoiseBytes() : std::unordered_set<uint64_t>{};
+    auto aiBytes    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes()  : std::unordered_set<uint64_t>{};
+    auto noiseBytes = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()    : std::unordered_set<uint64_t>{};
 
     for (uint32_t id : common) {
         for (int b = 0; b < 64; ++b) {
@@ -54,10 +53,9 @@ LearningEngine::computeCorrelations(const std::string &variableKey) const {
             }
             int N = static_cast<int>(vx.size());
             if (N < 3) continue;
-            // Skip auto-increment bytes (counters, timestamps)
-            if (aiBytes.count((static_cast<uint64_t>(id) << 8) | b)) continue;
-            // Skip cyclic noise bytes (bits toggling at high frequency)
-            if (m_noiseFilterEnabled && noiseBytes.count((static_cast<uint64_t>(id) << 8) | b)) continue;
+            uint64_t fkey = (static_cast<uint64_t>(id) << 8) | b;
+            if (aiBytes.count(fkey))    continue;
+            if (noiseBytes.count(fkey)) continue;
             double corr = (m_decayLambda > 0.0)
                 ? correlationPearsonWeighted(vx, vy, timestamps, m_decayLambda)
                 : correlationPearson(vx, vy);
@@ -131,8 +129,8 @@ LearningEngine::computeCrossByte(const std::string &variableKey) const {
         if (kv.second >= threshold)
             common.insert(kv.first);
 
-    // #34: Pre-compute variance per (ID, byte) to skip zero-variance pairs
-    auto noiseBytes = m_noiseFilterEnabled ? detectCyclicNoiseBytes() : std::unordered_set<uint64_t>{};
+    auto aiBytes    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes() : std::unordered_set<uint64_t>{};
+    auto noiseBytes = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()   : std::unordered_set<uint64_t>{};
     std::unordered_map<uint64_t, double> varCache;
     for (uint32_t id : common) {
         for (int b = 0; b < 8; ++b) {
@@ -158,12 +156,14 @@ LearningEngine::computeCrossByte(const std::string &variableKey) const {
             uint64_t kj = static_cast<uint64_t>(idList[j]) << 8;
             for (int b1 = 0; b1 < 8; ++b1) {
                 double v1 = varCache[ki | b1];
-                if (v1 < 1e-9) continue;  // #34: skip zero-variance bytes
-                if (m_noiseFilterEnabled && noiseBytes.count(ki | b1)) continue;
+                if (v1 < 1e-9) continue;
+                if (aiBytes.count(ki | b1))    continue;
+                if (noiseBytes.count(ki | b1)) continue;
                 for (int b2 = 0; b2 < 8; ++b2) {
                     double v2 = varCache[kj | b2];
-                    if (v2 < 1e-9) continue;  // #34: skip zero-variance bytes
-                    if (m_noiseFilterEnabled && noiseBytes.count(kj | b2)) continue;
+                    if (v2 < 1e-9) continue;
+                    if (aiBytes.count(kj | b2))    continue;
+                    if (noiseBytes.count(kj | b2)) continue;
                     std::vector<double> vb1, vb2;
                     std::vector<uint64_t> timestamps;
                     for (const auto &o : obs) {
@@ -202,6 +202,9 @@ LearningEngine::trainPrediction(const std::string &variableKey) {
     const auto &obs = observations(variableKey);
     if (obs.size() < 3) return models;
 
+    auto aiBytes    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes() : std::unordered_set<uint64_t>{};
+    auto noiseBytes = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()   : std::unordered_set<uint64_t>{};
+
     std::unordered_set<uint64_t> allPairs;
     for (const auto &o : obs)
         for (const auto &kv : o.idAverageBytes)
@@ -213,6 +216,9 @@ LearningEngine::trainPrediction(const std::string &variableKey) {
     for (uint64_t key : allPairs) {
         uint32_t id = static_cast<uint32_t>(key / 100);
         int byteIdx = static_cast<int>(key % 100);
+        uint64_t fkey = (static_cast<uint64_t>(id) << 8) | byteIdx;
+        if (aiBytes.count(fkey))    continue;
+        if (noiseBytes.count(fkey)) continue;
         std::vector<double> X, Y;
         std::vector<uint64_t> timestamps;
         for (const auto &o : obs) {
@@ -446,8 +452,14 @@ LearningEngine::computeMutualInformation(const std::string &variableKey) const {
         if (kv.second >= threshold)
             commonIds.insert(kv.first);
 
+    auto aiBytes    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes() : std::unordered_set<uint64_t>{};
+    auto noiseBytes = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()   : std::unordered_set<uint64_t>{};
+
     for (uint32_t id : commonIds) {
         for (int b = 0; b < 64; ++b) {
+            uint64_t fkey = (static_cast<uint64_t>(id) << 8) | b;
+            if (aiBytes.count(fkey))    continue;
+            if (noiseBytes.count(fkey)) continue;
             std::vector<double> byteVals;
             for (const auto &o : obs) {
                 auto it = o.idAverageBytes.find(id);
@@ -545,6 +557,9 @@ LearningEngine::computeMIC(const std::string &variableKey) const {
         if (kv.second >= threshold)
             commonIds.insert(kv.first);
 
+    auto aiBytesMic    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes() : std::unordered_set<uint64_t>{};
+    auto noiseBytesMic = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()   : std::unordered_set<uint64_t>{};
+
     auto computeMI = [&](const std::vector<double> &xvals,
                          const std::vector<double> &yvals,
                          int binsX, int binsY) -> double {
@@ -591,6 +606,9 @@ LearningEngine::computeMIC(const std::string &variableKey) const {
 
     for (uint32_t id : commonIds) {
         for (int b = 0; b < 64; ++b) {
+            uint64_t fkey = (static_cast<uint64_t>(id) << 8) | b;
+            if (aiBytesMic.count(fkey))    continue;
+            if (noiseBytesMic.count(fkey)) continue;
             std::vector<double> byteVals;
             for (const auto &o : obs) {
                 auto it = o.idAverageBytes.find(id);

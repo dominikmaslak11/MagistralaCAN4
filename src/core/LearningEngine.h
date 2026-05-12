@@ -165,9 +165,11 @@ public:
                           const std::string *j1939Name = nullptr) const;
 
     // ── Auto-increment byte filter ─────────────────────────
-    // Detects bytes that are counters/timestamps (always changing)
+    // Detects bytes that are counters/timestamps (always incrementing)
     std::unordered_set<uint64_t> detectAutoIncrementBytes() const;
     // key = (id << 8) | byteIdx
+    void setAutoIncrFilterEnabled(bool on) { m_autoIncrFilterEnabled = on; }
+    bool autoIncrFilterEnabled() const { return m_autoIncrFilterEnabled; }
 
     // ── Cyclic noise filter ───────────────────────────────
     // Detects bytes where any bit toggles 0↔1 at high frequency
@@ -398,6 +400,7 @@ private:
     // ── #28 Online learning (Welford) ──────────────────────
     bool m_onlineLearning = false;
     bool m_useEwmaAnomaly = false;
+    bool m_autoIncrFilterEnabled = true;
     bool m_noiseFilterEnabled = true;
     struct WelfordAccum {
         size_t n = 0;

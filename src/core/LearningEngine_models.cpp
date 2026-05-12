@@ -664,11 +664,12 @@ LearningEngine::computeCrossCorrelationLag(const std::string &variableKey,
     const auto &obs = observations(variableKey);
     if (obs.size() < maxLag + 3) return entries;
 
-    // Build time series: variable values and per-(ID,byte) byte values
     std::vector<double> values;
     for (const auto &o : obs) values.push_back(o.value);
 
-    // Find all (ID, byte) pairs
+    auto aiBytes    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes() : std::unordered_set<uint64_t>{};
+    auto noiseBytes = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()   : std::unordered_set<uint64_t>{};
+
     std::unordered_set<uint32_t> ids;
     for (const auto &o : obs)
         for (const auto &kv : o.idAverageBytes)
@@ -676,6 +677,9 @@ LearningEngine::computeCrossCorrelationLag(const std::string &variableKey,
 
     for (uint32_t id : ids) {
         for (int b = 0; b < 8; ++b) {
+            uint64_t fkey = (static_cast<uint64_t>(id) << 8) | b;
+            if (aiBytes.count(fkey))    continue;
+            if (noiseBytes.count(fkey)) continue;
             std::vector<double> bytes;
             for (const auto &o : obs) {
                 auto it = o.idAverageBytes.find(id);
@@ -724,7 +728,9 @@ LearningEngine::computeGrangerCausality(const std::string &variableKey,
     for (const auto &o : obs) Y.push_back(o.value);
     int T = static_cast<int>(Y.size());
 
-    // Find all (ID, byte) pairs with enough data
+    auto aiBytes    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes() : std::unordered_set<uint64_t>{};
+    auto noiseBytes = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()   : std::unordered_set<uint64_t>{};
+
     std::unordered_set<uint32_t> ids;
     for (const auto &o : obs)
         for (const auto &kv : o.idAverageBytes)
@@ -732,6 +738,9 @@ LearningEngine::computeGrangerCausality(const std::string &variableKey,
 
     for (uint32_t id : ids) {
         for (int b = 0; b < 8; ++b) {
+            uint64_t fkey = (static_cast<uint64_t>(id) << 8) | b;
+            if (aiBytes.count(fkey))    continue;
+            if (noiseBytes.count(fkey)) continue;
             std::vector<double> X;
             for (const auto &o : obs) {
                 auto it = o.idAverageBytes.find(id);

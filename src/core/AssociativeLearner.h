@@ -227,6 +227,7 @@ private:
     QTableWidget *m_gbtPredTable;
     QCheckBox    *m_onlineLearningCheck;
     QCheckBox    *m_ewmaAnomalyCheck;
+    QCheckBox    *m_autoIncrFilterCheck;
     QCheckBox    *m_noiseFilterCheck;
 
     // ── Async helper ──────────────────────────────────────

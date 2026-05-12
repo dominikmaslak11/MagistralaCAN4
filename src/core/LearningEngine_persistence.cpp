@@ -205,7 +205,8 @@ LearningEngine::computeCorrelationsOnline(const std::string &variableKey) const 
 
     std::hash<std::string> hs;
     uint64_t varHash = hs(variableKey) & 0xFFFFFFULL;  // match welfordKey truncation
-    auto noiseBytes = m_noiseFilterEnabled ? detectCyclicNoiseBytes() : std::unordered_set<uint64_t>{};
+    auto aiBytes    = m_autoIncrFilterEnabled ? detectAutoIncrementBytes() : std::unordered_set<uint64_t>{};
+    auto noiseBytes = m_noiseFilterEnabled    ? detectCyclicNoiseBytes()   : std::unordered_set<uint64_t>{};
 
     for (const auto &kv : m_welford) {
         uint64_t key = kv.first;
@@ -214,7 +215,9 @@ LearningEngine::computeCorrelationsOnline(const std::string &variableKey) const 
         int byteIdx = static_cast<int>(key & 0xFF);
         const auto &a = kv.second;
         if (a.n < 3) continue;
-        if (m_noiseFilterEnabled && noiseBytes.count((static_cast<uint64_t>(id) << 8) | byteIdx)) continue;
+        uint64_t fkey = (static_cast<uint64_t>(id) << 8) | byteIdx;
+        if (aiBytes.count(fkey))    continue;
+        if (noiseBytes.count(fkey)) continue;
 
         double varX = a.M2x / (a.n - 1);
         double varY = a.M2y / (a.n - 1);

@@ -546,6 +546,18 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
         m_engine.setEwmaAnomaly(on);
     });
 
+    // ── Auto-increment filter checkbox ────────────────────
+    auto *autoIncrLayout = new QHBoxLayout;
+    m_autoIncrFilterCheck = new QCheckBox("Filtr autoinkrementacji (liczniki, timestampy)");
+    m_autoIncrFilterCheck->setChecked(true);
+    m_autoIncrFilterCheck->setStyleSheet("color: #ffaa44; font-weight: bold;");
+    autoIncrLayout->addWidget(m_autoIncrFilterCheck);
+    autoIncrLayout->addStretch();
+    mainLayout->addLayout(autoIncrLayout);
+    connect(m_autoIncrFilterCheck, &QCheckBox::toggled, this, [this](bool on) {
+        m_engine.setAutoIncrFilterEnabled(on);
+    });
+
     // ── Cyclic noise filter checkbox ──────────────────────
     auto *noiseFilterLayout = new QHBoxLayout;
     m_noiseFilterCheck = new QCheckBox("Filtr zaszumienia cyklicznego (bity 0↔1)");

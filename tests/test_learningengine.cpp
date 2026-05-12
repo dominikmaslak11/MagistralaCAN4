@@ -252,6 +252,8 @@ TEST(LearningEngine, GrangerCausality) {
     LearningEngine eng;
     eng.addVariable("y");
     eng.setMaxObservations(100);
+    eng.setAutoIncrFilterEnabled(false);  // synthetic data, test algorithm not filters
+    eng.setNoiseFilterEnabled(false);
 
     // Generate data: Y_t = 0.7*Y_{t-1} + 0.3*X_{t-1} + noise
     // X causes Y in Granger sense
@@ -363,6 +365,8 @@ TEST(LearningEngine, CrossCorrelationLag) {
     LearningEngine eng;
     eng.addVariable("test");
     eng.setMaxObservations(100);
+    eng.setAutoIncrFilterEnabled(false);  // i%128 is auto-increment by design, test algorithm
+    eng.setNoiseFilterEnabled(false);
 
     // Generate data where byte LAGS variable by 3 positions
     for (int i = 0; i < 60; ++i) {
