@@ -5,3 +5,16 @@ build_*/
 *.pro.user
 *.autosave
 *.7z
+
+# Dev artifacts & local config
+.claude/
+.deepseek/
+gdb.txt
+gdb_commands.txt
+github_log.txt
+magistrala_debug.log
+opis_gui_sniffer.txt
+patch_eh.py
+todo.txt
+*.log
+autosave_learner.json

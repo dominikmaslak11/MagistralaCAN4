@@ -1,7 +1,0 @@
-set pagination off
-set logging enabled on
-set logging file E:/MagistralaCAN4/gdb_crash.txt
-set logging overwrite on
-run
-bt full
-quit
