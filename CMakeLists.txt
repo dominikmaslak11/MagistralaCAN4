@@ -124,6 +124,8 @@ set(SOURCES
     src/core/ArxmlParser.cpp
     src/core/CanModuleProfiler.cpp
     src/core/CanModuleProfilerWidget.cpp
+    src/core/CanPrototypeExporter.cpp
+    src/core/CanPrototypeExporterWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
     src/core/CanOpenWidget.cpp
@@ -307,6 +309,7 @@ set(TEST_SOURCES
     tests/test_arxmlparser.cpp
     tests/test_cangaugewidget.cpp
     tests/test_canmoduleprofiler.cpp
+    tests/test_canprototypeexporter.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -343,6 +346,7 @@ set(TEST_SOURCES
     src/core/ArxmlParser.cpp
     src/core/CanGaugeWidget.cpp
     src/core/CanModuleProfiler.cpp
+    src/core/CanPrototypeExporter.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

@@ -114,6 +114,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_heatmapWidget          = new CanByteHeatmapWidget;
     m_moduleProfilerWidget   = new CanModuleProfilerWidget(&m_sniffer, this);
     m_moduleProfilerWidget->setAlertEngine(m_alertWidget->engine());
+    m_protoExporterWidget    = new CanPrototypeExporterWidget(this);
+    m_protoExporterWidget->setFrameModel(m_model);
     m_restServer.setModel(m_model);
     m_restServer.setAlertEngine(m_alertWidget->engine());
     connect(&m_restServer, &HttpRestServer::startRequested,    this, [this]() { if (!m_sniffing) toggleSniffing(); });
@@ -240,6 +242,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             [this](const CanFrame &f) { m_heatmapWidget->processFrame(f); });
     connect(this, &MainWindow::frameProcessed, m_moduleProfilerWidget,
             [this](const CanFrame &f) { m_moduleProfilerWidget->onFrame(f); });
+    connect(this, &MainWindow::frameProcessed, m_protoExporterWidget,
+            [this](const CanFrame &f) { m_protoExporterWidget->onFrame(f); });
     connect(m_alertWidget->engine(), &CanAlertEngine::alertTriggered,
             this, [this](const CanAlert &a) {
                 if (a.frame.id != 0 || !a.description.isEmpty())
@@ -284,6 +288,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_signalMonitorWidget->setDbc(parser);
         m_timelineWidget->setDbcParser(parser);
         m_heatmapWidget->setDbcParser(parser);
+        m_protoExporterWidget->setDbcParser(const_cast<DbcParser*>(parser));
     });
 
     loadSettings();
@@ -540,6 +545,7 @@ void MainWindow::loadDbcFile() {
         m_signalMonitorWidget->setDbc(&m_dbcParser);
         m_timelineWidget->setDbcParser(&m_dbcParser);
         m_heatmapWidget->setDbcParser(&m_dbcParser);
+        m_protoExporterWidget->setDbcParser(&m_dbcParser);
         addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
@@ -584,6 +590,7 @@ void MainWindow::loadArxmlFile() {
     m_signalMonitorWidget->setDbc(&m_dbcParser);
     m_timelineWidget->setDbcParser(&m_dbcParser);
     m_heatmapWidget->setDbcParser(&m_dbcParser);
+    m_protoExporterWidget->setDbcParser(&m_dbcParser);
 
     Logger::log(QString("ARXML: zaimportowano %1 wiadomości z %2").arg(msgs.size()).arg(fileName));
     QMessageBox::information(this, "ARXML",
@@ -769,6 +776,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_timelineWidget,       "Timeline");
     tabs->addTab(m_heatmapWidget,          "Byte Heatmap");
     tabs->addTab(m_moduleProfilerWidget,   "Moduły CAN");
+    tabs->addTab(m_protoExporterWidget,    "Eksport kodu");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
@@ -1153,6 +1161,7 @@ void MainWindow::updateMruMenus() {
                         m_signalMonitorWidget->setDbc(&m_dbcParser);
                         m_timelineWidget->setDbcParser(&m_dbcParser);
                         m_heatmapWidget->setDbcParser(&m_dbcParser);
+                        m_protoExporterWidget->setDbcParser(&m_dbcParser);
                         addMruFile(path, true);
                     }
                 } else {
