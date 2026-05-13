@@ -307,6 +307,7 @@ set(TEST_SOURCES
     tests/test_canmoduleprofiler.cpp
     tests/test_canprototypeexporter.cpp
     tests/test_remote_can.cpp
+    tests/test_remote_can_integration.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
