@@ -3,6 +3,7 @@
 #include <QString>
 #include <QSqlDatabase>
 #include <vector>
+#include <utility>
 #include <cstdint>
 
 struct DbFrameRow {
@@ -32,8 +33,31 @@ public:
     void flush();
 
     std::vector<DbFrameRow> queryByCanId(uint32_t id, int64_t sessionId = -1, int limit = 1000) const;
+    std::vector<DbFrameRow> queryTimeRange(uint64_t fromUs, uint64_t toUs,
+                                           int64_t sessionId = -1, int limit = 10000) const;
     int64_t totalFrameCount(int64_t sessionId = -1) const;
     std::vector<std::pair<int64_t, QString>> listSessions() const;
+
+    // Analytics
+    struct DlcAnomaly {
+        int64_t  rowid;
+        uint32_t canId;
+        uint8_t  expectedDlc; // most common DLC for this ID
+        uint8_t  actualDlc;
+        uint64_t timestampUs;
+    };
+    std::vector<DlcAnomaly> findDlcAnomalies(int64_t sessionId = -1) const;
+
+    struct IdFrequency {
+        uint32_t canId;
+        int64_t  frameCount;
+        double   avgIntervalUs; // 0 if only one frame
+    };
+    std::vector<IdFrequency> computeIdFrequencies(int64_t sessionId = -1) const;
+
+    // Export current query result (queryByCanId) to PCAP
+    bool exportToPcap(const QString &path, uint32_t canId,
+                      int64_t sessionId = -1, int limit = 100000) const;
 
     void reset();
 

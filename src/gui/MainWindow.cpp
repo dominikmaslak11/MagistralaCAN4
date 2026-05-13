@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "core/PcapExporter.h"
 #include <QOpenGLWidget>
 #ifdef Q_OS_WIN
 #include "core/PcanDriver.h"
@@ -107,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_signalMonitorWidget  = new CanSignalMonitorWidget;
     m_periodicSenderWidget = new CanPeriodicSenderWidget(&m_sniffer);
     m_observationDbWidget  = new CanObservationDbWidget;
+    m_alertWidget          = new CanAlertWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -222,6 +224,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(this, &MainWindow::frameProcessed, m_observationDbWidget,
             [this](const CanFrame &f) { m_observationDbWidget->onFrame(f); });
+    connect(this, &MainWindow::frameProcessed, m_alertWidget,
+            [this](const CanFrame &f) { m_alertWidget->onFrame(f); });
+    connect(m_alertWidget->engine(), &CanAlertEngine::alertTriggered,
+            this, [this](const CanAlert &a) {
+                if (a.frame.id != 0 || !a.description.isEmpty())
+                    showTrayNotification("CAN Alert: " + a.ruleName, a.description);
+            });
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -556,6 +565,17 @@ void MainWindow::setupToolBar() {
     QAction *clearAction = toolbar->addAction("🗙 Wyczyść"); if (clearAction) { connect(clearAction, &QAction::triggered, [this]() { m_model->clear(); }); QToolButton *clearBtn = qobject_cast<QToolButton*>(toolbar->widgetForAction(clearAction)); if (clearBtn) clearBtn->setObjectName("clearButton"); }
     QAction *exportAction = toolbar->addAction("📥 Eksportuj candump"); connect(exportAction, &QAction::triggered, this, &MainWindow::exportToCandump);
     QAction *csvAction = toolbar->addAction("📊 Eksportuj CSV"); connect(csvAction, &QAction::triggered, this, &MainWindow::exportToCsv);
+    QAction *pcapAction = toolbar->addAction("🦈 Eksportuj PCAP");
+    connect(pcapAction, &QAction::triggered, this, [this]() {
+        QString path = QFileDialog::getSaveFileName(this, "Eksport PCAP", "", "PCAP (*.pcap);;Wszystkie (*)");
+        if (path.isEmpty()) return;
+        QVector<CanFrame> frames = m_model->allFrames();
+        std::vector<CanFrame> vec(frames.begin(), frames.end());
+        if (PcapExporter::exportFrames(path, vec))
+            QMessageBox::information(this, "PCAP", QString("Wyeksportowano %1 ramek.").arg(vec.size()));
+        else
+            QMessageBox::warning(this, "PCAP", "Nie udało się zapisać pliku.");
+    });
     QAction *recAction = toolbar->addAction("⏺ Nagraj"); connect(recAction, &QAction::triggered, this, &MainWindow::toggleRecording);
     QAction *mdf4Action = toolbar->addAction("📦 Nagraj MDF4"); connect(mdf4Action, &QAction::triggered, this, &MainWindow::toggleMdf4Recording);
     QAction *restAction = toolbar->addAction("🌐 REST API"); connect(restAction, &QAction::triggered, this, &MainWindow::toggleRestApi);
@@ -676,6 +696,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_signalMonitorWidget,  "Live Signals");
     tabs->addTab(m_periodicSenderWidget, "Periodic Sender");
     tabs->addTab(m_observationDbWidget,  "Frame DB");
+    tabs->addTab(m_alertWidget,          "Alerts");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
