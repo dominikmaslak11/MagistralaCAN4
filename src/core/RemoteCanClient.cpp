@@ -108,6 +108,13 @@ void RemoteCanClient::onTextMessageReceived(const QString &message) {
         return;
     }
 
+    if (type == "frame_ack") {
+        uint32_t id = static_cast<uint32_t>(obj["id"].toInt());
+        qDebug() << "RemoteCanClient: potwierdzenie frame_ack dla ID" << Qt::hex << id;
+        emit frameAckReceived(id);
+        return;
+    }
+
     if (type == "auth_error") {
         qWarning() << "RemoteCanClient: błąd autoryzacji:" << obj["msg"].toString();
         emit errorOccurred("Autoryzacja odrzucona: " + obj["msg"].toString());
@@ -142,6 +149,29 @@ void RemoteCanClient::onSslErrors(const QList<QSslError> &errors) {
 }
 
 // ── Parsowanie JSON ──────────────────────────────────────────
+
+void RemoteCanClient::sendFrame(const CanFrame &frame) {
+    if (!isConnected()) {
+        qWarning() << "RemoteCanClient::sendFrame: brak połączenia";
+        return;
+    }
+    QJsonObject obj;
+    obj[QStringLiteral("type")]      = QStringLiteral("send_frame");
+    obj[QStringLiteral("id")]        = static_cast<int>(frame.id);
+    obj[QStringLiteral("extended")]  = frame.extended;
+    obj[QStringLiteral("rtr")]       = frame.rtr;
+    obj[QStringLiteral("fd")]        = frame.fd;
+    obj[QStringLiteral("dlc")]       = static_cast<int>(frame.dlc);
+    obj[QStringLiteral("timestamp")] = static_cast<qint64>(frame.timestamp);
+    QString hex;
+    hex.reserve(frame.dlc * 2);
+    for (int i = 0; i < frame.dlc && i < 64; ++i)
+        hex += QStringLiteral("%1").arg(frame.data[i], 2, 16, QLatin1Char('0'));
+    obj[QStringLiteral("data")] = hex;
+    m_socket.sendTextMessage(QString::fromUtf8(
+        QJsonDocument(obj).toJson(QJsonDocument::Compact)));
+    qDebug() << "RemoteCanClient: wysłano ramkę ID" << Qt::hex << frame.id;
+}
 
 CanFrame RemoteCanClient::parseFrameJson(const QJsonObject &obj) const {
     CanFrame frame;

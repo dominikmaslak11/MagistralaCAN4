@@ -267,6 +267,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
             m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
 
+    // Zdalny CAN – serwer: ramki od klientów wstrzykowane do UI i na magistralę
+    connect(m_remoteCanWidget->server(), &WebSocketServer::frameReceivedFromClient,
+            this, [this](const CanFrame &f) {
+                onNewFrame(f);                          // widok + analiza
+                if (m_sniffing) m_sniffer.writeFrame(f); // fizyczna magistrala (jeśli aktywna)
+            }, Qt::QueuedConnection);
+
     // Edytor DBC → podmiana parsera w dashboardzie i szczegółach
     connect(m_dbcEditor, &DbcEditorWidget::dbcApplied, this, [this]() {
         const DbcParser *parser = m_dbcEditor->parser();

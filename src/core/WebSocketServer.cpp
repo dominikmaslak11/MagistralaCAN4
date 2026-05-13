@@ -278,6 +278,28 @@ void WebSocketServer::onTextMessageReceived(const QString &message) {
         return;
     }
 
+    // Ramki przysłane przez klienta do wstrzyknięcia na magistralę
+    if (m_authenticatedClients.contains(client)) {
+        QJsonDocument doc2 = QJsonDocument::fromJson(message.toUtf8());
+        if (doc2.isObject()) {
+            QJsonObject obj2 = doc2.object();
+            if (obj2["type"].toString() == "send_frame") {
+                CanFrame frame = parseIncomingFrame(obj2);
+                emit frameReceivedFromClient(frame);
+                // Potwierdź odbiór nadawcy
+                QJsonObject ack;
+                ack[QStringLiteral("type")]   = QStringLiteral("frame_ack");
+                ack[QStringLiteral("id")]     = static_cast<int>(frame.id);
+                ack[QStringLiteral("status")] = QStringLiteral("ok");
+                client->sendTextMessage(QString::fromUtf8(
+                    QJsonDocument(ack).toJson(QJsonDocument::Compact)));
+                qDebug() << "WS: ramka odebrana od klienta — ID:"
+                         << Qt::hex << frame.id;
+                return;
+            }
+        }
+    }
+
     // Inne wiadomości – loguj
     qDebug() << "WS wiadomość od klienta:" << message.left(120);
 }
@@ -299,6 +321,24 @@ void WebSocketServer::checkAuthTimeout() {
 }
 
 // ── Broadcast ────────────────────────────────────────────────
+
+CanFrame WebSocketServer::parseIncomingFrame(const QJsonObject &obj) {
+    CanFrame frame;
+    frame.id       = static_cast<uint32_t>(obj["id"].toInt());
+    frame.extended = obj["extended"].toBool();
+    frame.rtr      = obj["rtr"].toBool();
+    frame.fd       = obj["fd"].toBool();
+    frame.dlc      = static_cast<uint8_t>(obj["dlc"].toInt());
+    frame.timestamp = static_cast<uint64_t>(
+        obj["timestamp"].toVariant().toLongLong());
+
+    QString hex = obj["data"].toString();
+    int maxBytes = qMin(frame.dlc, static_cast<uint8_t>(64));
+    for (int i = 0; i < maxBytes && (i * 2 + 1) < hex.length(); ++i)
+        frame.data[i] = static_cast<uint8_t>(hex.mid(i * 2, 2).toUInt(nullptr, 16));
+
+    return frame;
+}
 
 void WebSocketServer::broadcastFrameBatch(const QVector<CanFrame> &frames) {
     if (!m_running || frames.isEmpty()) return;

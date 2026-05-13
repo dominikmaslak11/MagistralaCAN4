@@ -384,6 +384,79 @@ TEST_F(RemoteCanIntegrationTest, ScenarioB_EmptyBatchDoesNotCrashPythonClient) {
 // Scenariusz C: protocol conformance (Python↔Python validates JSON format)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// Scenariusz D: Python client → C++ server (send_frame + frame_ack)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+TEST_F(RemoteCanIntegrationTest, ScenarioD_PythonClientSendsFrame_CppServerEmitsSignal) {
+    WebSocketServer server;
+    server.start(19430);
+    ASSERT_TRUE(server.isRunning());
+
+    CanFrame rxFrame; bool got = false;
+    QObject::connect(&server, &WebSocketServer::frameReceivedFromClient,
+                     [&](const CanFrame &f) { rxFrame = f; got = true; });
+
+    QProcess pyClient;
+    pyClient.setProgram("python3");
+    pyClient.setArguments({m_scripts + "/ws_client_fixture.py",
+                           "--url",     "ws://127.0.0.1:19430",
+                           "--expect",  "0",
+                           "--send-id", "0x7DF",
+                           "--send-data", "02 01 0C",
+                           "--wait-ack"});
+    pyClient.setReadChannel(QProcess::StandardOutput);
+    pyClient.start();
+    ASSERT_TRUE(pyClient.waitForStarted(3000));
+
+    // Wait for C++ server to receive the frame
+    ASSERT_TRUE(spinUntil([&]{ return got; }, 5000))
+        << "Server never emitted frameReceivedFromClient";
+
+    EXPECT_EQ(rxFrame.id,  0x7DFu);
+    EXPECT_EQ(rxFrame.dlc, 3);
+    EXPECT_EQ(rxFrame.data[0], 0x02);
+    EXPECT_EQ(rxFrame.data[1], 0x01);
+    EXPECT_EQ(rxFrame.data[2], 0x0C);
+
+    // Wait for Python process to receive ack and exit
+    ASSERT_TRUE(spinUntil([&]{ return pyClient.state() == QProcess::NotRunning; }, 4000));
+    EXPECT_EQ(pyClient.exitCode(), 0);
+
+    QString out = drainStdout(pyClient, 100);
+    EXPECT_TRUE(out.contains("SENT:0x7DF")) << out.toStdString();
+    EXPECT_TRUE(out.contains("ACK:0x7DF:ok")) << out.toStdString();
+
+    server.stop();
+}
+
+TEST_F(RemoteCanIntegrationTest, ScenarioD_AckContainsCorrectId) {
+    WebSocketServer server;
+    server.start(19431);
+    ASSERT_TRUE(server.isRunning());
+
+    QProcess pyClient;
+    pyClient.setProgram("python3");
+    pyClient.setArguments({m_scripts + "/ws_client_fixture.py",
+                           "--url",     "ws://127.0.0.1:19431",
+                           "--expect",  "0",
+                           "--send-id", "0x1A2B3C4D",
+                           "--send-data", "DE AD BE EF",
+                           "--wait-ack"});
+    pyClient.setReadChannel(QProcess::StandardOutput);
+    pyClient.start();
+    ASSERT_TRUE(pyClient.waitForStarted(3000));
+    ASSERT_TRUE(spinUntil([&]{ return pyClient.state() == QProcess::NotRunning; }, 6000));
+
+    QString out = drainStdout(pyClient, 100);
+    EXPECT_TRUE(out.contains("ACK:0x1A2B3C4D:ok")) << out.toStdString();
+    server.stop();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Scenariusz C: protocol conformance (Python↔Python validates JSON format)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 TEST_F(RemoteCanIntegrationTest, ScenarioC_PythonServerPythonClientProtocol) {
     // This test validates that the JSON format is self-consistent in Python
     // (fixture server → fixture client). Acts as a baseline for Scenarios A & B.

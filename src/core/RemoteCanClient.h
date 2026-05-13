@@ -28,11 +28,15 @@ public:
 public slots:
     void connectToServer(const QString &url, const QString &token);
     void disconnect();
+    /// Sends a CAN frame to the server (requires active authenticated connection).
+    void sendFrame(const CanFrame &frame);
 
 signals:
     void newFrame(const CanFrame &frame);
     void statusChanged(bool connected, const QString &info);
     void errorOccurred(const QString &msg);
+    /// Emitted when the server acknowledges a sent frame.
+    void frameAckReceived(uint32_t canId);
 
 private slots:
     void onConnected();

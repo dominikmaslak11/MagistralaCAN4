@@ -64,6 +64,8 @@ signals:
     void statusChanged(bool running);
     void clientCountChanged(int count);
     void errorOccurred(const QString &msg);
+    /// Emitted when an authenticated client sends a CAN frame to the server.
+    void frameReceivedFromClient(const CanFrame &frame);
 
 private slots:
     void onNewConnection();
@@ -74,6 +76,7 @@ private slots:
 private:
     void setupDirs();
     QString loadOrGenerateToken();
+    static CanFrame parseIncomingFrame(const QJsonObject &obj);
 
     QWebSocketServer *m_server = nullptr;
     QList<QWebSocket *> m_authenticatedClients;

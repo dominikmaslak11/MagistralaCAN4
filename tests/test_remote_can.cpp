@@ -293,3 +293,128 @@ TEST_F(RemoteCanTest, TokenIsConsistentAcrossRestarts) {
     EXPECT_EQ(tok1, tok2);
     EXPECT_EQ(tok1.length(), 64);
 }
+
+// ── Tests — client → server frame sending ─────────────────────────────────────
+
+TEST_F(RemoteCanTest, ClientSendsFrame_ServerEmitsSignal) {
+    server.start(19130);
+    bool connected = false;
+    QObject::connect(&client, &RemoteCanClient::statusChanged,
+                     [&](bool c, const QString &) { if (c) connected = true; });
+    client.connectToServer("ws://127.0.0.1:19130", {});
+    ASSERT_TRUE(spinUntil([&]{ return connected; }, 2000));
+
+    CanFrame sent; sent.id = 0x7DF; sent.dlc = 3;
+    sent.data[0] = 0x02; sent.data[1] = 0x01; sent.data[2] = 0x0C;
+
+    CanFrame received;
+    bool gotSignal = false;
+    QObject::connect(&server, &WebSocketServer::frameReceivedFromClient,
+                     [&](const CanFrame &f) { received = f; gotSignal = true; });
+
+    client.sendFrame(sent);
+
+    ASSERT_TRUE(spinUntil([&]{ return gotSignal; }, 2000));
+    EXPECT_EQ(received.id,  0x7DFu);
+    EXPECT_EQ(received.dlc, 3);
+    EXPECT_EQ(received.data[0], 0x02);
+    EXPECT_EQ(received.data[1], 0x01);
+    EXPECT_EQ(received.data[2], 0x0C);
+}
+
+TEST_F(RemoteCanTest, ServerSendsAck_ClientReceivesAck) {
+    server.start(19131);
+    bool connected = false;
+    QObject::connect(&client, &RemoteCanClient::statusChanged,
+                     [&](bool c, const QString &) { if (c) connected = true; });
+    client.connectToServer("ws://127.0.0.1:19131", {});
+    ASSERT_TRUE(spinUntil([&]{ return connected; }, 2000));
+
+    uint32_t ackedId = 0;
+    bool gotAck = false;
+    QObject::connect(&client, &RemoteCanClient::frameAckReceived,
+                     [&](uint32_t id) { ackedId = id; gotAck = true; });
+
+    CanFrame f; f.id = 0x300; f.dlc = 1; f.data[0] = 0xAB;
+    client.sendFrame(f);
+
+    ASSERT_TRUE(spinUntil([&]{ return gotAck; }, 2000));
+    EXPECT_EQ(ackedId, 0x300u);
+}
+
+TEST_F(RemoteCanTest, MultipleFramesSentByClient_AllReceived) {
+    server.start(19132);
+    bool connected = false;
+    QObject::connect(&client, &RemoteCanClient::statusChanged,
+                     [&](bool c, const QString &) { if (c) connected = true; });
+    client.connectToServer("ws://127.0.0.1:19132", {});
+    ASSERT_TRUE(spinUntil([&]{ return connected; }, 2000));
+
+    QVector<CanFrame> rxFrames;
+    QObject::connect(&server, &WebSocketServer::frameReceivedFromClient,
+                     [&](const CanFrame &f) { rxFrames.append(f); });
+
+    for (uint32_t id : {0x100u, 0x200u, 0x300u, 0x400u, 0x500u}) {
+        CanFrame f; f.id = id; f.dlc = 1; f.data[0] = static_cast<uint8_t>(id >> 4);
+        client.sendFrame(f);
+    }
+
+    ASSERT_TRUE(spinUntil([&]{ return rxFrames.size() >= 5; }, 3000));
+    EXPECT_EQ(rxFrames[0].id, 0x100u);
+    EXPECT_EQ(rxFrames[4].id, 0x500u);
+}
+
+TEST_F(RemoteCanTest, ExtendedFrameSentAndReceived) {
+    server.start(19133);
+    bool connected = false;
+    QObject::connect(&client, &RemoteCanClient::statusChanged,
+                     [&](bool c, const QString &) { if (c) connected = true; });
+    client.connectToServer("ws://127.0.0.1:19133", {});
+    ASSERT_TRUE(spinUntil([&]{ return connected; }, 2000));
+
+    CanFrame rxFrame; bool got = false;
+    QObject::connect(&server, &WebSocketServer::frameReceivedFromClient,
+                     [&](const CanFrame &f) { rxFrame = f; got = true; });
+
+    CanFrame tx; tx.id = 0x18DB33F1; tx.extended = true; tx.dlc = 8;
+    for (int i = 0; i < 8; ++i) tx.data[i] = uint8_t(0x10 + i);
+    client.sendFrame(tx);
+
+    ASSERT_TRUE(spinUntil([&]{ return got; }, 2000));
+    EXPECT_EQ(rxFrame.id, 0x18DB33F1u);
+    EXPECT_TRUE(rxFrame.extended);
+    EXPECT_EQ(rxFrame.dlc, 8);
+    EXPECT_EQ(rxFrame.data[7], 0x17);
+}
+
+TEST_F(RemoteCanTest, SendFrameWhileDisconnected_NoOp) {
+    // Should not crash when disconnected
+    CanFrame f; f.id = 0x001; f.dlc = 1; f.data[0] = 0xFF;
+    client.sendFrame(f);  // no crash expected
+    SUCCEED();
+}
+
+TEST_F(RemoteCanTest, WssClientSendsFrame_ServerEmitsSignal) {
+    if (!server.ensureCertificate()) GTEST_SKIP() << "openssl niedostępny";
+
+    server.startSecure(19140);
+    ASSERT_TRUE(server.isRunning());
+
+    bool connected = false;
+    QObject::connect(&client, &RemoteCanClient::statusChanged,
+                     [&](bool c, const QString &) { if (c) connected = true; });
+    client.connectToServer("wss://127.0.0.1:19140", server.token());
+    ASSERT_TRUE(spinUntil([&]{ return connected; }, 4000));
+
+    CanFrame rxFrame; bool got = false;
+    QObject::connect(&server, &WebSocketServer::frameReceivedFromClient,
+                     [&](const CanFrame &f) { rxFrame = f; got = true; });
+
+    CanFrame tx; tx.id = 0x7FF; tx.dlc = 2; tx.data[0] = 0xCA; tx.data[1] = 0xFE;
+    client.sendFrame(tx);
+
+    ASSERT_TRUE(spinUntil([&]{ return got; }, 2000));
+    EXPECT_EQ(rxFrame.id, 0x7FFu);
+    EXPECT_EQ(rxFrame.data[0], 0xCA);
+    EXPECT_EQ(rxFrame.data[1], 0xFE);
+}

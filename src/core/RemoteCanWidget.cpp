@@ -7,6 +7,8 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMessageBox>
+#include <QDateTime>
+#include <QTime>
 
 RemoteCanWidget::RemoteCanWidget(CanSniffer *sniffer, QWidget *parent)
     : QWidget(parent), m_sniffer(sniffer) {
@@ -90,6 +92,59 @@ void RemoteCanWidget::setupUi() {
     clientLayout->addWidget(m_frameCountLabel);
     mainLayout->addWidget(clientGroup);
 
+    // ═══ Panel wysyłania ramek ═══
+    auto *sendGroup = new QGroupBox("Wyślij ramkę CAN (przez klienta)");
+    sendGroup->setStyleSheet(
+        "QGroupBox { color: #ffaa00; font-weight: bold; border: 1px solid #e94560; "
+        "border-radius: 4px; margin-top: 8px; padding-top: 16px; }");
+    auto *sendLayout = new QVBoxLayout(sendGroup);
+
+    // Wiersz: CAN ID + flagi
+    auto *idRow = new QHBoxLayout;
+    idRow->addWidget(new QLabel("CAN ID (hex):"));
+    m_sendIdEdit = new QLineEdit;
+    m_sendIdEdit->setPlaceholderText("7DF");
+    m_sendIdEdit->setMaximumWidth(90);
+    idRow->addWidget(m_sendIdEdit);
+    idRow->addSpacing(12);
+    m_sendExtended = new QCheckBox("Extended (29-bit)");
+    m_sendRtr      = new QCheckBox("RTR");
+    m_sendFd       = new QCheckBox("CAN FD");
+    idRow->addWidget(m_sendExtended);
+    idRow->addWidget(m_sendRtr);
+    idRow->addWidget(m_sendFd);
+    idRow->addStretch();
+    sendLayout->addLayout(idRow);
+
+    // Wiersz: dane
+    auto *dataRow = new QHBoxLayout;
+    dataRow->addWidget(new QLabel("Dane (hex, spacje):"));
+    m_sendDataEdit = new QLineEdit;
+    m_sendDataEdit->setPlaceholderText("02 01 0C 00 00 00 00 00");
+    dataRow->addWidget(m_sendDataEdit, 1);
+    sendLayout->addLayout(dataRow);
+
+    // Przycisk wyślij + status
+    auto *sendBtnRow = new QHBoxLayout;
+    m_sendBtn = new QPushButton("→ Wyślij ramkę");
+    m_sendBtn->setStyleSheet("QPushButton { color: #ffaa00; border-color: #ffaa00; }");
+    m_sendBtn->setEnabled(false);
+    sendBtnRow->addWidget(m_sendBtn);
+    m_sendStatusLabel = new QLabel("—");
+    m_sendStatusLabel->setStyleSheet("color: #888;");
+    sendBtnRow->addWidget(m_sendStatusLabel, 1);
+    sendLayout->addLayout(sendBtnRow);
+
+    // Historia ostatnich wysłanych ramek
+    sendLayout->addWidget(new QLabel("Historia wysłanych:"));
+    m_sendHistory = new QListWidget;
+    m_sendHistory->setMaximumHeight(110);
+    m_sendHistory->setStyleSheet(
+        "QListWidget { background: #0a0e17; color: #ffaa00; "
+        "border: 1px solid #333; font-family: Consolas, monospace; font-size: 12px; }");
+    sendLayout->addWidget(m_sendHistory);
+    mainLayout->addWidget(sendGroup);
+
     mainLayout->addStretch();
 
     // ── Połączenia ──
@@ -110,6 +165,13 @@ void RemoteCanWidget::setupUi() {
     connect(&m_client, &RemoteCanClient::errorOccurred, this, [this](const QString &msg) {
         QMessageBox::warning(this, "Błąd klienta", msg);
     });
+    connect(&m_client, &RemoteCanClient::frameAckReceived, this, &RemoteCanWidget::onFrameAck);
+
+    // Panel wysyłania — aktywny tylko gdy klient jest połączony
+    connect(&m_client, &RemoteCanClient::statusChanged, this, [this](bool connected, const QString &) {
+        m_sendBtn->setEnabled(connected && m_client.isConnected());
+    });
+    connect(m_sendBtn, &QPushButton::clicked, this, &RemoteCanWidget::onSendFrame);
 
     // Statystyki
     connect(&m_statsTimer, &QTimer::timeout, this, [this]() {
@@ -180,8 +242,62 @@ void RemoteCanWidget::updateClientStatus(bool connected, const QString &info) {
 }
 
 void RemoteCanWidget::onRemoteFrame(const CanFrame &frame) {
-    // Ramki zdalne są wstrzykiwane do pipeline'u przez sygnał newFrame
-    // (połączenia robione w MainWindow). Nie wysyłamy na vcan0,
-    // żeby uniknąć nieskończonej pętli WSS ↔ vcan0.
     Q_UNUSED(frame);
+}
+
+void RemoteCanWidget::onSendFrame() {
+    if (!m_client.isConnected()) return;
+
+    // Parsowanie CAN ID
+    bool ok = false;
+    QString idStr = m_sendIdEdit->text().trimmed();
+    if (idStr.startsWith("0x", Qt::CaseInsensitive)) idStr = idStr.mid(2);
+    uint32_t canId = idStr.toUInt(&ok, 16);
+    if (!ok || idStr.isEmpty()) {
+        m_sendStatusLabel->setText("⚠ Nieprawidłowy ID");
+        m_sendStatusLabel->setStyleSheet("color: #ff4444;");
+        return;
+    }
+
+    // Parsowanie danych (hex bajty oddzielone spacjami lub bez)
+    CanFrame frame;
+    frame.id       = canId;
+    frame.extended = m_sendExtended->isChecked();
+    frame.rtr      = m_sendRtr->isChecked();
+    frame.fd       = m_sendFd->isChecked();
+
+    QString dataStr = m_sendDataEdit->text().simplified().remove(' ');
+    if (dataStr.length() % 2 != 0 && !dataStr.isEmpty()) dataStr.prepend('0');
+    int byteCount = qMin(dataStr.length() / 2, m_sendFd->isChecked() ? 64 : 8);
+    for (int i = 0; i < byteCount; ++i)
+        frame.data[i] = static_cast<uint8_t>(dataStr.mid(i * 2, 2).toUInt(nullptr, 16));
+    frame.dlc = static_cast<uint8_t>(byteCount);
+    frame.timestamp = static_cast<uint64_t>(
+        QDateTime::currentMSecsSinceEpoch()) * 1000;
+
+    m_client.sendFrame(frame);
+
+    // UI feedback — status i historia
+    m_sendStatusLabel->setText("Wysyłanie...");
+    m_sendStatusLabel->setStyleSheet("color: #ffaa00;");
+
+    QString dataHex;
+    for (int i = 0; i < frame.dlc; ++i)
+        dataHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
+
+    QString entry = QString("%1  ID=0x%2  DLC=%3  [%4]")
+        .arg(QTime::currentTime().toString("HH:mm:ss.zzz"))
+        .arg(frame.id, frame.extended ? 8 : 3, 16, QChar('0')).toUpper()
+        .arg(frame.dlc)
+        .arg(dataHex.trimmed());
+    m_sendHistory->insertItem(0, entry);
+    if (m_sendHistory->count() > 20) delete m_sendHistory->takeItem(20);
+
+    Logger::log(QString("Zdalna ramka CAN wysłana: %1").arg(entry));
+}
+
+void RemoteCanWidget::onFrameAck(uint32_t canId) {
+    m_sendStatusLabel->setText(
+        QString("✓ Potwierdzone: 0x%1").arg(canId, 0, 16).toUpper());
+    m_sendStatusLabel->setStyleSheet("color: #00ffaa; font-weight: bold;");
 }

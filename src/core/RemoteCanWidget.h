@@ -6,8 +6,10 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QTimer>
+#include <QListWidget>
 #include "WebSocketServer.h"
 #include "RemoteCanClient.h"
+#include "CanFrame.h"
 
 class CanSniffer;
 
@@ -32,6 +34,8 @@ private slots:
     void updateServerStatus(bool running);
     void updateClientStatus(bool connected, const QString &info);
     void onRemoteFrame(const CanFrame &frame);
+    void onSendFrame();
+    void onFrameAck(uint32_t canId);
 
 private:
     void setupUi();
@@ -51,6 +55,16 @@ private:
     QPushButton *m_clientBtn;
     QLabel      *m_clientStatus;
     QLabel      *m_frameCountLabel;
+
+    // Sekcja wysyłania ramek
+    QLineEdit   *m_sendIdEdit       = nullptr;
+    QLineEdit   *m_sendDataEdit     = nullptr;
+    QCheckBox   *m_sendExtended     = nullptr;
+    QCheckBox   *m_sendRtr          = nullptr;
+    QCheckBox   *m_sendFd           = nullptr;
+    QPushButton *m_sendBtn          = nullptr;
+    QLabel      *m_sendStatusLabel  = nullptr;
+    QListWidget *m_sendHistory      = nullptr;
 
     CanSniffer  *m_sniffer;
     QTimer       m_statsTimer;
