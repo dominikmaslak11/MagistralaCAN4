@@ -49,7 +49,7 @@ QString WebSocketServer::regenerateToken() {
     QString tokenFile = m_configDir + "/token";
     QString tok;
     tok.reserve(64);
-    for (int i = 0; i < 64; ++i)
+    for (int i = 0; i < 32; ++i)  // 32 bytes = 64 hex chars = 256 bits
         tok += QString("%1").arg(QRandomGenerator::global()->bounded(256), 2, 16, QChar('0'));
     QFile f(tokenFile);
     if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {

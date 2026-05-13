@@ -56,15 +56,23 @@ void RemoteCanClient::disconnect() {
 
 void RemoteCanClient::onConnected() {
     m_connected = true;
-    qDebug() << "RemoteCanClient: połączono TLS, wysyłam token...";
 
-    // Wyślij wiadomość autoryzacyjną
-    QJsonObject auth;
-    auth["type"]  = "auth";
-    auth["token"] = m_token;
-    m_socket.sendTextMessage(QString::fromUtf8(
-        QJsonDocument(auth).toJson(QJsonDocument::Compact)));
-    emit statusChanged(true, "Autoryzacja...");
+    if (m_url.startsWith("ws://", Qt::CaseInsensitive)) {
+        // Tryb plaintext — serwer akceptuje bez tokena, klient jest od razu gotowy
+        m_authenticated = true;
+        m_reconnectDelayMs = 1000;
+        qDebug() << "RemoteCanClient: połączono (WS plaintext), gotowy";
+        emit statusChanged(true, "Połączono");
+    } else {
+        // Tryb WSS — wyślij wiadomość autoryzacyjną
+        QJsonObject auth;
+        auth["type"]  = "auth";
+        auth["token"] = m_token;
+        m_socket.sendTextMessage(QString::fromUtf8(
+            QJsonDocument(auth).toJson(QJsonDocument::Compact)));
+        qDebug() << "RemoteCanClient: połączono (WSS), wysyłam token...";
+        emit statusChanged(true, "Autoryzacja...");
+    }
 }
 
 void RemoteCanClient::onDisconnected() {
@@ -108,10 +116,14 @@ void RemoteCanClient::onTextMessageReceived(const QString &message) {
         return;
     }
 
-    if (type == "frame" && m_authenticated) {
-        CanFrame frame = parseFrameJson(obj);
-        m_frameCount++;
-        emit newFrame(frame);
+    if (type == "frames" && m_authenticated) {
+        QJsonArray arr = obj["frames"].toArray();
+        for (const QJsonValue &val : arr) {
+            if (!val.isObject()) continue;
+            CanFrame frame = parseFrameJson(val.toObject());
+            m_frameCount++;
+            emit newFrame(frame);
+        }
     }
 }
 
@@ -141,9 +153,11 @@ CanFrame RemoteCanClient::parseFrameJson(const QJsonObject &obj) const {
     frame.dlc       = static_cast<uint8_t>(obj["dlc"].toInt());
     frame.timestamp = static_cast<uint64_t>(obj["timestamp"].toVariant().toLongLong());
 
-    QJsonArray bytes = obj["dataBytes"].toArray();
-    for (int i = 0; i < bytes.size() && i < 64; ++i)
-        frame.data[i] = static_cast<uint8_t>(bytes[i].toInt());
+    // Server encodes data as lowercase hex string (e.g. "0102aabb")
+    QString hex = obj["data"].toString();
+    int maxBytes = qMin(frame.dlc, static_cast<uint8_t>(64));
+    for (int i = 0; i < maxBytes && (i * 2 + 1) < hex.length(); ++i)
+        frame.data[i] = static_cast<uint8_t>(hex.mid(i * 2, 2).toUInt(nullptr, 16));
 
     return frame;
 }
