@@ -52,6 +52,7 @@
 #include "core/CanProtocolTimelineWidget.h"
 #include "core/CanByteHeatmapWidget.h"
 #include "core/ArxmlParser.h"
+#include "core/CanModuleProfilerWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -150,6 +151,7 @@ private:
     CanAlertWidget               *m_alertWidget;
     CanProtocolTimelineWidget    *m_timelineWidget;
     CanByteHeatmapWidget         *m_heatmapWidget;
+    CanModuleProfilerWidget      *m_moduleProfilerWidget = nullptr;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

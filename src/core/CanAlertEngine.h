@@ -65,6 +65,7 @@ public:
     const std::vector<CanAlertRule> &rules() const { return m_rules; }
 
     void evaluate(const CanFrame &frame, uint64_t tsUs = 0);
+    void submitExternalAlert(const CanAlert &alert);
     void reset();
 
     int totalAlerts() const { return m_totalAlerts; }

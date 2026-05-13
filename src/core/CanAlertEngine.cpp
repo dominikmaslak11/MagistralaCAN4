@@ -22,6 +22,11 @@ void CanAlertEngine::updateRule(int idx, const CanAlertRule &rule) {
 
 void CanAlertEngine::clearRules() { m_rules.clear(); }
 
+void CanAlertEngine::submitExternalAlert(const CanAlert &alert) {
+    ++m_totalAlerts;
+    emit alertTriggered(alert);
+}
+
 void CanAlertEngine::reset() {
     m_seenIds.clear();
     m_knownDlc.clear();

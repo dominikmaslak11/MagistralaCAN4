@@ -111,7 +111,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_alertWidget          = new CanAlertWidget;
     m_alertWidget->setScorer([this]() { return m_learner->scoreLatestWindow(); });
     m_timelineWidget       = new CanProtocolTimelineWidget;
-    m_heatmapWidget        = new CanByteHeatmapWidget;
+    m_heatmapWidget          = new CanByteHeatmapWidget;
+    m_moduleProfilerWidget   = new CanModuleProfilerWidget(&m_sniffer, this);
+    m_moduleProfilerWidget->setAlertEngine(m_alertWidget->engine());
     m_restServer.setModel(m_model);
     m_restServer.setAlertEngine(m_alertWidget->engine());
     connect(&m_restServer, &HttpRestServer::startRequested,    this, [this]() { if (!m_sniffing) toggleSniffing(); });
@@ -236,6 +238,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             [this](const CanFrame &f) { m_timelineWidget->processFrame(f); });
     connect(this, &MainWindow::frameProcessedThrottled, m_heatmapWidget,
             [this](const CanFrame &f) { m_heatmapWidget->processFrame(f); });
+    connect(this, &MainWindow::frameProcessed, m_moduleProfilerWidget,
+            [this](const CanFrame &f) { m_moduleProfilerWidget->onFrame(f); });
     connect(m_alertWidget->engine(), &CanAlertEngine::alertTriggered,
             this, [this](const CanAlert &a) {
                 if (a.frame.id != 0 || !a.description.isEmpty())
@@ -763,7 +767,8 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_observationDbWidget,  "Frame DB");
     tabs->addTab(m_alertWidget,          "Alerts");
     tabs->addTab(m_timelineWidget,       "Timeline");
-    tabs->addTab(m_heatmapWidget,        "Byte Heatmap");
+    tabs->addTab(m_heatmapWidget,          "Byte Heatmap");
+    tabs->addTab(m_moduleProfilerWidget,   "Moduły CAN");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
