@@ -828,3 +828,58 @@ Wstępna implementacja failowała 2 testy (`DetectionOfflineWhenIdMissing`, `Mod
 3. **CanModuleProfiler rozszerzenia** — grupowanie ID po klastrze DBSCAN (które ID → jeden moduł bez izolacji fizycznej)
 4. **CANopen/OBD-II parsery** — PDO/SDO + OBD-II PID decode
 5. **MQTT bridge testy** — testy jednostkowe dla MqttBridge
+
+---
+
+## Sesja 2026-05-13 (część 8): CanModuleProfiler — uczenie różnicowe (2-fazowe) ✅
+
+### Testy: 414 → 419 (+5 testów, 29 suites)
+### Commit: `4059569`
+
+### Opis funkcjonalności
+Opcjonalna faza 2 uczenia, która pozwala izolować ID modułu od tła magistrali gdy moduł działa razem z innymi modułami. Wynik = set difference A \ B.
+
+**Algorytm:**
+- **Faza 1** (normalny `startLearning`, moduł podłączony) → Zbiór A = wszystkie cykliczne ID
+- **Faza 2** (`startLearningBackground`, moduł ODŁĄCZONY, same kryterium co faza 1) → Zbiór B = tło magistrali
+- **Profil różnicowy** = A \ B (ID które znikły po odłączeniu = ID modułu)
+
+### Zmiany w kodzie
+
+**`ModuleProfile`**: nowe pole `bool isDifferential = false`, serializowane w `toJson()`/`fromJson()`
+
+**`CanModuleProfiler`**:
+- Nowy stan `LearningBackground` w enum `State`
+- `startLearningBackground(phase1, name, durationMs)` — uruchamia uczenie tła
+- `cancelBackgroundLearning()` — anuluje (też pomija timer)
+- `finalizeBackgroundLearning()` — test helper pomijający timer
+- `finalizeBackgroundProfile()` — oblicza A \ B, emituje `backgroundLearningFinished`
+- `feed()` — w stanie `LearningBackground` akumuluje `m_bgLearnData` (Welford, identyczny kod)
+- Sygnały: `backgroundLearningProgress(int)`, `backgroundLearningFinished(ModuleProfile)`
+
+**`CanModuleProfilerWidget`**:
+- Ukryty panel "Faza 2: uczenie tła" — pojawia się PO zakończeniu fazy 1
+- Instrukcja: "Odłącz moduł od magistrali i uruchom uczenie tła"
+- Przycisk "▶ Start tła" + "✕ Anuluj" + pasek postępu
+- Po ukończeniu: dodaje profil `[diff]` do listy, ukrywa panel
+- Lista profili: tag `[diff]` prefix dla profili różnicowych
+- Szczegóły: `[RÓŻNICOWY]` prefix w nagłówku
+
+### Testy (5 nowych)
+| Test | Weryfikuje |
+|------|------------|
+| Differential_BackgroundIdRemoved | ID w obu fazach → usunięte z profilu |
+| Differential_UniqueIdKept | ID tylko w fazie 1 → zachowane |
+| Differential_EmptyBackgroundKeepsAll | puste tło → wszystkie ID zachowane |
+| Differential_JsonRoundtrip | isDifferential serializowany w JSON |
+| Differential_StateTransitions | LearningBackground → cancelBackgroundLearning → Idle |
+
+### Łączny stan projektu (2026-05-13, część 8)
+- **Testy**: 419/419 w 29 suites
+- **CanModuleProfiler**: 2 tryby uczenia (normalny + różnicowy)
+
+### Roadmapa (następna sesja — priorytety)
+1. **CanGaugeWidget integracja z DBC** — bindowanie sygnałów DBC do wskaźników w MainWindow
+2. **LogComparatorWidget** — porównanie dwóch plików candump
+3. **CANopen/OBD-II parsery** — PDO/SDO + OBD-II PID decode
+4. **MQTT bridge testy** — testy jednostkowe dla MqttBridge
