@@ -299,6 +299,7 @@ public:
     };
     void trainIsolationForest(int nTrees = 100, int sampleSize = 256);
     std::vector<IForestResult> scoreIsolationForest(double threshold = 0.6) const;
+    double scoreLatestWindow() const;  // score last observation window [0=normal, 1=anomaly]
     bool   iforestTrained()    const { return m_iforest.trained; }
     void   setIforestThreshold(double t) { m_iforest.threshold = t; }
     double iforestThreshold()  const { return m_iforest.threshold; }

@@ -1,0 +1,269 @@
+================================================================================
+        OPIS GUI ZAKŁADKI "SNIFFER" — MagistralaCAN4
+================================================================================
+
+Plik wygenerowany na podstawie kodu źródłowego: src/gui/MainWindow.cpp,
+src/core/CanFrameModel.cpp, src/core/CanStatsPanel.cpp, FrameDetailWidget.cpp
+Data: 2026-05-10
+
+================================================================================
+1. STRUKTURA OKNA GŁÓWNEGO (QTabWidget)
+================================================================================
+
+Główne okno aplikacji to QTabWidget z ok. 12 zakładkami.
+Zakładka "Ruch CAN" (pierwsza zakładka, indeks 0) zawiera:
+  - CanStatsPanel (górny pasek statystyk z filtrem)
+  - QTableView   (główna tabela ramek CAN)
+
+================================================================================
+2. GÓRNY PASEK STATYSTYK (CanStatsPanel) — poziomy układ
+================================================================================
+
+Od lewej do prawej:
+
+  [2.1] POLE FILTRA CAN ID (QLineEdit)
+        - placeholder: "Filtruj po CAN ID (hex, np. 123 lub 0x123)..."
+        - po wpisaniu filtruje tabelę (pokazuje tylko pasujący ID)
+        - akceptuje hex z prefiksem "0x" lub bez
+
+  [2.2] ETYKIETA STATYSTYK (QLabel)
+        - format: "Ramki: X | FPS: Y | Unikalne ID: Z | Obc.: W% | Top: ..."
+        - Top: 3 najczęściej występujące ID (hex + licznik)
+        - "Obc." = obciążenie magistrali w % względem 500 kbps
+        - przy burst: dodaje "⚡BURST" i zmienia kolor na czerwony (1.5s)
+
+  [2.3] PRZYCISK PAUZY (QPushButton)
+        - tekst: "⏸ Pauza" / "▶ Wznów"
+        - gdy aktywna: ramki są buforowane, tabela NIE jest odświeżana
+        - po wznowieniu: bufor opróżniany do modelu
+
+  [2.4] MINI-WYKRES FPS (QChartView, 120×30px)
+        - wykres liniowy (QLineSeries), kolor #00ffaa
+        - pokazuje ostatnie ~60 próbek (każda co 500ms)
+        - osie ukryte, przezroczyste tło
+        - renderowany przez OpenGL (QOpenGLWidget jako viewport)
+
+Timer aktualizacji: 500ms — co pół sekundy przelicza FPS, burst, top ID.
+
+================================================================================
+3. GŁÓWNA TABELA RAMEK CAN (QTableView + CanFrameModel)
+================================================================================
+
+  [3.1] PARAMETRY OGÓLNE
+        - QTableView, model: CanFrameModel (QAbstractTableModel)
+        - SelectionBehavior: SelectRows
+        - SelectionMode: ExtendedSelection (można zaznaczać wiele wierszy)
+        - zmiana zaznaczenia: emitowany sygnał clicked → onFrameSelected()
+        - pionowe nagłówki: ukryte (verticalHeader()->hide())
+        - poziome nagłówki: widoczne z nazwami kolumn
+        - ostatnia kolumna rozciągana (StretchLastSection)
+        - siatka (grid): ukryta
+        - naprzemienne kolory wierszy: NIE — model dostarcza własne tło
+        - sortowanie: włączone (SortingEnabled), wskaźnik sortowania widoczny
+        - auto-scroll: włączony (przewija do ostatniej ramki),
+                       wyłącza się gdy użytkownik ręcznie przewinie w górę;
+                       ponownie włącza przy dojechaniu na dół
+
+  [3.2] KOLUMNY (enum Column — 10 kolumn)
+
+      Kolumna          Nagłówek          Opis
+      ───────────────────────────────────────────────────────────────
+      0. ID            "CAN ID"           ID ramki w hex (3 znaki)
+      1. EXT           "Typ"              "EXT" lub "STD"
+      2. RTR           "RTR"              "RTR" lub "Data"
+      3. DLC           "DLC"              długość danych (0–64 dla FD, 0–2047 dla XL)
+      4. DATA          "Dane (hex)"       bajty w hex, do 16 bajtów pokazane
+                                          (dla XL: tylko pierwsze 16 + "... (N bajtów)")
+      5. TIMESTAMP     "Czas [µs]"        znacznik czasu w mikrosekundach
+      6. FD            "FD"               tryb ramki: "CAN" / "FD" / "XL"
+      7. DELTA         "Delta"            odstęp czasu od poprzedniej ramki o tym samym ID
+      8. SIGNAL        "DBC / J1939"      nazwa sygnału z pliku DBC, lub
+                                          nazwa PGN z J1939 (jeśli ID Extended)
+      9. _COUNT                           (liczba kolumn — wewnętrzne)
+
+  [3.3] KOLORY TEKSTU (Qt::ForegroundRole)
+
+      Kolumna 0 (ID):        #00ffaa  (zielono-neonowy)
+      Kolumna 1 (EXT):       #ff66cc  (różowy)
+      Kolumna 2 (RTR):       #ffaa00  (pomarańczowy)
+      Kolumna 3 (DLC):       #66ccff  (jasnoniebieski)
+      Kolumna 4 (DATA):      #aa44ff  (fioletowy)
+      Kolumna 5 (TIMESTAMP): #888888  (szary)
+      Kolumna 6 (FD):        zależnie od trybu:
+                               XL → #ff4444 (czerwony)
+                               FD → #00ffaa (zielony)
+                               CAN → #666666 (ciemnoszary)
+      Kolumna 7 (DELTA):     #8888cc  (szaro-niebieski)
+      Kolumna 8 (SIGNAL):    #ffaa00  (pomarańczowy)
+
+  [3.4] KOLORY TŁA WIERSZY (Qt::BackgroundRole)
+
+      - Ramki BURST (odstęp < 1000µs od poprzedniej tego ID):
+        tło → #2e1a0a (ciemnopomarańczowe)
+      - Pozostałe wiersze: kolorowane wg zakresu ID:
+        (ID / 0x100) % 6 = 0 → #0d1117
+                         1 → #111a1a
+                         2 → #1a111a
+                         3 → #1a1a11
+                         4 → #111a11
+                         5 → #1a1111
+
+  [3.5] DODATKOWE ROLE DANYCH
+
+      Qt::TextAlignmentRole — wszystkie kolumny: AlignCenter
+      Qt::UserRole — wartości numeryczne do sortowania:
+        ID: uint32_t, DLC: int, TIMESTAMP: uint64_t, DELTA: uint64_t
+      Qt::ToolTipRole:
+        Kolumna DATA + XL: pełne dane hex (do 64B) + "CAN XL N bajtów"
+        Kolumna SIGNAL: rozszyfrowane wartości sygnałów z DBC
+                        (nazwa = wartość jednostka)
+
+  [3.6] TRYB NADPISYWANIA (m_overwrite)
+
+      Domyślnie: WŁĄCZONY (checkbox "Nadpisywanie" w toolbarze)
+      Gdy włączony: ramki o tym samym ID NADPISUJĄ poprzednie
+                    (mapowanie ID→wiersz; tylko update w miejscu)
+      Gdy wyłączony: każda ramka to nowy wiersz (append)
+      Przełączenie: czyści całą tabelę (beginResetModel)
+
+  [3.7] LIMIT WIERSZY
+
+      Domyślnie: 10000 (setMaxFrames)
+      Po przekroczeniu: usuwa najstarsze wiersze (beginRemoveRows z początku)
+
+================================================================================
+4. PASEK NARZĘDZI (QToolBar)
+================================================================================
+
+Elementy od lewej do prawej:
+
+  1. QComboBox — wybór interfejsu CAN (edytowalny, min. szer. 120px)
+  2. QPushButton "↻" — odśwież listę interfejsów
+  3. QComboBox — prędkość magistrali: 1M,800K,500K,250K,125K,100K,50K,20K,10K
+                 (domyślnie 500K)
+  4. SEPARATOR
+  5. QPushButton "▶ Start" / "■ Stop" — start/stop nasłuchu
+  6. QCheckBox "Nadpisywanie" — tryb nadpisywania (domyślnie zaznaczony)
+  7. SEPARATOR
+  8. QLabel "Rozłączony" / "Nasłuchuje..." — status (czerwony/zielony)
+  9. SEPARATOR
+  10. "🗙 Wyczyść"     — czyści tabelę
+  11. "📥 Eksportuj candump" — eksport do formatu candump (.log/.txt)
+  12. "📊 Eksportuj CSV"     — eksport do CSV
+  13. "⏺ Nagraj"       — nagrywanie do formatu .mcan (CanRecorder)
+  14. "📦 Nagraj MDF4"  — nagrywanie do formatu .mf4 (MDF4)
+  15. "🌐 REST API"     — uruchom/zatrzymaj serwer REST (port 8080)
+  16. "📡 MQTT"         — włącz/wyłącz mostek MQTT
+  17. "☀️ Jasny motyw"  — przełącz motyw (ciemny/jasny) z QSS
+  18. "📜 Wczytaj skrypt Lua" — otwórz plik .lua
+  19. "🗄️ Wczytaj DBC"        — otwórz plik .dbc
+
+================================================================================
+5. POZOSTAŁE ZAKŁADKI (sąsiadujące z "Ruch CAN")
+================================================================================
+
+  2.  "Uczenie asocjacyjne"  — AssociativeLearner
+  3.  "Szczegóły ramki"      — FrameDetailWidget (siatka bitów/bajtów)
+  4.  "Analiza offline"      — OfflineAnalyzer
+  5.  "Dashboard CAN"        — CanDashboard (wykresy, wskaźniki)
+  6.  "Diagnostyka J1939"    — J1939Widget
+  7.  "Edytor DBC"           — DbcEditorWidget
+  8.  "Symulacja CAN"        — CanNodeSimWidget
+  9.  "Zdalny CAN"           — RemoteCanWidget (WebSocket client/server)
+  10. "Diagnostyka UDS"      — UdsWidget
+  11. "Porównywarka logów"   — LogComparatorWidget
+  12. "Diagnostyka OBD-II"   — ObdWidget
+  13. "CANopen"              — CanOpenWidget
+  +   wtyczki z ./plugins    — dynamiczne (PluginLoader)
+
+================================================================================
+6. PRZEPŁYW DANYCH (SNIFFER → GUI)
+================================================================================
+
+  1. ToggleSniffing() → CanSniffer::start(iface)
+  2. Wątek roboczy (QThreadPool): doWork() → driver->readFrame()
+  3. Ramka trafia do lock-free RingBuffer (8192 sloty)
+  4. Timer GUI (co 33ms): updateTableBatch() →
+     a) m_sniffer.drainAndEmit() → opróżnia ring buffer → emit newFrame()
+     b) Slot onNewFrame(): dodaje ramkę do m_frameBuffer + aktualizuje CanStatsPanel
+     c) Emisja frameProcessed() do wszystkich slotów analizy
+        (learner, luaEngine, dashboard, j1939, sim, uds, obd, recorder, mqtt, plugins)
+     d) m_model->processIncomingFrames(m_frameBuffer) → aktualizuje model/tabelę
+     e) auto-scroll (scrollToBottom) jeśli m_autoScroll == true
+
+  6.1 Gdy pauza aktywna (CanStatsPanel::m_paused):
+      - ramki są buforowane w m_frameBuffer
+      - model NIE jest aktualizowany
+      - po wznowieniu: bufor opróżniany
+
+================================================================================
+7. INTERAKCJE UŻYTKOWNIKA (SKRÓTY, KLIKNIĘCIA)
+================================================================================
+
+  - Ctrl+C:          kopiuje zaznaczone wiersze tabeli do schowka (TSV)
+  - Ctrl+Shift+E:    oznacza zdarzenie (AssociativeLearner)
+  - Ctrl+Shift+D:    oznacza "nie-zdarzenie"
+  - Kliknięcie na wiersz: ładuje ramkę do FrameDetailWidget (zakładka 3)
+  - Przewijanie tabeli:    wyłącza auto-scroll; po dojechaniu na dół włącza
+
+================================================================================
+8. POTENCJALNE ŹRÓDŁA BŁĘDÓW W GUI (na podstawie kodu)
+================================================================================
+
+  [8.1] CanStatsPanel::statsUpdated vs. m_uniqueIds.clear()
+        - updateStats() czyści m_uniqueIds co 500ms;
+          to oznacza, że "Unikalne ID" pokazuje tylko ID z ostatnich 500ms,
+          NIE łącznie od początku sesji. Może być mylące.
+
+  [8.2] Pauza + nowe ramki
+        - gdy pauza jest włączona, ramki kumulują się w m_frameBuffer;
+          po wznowieniu WSZYSTKIE są wrzucane na raz do modelu.
+          Przy bardzo długiej pauzie (>10k ramek) może to spowodować
+          krótkotrwałe zamrożenie GUI.
+
+  [8.3] Tryb nadpisywania + auto-scroll
+        - w trybie nadpisywania (overwrite) ramki NIE są dodawane jako nowe wiersze,
+          tylko aktualizowane w miejscu (dataChanged). Auto-scroll działa tylko
+          dla nowych wierszy — nie przewija przy update istniejącego ID.
+          Efekt: przy nadpisywaniu tabela może "stać w miejscu" mimo ruchu CAN.
+
+  [8.4] connect(&m_sniffer, &CanSniffer::newFrame, ...) — NIE QueuedConnection
+        - newFrame jest łączone przez DirectConnection (bo drainAndEmit
+          jest wywoływane z GUI). Jeśli jednak coś przypadkiem wyemituje
+          newFrame z wątku roboczego — niezdefiniowane zachowanie w GUI.
+
+  [8.5] Filtrowanie ID (applyIdFilter) — O(n) po całej tabeli
+        - przy 10k wierszy wywoływane przy każdej zmianie tekstu w filtrze;
+          może być powolne przy szybkim pisaniu.
+
+  [8.6] Export candump — przycina dane do 8 bajtów
+        - pętla for (int i = 0; i < frame.dlc && i < 8; ++i)
+          Oznacza to, że ramki CAN FD (>8B) są obcinane przy eksporcie.
+
+  [8.7] FrameDetailWidget + sygnały DBC
+        - tooltip dla kolumny SIGNAL oblicza wartości sygnałów z DBC
+          w locie (przy najechaniu myszą). Jeśli DBCParser jest wolny,
+          może spowalniać GUI.
+
+================================================================================
+9. STRUKTURA CanFrame (dla referencji)
+================================================================================
+
+  struct CanFrame {
+      uint32_t id;              // CAN ID (11/29 bit)
+      bool     extended;        // czy ramka extended (29-bit)
+      bool     rtr;             // Remote Transmission Request
+      bool     error;           // ramka błędu
+      bool     fd;              // CAN FD (payload do 64B)
+      bool     xl;              // CAN XL (>64B, obcięte)
+      uint8_t  sdt;             // SDU type (CAN XL)
+      uint32_t af;              // acceptance field (CAN XL)
+      uint8_t  dlc;             // 0–8 classic, 0–64 FD, 0–2047 XL
+      uint8_t  data[64];        // inline payload
+      uint64_t timestamp;       // µs od epoch
+  };
+  Rozmiar: ok. 88 bajtów (64B data + metadane).
+
+================================================================================
+Koniec opisu.
+================================================================================

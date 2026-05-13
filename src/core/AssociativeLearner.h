@@ -66,6 +66,9 @@ public slots:
     void runPcaClustering();
     void runFftAnalysis();
 
+    /// Returns isolation forest anomaly score for latest window [0=normal, 1=anomaly].
+    double scoreLatestWindow() const { return m_engine.scoreLatestWindow(); }
+
 signals:
     void eventMarked(int iteration);
     void anomalyDetected();

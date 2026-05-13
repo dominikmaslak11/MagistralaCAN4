@@ -8,6 +8,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QLabel>
+#include <functional>
 #include "CanAlertEngine.h"
 #include "CanFrame.h"
 
@@ -17,6 +18,8 @@ public:
     explicit CanAlertWidget(QWidget *parent = nullptr);
 
     CanAlertEngine *engine() { return &m_engine; }
+
+    void setScorer(std::function<double()> scorer) { m_scorer = std::move(scorer); }
 
 public slots:
     void onFrame(const CanFrame &frame, uint64_t tsUs = 0);
@@ -44,6 +47,7 @@ private:
     QComboBox       *m_opCombo;
     QSpinBox        *m_thresholdSpin;
     QDoubleSpinBox  *m_rateDevSpin;
+    QDoubleSpinBox  *m_isoThresholdSpin;
     QPushButton     *m_addBtn;
     QPushButton     *m_removeBtn;
 
@@ -54,4 +58,6 @@ private:
     QTableWidget    *m_alertTable;
 
     QLabel          *m_statsLabel;
+
+    std::function<double()> m_scorer;
 };

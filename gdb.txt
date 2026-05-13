@@ -1,0 +1,112 @@
+[New Thread 5884.0x3640]
+[New Thread 5884.0x2b60]
+[New Thread 5884.0x2034]
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(1) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\directxdatabasehelper.cpp(2333)\directxdatabasehelper.dll!00007FFEF2534A9A: (caller: 00007FFEF55F6321) ReturnHr(2) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(3) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(4) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(5) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(6) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(7) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(8) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(9) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(10) tid(11a0) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+[New Thread 5884.0x11f8]
+warning: qt.qpa.plugin: Could not find the Qt platform plugin "offscreen" in ""
+[New Thread 5884.0x4118]
+[New Thread 5884.0x3218]
+warning: This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Available platform plugins are: windows.
+
+gdb: unknown target exception 0xc0000602 at 0x7ff63c7d0f65
+
+Thread 1 received signal ?, Unknown signal.
+0x00007ffefaffa228 in RaiseFailFastException () from C:\WINDOWS\System32\KernelBase.dll
+#0  0x00007ffefaffa228 in RaiseFailFastException () from C:\WINDOWS\System32\KernelBase.dll
+No symbol table info available.
+#1  0x00007ff63c7d0f65 in qAbort() ()
+No symbol table info available.
+#2  0x00007ff63c7ee58b in qt_message(QtMsgType, QMessageLogContext const&, char const*, char*) ()
+No symbol table info available.
+#3  0x00007ff63df35cdd in QMessageLogger::fatal(char const*, ...) const ()
+No symbol table info available.
+#4  0x00007ff63df4351e in init_platform(QString const&, QString const&, QString const&, int&, char**) [clone .cold] ()
+No symbol table info available.
+#5  0x00007ff63d247aef in QGuiApplicationPrivate::createPlatformIntegration() ()
+No symbol table info available.
+#6  0x00007ff63d2461e8 in QGuiApplicationPrivate::createEventDispatcher() ()
+No symbol table info available.
+#7  0x00007ff63d29abe5 in QCoreApplicationPrivate::init() ()
+No symbol table info available.
+#8  0x00007ff63d24a6a9 in QGuiApplicationPrivate::init() ()
+No symbol table info available.
+#9  0x00007ff63d09eb71 in QApplicationPrivate::init() ()
+No symbol table info available.
+#10 0x00007ff63c7cfc8f in qMain(int, char**) ()
+No symbol table info available.
+#11 0x00007ff63c68429a in qtEntryPoint() ()
+No symbol table info available.
+#12 0x00007ff63c6810da in __tmainCRTStartup () at D:/W/B/src/mingw-w64/mingw-w64-crt/crt/crtexe.c:260
+        lock_free = 0x0
+        fiberid = <optimized out>
+        nested = 0
+        startinfo = {newmode = 0}
+        ret = 0
+#13 0x00007ff63c681436 in WinMainCRTStartup () at D:/W/B/src/mingw-w64/mingw-w64-crt/crt/crtexe.c:98
+        ret = 255
+A debugging session is active.
+
+	Inferior 1 [process 5884] will be killed.
+
+Quit anyway? (y or n) [answered Y; input not from terminal]
+warning: Currently logging to gdb.txt.  Turn the logging off and on to make the new setting effective.
+[New Thread 16428.0x3b5c]
+[New Thread 16428.0x3a44]
+[New Thread 16428.0x1f88]
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(1) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\directxdatabasehelper.cpp(2333)\directxdatabasehelper.dll!00007FFEF2534A9A: (caller: 00007FFEF55F6321) ReturnHr(2) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(3) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(4) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(5) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(6) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(7) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(8) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(9) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+warning: onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(158)\directxdatabasehelper.dll!00007FFEF253CF76: (caller: 00007FFEF253CDAC) ReturnHr(10) tid(3590) 80070002 Nie mo¿na odnaleŸæ okreœlonego pliku.
+[New Thread 16428.0xd28]
+[New Thread 16428.0x2744]
+[New Thread 16428.0x3c74]
+warning: "Aplikacja MagistralaCAN4 uruchomiona"
+warning: "Lokalny skrót Ctrl+Shift+E utworzony"
+warning: "Lokalny skrót Ctrl+Shift+D utworzony"
+warning: Token zapisany do "C:/Users/dominik/.magistrala_can4/token"
+[New Thread 16428.0x1374]
+
+Thread 1 received signal SIGSEGV, Segmentation fault.
+0x00007ff63db1c2a4 in QWidget::layout() const ()
+#0  0x00007ff63db1c2a4 in QWidget::layout() const ()
+No symbol table info available.
+#1  0x00007ff63cc5af0e in CanAlertWidget::onTypeChanged(int) ()
+No symbol table info available.
+#2  0x00007ff63cc5e68f in CanAlertWidget::CanAlertWidget(QWidget*) ()
+No symbol table info available.
+#3  0x00007ff63c90d398 in MainWindow::MainWindow(QWidget*) ()
+No symbol table info available.
+#4  0x00007ff63c7d00ea in qMain(int, char**) ()
+No symbol table info available.
+#5  0x00007ff63c68429a in qtEntryPoint() ()
+No symbol table info available.
+#6  0x00007ff63c6810da in __tmainCRTStartup () at D:/W/B/src/mingw-w64/mingw-w64-crt/crt/crtexe.c:260
+        lock_free = 0x0
+        fiberid = <optimized out>
+        nested = 0
+        startinfo = {newmode = 0}
+        ret = 0
+#7  0x00007ff63c681436 in WinMainCRTStartup () at D:/W/B/src/mingw-w64/mingw-w64-crt/crt/crtexe.c:98
+        ret = 255
+A debugging session is active.
+
+	Inferior 1 [process 16428] will be killed.
+
+Quit anyway? (y or n) [answered Y; input not from terminal]

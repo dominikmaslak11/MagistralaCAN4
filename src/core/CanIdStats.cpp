@@ -21,6 +21,13 @@ void CanIdStats::feed(const CanFrame &frame) {
     }
     ++p.frameCount;
 
+    if (frame.fd) {
+        ++p.fdFrameCount;
+        if (frame.brs) ++p.brsCount;
+        if (frame.esi) ++p.esiCount;
+        if (frame.dlc > p.maxFdDlc) p.maxFdDlc = frame.dlc;
+    }
+
     uint8_t dlc = frame.dlc <= 8 ? frame.dlc : 8;
     if (dlc > p.maxDlc) p.maxDlc = dlc;
     for (int i = 0; i < dlc; ++i) {
@@ -52,7 +59,7 @@ const IdProfile *CanIdStats::profileFor(uint32_t id) const {
 
 std::string CanIdStats::toCsv() const {
     std::ostringstream ss;
-    ss << "id,extended,frames,first_ts_us,last_ts_us,avg_interval_ms,freq_hz";
+    ss << "id,extended,fd_frames,brs_count,esi_count,frames,first_ts_us,last_ts_us,avg_interval_ms,freq_hz";
     for (int i = 0; i < 8; ++i)
         ss << ",b" << i << "_min,b" << i << "_max,b" << i << "_avg";
     ss << "\n";
@@ -63,6 +70,9 @@ std::string CanIdStats::toCsv() const {
         snprintf(idBuf, sizeof(idBuf), "0x%X", p.id);
         ss << idBuf << ","
            << (p.extended ? 1 : 0) << ","
+           << p.fdFrameCount << ","
+           << p.brsCount << ","
+           << p.esiCount << ","
            << p.frameCount << ","
            << p.firstTs << ","
            << p.lastTs << ","

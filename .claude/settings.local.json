@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cmake *)",
+      "PowerShell(cd E:\\\\MagistralaCAN4\\\\build_native; $proc = Start-Process -FilePath \".\\\\MagistralaCAN4_tests.exe\" -ArgumentList \"--gtest_brief=1\" -RedirectStandardOutput \"test_out.txt\" -RedirectStandardError \"test_err.txt\" -NoNewWindow -PassThru; $proc.WaitForExit\\(30000\\); Get-Content test_out.txt | Select-Object -Last 20)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(cd E:\\\\MagistralaCAN4\\\\build_native; $proc = Start-Process -FilePath \".\\\\MagistralaCAN4_tests.exe\" -RedirectStandardOutput \"all.txt\" -NoNewWindow -PassThru; $proc.WaitForExit\\(90000\\); Get-Content all.txt | Select-Object -Last 10)",
+      "PowerShell(cd E:\\\\MagistralaCAN4 && \\(Get-Content src/core/LearningEngine.cpp\\).Count)",
+      "PowerShell(Set-Content *)",
+      "PowerShell(cd E:\\\\MagistralaCAN4\\\\build_native; $proc = Start-Process -FilePath \".\\\\MagistralaCAN4_tests.exe\" -RedirectStandardOutput \"all.txt\" -NoNewWindow -PassThru; $proc.WaitForExit\\(90000\\); Get-Content all.txt | Select-Object -Last 6)",
+      "PowerShell(Get-ChildItem E:\\\\MagistralaCAN4\\\\build_native\\\\MagistralaCAN4.exe | Select-Object Name, @{N='MB';E={[math]::Round\\($_.Length/1MB,1\\)}}, LastWriteTime)",
+      "PowerShell(cd E:\\\\MagistralaCAN4\\\\build_native; $p = Start-Process -FilePath \".\\\\MagistralaCAN4_tests.exe\" -RedirectStandardOutput \"all.txt\" -NoNewWindow -PassThru; $p.WaitForExit\\(90000\\); Get-Content all.txt | Select-Object -Last 5)",
+      "PowerShell(git lfs *)",
+      "PowerShell(cd E:\\\\MagistralaCAN4\\\\build_native; $p = Start-Process -FilePath \".\\\\MagistralaCAN4_tests.exe\" -RedirectStandardOutput \"all.txt\" -NoNewWindow -PassThru; $p.WaitForExit\\(90000\\); Get-Content all.txt | Select-Object -Last 8)",
+      "PowerShell(Get-Content *)",
+      "PowerShell(cd E:\\\\MagistralaCAN4\\\\build_native; $p = Start-Process -FilePath \".\\\\MagistralaCAN4_tests.exe\" -RedirectStandardOutput \"all.txt\" -NoNewWindow -PassThru; $p.WaitForExit\\(90000\\); Get-Content all.txt | Select-Object -Last 6)",
+      "PowerShell(npm i *)",
+      "PowerShell(npm *)",
+      "PowerShell(Get-Item *)",
+      "PowerShell(& 'C:/msys64/usr/bin/bash.exe' -lc \"cd /e/MagistralaCAN4 && cmake -B build_debug -S . -DCMAKE_BUILD_TYPE=RelWithDebInfo 2>&1 | tail -5\")",
+      "PowerShell(Get-Command *)",
+      "PowerShell(\\(Get-Item \"E:\\\\MagistralaCAN4\\\\build_native\\\\MagistralaCAN4.exe\"\\).Length / 1MB | ForEach-Object { \"{0:F1} MB\" -f $_ })",
+      "PowerShell(git *)",
+      "PowerShell(& \"C:\\\\msys64\\\\usr\\\\bin\\\\ldd.exe\" \"E:\\\\MagistralaCAN4\\\\build_native\\\\MagistralaCAN4.exe\" 2>&1 | Select-Object -First 50)",
+      "PowerShell(& \"C:\\\\msys64\\\\usr\\\\bin\\\\ldd.exe\" \"E:\\\\MagistralaCAN4\\\\build_native\\\\MagistralaCAN4.exe\" 2>&1 | Select-Object -Skip 50)",
+      "PowerShell(Test-Path \"E:\\\\MagistralaCAN4\\\\build_native\\\\libb2-1.dll\"; Test-Path \"E:\\\\MagistralaCAN4\\\\build_native\\\\libssl-3-x64.dll\"; Get-ChildItem \"E:\\\\MagistralaCAN4\\\\build_native\\\\\" | Where-Object { $_.Extension -eq \".dll\" } | Select-Object Name)",
+      "PowerShell(Get-ChildItem \"E:\\\\MagistralaCAN4\\\\build_native\\\\\" | Where-Object { $_.Extension -ieq \".dll\" } | Select-Object Name | Sort-Object Name)",
+      "PowerShell(cmd /c \"dir E:\\\\MagistralaCAN4\\\\build_native\\\\ /b\" 2>&1 | Select-Object -First 50)",
+      "PowerShell(Get-ChildItem -LiteralPath \"E:\\\\MagistralaCAN4\\\\build_native\" | Where-Object { $_.Name -match '\\\\.dll$' } | Select-Object Name | Sort-Object Name)"
+    ]
+  }
+}

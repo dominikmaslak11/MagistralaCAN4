@@ -1,0 +1,92 @@
+Run cmake --build build --target MagistralaCAN4_tests -j$(nproc)
+[1/65] Building CXX object _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o
+[2/65] Building CXX object _deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o
+[3/65] Linking CXX static library lib/libgtest.a
+[4/65] Linking CXX static library lib/libgtest_main.a
+[5/65] Automatic MOC for target MagistralaCAN4_tests
+[6/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canframe.cpp.o
+[7/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_ringbuffer.cpp.o
+[8/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/MagistralaCAN4_tests_autogen/mocs_compilation.cpp.o
+[9/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_dbcparser.cpp.o
+[10/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_cantplayer.cpp.o
+[11/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canframemodel.cpp.o
+[12/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_someipparser.cpp.o
+[13/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_learningengine.cpp.o
+[14/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_doipparser.cpp.o
+[15/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_busloadanalyzer.cpp.o
+[16/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_cangateway.cpp.o
+[17/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_dbcautogenerator.cpp.o
+[18/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_udssequencerunner.cpp.o
+[19/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canfilterexpr.cpp.o
+[20/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_linparser.cpp.o
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_linparser.cpp: In member function ‘virtual void LinParser_WrongChecksumDetected_Test::TestBody()’:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_linparser.cpp:88:13: warning: unused variable ‘data’ [-Wunused-variable]
+   88 |     uint8_t data[2] = {0x01, 0x02};
+      |             ^~~~
+[21/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canidstats.cpp.o
+[22/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_kwp2000parser.cpp.o
+[23/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_xcpparser.cpp.o
+[24/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canreplayfilter.cpp.o
+[25/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canperiodicsender.cpp.o
+[26/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_cansignalmonitor.cpp.o
+In file included from /home/runner/work/MagistralaCAN4/MagistralaCAN4/src/core/CanSignalMonitor.h:3,
+                 from /home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:2:
+In copy constructor ‘DbcSignal::DbcSignal(const DbcSignal&)’,
+    inlined from ‘virtual void CanSignalMonitor_LatestValueKept_Test::TestBody()’ at /home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:102:52:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/src/core/DbcParser.h:7:8: warning: ‘sig’ may be used uninitialized [-Wmaybe-uninitialized]
+    7 | struct DbcSignal {
+      |        ^~~~~~~~~
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp: In member function ‘virtual void CanSignalMonitor_LatestValueKept_Test::TestBody()’:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:97:15: note: ‘sig’ declared here
+   97 |     DbcSignal sig;
+      |               ^~~
+In copy constructor ‘DbcSignal::DbcSignal(const DbcSignal&)’,
+    inlined from ‘virtual void CanSignalMonitor_UpdateCount_Test::TestBody()’ at /home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:85:53:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/src/core/DbcParser.h:7:8: warning: ‘sig’ may be used uninitialized [-Wmaybe-uninitialized]
+    7 | struct DbcSignal {
+      |        ^~~~~~~~~
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp: In member function ‘virtual void CanSignalMonitor_UpdateCount_Test::TestBody()’:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:80:15: note: ‘sig’ declared here
+   80 |     DbcSignal sig;
+      |               ^~~
+In copy constructor ‘DbcSignal::DbcSignal(const DbcSignal&)’,
+    inlined from ‘virtual void CanSignalMonitor_StaleDetection_Test::TestBody()’ at /home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:173:51:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/src/core/DbcParser.h:7:8: warning: ‘sig’ may be used uninitialized [-Wmaybe-uninitialized]
+    7 | struct DbcSignal {
+      |        ^~~~~~~~~
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp: In member function ‘virtual void CanSignalMonitor_StaleDetection_Test::TestBody()’:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:169:15: note: ‘sig’ declared here
+  169 |     DbcSignal sig;
+      |               ^~~
+In copy constructor ‘DbcSignal::DbcSignal(const DbcSignal&)’,
+    inlined from ‘virtual void CanSignalMonitor_Reset_Test::TestBody()’ at /home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:192:51:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/src/core/DbcParser.h:7:8: warning: ‘sig’ may be used uninitialized [-Wmaybe-uninitialized]
+    7 | struct DbcSignal {
+      |        ^~~~~~~~~
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp: In member function ‘virtual void CanSignalMonitor_Reset_Test::TestBody()’:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_cansignalmonitor.cpp:188:15: note: ‘sig’ declared here
+  188 |     DbcSignal sig;
+      |               ^~~
+[27/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canalerengine.cpp.o
+[28/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canobservationdb.cpp.o
+[29/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_pcapexporter.cpp.o
+[30/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_httprestserver.cpp.o
+FAILED: [code=1] CMakeFiles/MagistralaCAN4_tests.dir/tests/test_httprestserver.cpp.o 
+/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_SQL_LIB -DQT_TESTCASE_BUILDDIR=\"/home/runner/work/MagistralaCAN4/MagistralaCAN4/build\" -DQT_TESTCASE_SOURCEDIR=\"/home/runner/work/MagistralaCAN4/MagistralaCAN4\" -DQT_TESTLIB_LIB -DUNIT_TEST -I/home/runner/work/MagistralaCAN4/MagistralaCAN4/build/MagistralaCAN4_tests_autogen/include -I/home/runner/work/MagistralaCAN4/MagistralaCAN4/src -isystem /home/runner/work/MagistralaCAN4/MagistralaCAN4/build/_deps/googletest-src/googletest/include -isystem /home/runner/work/MagistralaCAN4/MagistralaCAN4/build/_deps/googletest-src/googletest -isystem /usr/include/x86_64-linux-gnu/qt6/QtCore -isystem /usr/include/x86_64-linux-gnu/qt6 -isystem /usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -isystem /usr/include/x86_64-linux-gnu/qt6/QtGui -isystem /usr/include/x86_64-linux-gnu/qt6/QtTest -isystem /usr/include/x86_64-linux-gnu/qt6/QtSql -isystem /usr/include/x86_64-linux-gnu/qt6/QtNetwork -Wall -Wextra -Werror=return-type -O3 -DNDEBUG -std=gnu++17 -fPIC -MD -MT CMakeFiles/MagistralaCAN4_tests.dir/tests/test_httprestserver.cpp.o -MF CMakeFiles/MagistralaCAN4_tests.dir/tests/test_httprestserver.cpp.o.d -o CMakeFiles/MagistralaCAN4_tests.dir/tests/test_httprestserver.cpp.o -c /home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_httprestserver.cpp
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_httprestserver.cpp: In function ‘QByteArray doRequest(quint16, const QByteArray&)’:
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_httprestserver.cpp:41:5: error: ‘QDeadlineTimer’ was not declared in this scope
+   41 |     QDeadlineTimer deadline(2000);
+      |     ^~~~~~~~~~~~~~
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_httprestserver.cpp:42:64: error: ‘deadline’ was not declared in this scope; did you mean ‘readlink’?
+   42 |     while (sock.state() != QAbstractSocket::ConnectedState && !deadline.hasExpired()) {
+      |                                                                ^~~~~~~~
+      |                                                                readlink
+/home/runner/work/MagistralaCAN4/MagistralaCAN4/tests/test_httprestserver.cpp:54:5: error: ‘deadline’ was not declared in this scope; did you mean ‘readlink’?
+   54 |     deadline = QDeadlineTimer(2000);
+      |     ^~~~~~~~
+      |     readlink
+[31/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_cantimelinemodel.cpp.o
+[32/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/tests/test_canbyteheatmapmodel.cpp.o
+[33/65] Building CXX object CMakeFiles/MagistralaCAN4_tests.dir/src/core/DbcParser.cpp.o
+ninja: build stopped: subcommand failed.
+Error: Process completed with exit code 1.

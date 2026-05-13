@@ -1,0 +1,5 @@
+chciałbym dodać w uczeniu asocjacyjnym filtr zaszumienia który będzie sprawdzał czy w danym bicie zmienia się cyklicznie jeden bajt w sensie w kółko ││                                                        │
+▏ raz jest 1 raz zero z dużą częstotliowścią . Filtr ma być zaimplementowany w formie checkboxa, który jest domyślnie włączony ale można go wyłączyć,  │└────────────────────────────────────────────────────────┘
+▏ cały mechanizm ma sprawdzać powtarzające się cyklicznie zmiany bitów w danym bajcie i odfiltrować te bajty by uczenie asocjacyjne nie brało ich pod  │┌ Tasks ─────────────────────────────────────────────────┐
+▏ uwagę w analizie, czy masz na to pomysł. A może ty masz inną wizję filtry zaszumienia? jak ty to widzisz swoimi oczyma? Co powinniśmy zrobić w tej   ││ turn 292ee11e-... (in_progress)                        │
+▏ kwestii?          

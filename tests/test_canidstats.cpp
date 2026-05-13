@@ -158,7 +158,8 @@ TEST(CanIdStats, CsvHeaderPresent) {
     CanIdStats s;
     s.feed(makeFrame(0x1FF, 0, {0xAB}));
     std::string csv = s.toCsv();
-    EXPECT_NE(csv.find("id,extended,frames"), std::string::npos);
+    EXPECT_NE(csv.find("id,extended"), std::string::npos);
+    EXPECT_NE(csv.find("fd_frames"), std::string::npos);
     EXPECT_NE(csv.find("avg_interval_ms"), std::string::npos);
     EXPECT_NE(csv.find("b0_min"), std::string::npos);
 }
@@ -190,4 +191,73 @@ TEST(CanIdStats, ExtendedFlagInCsv) {
 TEST(CanIdStats, UnknownIdReturnsNull) {
     CanIdStats s;
     EXPECT_EQ(s.profileFor(0xDEAD), nullptr);
+}
+
+// ── CAN FD tracking ───────────────────────────────────────────────────────────
+
+TEST(CanIdStats, FdFrameCountTracked) {
+    CanIdStats s;
+    CanFrame f = makeFrame(0x100, 0, {0x01, 0x02, 0x03, 0x04});
+    f.fd = true;
+    s.feed(f);
+    s.feed(f);
+    const auto *p = s.profileFor(0x100);
+    ASSERT_NE(p, nullptr);
+    EXPECT_EQ(p->fdFrameCount, 2u);
+}
+
+TEST(CanIdStats, BrsCountTracked) {
+    CanIdStats s;
+    CanFrame f = makeFrame(0x200, 0, {0xAA});
+    f.fd = true; f.brs = true;
+    s.feed(f);
+    f.brs = false;
+    s.feed(f);
+    const auto *p = s.profileFor(0x200);
+    ASSERT_NE(p, nullptr);
+    EXPECT_EQ(p->brsCount, 1u);
+    EXPECT_EQ(p->fdFrameCount, 2u);
+}
+
+TEST(CanIdStats, EsiCountTracked) {
+    CanIdStats s;
+    CanFrame f = makeFrame(0x300, 0, {0x00});
+    f.fd = true; f.esi = true;
+    s.feed(f);
+    const auto *p = s.profileFor(0x300);
+    ASSERT_NE(p, nullptr);
+    EXPECT_EQ(p->esiCount, 1u);
+}
+
+TEST(CanIdStats, MaxFdDlcTracked) {
+    CanIdStats s;
+    CanFrame f = makeFrame(0x400, 0, {});
+    f.fd = true; f.dlc = 12;  // FD DLC 12 bytes
+    s.feed(f);
+    f.dlc = 48;
+    s.feed(f);
+    const auto *p = s.profileFor(0x400);
+    ASSERT_NE(p, nullptr);
+    EXPECT_EQ(p->maxFdDlc, 48u);
+}
+
+TEST(CanIdStats, ClassicFrameNoFdStats) {
+    CanIdStats s;
+    s.feed(makeFrame(0x500, 0, {0x01, 0x02}));
+    const auto *p = s.profileFor(0x500);
+    ASSERT_NE(p, nullptr);
+    EXPECT_EQ(p->fdFrameCount, 0u);
+    EXPECT_EQ(p->brsCount, 0u);
+    EXPECT_EQ(p->esiCount, 0u);
+}
+
+TEST(CanIdStats, CsvContainsFdColumns) {
+    CanIdStats s;
+    CanFrame f = makeFrame(0x1A0, 0, {0xBE, 0xEF});
+    f.fd = true; f.brs = true;
+    s.feed(f);
+    std::string csv = s.toCsv();
+    EXPECT_NE(csv.find("fd_frames"), std::string::npos);
+    EXPECT_NE(csv.find("brs_count"), std::string::npos);
+    EXPECT_NE(csv.find("esi_count"), std::string::npos);
 }

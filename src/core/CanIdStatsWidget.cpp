@@ -35,10 +35,10 @@ void CanIdStatsWidget::buildUi() {
     root->addLayout(bar);
 
     // ── Table ────────────────────────────────────────────────────────────────
-    // Columns: ID | Ext | Frames | Avg Interval (ms) | Freq (Hz) |
-    //          B0 min/max/avg | B1 min/max/avg | … | B7 min/max/avg
+    // Columns: ID | Ext | FD | BRS | ESI | Frames | Avg Interval (ms) | Freq (Hz) |
+    //          B0 min/max/avg | … | B7 min/max/avg
     static const QStringList hdr = []() {
-        QStringList h = {"ID", "Ext", "Frames", "Avg Interval (ms)", "Freq (Hz)"};
+        QStringList h = {"ID", "Ext", "FD", "BRS", "ESI", "Frames", "Avg Interval (ms)", "Freq (Hz)"};
         for (int i = 0; i < 8; ++i)
             h << QString("B%1 min").arg(i) << QString("B%1 max").arg(i) << QString("B%1 avg").arg(i);
         return h;
@@ -110,19 +110,22 @@ void CanIdStatsWidget::refreshTable() {
 
         cell(0, idBuf);
         cell(1, p.extended ? "Y" : "N");
-        cell(2, QString::number(p.frameCount));
-        cell(3, QString::number(p.avgIntervalMs(), 'f', 2));
-        cell(4, QString::number(p.freqHz(), 'f', 1));
+        cell(2, p.fdFrameCount > 0 ? QString::number(p.fdFrameCount) : "-");
+        cell(3, p.brsCount     > 0 ? QString::number(p.brsCount)     : "-");
+        cell(4, p.esiCount     > 0 ? QString::number(p.esiCount)     : "-");
+        cell(5, QString::number(p.frameCount));
+        cell(6, QString::number(p.avgIntervalMs(), 'f', 2));
+        cell(7, QString::number(p.freqHz(), 'f', 1));
 
         for (int i = 0; i < 8; ++i) {
             if (i < p.maxDlc) {
-                cell(5 + i*3,     QString::number(p.bytes[i].minVal));
-                cell(5 + i*3 + 1, QString::number(p.bytes[i].maxVal));
-                cell(5 + i*3 + 2, QString::number(p.byteAvg(i), 'f', 1));
+                cell(8 + i*3,     QString::number(p.bytes[i].minVal));
+                cell(8 + i*3 + 1, QString::number(p.bytes[i].maxVal));
+                cell(8 + i*3 + 2, QString::number(p.byteAvg(i), 'f', 1));
             } else {
-                cell(5 + i*3,     "-");
-                cell(5 + i*3 + 1, "-");
-                cell(5 + i*3 + 2, "-");
+                cell(8 + i*3,     "-");
+                cell(8 + i*3 + 1, "-");
+                cell(8 + i*3 + 2, "-");
             }
         }
     }

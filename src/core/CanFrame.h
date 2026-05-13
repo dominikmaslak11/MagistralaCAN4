@@ -10,6 +10,8 @@ struct CanFrame {
     bool     rtr = false;
     bool     error = false;
     bool     fd = false;                  // CAN FD frame (payload up to 64 bytes)
+    bool     brs = false;                 // Bit Rate Switch (CAN FD)
+    bool     esi = false;                 // Error State Indicator (CAN FD)
     bool     xl = false;                  // CAN XL frame (>64 bytes, truncated)
     uint8_t  sdt = 0;                     // SDU type (CAN XL only)
     uint32_t af = 0;                      // acceptance field (CAN XL only)

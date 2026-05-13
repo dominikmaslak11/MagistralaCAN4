@@ -28,7 +28,7 @@ void CanAlertWidget::buildUi() {
     editorForm->addRow("Name:", m_nameEdit);
 
     m_typeCombo = new QComboBox(this);
-    m_typeCombo->addItems({"New CAN ID", "DLC Change", "Byte Value", "Rate Anomaly"});
+    m_typeCombo->addItems({"New CAN ID", "DLC Change", "Byte Value", "Rate Anomaly", "IsoForest Score"});
     editorForm->addRow("Type:", m_typeCombo);
 
     m_actionCombo = new QComboBox(this);
@@ -66,6 +66,14 @@ void CanAlertWidget::buildUi() {
     m_rateDevSpin->setSuffix("  %  deviation");
     m_rateDevSpin->setMaximumWidth(150);
     editorForm->addRow("Rate threshold:", m_rateDevSpin);
+
+    m_isoThresholdSpin = new QDoubleSpinBox(this);
+    m_isoThresholdSpin->setRange(0.0, 1.0);
+    m_isoThresholdSpin->setSingleStep(0.05);
+    m_isoThresholdSpin->setValue(0.6);
+    m_isoThresholdSpin->setDecimals(2);
+    m_isoThresholdSpin->setMaximumWidth(100);
+    editorForm->addRow("IsoForest threshold:", m_isoThresholdSpin);
 
     auto *btnRow = new QHBoxLayout;
     m_addBtn    = new QPushButton("Add Rule", this);
@@ -126,11 +134,13 @@ void CanAlertWidget::buildUi() {
 void CanAlertWidget::onTypeChanged(int idx) {
     bool isByte = (idx == 2);
     bool isRate = (idx == 3);
+    bool isIso  = (idx == 4);
     m_idEdit->setVisible(isByte);
     m_byteIdxSpin->setVisible(isByte);
     m_opCombo->setVisible(isByte);
     m_thresholdSpin->setVisible(isByte);
     m_rateDevSpin->setVisible(isRate);
+    m_isoThresholdSpin->setVisible(isIso);
 }
 
 void CanAlertWidget::addRule() {
@@ -155,6 +165,11 @@ void CanAlertWidget::addRule() {
     }
     if (rule.type == AlertType::RateAnomaly)
         rule.rateDeviationPct = m_rateDevSpin->value();
+
+    if (rule.type == AlertType::IsolationForestScore) {
+        rule.isThreshold = m_isoThresholdSpin->value();
+        rule.scorer = m_scorer;  // injected from outside (MainWindow)
+    }
 
     m_engine.addRule(rule);
     refreshRuleTable();

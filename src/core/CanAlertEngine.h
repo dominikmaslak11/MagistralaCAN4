@@ -7,12 +7,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cstdint>
+#include <functional>
 
 enum class AlertType {
-    NewCanId,    // ID seen for the first time in this session
-    DlcChange,   // DLC differs from first-seen DLC for this ID
-    ByteValue,   // frame.data[byteIdx] op threshold
-    RateAnomaly, // frame rate deviates more than N% from learned baseline
+    NewCanId,            // ID seen for the first time in this session
+    DlcChange,           // DLC differs from first-seen DLC for this ID
+    ByteValue,           // frame.data[byteIdx] op threshold
+    RateAnomaly,         // frame rate deviates more than N% from learned baseline
+    IsolationForestScore,// injected ML scorer() > threshold
 };
 
 enum class AlertAction {
@@ -38,6 +40,10 @@ struct CanAlertRule {
 
     // RateAnomaly parameters
     double    rateDeviationPct = 50.0; // trigger if current rate deviates >N%
+
+    // IsolationForestScore parameters
+    double    isThreshold = 0.5;             // trigger if scorer() > this value
+    std::function<double()> scorer;          // injected ML scoring function
 };
 
 struct CanAlert {

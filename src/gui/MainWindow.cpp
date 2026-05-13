@@ -109,6 +109,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_periodicSenderWidget = new CanPeriodicSenderWidget(&m_sniffer);
     m_observationDbWidget  = new CanObservationDbWidget;
     m_alertWidget          = new CanAlertWidget;
+    m_alertWidget->setScorer([this]() { return m_learner->scoreLatestWindow(); });
     m_timelineWidget       = new CanProtocolTimelineWidget;
     m_heatmapWidget        = new CanByteHeatmapWidget;
     m_restServer.setModel(m_model);

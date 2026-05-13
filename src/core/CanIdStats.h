@@ -19,6 +19,12 @@ struct IdProfile {
     uint64_t intervalMax = 0;
     double   intervalSum = 0.0; // used for mean; avoids overflow for long runs
 
+    // CAN FD tracking
+    uint64_t fdFrameCount = 0;
+    uint64_t brsCount     = 0;
+    uint64_t esiCount     = 0;
+    uint8_t  maxFdDlc     = 0;  // max FD DLC seen (can be >8)
+
     // Per-byte stats (positions 0–7; tracked up to maxDlc seen)
     uint8_t maxDlc = 0;
     struct ByteStat {

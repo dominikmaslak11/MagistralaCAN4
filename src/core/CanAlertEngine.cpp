@@ -71,6 +71,18 @@ void CanAlertEngine::evaluate(const CanFrame &frame, uint64_t tsUs) {
                      QString("Rate anomaly for 0x%1 (threshold ±%2%)")
                          .arg(frame.id, 0, 16).arg(rule.rateDeviationPct, 0, 'f', 0));
             break;
+
+        case AlertType::IsolationForestScore:
+            if (rule.scorer) {
+                double score = rule.scorer();
+                if (score > rule.isThreshold)
+                    fire(rule, frame, tsUs,
+                         QString("IsoForest score %1 > threshold %2 (0x%3)")
+                             .arg(score, 0, 'f', 3)
+                             .arg(rule.isThreshold, 0, 'f', 2)
+                             .arg(frame.id, 0, 16));
+            }
+            break;
         }
     }
 

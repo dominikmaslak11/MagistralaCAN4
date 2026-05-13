@@ -881,6 +881,27 @@ void LearningEngine::trainIsolationForest(int nTrees, int sampleSize) {
     m_iforest.trained = true;
 }
 
+double LearningEngine::scoreLatestWindow() const {
+    std::shared_lock lock(m_mutex);
+    if (!m_iforest.trained || m_iforest.trees.empty()) return 0.0;
+    if (m_frameHistory.empty()) return 0.0;
+
+    auto windows = splitWindows(m_frameHistory, 500000);
+    if (windows.empty()) return 0.0;
+
+    auto feat = buildWindowFeatures(windows.back());
+    if (static_cast<int>(feat.size()) != m_iforest.nFeatures) return 0.0;
+
+    double cn = iforestC(static_cast<double>(m_iforest.sampleSize));
+    if (cn < 1e-9) return 0.0;
+
+    double sumH = 0.0;
+    for (const auto &tree : m_iforest.trees)
+        sumH += iforestPathLength(tree, feat, 0, 0);
+    double avgH = sumH / static_cast<double>(m_iforest.trees.size());
+    return std::pow(2.0, -avgH / cn);
+}
+
 std::vector<LearningEngine::IForestResult>
 LearningEngine::scoreIsolationForest(double threshold) const {
     std::shared_lock lock(m_mutex);

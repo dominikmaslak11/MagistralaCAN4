@@ -245,3 +245,59 @@ TEST(CanAlertEngine, AlertDescriptionContainsId) {
     eng.evaluate(makeFrame(0x1AB, 8));
     EXPECT_TRUE(desc.contains("1ab", Qt::CaseInsensitive));
 }
+
+// ── IsolationForestScore ──────────────────────────────────────────────────────
+
+TEST(CanAlertEngine, IsoForestScoreAboveThresholdTriggers) {
+    CanAlertEngine eng;
+    CanAlertRule r;
+    r.type        = AlertType::IsolationForestScore;
+    r.name        = "IsoTest";
+    r.action      = AlertAction::Log;
+    r.isThreshold = 0.5;
+    r.scorer      = []() { return 0.8; };  // always returns high score
+    eng.addRule(r);
+
+    int count = 0;
+    QObject::connect(&eng, &CanAlertEngine::alertTriggered,
+                     [&](const CanAlert &) { ++count; });
+
+    eng.evaluate(makeFrame(0x100, 8));
+    EXPECT_EQ(count, 1);
+}
+
+TEST(CanAlertEngine, IsoForestScoreBelowThresholdNoTrigger) {
+    CanAlertEngine eng;
+    CanAlertRule r;
+    r.type        = AlertType::IsolationForestScore;
+    r.name        = "IsoTest";
+    r.action      = AlertAction::Log;
+    r.isThreshold = 0.9;
+    r.scorer      = []() { return 0.3; };  // low score
+    eng.addRule(r);
+
+    int count = 0;
+    QObject::connect(&eng, &CanAlertEngine::alertTriggered,
+                     [&](const CanAlert &) { ++count; });
+
+    eng.evaluate(makeFrame(0x100, 8));
+    EXPECT_EQ(count, 0);
+}
+
+TEST(CanAlertEngine, IsoForestNoScorerNoTrigger) {
+    CanAlertEngine eng;
+    CanAlertRule r;
+    r.type        = AlertType::IsolationForestScore;
+    r.name        = "IsoNoScorer";
+    r.action      = AlertAction::Log;
+    r.isThreshold = 0.0;
+    // r.scorer not set — should not crash or trigger
+    eng.addRule(r);
+
+    int count = 0;
+    QObject::connect(&eng, &CanAlertEngine::alertTriggered,
+                     [&](const CanAlert &) { ++count; });
+
+    eng.evaluate(makeFrame(0x200, 8));
+    EXPECT_EQ(count, 0);
+}
