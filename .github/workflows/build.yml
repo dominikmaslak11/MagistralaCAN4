@@ -96,4 +96,6 @@ jobs:
         run: ninja -C build_ci -j$(nproc)
 
       - name: Test
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: ctest --test-dir build_ci --output-on-failure -j$(nproc)

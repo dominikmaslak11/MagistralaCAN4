@@ -85,7 +85,6 @@ TEST(LinParser, ParseWithoutSync) {
 TEST(LinParser, WrongChecksumDetected) {
     uint8_t id = 0x10;
     uint8_t pid = LinFrame::computePid(id);
-    uint8_t data[2] = {0x01, 0x02};
     uint8_t cs = 0xAA; // wrong
     std::vector<uint8_t> bytes = {0x55, pid, 0x01, 0x02, cs};
 

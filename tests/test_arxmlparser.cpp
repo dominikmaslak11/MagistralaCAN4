@@ -116,8 +116,8 @@ TEST(ArxmlParser, SignalBitLength) {
 
     ASSERT_EQ(msgs.size(), 1);
     for (auto &s : msgs[0].sigList) {
-        if (s.name == "EngineSpeed") EXPECT_EQ(s.length, 16);
-        if (s.name == "Throttle")    EXPECT_EQ(s.length, 8);
+        if (s.name == "EngineSpeed") { EXPECT_EQ(s.length, 16); }
+        if (s.name == "Throttle")    { EXPECT_EQ(s.length, 8);  }
     }
 }
 
@@ -131,8 +131,8 @@ TEST(ArxmlParser, SignalStartPosition) {
 
     ASSERT_EQ(msgs.size(), 1);
     for (auto &s : msgs[0].sigList) {
-        if (s.name == "EngineSpeed") EXPECT_EQ(s.startBit, 0);
-        if (s.name == "Throttle")    EXPECT_EQ(s.startBit, 16);
+        if (s.name == "EngineSpeed") { EXPECT_EQ(s.startBit, 0);  }
+        if (s.name == "Throttle")    { EXPECT_EQ(s.startBit, 16); }
     }
 }
 

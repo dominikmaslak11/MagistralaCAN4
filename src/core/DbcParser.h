@@ -6,14 +6,14 @@
 
 struct DbcSignal {
     QString name;
-    int startBit;       // bit startu (0‑63)
-    int length;         // długość w bitach
-    bool isLittleEndian;
-    bool isSigned;
-    double scale;
-    double offset;
-    double minimum;
-    double maximum;
+    int    startBit       = 0;
+    int    length         = 0;
+    bool   isLittleEndian = true;
+    bool   isSigned       = false;
+    double scale          = 1.0;
+    double offset         = 0.0;
+    double minimum        = 0.0;
+    double maximum        = 0.0;
     QString unit;
 };
 

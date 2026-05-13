@@ -3,6 +3,7 @@
 #include "core/CanFrameModel.h"
 #include "core/CanAlertEngine.h"
 #include <QApplication>
+#include <QDeadlineTimer>
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
