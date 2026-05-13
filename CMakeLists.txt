@@ -121,6 +121,7 @@ set(SOURCES
     src/core/CanByteHeatmapModel.cpp
     src/core/CanByteHeatmapWidget.cpp
     src/core/CanGaugeWidget.cpp
+    src/core/ArxmlParser.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
     src/core/CanOpenWidget.cpp
@@ -301,6 +302,7 @@ set(TEST_SOURCES
     tests/test_cantimelinemodel.cpp
     tests/test_httprestserver.cpp
     tests/test_canbyteheatmapmodel.cpp
+    tests/test_arxmlparser.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -334,6 +336,7 @@ set(TEST_SOURCES
     src/core/CanTimelineModel.cpp
     src/core/HttpRestServer.cpp
     src/core/CanByteHeatmapModel.cpp
+    src/core/ArxmlParser.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

@@ -51,6 +51,7 @@
 #include "core/CanAlertWidget.h"
 #include "core/CanProtocolTimelineWidget.h"
 #include "core/CanByteHeatmapWidget.h"
+#include "core/ArxmlParser.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -102,6 +103,7 @@ private slots:
     void updateMruMenus();
     void loadRecording();
     void togglePlayback();
+    void loadArxmlFile();
 
 private:
     void setupStyle();

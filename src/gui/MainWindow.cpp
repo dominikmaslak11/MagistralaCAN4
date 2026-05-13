@@ -542,6 +542,49 @@ void MainWindow::loadDbcFile() {
     }
 }
 
+void MainWindow::loadArxmlFile() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Importuj AUTOSAR ARXML", "",
+                                                    "ARXML files (*.arxml);;XML files (*.xml);;All files (*)");
+    if (fileName.isEmpty()) return;
+
+    ArxmlParser arxml;
+    QVector<DbcMessage> msgs = arxml.load(fileName);
+    if (!arxml.lastError().isEmpty()) {
+        QMessageBox::warning(this, "ARXML", "Błąd parsowania ARXML:\n" + arxml.lastError());
+        return;
+    }
+    if (msgs.isEmpty()) {
+        QMessageBox::warning(this, "ARXML", "Plik ARXML nie zawiera żadnych wiadomości CAN.");
+        return;
+    }
+
+    // Merge with existing DBC messages (ARXML adds on top, DBC wins on ID conflict)
+    QVector<DbcMessage> merged = m_dbcParser.messages();
+    QSet<uint32_t> existingIds;
+    for (auto &m : merged) existingIds.insert(m.id);
+    for (auto &m : msgs) {
+        if (!existingIds.contains(m.id))
+            merged.append(m);
+    }
+    m_dbcParser.setMessages(merged);
+
+    m_frameDetail->setDbcParser(&m_dbcParser);
+    m_canDashboard->setDbcParser(&m_dbcParser);
+    m_learner->setDbcParser(&m_dbcParser);
+    m_model->setDbcParser(&m_dbcParser);
+    m_mqttBridge.setDbcParser(&m_dbcParser);
+    m_signalPlotter->setDbcParser(&m_dbcParser);
+    m_frameSender->setDbcParser(&m_dbcParser);
+    m_signalMonitorWidget->setDbc(&m_dbcParser);
+    m_timelineWidget->setDbcParser(&m_dbcParser);
+    m_heatmapWidget->setDbcParser(&m_dbcParser);
+
+    Logger::log(QString("ARXML: zaimportowano %1 wiadomości z %2").arg(msgs.size()).arg(fileName));
+    QMessageBox::information(this, "ARXML",
+        QString("Zaimportowano %1 wiadomości CAN z pliku ARXML.\n"
+                "Łącznie w bazie: %2 wiadomości.").arg(msgs.size()).arg(merged.size()));
+}
+
 void MainWindow::onFrameSelected(const QModelIndex &index) {
     if (!index.isValid()) return;
     QModelIndex srcIdx = m_filterProxy ? m_filterProxy->mapToSource(index) : index;
@@ -611,6 +654,12 @@ void MainWindow::setupToolBar() {
     m_dbcToolBtn->setToolButtonStyle(Qt::ToolButtonTextOnly);
     connect(m_dbcToolBtn, &QToolButton::clicked, this, &MainWindow::loadDbcFile);
     toolbar->addWidget(m_dbcToolBtn);
+
+    // ARXML import button
+    auto *arxmlBtn = new QPushButton("ARXML");
+    arxmlBtn->setToolTip("Importuj sygnały z pliku AUTOSAR ARXML (.arxml)");
+    connect(arxmlBtn, &QPushButton::clicked, this, &MainWindow::loadArxmlFile);
+    toolbar->addWidget(arxmlBtn);
 
     // Presety filtrów ID
     toolbar->addSeparator();
