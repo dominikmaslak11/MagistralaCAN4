@@ -57,6 +57,7 @@
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
+#include "gui/LazyTabWidget.h"
 #include <QSystemTrayIcon>
 #include <QShortcut>
 
@@ -129,23 +130,23 @@ private:
     DbcEditorWidget *m_dbcEditor;
     CanNodeSimWidget *m_canSimWidget;
     RemoteCanWidget  *m_remoteCanWidget;
-    UdsWidget        *m_udsWidget;
-    LogComparatorWidget *m_logComparator;
-    ObdWidget           *m_obdWidget;
-    CanOpenWidget       *m_canOpenWidget;
-    SomeIpWidget        *m_someIpWidget;
+    UdsWidget        *m_udsWidget        = nullptr;
+    LogComparatorWidget *m_logComparator = nullptr;
+    ObdWidget           *m_obdWidget     = nullptr;
+    CanOpenWidget       *m_canOpenWidget = nullptr;
+    SomeIpWidget        *m_someIpWidget  = nullptr;
     SignalPlotterWidget *m_signalPlotter;
-    DoIpWidget          *m_doIpWidget;
+    DoIpWidget          *m_doIpWidget    = nullptr;
     DbcAutoWidget       *m_dbcAutoWidget;
     CanBusLoadWidget      *m_busLoadWidget;
     CanFrameSenderWidget  *m_frameSender;
     CanGatewayWidget      *m_gatewayWidget;
     UdsSequenceWidget     *m_udsSequenceWidget;
-    LinWidget             *m_linWidget;
+    LinWidget             *m_linWidget          = nullptr;
     CanIdStatsWidget      *m_idStatsWidget;
-    Kwp2000Widget         *m_kwp2000Widget;
-    XcpWidget             *m_xcpWidget;
-    CanReplayFilterWidget  *m_replayFilterWidget;
+    Kwp2000Widget         *m_kwp2000Widget      = nullptr;
+    XcpWidget             *m_xcpWidget          = nullptr;
+    CanReplayFilterWidget  *m_replayFilterWidget = nullptr;
     CanSignalMonitorWidget  *m_signalMonitorWidget;
     CanPeriodicSenderWidget *m_periodicSenderWidget;
     CanObservationDbWidget  *m_observationDbWidget;

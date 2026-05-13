@@ -85,13 +85,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_dbcEditor = new DbcEditorWidget;
     m_canSimWidget = new CanNodeSimWidget(&m_sniffer, m_luaEngine);
     m_remoteCanWidget = new RemoteCanWidget(&m_sniffer);
-    m_udsWidget = new UdsWidget;
-    m_logComparator = new LogComparatorWidget;
-    m_obdWidget = new ObdWidget;
-    m_canOpenWidget = new CanOpenWidget;
-    m_someIpWidget   = new SomeIpWidget;
+    // m_udsWidget, m_obdWidget, m_canOpenWidget, m_someIpWidget, m_doIpWidget — lazy (LazyTabWidget)
+    // m_logComparator — lazy
     m_signalPlotter  = new SignalPlotterWidget;
-    m_doIpWidget     = new DoIpWidget;
     m_dbcAutoWidget  = new DbcAutoWidget;
     m_dbcAutoWidget->setDbcEditor(m_dbcEditor);
     m_busLoadWidget  = new CanBusLoadWidget;
@@ -100,11 +96,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     if (m_canDriver)   m_gatewayWidget->addDriver("PCAN/SocketCAN", m_canDriver);
     if (m_slCanDriver) m_gatewayWidget->addDriver("SLCAN", m_slCanDriver);
     m_udsSequenceWidget = new UdsSequenceWidget(&m_sniffer);
-    m_linWidget      = new LinWidget;
+    // m_linWidget, m_kwp2000Widget, m_xcpWidget, m_replayFilterWidget — lazy (LazyTabWidget)
     m_idStatsWidget  = new CanIdStatsWidget;
-    m_kwp2000Widget  = new Kwp2000Widget;
-    m_xcpWidget           = new XcpWidget;
-    m_replayFilterWidget   = new CanReplayFilterWidget(&m_sniffer);
     m_signalMonitorWidget  = new CanSignalMonitorWidget;
     m_periodicSenderWidget = new CanPeriodicSenderWidget(&m_sniffer);
     m_observationDbWidget  = new CanObservationDbWidget;
@@ -221,9 +214,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Throttlowane sloty — co N-tą ramkę: dashboard, widgety diagnostyczne, pluginy
     connect(this, &MainWindow::frameProcessedThrottled, m_canDashboard, &CanDashboard::updateSignal);
     connect(this, &MainWindow::frameProcessedThrottled, m_j1939Widget, &J1939Widget::processFrame);
-    connect(this, &MainWindow::frameProcessedThrottled, m_udsWidget, &UdsWidget::processFrame);
-    connect(this, &MainWindow::frameProcessedThrottled, m_obdWidget, &ObdWidget::processFrame);
-    connect(this, &MainWindow::frameProcessedThrottled, m_canOpenWidget, &CanOpenWidget::processFrame);
+    // m_udsWidget, m_obdWidget, m_canOpenWidget — lazy: connected in LazyTabWidget factory
     connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter,  &SignalPlotterWidget::processFrame);
     connect(this, &MainWindow::frameProcessed,          m_dbcAutoWidget,  &DbcAutoWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_busLoadWidget,  &CanBusLoadWidget::processFrame);
@@ -751,35 +742,68 @@ void MainWindow::setupCentralWidget() {
     captureTabs->addTab(m_heatmapWidget,        "Byte Heatmap");
     captureTabs->addTab(m_timelineWidget,       "Timeline");
 
-    // ── Grupa: Protokoły ──────────────────────────────────────────────────────
-    auto *protocolTabs = new QTabWidget;
-    protocolTabs->addTab(m_j1939Widget,       "J1939");
-    protocolTabs->addTab(m_udsWidget,         "UDS");
-    protocolTabs->addTab(m_udsSequenceWidget, "Sekwencje UDS");
-    protocolTabs->addTab(m_obdWidget,         "OBD-II");
-    protocolTabs->addTab(m_kwp2000Widget,     "KWP2000");
-    protocolTabs->addTab(m_xcpWidget,         "XCP");
-    protocolTabs->addTab(m_canOpenWidget,     "CANopen");
-    protocolTabs->addTab(m_someIpWidget,      "SOME/IP");
-    protocolTabs->addTab(m_doIpWidget,        "DoIP");
-    protocolTabs->addTab(m_linWidget,         "LIN Bus");
+    // ── Grupa: Protokoły (lazy — parsery tworzone przy pierwszym otwarciu zakładki) ──
+    auto *protocolTabs = new LazyTabWidget;
+    protocolTabs->addTab(m_j1939Widget,       "J1939");          // eager: setJ1939Parser deps
+    protocolTabs->addLazyTab("UDS", [this]() -> QWidget* {
+        m_udsWidget = new UdsWidget;
+        connect(this, &MainWindow::frameProcessedThrottled, m_udsWidget, &UdsWidget::processFrame);
+        return m_udsWidget;
+    });
+    protocolTabs->addTab(m_udsSequenceWidget, "Sekwencje UDS");  // eager: Direct frame connect
+    protocolTabs->addLazyTab("OBD-II", [this]() -> QWidget* {
+        m_obdWidget = new ObdWidget;
+        connect(this, &MainWindow::frameProcessedThrottled, m_obdWidget, &ObdWidget::processFrame);
+        return m_obdWidget;
+    });
+    protocolTabs->addLazyTab("KWP2000", [this]() -> QWidget* {
+        m_kwp2000Widget = new Kwp2000Widget;
+        return m_kwp2000Widget;
+    });
+    protocolTabs->addLazyTab("XCP", [this]() -> QWidget* {
+        m_xcpWidget = new XcpWidget;
+        return m_xcpWidget;
+    });
+    protocolTabs->addLazyTab("CANopen", [this]() -> QWidget* {
+        m_canOpenWidget = new CanOpenWidget;
+        connect(this, &MainWindow::frameProcessedThrottled, m_canOpenWidget, &CanOpenWidget::processFrame);
+        return m_canOpenWidget;
+    });
+    protocolTabs->addLazyTab("SOME/IP", [this]() -> QWidget* {
+        m_someIpWidget = new SomeIpWidget;
+        return m_someIpWidget;
+    });
+    protocolTabs->addLazyTab("DoIP", [this]() -> QWidget* {
+        m_doIpWidget = new DoIpWidget;
+        return m_doIpWidget;
+    });
+    protocolTabs->addLazyTab("LIN Bus", [this]() -> QWidget* {
+        m_linWidget = new LinWidget;
+        return m_linWidget;
+    });
 
     // ── Grupa: Analiza ────────────────────────────────────────────────────────
-    auto *analysisTabs = new QTabWidget;
+    auto *analysisTabs = new LazyTabWidget;
     analysisTabs->addTab(m_learner,              "Uczenie asocjacyjne");
     analysisTabs->addTab(m_signalPlotter,        "Przebiegi sygnałów");
     analysisTabs->addTab(m_offlineAnalyzer,      "Analiza offline");
-    analysisTabs->addTab(m_logComparator,        "Porównywarka logów");
+    analysisTabs->addLazyTab("Porównywarka logów", [this]() -> QWidget* {
+        m_logComparator = new LogComparatorWidget;
+        return m_logComparator;
+    });
     analysisTabs->addTab(m_moduleProfilerWidget, "Moduły CAN");
     analysisTabs->addTab(m_alertWidget,          "Alerts");
     analysisTabs->addTab(m_signalMonitorWidget,  "Live Signals");
 
     // ── Grupa: Narzędzia ──────────────────────────────────────────────────────
-    auto *toolsTabs = new QTabWidget;
-    toolsTabs->addTab(m_frameSender,         "Nadajnik ramek");
-    toolsTabs->addTab(m_periodicSenderWidget,"Periodic Sender");
-    toolsTabs->addTab(m_gatewayWidget,       "CAN Gateway");
-    toolsTabs->addTab(m_replayFilterWidget,  "Replay Filter");
+    auto *toolsTabs = new LazyTabWidget;
+    toolsTabs->addTab(m_frameSender,          "Nadajnik ramek");
+    toolsTabs->addTab(m_periodicSenderWidget, "Periodic Sender");
+    toolsTabs->addTab(m_gatewayWidget,        "CAN Gateway");
+    toolsTabs->addLazyTab("Replay Filter", [this]() -> QWidget* {
+        m_replayFilterWidget = new CanReplayFilterWidget(&m_sniffer);
+        return m_replayFilterWidget;
+    });
     toolsTabs->addTab(m_protoExporterWidget, "Eksport kodu");
     toolsTabs->addTab(m_canSimWidget,        "Symulacja CAN");
     toolsTabs->addTab(m_remoteCanWidget,     "Zdalny CAN");
