@@ -1,4 +1,6 @@
 dist/
+build/
+build_*/
 *.o
 *.pro.user
 *.autosave

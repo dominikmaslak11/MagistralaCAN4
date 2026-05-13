@@ -1,2 +1,0 @@
-set(__QT_DEPLOY_TARGET_MagistralaCAN4_FILE /home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/MagistralaCAN4)
-set(__QT_DEPLOY_TARGET_MagistralaCAN4_TYPE EXECUTABLE)

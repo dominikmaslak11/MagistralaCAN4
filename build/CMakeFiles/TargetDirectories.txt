@@ -1,5 +1,0 @@
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4.dir
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/edit_cache.dir
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/rebuild_cache.dir
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4_autogen_timestamp_deps.dir
-/home/nz2xzhkzfeewkgbu/MagistralaCAN4/build/CMakeFiles/MagistralaCAN4_autogen.dir
