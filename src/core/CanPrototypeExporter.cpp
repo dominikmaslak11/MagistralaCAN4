@@ -117,7 +117,10 @@ QString CanPrototypeExporter::arduinoEncodeSignal(const DbcSignal &sig) {
             out += QString("    txData[%1] = (raw_%2 >> %3) & 0xFF;\n")
                        .arg(startByte + b).arg(varName).arg(b * 8);
     } else {
-        out += QString("    // TODO: complex signal packing (use Automotive Byte Order)\n");
+        out += QString("    packBits(txData, %1, %2, %3, %4f, %5f, %6);\n")
+                   .arg(sig.startBit).arg(sig.length).arg(varName)
+                   .arg(sig.scale).arg(sig.offset)
+                   .arg(sig.isLittleEndian ? "true" : "false");
     }
     return out;
 }
@@ -591,6 +594,38 @@ QString CanPrototypeExporter::generateArduino(const QVector<FrameExportInfo> &fr
       << "const long CAN_SPEED   = " << speedConst << ";\n"
          "const byte MCP_CLOCK   = MCP_16MHZ;   // or MCP_8MHZ depending on crystal\n\n"
          "MCP_CAN CAN(CAN_CS_PIN);\n\n";
+
+    // packBits helper — emit only when needed (non-byte-aligned or Motorola signals)
+    bool needsPack = false;
+    for (const auto &f : frames)
+        for (const auto &sig : f.sigList)
+            if ((sig.startBit % 8 != 0) || (sig.length % 8 != 0)) { needsPack = true; break; }
+
+    if (needsPack) {
+        s << "// ── Generic signal packer ───────────────────────────────────────────────────\n"
+             "// Packs a physical value into a CAN data buffer at the given bit position.\n"
+             "// Intel LE: startBit = LSB, bits grow towards MSB.  Motorola BE: startBit = MSB.\n"
+             "void packBits(byte* data, int startBit, int length, float value,\n"
+             "              float scale, float offset, bool littleEndian) {\n"
+             "    long raw = constrain((long)((value - offset) / scale), 0L, (1L << length) - 1L);\n"
+             "    if (littleEndian) {\n"
+             "        for (int i = 0; i < length; i++) {\n"
+             "            int b = (startBit + i) / 8, p = (startBit + i) % 8;\n"
+             "            if (b < 8) { if ((raw >> i) & 1) data[b] |= (1 << p);\n"
+             "                         else                data[b] &= ~(1 << p); }\n"
+             "        }\n"
+             "    } else {\n"
+             "        // Motorola: startBit is MSB; bits descend in DBC visual order\n"
+             "        for (int i = 0; i < length; i++) {\n"
+             "            int srcBit = length - 1 - i;\n"
+             "            int row = startBit / 8, col = 7 - (startBit % 8) + i;\n"
+             "            int b = row + col / 8, p = col % 8;\n"
+             "            if (b >= 0 && b < 8) { if ((raw >> srcBit) & 1) data[b] |= (1 << p);\n"
+             "                                    else                     data[b] &= ~(1 << p); }\n"
+             "        }\n"
+             "    }\n"
+             "}\n\n";
+    }
 
     // Per-message variables + encode functions
     for (const auto &f : frames) {

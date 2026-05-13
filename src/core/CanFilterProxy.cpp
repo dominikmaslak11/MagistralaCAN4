@@ -5,26 +5,27 @@
 CanFilterProxy::CanFilterProxy(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    setDynamicSortFilter(true); // re-filtruj przy zmianie danych
+    setDynamicSortFilter(true);
 }
 
 QString CanFilterProxy::setExpression(const QString &expr) {
     QString trimmed = expr.trimmed();
+    beginFilterChange();
     if (trimmed.isEmpty()) {
         m_exprActive = false;
-        invalidateFilter();
+        endFilterChange();
         return {};
     }
     m_expr = CanFilterExpr::parse(trimmed);
     if (!m_expr.isValid()) {
         m_exprActive = false;
-        invalidateFilter();
+        endFilterChange();
         return m_expr.errorString();
     }
     m_exprActive   = true;
-    m_filterActive = false; // expression takes over
+    m_filterActive = false;
     m_filterId     = 0;
-    invalidateFilter();
+    endFilterChange();
     return {};
 }
 
@@ -34,11 +35,18 @@ void CanFilterProxy::setIdFilter(const QString &text) {
         filter = filter.mid(2);
 
     bool wasActive = m_filterActive;
-    m_filterActive = !filter.isEmpty();
-    m_filterId = m_filterActive ? filter.toUInt(nullptr, 16) : 0;
+    bool newActive = !filter.isEmpty();
+    uint32_t newId = newActive ? filter.toUInt(nullptr, 16) : 0;
 
-    if (wasActive != m_filterActive || m_filterActive)
-        invalidateFilter();
+    if (wasActive != newActive || newActive) {
+        beginFilterChange();
+        m_filterActive = newActive;
+        m_filterId     = newId;
+        endFilterChange();
+    } else {
+        m_filterActive = newActive;
+        m_filterId     = newId;
+    }
 }
 
 bool CanFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
@@ -64,7 +72,6 @@ bool CanFilterProxy::lessThan(const QModelIndex &left, const QModelIndex &right)
     QVariant l = sourceModel()->data(left, Qt::UserRole);
     QVariant r = sourceModel()->data(right, Qt::UserRole);
 
-    // Numeryczne porównanie gdy obie strony mają UserRole
     if (l.isValid() && r.isValid()) {
         switch (left.column()) {
         case 0: // ID
@@ -78,6 +85,5 @@ bool CanFilterProxy::lessThan(const QModelIndex &left, const QModelIndex &right)
         }
     }
 
-    // Fallback: porównanie tekstowe
     return QSortFilterProxyModel::lessThan(left, right);
 }

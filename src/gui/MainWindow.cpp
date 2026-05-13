@@ -386,8 +386,9 @@ void MainWindow::updateTableBatch() {
     static const int MAX_BATCH = 500;
     QVector<CanFrame> batch;
     if (m_frameBuffer.size() > MAX_BATCH) {
-        batch = m_frameBuffer.mid(0, MAX_BATCH);
-        m_frameBuffer.erase(m_frameBuffer.begin(), m_frameBuffer.begin() + MAX_BATCH);
+        batch.resize(MAX_BATCH);
+        std::move(m_frameBuffer.begin(), m_frameBuffer.begin() + MAX_BATCH, batch.begin());
+        m_frameBuffer.remove(0, MAX_BATCH);
     } else {
         batch.swap(m_frameBuffer);
         m_frameBuffer.reserve(4096);
@@ -722,18 +723,14 @@ void MainWindow::setupToolBar() {
 }
 
 void MainWindow::setupCentralWidget() {
-    auto *tabs = new QTabWidget;
-
-    // Zakładka "Ruch CAN" z paskiem statystyk i filtrem ID
+    // ── Zakładka "Ruch CAN" (canTab) ─────────────────────────────────────────
     auto *canTab = new QWidget;
     auto *canLayout = new QVBoxLayout(canTab);
     canLayout->setContentsMargins(0, 0, 0, 0);
     canLayout->setSpacing(0);
-
     canLayout->addWidget(m_toolBarWidget);
     canLayout->addWidget(m_canStatsPanel);
 
-    // Tabela + pasek heatmap (szybki skok)
     auto *tableRow = new QHBoxLayout;
     tableRow->setContentsMargins(0, 0, 0, 0);
     tableRow->setSpacing(0);
@@ -743,44 +740,62 @@ void MainWindow::setupCentralWidget() {
     tableRow->addWidget(m_heatmapBar);
     canLayout->addLayout(tableRow);
 
-    tabs->addTab(canTab, "Ruch CAN");
-    tabs->addTab(m_learner, "Uczenie asocjacyjne");
-    tabs->addTab(m_frameDetail, "Szczegóły ramki");
-    tabs->addTab(m_offlineAnalyzer, "Analiza offline");
-    tabs->addTab(m_canDashboard, "Dashboard CAN");
-    tabs->addTab(m_j1939Widget, "Diagnostyka J1939");
-    tabs->addTab(m_dbcEditor, "Edytor DBC");
-    tabs->addTab(m_canSimWidget, "Symulacja CAN");
-    tabs->addTab(m_remoteCanWidget, "Zdalny CAN");
-    tabs->addTab(m_udsWidget, "Diagnostyka UDS");
-    tabs->addTab(m_logComparator, "Porównywarka logów");
-    tabs->addTab(m_obdWidget, "Diagnostyka OBD-II");
-    tabs->addTab(m_canOpenWidget, "CANopen");
-    tabs->addTab(m_someIpWidget,   "SOME/IP");
-    tabs->addTab(m_signalPlotter,  "Przebiegi sygnałów");
-    tabs->addTab(m_doIpWidget,     "DoIP");
-    tabs->addTab(m_dbcAutoWidget,  "Auto-DBC");
-    tabs->addTab(m_busLoadWidget,  "Obciążenie magistrali");
-    tabs->addTab(m_frameSender,    "Nadajnik ramek");
-    tabs->addTab(m_gatewayWidget,      "CAN Gateway");
-    tabs->addTab(m_udsSequenceWidget,  "Sekwencje UDS");
-    tabs->addTab(m_linWidget,          "LIN Bus");
-    tabs->addTab(m_idStatsWidget,      "ID Statistics");
-    tabs->addTab(m_kwp2000Widget,      "KWP2000");
-    tabs->addTab(m_xcpWidget,          "XCP");
-    tabs->addTab(m_replayFilterWidget,  "Replay Filter");
-    tabs->addTab(m_signalMonitorWidget,  "Live Signals");
-    tabs->addTab(m_periodicSenderWidget, "Periodic Sender");
-    tabs->addTab(m_observationDbWidget,  "Frame DB");
-    tabs->addTab(m_alertWidget,          "Alerts");
-    tabs->addTab(m_timelineWidget,       "Timeline");
-    tabs->addTab(m_heatmapWidget,          "Byte Heatmap");
-    tabs->addTab(m_moduleProfilerWidget,   "Moduły CAN");
-    tabs->addTab(m_protoExporterWidget,    "Eksport kodu");
-    // Wtyczki z plugins/
+    // ── Grupa: Przechwytywanie ────────────────────────────────────────────────
+    auto *captureTabs = new QTabWidget;
+    captureTabs->addTab(canTab,                 "Ruch CAN");
+    captureTabs->addTab(m_frameDetail,          "Szczegóły ramki");
+    captureTabs->addTab(m_canDashboard,         "Dashboard CAN");
+    captureTabs->addTab(m_busLoadWidget,        "Obciążenie magistrali");
+    captureTabs->addTab(m_idStatsWidget,        "ID Statistics");
+    captureTabs->addTab(m_observationDbWidget,  "Frame DB");
+    captureTabs->addTab(m_heatmapWidget,        "Byte Heatmap");
+    captureTabs->addTab(m_timelineWidget,       "Timeline");
+
+    // ── Grupa: Protokoły ──────────────────────────────────────────────────────
+    auto *protocolTabs = new QTabWidget;
+    protocolTabs->addTab(m_j1939Widget,       "J1939");
+    protocolTabs->addTab(m_udsWidget,         "UDS");
+    protocolTabs->addTab(m_udsSequenceWidget, "Sekwencje UDS");
+    protocolTabs->addTab(m_obdWidget,         "OBD-II");
+    protocolTabs->addTab(m_kwp2000Widget,     "KWP2000");
+    protocolTabs->addTab(m_xcpWidget,         "XCP");
+    protocolTabs->addTab(m_canOpenWidget,     "CANopen");
+    protocolTabs->addTab(m_someIpWidget,      "SOME/IP");
+    protocolTabs->addTab(m_doIpWidget,        "DoIP");
+    protocolTabs->addTab(m_linWidget,         "LIN Bus");
+
+    // ── Grupa: Analiza ────────────────────────────────────────────────────────
+    auto *analysisTabs = new QTabWidget;
+    analysisTabs->addTab(m_learner,              "Uczenie asocjacyjne");
+    analysisTabs->addTab(m_signalPlotter,        "Przebiegi sygnałów");
+    analysisTabs->addTab(m_offlineAnalyzer,      "Analiza offline");
+    analysisTabs->addTab(m_logComparator,        "Porównywarka logów");
+    analysisTabs->addTab(m_moduleProfilerWidget, "Moduły CAN");
+    analysisTabs->addTab(m_alertWidget,          "Alerts");
+    analysisTabs->addTab(m_signalMonitorWidget,  "Live Signals");
+
+    // ── Grupa: Narzędzia ──────────────────────────────────────────────────────
+    auto *toolsTabs = new QTabWidget;
+    toolsTabs->addTab(m_frameSender,         "Nadajnik ramek");
+    toolsTabs->addTab(m_periodicSenderWidget,"Periodic Sender");
+    toolsTabs->addTab(m_gatewayWidget,       "CAN Gateway");
+    toolsTabs->addTab(m_replayFilterWidget,  "Replay Filter");
+    toolsTabs->addTab(m_protoExporterWidget, "Eksport kodu");
+    toolsTabs->addTab(m_canSimWidget,        "Symulacja CAN");
+    toolsTabs->addTab(m_remoteCanWidget,     "Zdalny CAN");
+    toolsTabs->addTab(m_dbcEditor,           "Edytor DBC");
+    toolsTabs->addTab(m_dbcAutoWidget,       "Auto-DBC");
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
-            tabs->addTab(w, plugin->name());
+            toolsTabs->addTab(w, plugin->name());
+
+    // ── Główny QTabWidget (4 grupy) ───────────────────────────────────────────
+    auto *tabs = new QTabWidget;
+    tabs->addTab(captureTabs,  "Przechwytywanie");
+    tabs->addTab(protocolTabs, "Protokoły");
+    tabs->addTab(analysisTabs, "Analiza");
+    tabs->addTab(toolsTabs,    "Narzędzia");
+
     setCentralWidget(tabs);
 }
 
