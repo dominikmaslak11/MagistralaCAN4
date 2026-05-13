@@ -303,6 +303,7 @@ set(TEST_SOURCES
     tests/test_httprestserver.cpp
     tests/test_canbyteheatmapmodel.cpp
     tests/test_arxmlparser.cpp
+    tests/test_cangaugewidget.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -337,6 +338,7 @@ set(TEST_SOURCES
     src/core/HttpRestServer.cpp
     src/core/CanByteHeatmapModel.cpp
     src/core/ArxmlParser.cpp
+    src/core/CanGaugeWidget.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
@@ -347,6 +349,7 @@ target_link_libraries(${PROJECT_NAME}_tests PRIVATE
     gtest_main
     Qt6::Core
     Qt6::Gui
+    Qt6::Widgets
     Qt6::Test
     Qt6::Sql
     Qt6::Network

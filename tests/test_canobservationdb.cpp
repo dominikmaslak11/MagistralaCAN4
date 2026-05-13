@@ -1,21 +1,21 @@
 #include <gtest/gtest.h>
-#include <QCoreApplication>
+#include <QApplication>
 #include <QTemporaryFile>
 #include "core/CanObservationDb.h"
 #include "core/CanFrame.h"
 
-// QSQLITE plugin loader needs QCoreApplication — create one for the whole test binary
+// QWidget (CanGaugeWidget tests) and QSQLITE need QApplication
 namespace {
 static char   s_prog[] = "test";
 static char  *s_argv[] = { s_prog, nullptr };
 static int    s_argc   = 1;
 
 class QtSqlEnvironment : public ::testing::Environment {
-    QCoreApplication *m_app = nullptr;
+    QApplication *m_app = nullptr;
 public:
     void SetUp() override {
-        if (!QCoreApplication::instance())
-            m_app = new QCoreApplication(s_argc, s_argv);
+        if (!QApplication::instance())
+            m_app = new QApplication(s_argc, s_argv);
     }
     void TearDown() override { delete m_app; m_app = nullptr; }
 };

@@ -2,23 +2,24 @@
 #include "core/HttpRestServer.h"
 #include "core/CanFrameModel.h"
 #include "core/CanAlertEngine.h"
-#include <QCoreApplication>
+#include <QApplication>
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 
-// ── Test environment (QCoreApplication) ─────────────────────────────────────
+// ── Test environment ──────────────────────────────────────────────────────────
 
-static int    s_argc = 0;
-static char **s_argv = nullptr;
+static int    s_argc   = 1;
+static char  *s_argbuf = (char*)"test";
+static char **s_argv   = &s_argbuf;
 
 class QtNetEnvironment : public ::testing::Environment {
-    QCoreApplication *m_app = nullptr;
+    QApplication *m_app = nullptr;
 public:
     void SetUp() override {
-        if (!QCoreApplication::instance())
-            m_app = new QCoreApplication(s_argc, s_argv);
+        if (!QApplication::instance())
+            m_app = new QApplication(s_argc, s_argv);
     }
     void TearDown() override { delete m_app; m_app = nullptr; }
 };
