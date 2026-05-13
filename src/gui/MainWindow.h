@@ -49,6 +49,7 @@
 #include "core/CanPeriodicSenderWidget.h"
 #include "core/CanObservationDbWidget.h"
 #include "core/CanAlertWidget.h"
+#include "core/CanProtocolTimelineWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -143,7 +144,8 @@ private:
     CanSignalMonitorWidget  *m_signalMonitorWidget;
     CanPeriodicSenderWidget *m_periodicSenderWidget;
     CanObservationDbWidget  *m_observationDbWidget;
-    CanAlertWidget          *m_alertWidget;
+    CanAlertWidget               *m_alertWidget;
+    CanProtocolTimelineWidget    *m_timelineWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

@@ -109,6 +109,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_periodicSenderWidget = new CanPeriodicSenderWidget(&m_sniffer);
     m_observationDbWidget  = new CanObservationDbWidget;
     m_alertWidget          = new CanAlertWidget;
+    m_timelineWidget       = new CanProtocolTimelineWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -226,6 +227,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             [this](const CanFrame &f) { m_observationDbWidget->onFrame(f); });
     connect(this, &MainWindow::frameProcessed, m_alertWidget,
             [this](const CanFrame &f) { m_alertWidget->onFrame(f); });
+    connect(this, &MainWindow::frameProcessedThrottled, m_timelineWidget,
+            [this](const CanFrame &f) { m_timelineWidget->processFrame(f); });
     connect(m_alertWidget->engine(), &CanAlertEngine::alertTriggered,
             this, [this](const CanAlert &a) {
                 if (a.frame.id != 0 || !a.description.isEmpty())
@@ -266,6 +269,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_signalPlotter->setDbcParser(parser);
         m_frameSender->setDbcParser(parser);
         m_signalMonitorWidget->setDbc(parser);
+        m_timelineWidget->setDbcParser(parser);
     });
 
     loadSettings();
@@ -520,6 +524,7 @@ void MainWindow::loadDbcFile() {
         m_signalPlotter->setDbcParser(&m_dbcParser);
         m_frameSender->setDbcParser(&m_dbcParser);
         m_signalMonitorWidget->setDbc(&m_dbcParser);
+        m_timelineWidget->setDbcParser(&m_dbcParser);
         addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
@@ -697,6 +702,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_periodicSenderWidget, "Periodic Sender");
     tabs->addTab(m_observationDbWidget,  "Frame DB");
     tabs->addTab(m_alertWidget,          "Alerts");
+    tabs->addTab(m_timelineWidget,       "Timeline");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
@@ -1079,6 +1085,7 @@ void MainWindow::updateMruMenus() {
                         m_signalPlotter->setDbcParser(&m_dbcParser);
                         m_frameSender->setDbcParser(&m_dbcParser);
                         m_signalMonitorWidget->setDbc(&m_dbcParser);
+                        m_timelineWidget->setDbcParser(&m_dbcParser);
                         addMruFile(path, true);
                     }
                 } else {

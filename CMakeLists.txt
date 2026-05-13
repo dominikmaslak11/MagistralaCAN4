@@ -116,6 +116,8 @@ set(SOURCES
     src/core/CanAlertEngine.cpp
     src/core/CanAlertWidget.cpp
     src/core/PcapExporter.cpp
+    src/core/CanTimelineModel.cpp
+    src/core/CanProtocolTimelineWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
@@ -293,6 +295,7 @@ set(TEST_SOURCES
     tests/test_canobservationdb.cpp
     tests/test_canalerengine.cpp
     tests/test_pcapexporter.cpp
+    tests/test_cantimelinemodel.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -323,6 +326,7 @@ set(TEST_SOURCES
     src/core/CanObservationDb.cpp
     src/core/CanAlertEngine.cpp
     src/core/PcapExporter.cpp
+    src/core/CanTimelineModel.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
