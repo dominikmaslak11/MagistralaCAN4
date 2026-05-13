@@ -554,3 +554,147 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 3. **AUTOSAR ARXML import** — sygnały z ARXML bez DBC
 4. **Alert → ML integration** — reguła `IsolationForestScore` (score >threshold z LearningEngine)
 5. **Lua hook w Alert Pipeline** — `on_alert(rule, frame)` callback dla zaawansowanych akcji
+
+---
+
+## Sesja 2026-05-13 (część 3): CanProtocolTimelineWidget ✅
+
+### Testy: 330 → 344 (+14 testów, 24 test suites)
+### Commit: `b2b5e67`
+
+### CanTimelineModel — model danych sekwencji protokołów
+
+- ✅ `src/core/CanTimelineModel.h/cpp` — rejestruje zdarzenia protokołów po czasie:
+  - Zdarzenia: `{tsUs, protocolName, canId, label, color}` — maksymalnie `kMaxEvents=5000` per model
+  - `addEvent(tsUs, proto, id, label, color)` → ring-push + `m_maxTs` tracking
+  - `events(windowUs, bucketCount)` → agregacja do kubełków dla rysowania osi czasu
+  - `clearBefore(tsUs)` — przycinanie starych zdarzeń (sliding window)
+- ✅ `src/core/CanProtocolTimelineWidget.h/cpp` — Qt6 Charts scatter chart:
+  - `QCategoryAxis` (Y) — nazwy protokołów (J1939, UDS, KWP, XCP, SOME/IP, DoIP, LIN, CANopen)
+  - `QValueAxis` (X) — czas w sekundach, rolling 30s okno
+  - `processFrame(CanFrame)` — klasyfikuje ramkę per protokół i dodaje punkt na wykres
+  - Konfiguracja: przycisk Clear, okno czasu [5s/10s/30s/60s], DBC parser (hover tooltip z nazwą wiadomości)
+  - Fix: `QCategoryAxis::remove()` przyjmuje `const QString&`, nie `QStringList` — iteracja per label
+- ✅ `tests/test_cantimelinemodel.cpp` — 14 testów:
+  - EmptyState, AddEvent, WindowFilter, RingBufferCap, MultiProtocol, ClearBefore, MaxTimestamp, BucketCount
+  - overlapping timestamps, zero window, single bucket, protocol isolation, clear all, latestTimestamp
+
+### Łączny stan (po części 3)
+- **Testy**: 344/344 w 24 suites
+- **Nowa zakładka**: "Timeline" (CanProtocolTimelineWidget)
+
+---
+
+## Sesja 2026-05-13 (część 4): HTTP REST API + CanObservationDb fix ✅
+
+### Testy: 344 → 361 (+17 testów, 25 test suites)
+### Commit: `32acd36`
+
+### HttpRestServer — pełne REST API do sterowania snifferem
+
+- ✅ `src/core/HttpRestServer.h/cpp` — serwer HTTP/1.0 na `QTcpServer` (Qt6::Network):
+  - **7 endpointów**:
+    - `GET /api/status` — wersja, stan sniffingu, liczba ramek, bus load
+    - `GET /api/stats` — kopia /status z dodatkowymi polami
+    - `GET /api/frames?limit=N&id=0xXXX` — ostatnie N ramek (opcjonalny filtr ID)
+    - `GET /api/ids` — lista unikalnych ID z częstością (malejąco)
+    - `GET /api/alerts` — ring buffer 100 ostatnich alertów (thread-safe mutex)
+    - `POST /api/send` — wysyłanie ramki: `{"id": "0x1A0", "dlc": 8, "data": [...]}`
+    - `POST /api/start` / `POST /api/stop` — start/stop sniffingu zdalnie
+  - CORS: `Access-Control-Allow-Origin: *` na każdej odpowiedzi, 204 dla OPTIONS
+  - `parseRawRequest()`: ekstrakcja method/path/query/body z surowego TCP
+  - `queryParam(name)`: URL-decode przez `QUrlQuery`
+  - `setAlertEngine(CanAlertEngine*)` + ring buffer 100 alertów z `std::mutex`
+  - Sygnały: `startRequested`, `stopRequested`, `sendFrameRequested(CanFrame)`
+- ✅ `tests/test_httprestserver.cpp` — 17 testów:
+  - Klucz: `doRequest()` helper z `QCoreApplication::processEvents()` spin (nie `waitFor*` — nie procesuje event loop)
+  - StatusEndpoint, FramesEndpoint, IdsEndpoint, AlertsEndpoint, SendEndpoint, OptionsCorsPreflight
+  - StartStop, InvalidJson, MissingFields, EmptyModel, ServerStart, MultipleRequests, BusLoadField
+
+### CanObservationDb — fix przepełnienia bufora
+
+- ✅ `std::copy(frame.data.begin(), frame.data.end(), row.data)` kopiowało 64 bajty (`std::array<uint8_t,64>`) do `PendingRow::data[8]`
+- ✅ Fix: `std::copy_n(frame.data.begin(), std::min(frame.dlc, 8), row.data)` — tylko `min(dlc, 8)` bajtów
+
+### Dokumentacja
+
+- ✅ README.md: wersja 2.1.0 → 2.2.0, 7 nowych wierszy w tabeli architektury, Mermaid diagram, nowe sekcje (Frame DB, Alerts, Timeline)
+- ✅ README.tex: nowe infobox bullets, wiersze tabeli komponentów (różowe), nowe subsections, TikZ SQLite/GTest nodes
+
+### Łączny stan (po części 4)
+- **Testy**: 361/361 w 25 suites
+- **REST API**: curl/JavaScript dostęp do wszystkich danych sniffera
+- **Nowe Qt6**: Qt6::Network (linkowany statycznie z qt6-static MSYS2)
+
+---
+
+## Sesja 2026-05-13 (część 5): CanByteHeatmap + crash fix ✅
+
+### Testy: 361 → 374 (+13 testów, 26 test suites)
+### Commit: `4dd56dd`
+
+### SIGSEGV crash fix — aplikacja nie startowała
+
+- ✅ **Diagnoza (GNU GDB)**: SIGSEGV w `CanAlertWidget::onTypeChanged(int)` podczas budowy `MainWindow`
+  - Stack trace: `QWidget::layout()` ← `onTypeChanged(0)` ← `CanAlertWidget::CanAlertWidget()` ← `MainWindow::MainWindow()`
+  - Przyczyna: `m_nameEdit->parentWidget()->parentWidget()` zwracał `nullptr` (widget nie miał jeszcze rodzica podczas konstruktora)
+  - `qobject_cast<QGroupBox*>(nullptr)->layout()` → dereferencja nullptr = SIGSEGV
+  - Zmienna `form` była `Q_UNUSED` — cały kod był martwym kodem
+- ✅ **Fix**: usunięte 2 martwe linie (cały łańcuch castów + `Q_UNUSED(form)`)
+- ✅ Fałszywy crash (pierwsza sesja GDB): `QT_QPA_PLATFORM=offscreen` — statyczny build ma tylko plugin `windows`; fix: `Remove-Item Env:QT_QPA_PLATFORM`
+
+### CanByteHeatmapModel — ring-buffer model danych
+
+- ✅ `src/core/CanByteHeatmapModel.h/cpp` — czysty C++, bez Qt:
+  - Per-ID `std::deque<uint64_t> timestamps` + `std::deque<std::array<uint8_t,8>> byteValues`
+  - `addFrame(CanFrame, tsUs)` — kopiuje `min(dlc,8)` bajtów, cap ring buffera (`maxFramesPerid=5000`)
+  - `heatmapData(id, windowUs, bucketCount)` → `vector<array<double,8>>` — średnia wartości bajtów per kubełek; `-1.0` dla pustych kubełków
+  - `trackedIds()`, `frameCount(id)`, `totalIds()`, `latestTimestamp()`
+
+### CanByteHeatmapWidget — wizualizacja heatmapy
+
+- ✅ `src/core/CanByteHeatmapWidget.h/cpp` — custom `QWidget::paintEvent`:
+  - Siatka: wiersze = kubełki czasu (góra=najstarszy, dół=najnowszy), kolumny = B0…B7
+  - Gradient 5-stopniowy: `0x00` = ciemny granat → `0x80` = cyan/zielony → `0xFF` = żółty/biały
+  - Marginesy: left 64px (etykiety czasu), top 28px (nagłówki B0-B7), right 70px (legenda), bottom 16px
+  - Hover: `mouseMoveEvent` → QToolTip z `Bajt B%1 | kubełek %2 | Średnia: 0x%3 (%4 dec)`
+  - Przyciski Prev/Next — cykliczne przeglądanie tracked IDs (kolejność wstawiania)
+  - Combo: okno czasu (1s/5s/10s/30s/60s) + liczba kubełków (10/20/30/50)
+  - Timer 500ms odświeżanie, tryb Pause, przycisk Clear
+  - `processFrame(CanFrame, tsUs=0)` slot — auto-timestamp z `QDateTime::currentMSecsSinceEpoch()`
+
+### Testy
+
+- ✅ `tests/test_canbyteheatmapmodel.cpp` — 13 testów:
+  - EmptyInitialState, AddFrameTracksId, MultipleIds, InsertionOrderPreserved
+  - RingBufferCapsPerid, HeatmapEmptyForUnknownId, HeatmapSingleFrame
+  - HeatmapAveragesWithinBucket, HeatmapNoBucketCount, HeatmapOnlyBytesUpToDlc
+  - ClearResetsAll, LatestTimestampUpdates, NoDataOutsideWindow
+
+### Integracja MainWindow
+
+- ✅ `m_heatmapWidget = new CanByteHeatmapWidget` — nowa zakładka "Byte Heatmap"
+- ✅ `frameProcessedThrottled` → `m_heatmapWidget->processFrame(f)`
+- ✅ DBC parser wired we wszystkich 3 ścieżkach ładowania DBC
+
+### Dystrybucja (build_native/)
+
+- ✅ 31 DLL-ek MSYS2/UCRT64 skopiowanych do `build_native/` i śledzonych w Git:
+  - Qt6 linkowany statycznie (brak Qt6*.dll) — kod Qt skompilowany do exe
+  - Dynamiczne tylko zależności systemowe: libssl, libfreetype, libpcre2, libharfbuzz, libwebp, libtiff, libjpeg, libpng, libzstd, lua55, libgcc_s_seh, libstdc++, libwinpthread i in.
+  - Rozmiar exe: ~62 MB (Semi-static: Qt w exe, system libs jako DLL)
+- ✅ Commit + push na GitHub
+
+### Łączny stan projektu (2026-05-13, część 5)
+- **Testy**: 374/374 w 26 suites
+- **Protokoły**: CAN, CAN FD, LIN, J1939, UDS, KWP2000, XCP, SOME/IP, DoIP, CANopen, OBD-II
+- **Narzędzia**: Bus Load, Frame Sender, Periodic Sender, CAN Gateway, UDS Sequences, Replay Filter, Signal Monitor, Frame DB, **Byte Heatmap**, HTTP REST API, Timeline
+- **ML**: LearningEngine z 37 algorytmami, t-SNE, Isolation Forest, GBT, EWMA
+- **Infrastruktura**: REST API, MQTT, WebSocket, MDF4, zstd, Lua scripting, plugin system, CI/CD
+
+### Roadmapa (następna sesja — priorytety)
+1. **CAN FD extended stats** — Bit Timing, TDC, ESI tracking per-ID
+2. **AUTOSAR ARXML import** — sygnały z ARXML bez DBC (Vehicle Network Designer format)
+3. **Alert → ML integration** — reguła `IsolationForestScore` (score >threshold z LearningEngine)
+4. **Lua hook w Alert Pipeline** — `on_alert(rule, frame)` callback
+5. **CanGaugeWidget** — analogowe wskaźniki dla sygnałów DBC (prędkościomierz, obrotomierz)
