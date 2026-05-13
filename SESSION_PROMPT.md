@@ -448,3 +448,59 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 3. **Protocol sequence diagram** — wizualna oś czasu wymiany komunikatów (MSC diagram)
 4. **CAN FD extended stats** — Bit Timing, TDC, ESI tracking
 5. **AUTOSAR ARXML import** — sygnały z ARXML bez DBC (Vehicle Network Designer format)
+
+---
+
+## Sesja 2026-05-13: SQLite Frame DB + CI/CD fix ✅
+
+### Testy: 294 → 307 (+13 testów, 21 test suites)
+### Commit: `27fb969`
+
+### CI/CD — naprawione (były całkowicie zepsute)
+
+**Problem:** `CMakeLists.txt` hardkodował `C:/msys64/ucrt64/qt6-static` oraz flagi `-static-libgcc -static-libstdc++ -static` zawsze, niezależnie od środowiska. CI (GitHub Actions) używa dynamicznego Qt6 z `/ucrt64`, więc build na CI się wysypywał.
+
+**Rozwiązania:**
+- ✅ `CMakeLists.txt`: prefiks statycznego Qt6 otoczony `if(NOT DEFINED ENV{CI} AND EXISTS "C:/msys64/ucrt64/qt6-static")` — lokalnie działa statycznie, na CI nie ingeruje w CMAKE_PREFIX_PATH
+- ✅ `CMakeLists.txt`: flagi `-static-libgcc -static-libstdc++ -static` otoczone `if(NOT DEFINED ENV{CI})` — identyczna logika dla obu targetów (exe + tests)
+- ✅ `CMakeLists.txt`: dodano `Qt6::Sql` do `find_package` + `target_link_libraries` dla obu targetów
+- ✅ `build.yml` Windows job: dodano `-DCMAKE_PREFIX_PATH=/ucrt64`, `qt6-sql` do paczek MSYS2, build zmieniony na `--target MagistralaCAN4_tests` + `QT_QPA_PLATFORM=offscreen`
+- ✅ `ci.yml` Windows job: poprawiono `-DCMAKE_PREFIX_PATH=/ucrt64/qt6-static` → `/ucrt64`, dodano `qt6-sql`
+
+### CanObservationDb — SQLite-backed frame storage
+
+- ✅ `src/core/CanObservationDb.h/cpp` — persistentna baza obserwacji przez Qt6::Sql/QSQLITE
+  - **Schema**: tabela `sessions` (id, label, started, ended) + tabela `frames` (session_id, ts_us, can_id, extended, dlc, data BLOB)
+  - **Indeksy**: `idx_frames_can_id`, `idx_frames_session`, `idx_frames_ts`
+  - **WAL mode** + `PRAGMA synchronous=NORMAL` — szybkie zapisy bez blokowania
+  - **Batched inserts**: buforowanie do `kBatchSize=500` ramek → jednorazowa transakcja
+  - **API**: `open(path)`, `close()`, `beginSession(label)`, `endSession()`, `recordFrame(frame, ts_us)`, `flush()`, `queryByCanId(id, sessionId, limit)`, `totalFrameCount(sessionId)`, `listSessions()`, `reset()`
+  - Fix Qt warning: `m_db = QSqlDatabase()` przed `removeDatabase()` aby zwolnić wewnętrzną referencję
+
+- ✅ `src/core/CanObservationDbWidget.h/cpp` — Qt UI:
+  - Ścieżka do pliku DB + Open/Close + New Session + Reset DB (z potwierdzeniem)
+  - Query by CAN ID: hex input + limit spinner → tabela wyników (Session, Timestamp µs, CAN ID, DLC, Data)
+  - Stats label: liczba sesji, łączna liczba ramek, ramki bieżącej sesji
+  - `onFrame(CanFrame, ts_us=0)` — publiczny slot podpięty do `frameProcessed` przez lambdę w MainWindow
+
+- ✅ `tests/test_canobservationdb.cpp` — 13 testów:
+  - OpenClose, ReopenSameFile, BeginSessionReturnsPositiveId, MultipleSessionsIncrease, ListSessions
+  - RecordAndCount, CountPerSession, QueryByCanId, QueryByCanIdFilterSession, DataRoundtrip
+  - BatchInsertFlushes, ResetClearsAll, NoOpenNoRecord
+  - `QCoreApplication` tworzony przez `testing::Environment` (gtest globalny hook) — bez konfliktu z `gtest_main`
+
+- ✅ Nowa zakładka "Frame DB" w MainWindow, połączona z sygnałem `frameProcessed`
+
+### Łączny stan projektu (2026-05-13)
+- **Testy**: 307/307 w 21 suites
+- **Protokoły**: CAN, CAN FD, LIN, J1939, UDS, KWP2000, XCP, SOME/IP, DoIP, CANopen, OBD-II
+- **Narzędzia**: Bus Load, Frame Sender, Periodic Sender, CAN Gateway, UDS Sequences, Replay Filter, Signal Monitor, **Frame DB (SQLite)**
+- **ML**: LearningEngine z 37 algorytmami, t-SNE, Isolation Forest, GBT, EWMA
+- **Infrastruktura**: REST API, MQTT, WebSocket, MDF4, zstd, Lua scripting, plugin system, CI/CD (GitHub Actions)
+
+### Roadmapa (następna sesja — priorytety)
+1. **Protocol Sequence Diagram** — wizualna oś czasu wymiany komunikatów (MSC diagram)
+2. **CAN FD extended stats** — Bit Timing, TDC, ESI tracking
+3. **AUTOSAR ARXML import** — sygnały z ARXML bez DBC
+4. **CanObservationDb → ML integration** — trenowanie modeli na danych historycznych z SQLite
+5. **Eksport do Wireshark PCAP** — `.pcap` z enkapsulaacją socketcan
