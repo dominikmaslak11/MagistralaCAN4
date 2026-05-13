@@ -126,10 +126,6 @@ void CanAlertWidget::buildUi() {
 void CanAlertWidget::onTypeChanged(int idx) {
     bool isByte = (idx == 2);
     bool isRate = (idx == 3);
-    // Show/hide byte-specific controls
-    auto *form = qobject_cast<QFormLayout*>(
-        qobject_cast<QGroupBox*>(m_nameEdit->parentWidget()->parentWidget())->layout());
-    Q_UNUSED(form);
     m_idEdit->setVisible(isByte);
     m_byteIdxSpin->setVisible(isByte);
     m_opCombo->setVisible(isByte);

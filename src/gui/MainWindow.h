@@ -50,6 +50,7 @@
 #include "core/CanObservationDbWidget.h"
 #include "core/CanAlertWidget.h"
 #include "core/CanProtocolTimelineWidget.h"
+#include "core/CanByteHeatmapWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -146,6 +147,7 @@ private:
     CanObservationDbWidget  *m_observationDbWidget;
     CanAlertWidget               *m_alertWidget;
     CanProtocolTimelineWidget    *m_timelineWidget;
+    CanByteHeatmapWidget         *m_heatmapWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

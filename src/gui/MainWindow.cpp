@@ -110,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_observationDbWidget  = new CanObservationDbWidget;
     m_alertWidget          = new CanAlertWidget;
     m_timelineWidget       = new CanProtocolTimelineWidget;
+    m_heatmapWidget        = new CanByteHeatmapWidget;
     m_restServer.setModel(m_model);
     m_restServer.setAlertEngine(m_alertWidget->engine());
     connect(&m_restServer, &HttpRestServer::startRequested,    this, [this]() { if (!m_sniffing) toggleSniffing(); });
@@ -232,6 +233,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             [this](const CanFrame &f) { m_alertWidget->onFrame(f); });
     connect(this, &MainWindow::frameProcessedThrottled, m_timelineWidget,
             [this](const CanFrame &f) { m_timelineWidget->processFrame(f); });
+    connect(this, &MainWindow::frameProcessedThrottled, m_heatmapWidget,
+            [this](const CanFrame &f) { m_heatmapWidget->processFrame(f); });
     connect(m_alertWidget->engine(), &CanAlertEngine::alertTriggered,
             this, [this](const CanAlert &a) {
                 if (a.frame.id != 0 || !a.description.isEmpty())
@@ -273,6 +276,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_frameSender->setDbcParser(parser);
         m_signalMonitorWidget->setDbc(parser);
         m_timelineWidget->setDbcParser(parser);
+        m_heatmapWidget->setDbcParser(parser);
     });
 
     loadSettings();
@@ -528,6 +532,7 @@ void MainWindow::loadDbcFile() {
         m_frameSender->setDbcParser(&m_dbcParser);
         m_signalMonitorWidget->setDbc(&m_dbcParser);
         m_timelineWidget->setDbcParser(&m_dbcParser);
+        m_heatmapWidget->setDbcParser(&m_dbcParser);
         addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
@@ -706,6 +711,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_observationDbWidget,  "Frame DB");
     tabs->addTab(m_alertWidget,          "Alerts");
     tabs->addTab(m_timelineWidget,       "Timeline");
+    tabs->addTab(m_heatmapWidget,        "Byte Heatmap");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())
@@ -1089,6 +1095,7 @@ void MainWindow::updateMruMenus() {
                         m_frameSender->setDbcParser(&m_dbcParser);
                         m_signalMonitorWidget->setDbc(&m_dbcParser);
                         m_timelineWidget->setDbcParser(&m_dbcParser);
+                        m_heatmapWidget->setDbcParser(&m_dbcParser);
                         addMruFile(path, true);
                     }
                 } else {
