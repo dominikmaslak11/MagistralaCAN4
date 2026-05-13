@@ -111,8 +111,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_alertWidget          = new CanAlertWidget;
     m_timelineWidget       = new CanProtocolTimelineWidget;
     m_restServer.setModel(m_model);
-    connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
-    connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
+    m_restServer.setAlertEngine(m_alertWidget->engine());
+    connect(&m_restServer, &HttpRestServer::startRequested,    this, [this]() { if (!m_sniffing) toggleSniffing(); });
+    connect(&m_restServer, &HttpRestServer::stopRequested,     this, [this]() { if (m_sniffing)  toggleSniffing(); });
+    connect(&m_restServer, &HttpRestServer::sendFrameRequested,
+            this, [this](const CanFrame &f) { m_sniffer.writeFrame(f); });
     m_pluginLoader.loadFromDirectory("./plugins");
     m_offlineAnalyzer = new OfflineAnalyzer(m_learner, m_luaEngine);
     m_offlineAnalyzer->setSniffer(&m_sniffer);

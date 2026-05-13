@@ -117,7 +117,8 @@ void CanObservationDb::recordFrame(const CanFrame &frame, uint64_t timestampUs) 
     row.canId       = frame.id;
     row.extended    = frame.extended;
     row.dlc         = frame.dlc;
-    std::copy(std::begin(frame.data), std::end(frame.data), std::begin(row.data));
+    int toCopy = std::min(static_cast<int>(frame.dlc), 8);
+    std::copy_n(std::begin(frame.data), toCopy, std::begin(row.data));
     m_pending.push_back(row);
 
     if (static_cast<int>(m_pending.size()) >= kBatchSize)

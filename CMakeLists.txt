@@ -22,7 +22,7 @@ if(WIN32 OR MINGW)
         set(CMAKE_PREFIX_PATH "C:/msys64/ucrt64/qt6-static" CACHE PATH "Static Qt6 prefix (MSYS2 UCRT64)")
     endif()
 endif()
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort Sql)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort Sql Network)
 
 # ── zstd (kompresja nagrań) ──
 if(WIN32 OR MINGW)
@@ -220,6 +220,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::OpenGLWidgets
     Qt6::SerialPort
     Qt6::Sql
+    Qt6::Network
     $<$<BOOL:${ZSTD_FOUND}>:PkgConfig::ZSTD>
 )
 
@@ -268,7 +269,7 @@ endif()
 # ═══════════════════════════════════════════════════════════════
 # ── Testy jednostkowe (Google Test + QTest) ──
 # ═══════════════════════════════════════════════════════════════
-find_package(Qt6 REQUIRED COMPONENTS Test)
+find_package(Qt6 REQUIRED COMPONENTS Test Network)
 
 set(TEST_SOURCES
     # Test files
@@ -296,6 +297,7 @@ set(TEST_SOURCES
     tests/test_canalerengine.cpp
     tests/test_pcapexporter.cpp
     tests/test_cantimelinemodel.cpp
+    tests/test_httprestserver.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -327,6 +329,7 @@ set(TEST_SOURCES
     src/core/CanAlertEngine.cpp
     src/core/PcapExporter.cpp
     src/core/CanTimelineModel.cpp
+    src/core/HttpRestServer.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
@@ -339,6 +342,7 @@ target_link_libraries(${PROJECT_NAME}_tests PRIVATE
     Qt6::Gui
     Qt6::Test
     Qt6::Sql
+    Qt6::Network
 )
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE UNIT_TEST)
 
