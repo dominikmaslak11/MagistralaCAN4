@@ -25,12 +25,8 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort Sql Network)
 
 # ── zstd (kompresja nagrań) ──
-if(WIN32 OR MINGW)
-    find_package(PkgConfig)
-    pkg_check_modules(ZSTD IMPORTED_TARGET libzstd)
-else()
-    find_package(zstd)
-endif()
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(ZSTD IMPORTED_TARGET libzstd)
 
 # ── Platform-specific dependencies ──
 if(UNIX AND NOT APPLE)

@@ -87,7 +87,7 @@ CanFrame SocketCanDriver::readFrame() {
         frame.sdt = xlf->sdt;
         frame.af = xlf->af;
         frame.dlc = xlf->len > CANXL_MAX_DLC ? CANXL_MAX_DLC : xlf->len;
-        int xlN = std::min(frame.dlc, 64);
+        int xlN = std::min((int)frame.dlc, 64);
         for (int i = 0; i < xlN; ++i) frame.data[i] = xlf->data[i];
         frame.timestamp = ts;
     }

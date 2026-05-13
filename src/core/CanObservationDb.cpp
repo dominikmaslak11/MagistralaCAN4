@@ -85,7 +85,7 @@ int64_t CanObservationDb::beginSession(const QString &label) {
     QSqlQuery q(m_db);
     q.prepare("INSERT INTO sessions (label, started) VALUES (?, ?)");
     q.addBindValue(label.isEmpty() ? QVariant{} : QVariant(label));
-    q.addBindValue(now);
+    q.addBindValue(static_cast<qlonglong>(now));
     q.exec();
     m_sessionId = q.lastInsertId().toLongLong();
     return m_sessionId;
@@ -96,8 +96,8 @@ void CanObservationDb::endSession() {
     int64_t now = QDateTime::currentMSecsSinceEpoch();
     QSqlQuery q(m_db);
     q.prepare("UPDATE sessions SET ended=? WHERE id=?");
-    q.addBindValue(now);
-    q.addBindValue(m_sessionId);
+    q.addBindValue(static_cast<qlonglong>(now));
+    q.addBindValue(static_cast<qlonglong>(m_sessionId));
     q.exec();
     m_sessionId = -1;
 }
