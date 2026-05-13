@@ -760,3 +760,71 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 3. **CANopen/OBD-II parsery** — parsowanie PDO/SDO + OBD-II PID decode
 4. **MQTT bridge testy** — testy jednostkowe dla MqttBridge
 5. **Mdf4Writer weryfikacja** — test zapisu/odczytu MDF4
+
+---
+
+## Sesja 2026-05-13 (część 7): CanModuleProfiler — detekcja bicia serca modułu CAN ✅
+
+### Testy: 400 → 414 (+14 testów, 29 test suites)
+### Commit: `3fa95ec`
+
+### Opis funkcjonalności
+Moduł do uczenia, detekcji i symulacji "bicia serca" modułu CAN — jego obecności na magistrali przez cykliczne wysyłanie ramek.
+
+### Architektura
+
+**`CanModuleProfiler`** — czysty C++, bez Qt-UI, w pełni testowalny:
+- **Structs**: `ModulePeriodicId` (id, avgIntervalMs, jitterMs, frameCount), `ModuleReqResPair` (reqId, respId, avgLatencyMs, occurrences), `ModuleProfile` (name, periodicIds, reqResPairs, JSON serialization)
+- **Faza uczenia** (`startLearning(name, durationMs)`):
+  - Welford online statistics per ID → `mean` i `stddev` inter-frame intervals
+  - ID cykliczne: `frames ≥ 5` AND `jitter < 35% × avgInterval`
+  - Pary req/resp: okno 150ms, para (A→B) z ≥5 wystąpieniami → `reqResPairs`
+  - `finalizeLearning()` — pomija timer (dla testów deterministycznych)
+- **Faza detekcji** (`startDetecting(profile, initNowUs=UINT64_MAX)`):
+  - Timer 250ms → `checkDetection(nowUs)` — dla każdego periodicId sprawdza `lastSeenUs + (avgInterval + max(3σ, 50ms)) * 1000`
+  - `moduleOffline(name, id)` gdy deadline przekroczony, `moduleOnline(name)` po powrocie
+  - `initNowUs=UINT64_MAX` = użyj realnego zegara (produkcja); `initNowUs=0` = baza od 0 (testy)
+- **Symulacja**: przez `CanPeriodicSender` zarządzany wewnętrznie przez widget
+
+**`CanModuleProfilerWidget`** — zakładka "Moduły CAN":
+- Uczenie: pole nazwy, spinner czasu (2-60s), przycisk Start/Cancel, pasek postępu
+- Lista profili: Wykrywaj / Stop, Symuluj / Stop, Usuń, Zapisz JSON, Wczytaj JSON
+- Status z kolorem: zielony = ● ONLINE, czerwony = ● OFFLINE
+- Szczegóły profilu: cykliczne ID z avg/jitter, pary req/resp z latency
+- Symulacja przez własny `CanPeriodicSender` — nie ingeruje w zakładkę "Periodic Sender"
+- Alerty OFFLINE routowane do `CanAlertEngine::submitExternalAlert()` → zakładka "Alerts"
+
+**`CanAlertEngine`**: nowa metoda `submitExternalAlert(CanAlert)` — inkrementuje licznik + emituje `alertTriggered`; używana do routowania alertów spoza systemu reguł
+
+### Naprawiony bug w testach
+Wstępna implementacja failowała 2 testy (`DetectionOfflineWhenIdMissing`, `ModuleOnlineAfterRecovery`): `startDetecting()` inicjalizował `m_lastSeenUs` realnym zegarem (~1.7×10¹⁵ µs), a testy wywoływały `checkDetection(500000)` (relatywny). Sentinel `UINT64_MAX` jako domyślna wartość `initNowUs` umożliwia testom przekazanie `0` jako bazy czasu.
+
+### Testy (14 nowych w `test_canmoduleprofiler.cpp`)
+| Test | Weryfikuje |
+|------|------------|
+| InitialStateIsIdle | stan po konstrukcji |
+| StartLearningTransitionsState | Learning → cancelLearning → Idle |
+| FeedIgnoredWhenIdle | brak efektu gdy Idle |
+| PeriodicIdDetected | 20 ramek @10ms → avgInterval≈10ms, jitter<1ms |
+| AperiodicIdNotDetected | losowe interwały → nie promowane |
+| TwoPeriodicIdsBothDetected | dwa ID, sortowanie po ID |
+| TooFewFramesNotPromoted | 3 ramki < kMinPeriodicFrames=5 |
+| ReqRespPairDetected | 10 par A→B@50ms → avgLatency≈50ms |
+| DetectionOfflineWhenIdMissing | brak feed + checkDetection(500000µs) → offline |
+| DetectionOnlineWhenIdPresent | feed w oknie → brak offline |
+| ModuleOnlineAfterRecovery | offline → feed → online signal |
+| StopDetectingResetsState | Detecting → Idle |
+| JsonRoundtrip | toJson → fromJson zachowuje wszystkie pola |
+| EmptyProfileIsEmpty | isEmpty() na domyślnym profilu |
+
+### Łączny stan projektu (2026-05-13, część 7)
+- **Testy**: 414/414 w 29 suites
+- **Nowa zakładka**: "Moduły CAN" (CanModuleProfilerWidget)
+- **Alert pipeline**: ModuleOffline → CanAlertEngine → zakładka Alerts + tray
+
+### Roadmapa (następna sesja — priorytety)
+1. **CanGaugeWidget integracja z DBC** — bindowanie sygnałów DBC do wskaźników w MainWindow
+2. **LogComparatorWidget** — porównanie dwóch plików candump
+3. **CanModuleProfiler rozszerzenia** — grupowanie ID po klastrze DBSCAN (które ID → jeden moduł bez izolacji fizycznej)
+4. **CANopen/OBD-II parsery** — PDO/SDO + OBD-II PID decode
+5. **MQTT bridge testy** — testy jednostkowe dla MqttBridge
