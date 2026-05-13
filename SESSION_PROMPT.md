@@ -698,3 +698,65 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 3. **Alert → ML integration** — reguła `IsolationForestScore` (score >threshold z LearningEngine)
 4. **Lua hook w Alert Pipeline** — `on_alert(rule, frame)` callback
 5. **CanGaugeWidget** — analogowe wskaźniki dla sygnałów DBC (prędkościomierz, obrotomierz)
+
+---
+
+## Sesja 2026-05-13 (część 6): CAN FD stats + ARXML + Alert ML + Lua + CanGaugeWidget ✅
+
+### Testy: 374 → 400 (+26 testów, 28 test suites)
+### Commit: `ab1a4fa`
+
+### CAN FD extended stats (CanFrame + CanIdStats)
+- ✅ `CanFrame.h`: dodane `bool brs = false` (Bit Rate Switch) + `bool esi = false` (Error State Indicator)
+- ✅ `CanIdStats.h`: dodane do `IdProfile` — `fdFrameCount`, `brsCount`, `esiCount`, `maxFdDlc`
+- ✅ `CanIdStats.cpp`: `feed()` zlicza FD/BRS/ESI, `toCsv()` eksportuje nowe kolumny
+- ✅ `CanIdStatsWidget.cpp`: nowe kolumny "FD", "BRS", "ESI" w tabeli UI
+- ✅ +6 testów w `test_canidstats.cpp`
+
+### AUTOSAR ARXML import
+- ✅ `src/core/ArxmlParser.h/cpp` (NOWY) — ~270 LOC, `QXmlStreamReader`-based:
+  - Parsuje I-SIGNAL → I-SIGNAL-I-PDU → FRAME → CAN-FRAME-TRIGGERING
+  - Zwraca `QVector<DbcMessage>` — bezpośrednio kompatybilny z `DbcParser`
+  - CRITICAL fix: zmienna `signals` przemianowana na `sigDefs` (Qt #define signals = public)
+- ✅ `MainWindow`: przycisk toolbara "ARXML", `loadArxmlFile()` — merge z istniejącym DBC, wire 10 widgetów
+- ✅ `tests/test_arxmlparser.cpp` — 8 testów
+
+### Alert ML (IsolationForest → Alert Rule)
+- ✅ `LearningEngine.h/cpp`: `scoreLatestWindow()` — Isolation Forest score dla ostatniego okna [0=normal, 1=anomaly]
+- ✅ `AssociativeLearner.h`: proxy `scoreLatestWindow()` → `m_engine.scoreLatestWindow()`
+- ✅ `CanAlertEngine.h/cpp`: nowy `AlertType::IsolationForestScore`, pola `isThreshold` + `scorer` w `CanAlertRule`
+- ✅ `CanAlertWidget.h/cpp`: UI dla IsoForest (spinner progu 0.0-1.0), `setScorer()` API
+- ✅ `MainWindow.cpp`: `m_alertWidget->setScorer([this](){ return m_learner->scoreLatestWindow(); })`
+- ✅ +3 testy IsoForest w `test_canalerengine.cpp`
+
+### Lua hook w Alert Pipeline
+- ✅ `LuaScriptEngine.h`: dodany slot `callOnAlert(const CanAlert&)`
+- ✅ `LuaScriptEngine.cpp`: implementacja — wywołuje opcjonalną Lua `onAlert(ruleName, canId, desc, data[], tsUs)`
+- ✅ `MainWindow.cpp`: `connect(alertEngine, alertTriggered, luaEngine, callOnAlert)`
+
+### CanGaugeWidget — wskaźniki analogowe/cyfrowe
+- ✅ `src/core/CanGaugeWidget.h/cpp` — 3 tryby: Bar/Digital/Compact
+  - `setRange()`, `setValue()`, `currentValue()`, `isOutOfRange()`, `minObserved()`, `maxObserved()`
+  - `setStaleTimeout()` + `checkStaleness()` — wykrywa brak odświeżenia
+- ✅ `tests/test_cangaugewidget.cpp` — 9 testów, `GaugeTest` fixture z `SetUpTestSuite()`
+
+### Fix: QApplication w środowiskach testowych
+- Problem: `test_httprestserver.cpp` tworzył `QCoreApplication`, co blokowało stworzenie `QApplication` przez inne środowisko, powodując "QWidget: Cannot create QWidget without QApplication"
+- ✅ `test_httprestserver.cpp`: `QtNetEnvironment` → `QApplication` zamiast `QCoreApplication`
+- ✅ `test_canobservationdb.cpp`: guard `!QApplication::instance()` zamiast `!QCoreApplication::instance()`
+- ✅ `test_cangaugewidget.cpp`: `GaugeTest::SetUpTestSuite()` tworzy `QApplication` jeśli brak
+- ✅ Wszystkie 400 testów przechodzą
+
+### Łączny stan projektu (2026-05-13, część 6)
+- **Testy**: 400/400 w 28 suites
+- **Protokoły**: CAN, CAN FD (BRS/ESI), LIN, J1939, UDS, KWP2000, XCP, SOME/IP, DoIP, CANopen, OBD-II
+- **Formaty sygnałów**: DBC + **ARXML (AUTOSAR 4.x)**
+- **Alert Pipeline**: 5 typów reguł (NewCanId, DlcChange, ByteValue, RateAnomaly, **IsoForestScore**)
+- **Lua**: `onFrame(id, data, ts)` + `onAlert(rule, id, desc, data, ts)` callbacks
+
+### Roadmapa (następna sesja — priorytety)
+1. **CanGaugeWidget integracja z DBC** — bindowanie sygnałów DBC do wskaźników w MainWindow
+2. **LogComparatorWidget** — porównanie dwóch plików candump (diff timeline)
+3. **CANopen/OBD-II parsery** — parsowanie PDO/SDO + OBD-II PID decode
+4. **MQTT bridge testy** — testy jednostkowe dla MqttBridge
+5. **Mdf4Writer weryfikacja** — test zapisu/odczytu MDF4
