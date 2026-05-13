@@ -2,6 +2,7 @@
 #include <QDateTime>
 #include <QJsonArray>
 #include <algorithm>
+#include <unordered_set>
 
 // ── ModuleProfile serialization ───────────────────────────────────────────────
 
@@ -29,6 +30,7 @@ QJsonObject ModuleProfile::toJson() const {
     obj["name"]            = name;
     obj["learnDurationMs"] = learnDurationMs;
     obj["learnedAtUs"]     = static_cast<qint64>(learnedAtUs);
+    obj["isDifferential"]  = isDifferential;
     obj["periodicIds"]     = periodicArr;
     obj["reqResPairs"]     = rrArr;
     return obj;
@@ -39,6 +41,7 @@ ModuleProfile ModuleProfile::fromJson(const QJsonObject &obj) {
     p.name            = obj["name"].toString();
     p.learnDurationMs = obj["learnDurationMs"].toInt();
     p.learnedAtUs     = static_cast<uint64_t>(obj["learnedAtUs"].toInteger());
+    p.isDifferential  = obj["isDifferential"].toBool(false);
 
     for (const auto &v : obj["periodicIds"].toArray()) {
         QJsonObject o = v.toObject();
@@ -107,6 +110,87 @@ void CanModuleProfiler::cancelLearning() {
 
 void CanModuleProfiler::finalizeLearning() {
     onLearningTimeout();
+}
+
+// ── Background (phase 2) learning ─────────────────────────────────────────────
+
+void CanModuleProfiler::startLearningBackground(const ModuleProfile &phase1,
+                                                const QString &name, int durationMs) {
+    cancelBackgroundLearning();
+    cancelLearning();
+    stopDetecting();
+
+    m_state                  = LearningBackground;
+    m_phase1Profile          = phase1;
+    m_phase1Profile.name     = name;   // propagate updated name if provided
+    m_bgLearningDurationMs   = durationMs;
+    m_bgLearningStartMs      = static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch());
+    m_bgLearnData.clear();
+
+    delete m_bgLearningTimer;
+    m_bgLearningTimer = new QTimer(this);
+    m_bgLearningTimer->setSingleShot(true);
+    connect(m_bgLearningTimer, &QTimer::timeout,
+            this, &CanModuleProfiler::onBackgroundLearningTimeout);
+    m_bgLearningTimer->start(durationMs);
+
+    delete m_bgProgressTimer;
+    m_bgProgressTimer = new QTimer(this);
+    connect(m_bgProgressTimer, &QTimer::timeout, this, [this]() {
+        uint64_t nowMs = static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch());
+        int elapsed    = static_cast<int>(nowMs - m_bgLearningStartMs);
+        int pct        = std::min(100, elapsed * 100 / m_bgLearningDurationMs);
+        emit backgroundLearningProgress(pct);
+    });
+    m_bgProgressTimer->start(200);
+}
+
+void CanModuleProfiler::cancelBackgroundLearning() {
+    if (m_state != LearningBackground) return;
+    delete m_bgLearningTimer; m_bgLearningTimer = nullptr;
+    delete m_bgProgressTimer; m_bgProgressTimer = nullptr;
+    m_state = Idle;
+    m_bgLearnData.clear();
+}
+
+void CanModuleProfiler::finalizeBackgroundLearning() {
+    onBackgroundLearningTimeout();
+}
+
+void CanModuleProfiler::onBackgroundLearningTimeout() {
+    delete m_bgLearningTimer; m_bgLearningTimer = nullptr;
+    delete m_bgProgressTimer; m_bgProgressTimer = nullptr;
+    emit backgroundLearningProgress(100);
+    finalizeBackgroundProfile();
+    m_state = Idle;
+}
+
+void CanModuleProfiler::finalizeBackgroundProfile() {
+    // Collect IDs that appear periodic in the background (module absent)
+    std::unordered_set<uint32_t> bgIds;
+    for (const auto &[id, wd] : m_bgLearnData) {
+        if (wd.frames < static_cast<uint64_t>(kMinPeriodicFrames)) continue;
+        if (wd.n < kMinPeriodicFrames - 1) continue;
+        if (wd.mean < 0.5) continue;
+        if (wd.stddev() > kPeriodicJitterRatio * wd.mean) continue;
+        bgIds.insert(id);
+    }
+
+    // Result = phase1 profile minus background IDs (set difference A \ B)
+    ModuleProfile result     = m_phase1Profile;
+    result.isDifferential    = true;
+    result.learnedAtUs       = static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch()) * 1000;
+
+    QVector<ModulePeriodicId> filtered;
+    for (const auto &pid : m_phase1Profile.periodicIds) {
+        if (bgIds.find(pid.id) == bgIds.end())
+            filtered.append(pid);
+    }
+    result.periodicIds = filtered;
+
+    m_bgLearnData.clear();
+    m_lastLearned = result;
+    emit backgroundLearningFinished(result);
 }
 
 void CanModuleProfiler::onLearningTimeout() {
@@ -192,6 +276,21 @@ void CanModuleProfiler::stopDetecting() {
 void CanModuleProfiler::feed(const CanFrame &frame, uint64_t tsUs) {
     if (m_state == Detecting) {
         m_lastSeenUs[frame.id] = tsUs;
+        return;
+    }
+    if (m_state == LearningBackground) {
+        auto &wd = m_bgLearnData[frame.id];
+        wd.frames++;
+        wd.extended = frame.extended;
+        if (wd.lastTs > 0 && tsUs > wd.lastTs) {
+            double interval = static_cast<double>(tsUs - wd.lastTs) / 1000.0;
+            wd.n++;
+            double delta  = interval - wd.mean;
+            wd.mean      += delta / wd.n;
+            double delta2  = interval - wd.mean;
+            wd.M2         += delta * delta2;
+        }
+        wd.lastTs = tsUs;
         return;
     }
     if (m_state != Learning) return;

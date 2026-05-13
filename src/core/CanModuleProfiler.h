@@ -36,6 +36,7 @@ struct ModuleProfile {
     QVector<ModuleReqResPair> reqResPairs;
     int      learnDurationMs = 0;
     uint64_t learnedAtUs     = 0;
+    bool     isDifferential  = false; // true when background subtraction was applied
 
     bool isEmpty() const { return periodicIds.isEmpty(); }
     QJsonObject toJson() const;
@@ -48,12 +49,19 @@ class CanModuleProfiler : public QObject {
 public:
     explicit CanModuleProfiler(QObject *parent = nullptr);
 
-    enum State { Idle, Learning, Detecting };
+    enum State { Idle, Learning, LearningBackground, Detecting };
     State state() const { return m_state; }
 
     void startLearning(const QString &name, int durationMs = 8000);
     void cancelLearning();
     void finalizeLearning();            // skips timer — useful for tests
+
+    // Phase 2 differential learning: records background traffic (module absent)
+    // and subtracts it from phase1 to isolate module-specific IDs.
+    void startLearningBackground(const ModuleProfile &phase1, const QString &name,
+                                 int durationMs = 8000);
+    void cancelBackgroundLearning();
+    void finalizeBackgroundLearning();  // skips timer — useful for tests
 
     // initNowUs: initial "last-seen" timestamp for all periodic IDs.
     // Default (UINT64_MAX) = use real wall-clock; pass an explicit value in tests.
@@ -69,11 +77,14 @@ public:
 signals:
     void learningProgress(int percentDone);
     void learningFinished(const ModuleProfile &profile);
+    void backgroundLearningProgress(int percentDone);
+    void backgroundLearningFinished(const ModuleProfile &profile);
     void moduleOffline(const QString &profileName, uint32_t missingId);
     void moduleOnline(const QString &profileName);
 
 private slots:
     void onLearningTimeout();
+    void onBackgroundLearningTimeout();
     void onDetectionTick();
 
 private:
@@ -94,6 +105,15 @@ private:
         }
     };
     std::unordered_map<uint32_t, WelfordState> m_learnData;
+
+    // Background (phase 2) learning state
+    ModuleProfile m_phase1Profile;
+    std::unordered_map<uint32_t, WelfordState> m_bgLearnData;
+    uint64_t m_bgLearningStartMs   = 0;
+    int      m_bgLearningDurationMs = 8000;
+    QTimer  *m_bgLearningTimer  = nullptr;
+    QTimer  *m_bgProgressTimer  = nullptr;
+    void finalizeBackgroundProfile();
 
     struct RecentEntry { uint32_t id; uint64_t tsUs; };
     std::deque<RecentEntry> m_recentFrames;

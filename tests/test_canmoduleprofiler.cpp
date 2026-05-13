@@ -290,3 +290,109 @@ TEST(CanModuleProfiler, EmptyProfileIsEmpty) {
     ModuleProfile r = ModuleProfile::fromJson(obj);
     EXPECT_TRUE(r.isEmpty());
 }
+
+// ── Differential (2-phase) learning ──────────────────────────────────────────
+
+// Helper: build a profile with a single periodic ID
+static ModuleProfile makePhase1(uint32_t id, double intervalMs = 10.0) {
+    CanModuleProfiler p;
+    p.startLearning("Test", 100);
+    feedPeriodic(p, id, 20, static_cast<uint64_t>(intervalMs * 1000));
+    ModuleProfile prof;
+    QObject::connect(&p, &CanModuleProfiler::learningFinished,
+                     [&](const ModuleProfile &pr) { prof = pr; });
+    p.finalizeLearning();
+    return prof;
+}
+
+TEST(CanModuleProfiler, Differential_BackgroundIdRemoved) {
+    // Phase 1: 0x100 + 0x200 both periodic
+    CanModuleProfiler p;
+    p.startLearning("ECU", 100);
+    feedPeriodic(p, 0x100, 20, 10'000);
+    feedPeriodic(p, 0x200, 20, 20'000);
+    ModuleProfile phase1;
+    QObject::connect(&p, &CanModuleProfiler::learningFinished,
+                     [&](const ModuleProfile &pr) { phase1 = pr; });
+    p.finalizeLearning();
+    ASSERT_EQ(phase1.periodicIds.size(), 2);
+
+    // Phase 2 (background): only 0x200 seen (belongs to another module)
+    ModuleProfile diff;
+    QObject::connect(&p, &CanModuleProfiler::backgroundLearningFinished,
+                     [&](const ModuleProfile &pr) { diff = pr; });
+    p.startLearningBackground(phase1, "ECU", 100);
+    feedPeriodic(p, 0x200, 20, 20'000);  // background traffic
+    p.finalizeBackgroundLearning();
+
+    // 0x200 was in background → removed from differential profile
+    ASSERT_EQ(diff.periodicIds.size(), 1);
+    EXPECT_EQ(diff.periodicIds[0].id, 0x100u);
+    EXPECT_TRUE(diff.isDifferential);
+}
+
+TEST(CanModuleProfiler, Differential_UniqueIdKept) {
+    // Phase 1: only 0x300
+    ModuleProfile phase1 = makePhase1(0x300);
+    ASSERT_EQ(phase1.periodicIds.size(), 1);
+
+    // Phase 2 (background): different ID on the bus
+    CanModuleProfiler p;
+    ModuleProfile diff;
+    QObject::connect(&p, &CanModuleProfiler::backgroundLearningFinished,
+                     [&](const ModuleProfile &pr) { diff = pr; });
+    p.startLearningBackground(phase1, "ECU", 100);
+    feedPeriodic(p, 0x400, 20, 10'000);  // unrelated background ID
+    p.finalizeBackgroundLearning();
+
+    // 0x300 not in background → kept in differential profile
+    ASSERT_EQ(diff.periodicIds.size(), 1);
+    EXPECT_EQ(diff.periodicIds[0].id, 0x300u);
+    EXPECT_TRUE(diff.isDifferential);
+}
+
+TEST(CanModuleProfiler, Differential_EmptyBackgroundKeepsAll) {
+    // Phase 1 with two periodic IDs; background is silent
+    ModuleProfile phase1;
+    {
+        CanModuleProfiler p;
+        p.startLearning("ECU", 100);
+        feedPeriodic(p, 0x1, 20, 10'000);
+        feedPeriodic(p, 0x2, 20, 20'000);
+        QObject::connect(&p, &CanModuleProfiler::learningFinished,
+                         [&](const ModuleProfile &pr) { phase1 = pr; });
+        p.finalizeLearning();
+    }
+    ASSERT_EQ(phase1.periodicIds.size(), 2);
+
+    CanModuleProfiler p;
+    ModuleProfile diff;
+    QObject::connect(&p, &CanModuleProfiler::backgroundLearningFinished,
+                     [&](const ModuleProfile &pr) { diff = pr; });
+    p.startLearningBackground(phase1, "ECU", 100);
+    // No frames fed → empty background
+    p.finalizeBackgroundLearning();
+
+    EXPECT_EQ(diff.periodicIds.size(), 2);
+    EXPECT_TRUE(diff.isDifferential);
+}
+
+TEST(CanModuleProfiler, Differential_JsonRoundtrip) {
+    ModuleProfile orig = makePhase1(0x1A0);
+    orig.isDifferential = true;
+
+    ModuleProfile restored = ModuleProfile::fromJson(orig.toJson());
+    EXPECT_TRUE(restored.isDifferential);
+    ASSERT_EQ(restored.periodicIds.size(), orig.periodicIds.size());
+    EXPECT_EQ(restored.periodicIds[0].id, 0x1A0u);
+}
+
+TEST(CanModuleProfiler, Differential_StateTransitions) {
+    ModuleProfile phase1 = makePhase1(0x10);
+    CanModuleProfiler p;
+    p.startLearningBackground(phase1, "ECU", 100);
+    EXPECT_EQ(p.state(), CanModuleProfiler::LearningBackground);
+
+    p.cancelBackgroundLearning();
+    EXPECT_EQ(p.state(), CanModuleProfiler::Idle);
+}

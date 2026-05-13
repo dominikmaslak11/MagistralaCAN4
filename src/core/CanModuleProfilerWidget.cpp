@@ -32,6 +32,10 @@ CanModuleProfilerWidget::CanModuleProfilerWidget(CanSniffer *sniffer, QWidget *p
             this, &CanModuleProfilerWidget::onLearningProgress);
     connect(m_profiler, &CanModuleProfiler::learningFinished,
             this, &CanModuleProfilerWidget::onLearningFinished);
+    connect(m_profiler, &CanModuleProfiler::backgroundLearningProgress,
+            this, &CanModuleProfilerWidget::onBackgroundLearningProgress);
+    connect(m_profiler, &CanModuleProfiler::backgroundLearningFinished,
+            this, &CanModuleProfilerWidget::onBackgroundLearningFinished);
     connect(m_profiler, &CanModuleProfiler::moduleOffline,
             this, &CanModuleProfilerWidget::onModuleOffline);
     connect(m_profiler, &CanModuleProfiler::moduleOnline,
@@ -63,6 +67,34 @@ CanModuleProfilerWidget::CanModuleProfilerWidget(CanSniffer *sniffer, QWidget *p
     m_progressBar->setRange(0, 100);
     m_progressBar->setVisible(false);
     learnLayout->addWidget(m_progressBar, 3, 0, 1, 2);
+
+    // ── Phase 2: background learning group (hidden until phase 1 done) ────
+    m_bgLearnGroup = new QGroupBox("Faza 2: uczenie tła (tryb różnicowy)");
+    m_bgLearnGroup->setVisible(false);
+    auto *bgLayout = new QGridLayout(m_bgLearnGroup);
+
+    bgLayout->addWidget(new QLabel(
+        "Odłącz moduł od magistrali, a następnie uruchom uczenie tła.\n"
+        "Profil różnicowy = Faza 1 minus tło magistrali."), 0, 0, 1, 2);
+
+    bgLayout->addWidget(new QLabel("Czas uczenia tła (s):"), 1, 0);
+    m_bgDurationSpin = new QSpinBox;
+    m_bgDurationSpin->setRange(2, 60);
+    m_bgDurationSpin->setValue(8);
+    bgLayout->addWidget(m_bgDurationSpin, 1, 1);
+
+    auto *bgBtns = new QHBoxLayout;
+    m_bgLearnBtn = new QPushButton("▶ Start tła");
+    m_bgCancelBtn = new QPushButton("✕ Anuluj");
+    m_bgCancelBtn->setEnabled(false);
+    bgBtns->addWidget(m_bgLearnBtn);
+    bgBtns->addWidget(m_bgCancelBtn);
+    bgLayout->addLayout(bgBtns, 2, 0, 1, 2);
+
+    m_bgProgressBar = new QProgressBar;
+    m_bgProgressBar->setRange(0, 100);
+    m_bgProgressBar->setVisible(false);
+    bgLayout->addWidget(m_bgProgressBar, 3, 0, 1, 2);
 
     // ── Profile list group ─────────────────────────────────────────────────
     auto *profileGroup  = new QGroupBox("Wyuczone profile");
@@ -116,6 +148,7 @@ CanModuleProfilerWidget::CanModuleProfilerWidget(CanSniffer *sniffer, QWidget *p
     // ── Main layout ────────────────────────────────────────────────────────
     auto *main = new QVBoxLayout(this);
     main->addWidget(learnGroup);
+    main->addWidget(m_bgLearnGroup);
     main->addWidget(profileGroup);
     main->addWidget(m_statusLabel);
     main->addWidget(detailGroup);
@@ -124,6 +157,8 @@ CanModuleProfilerWidget::CanModuleProfilerWidget(CanSniffer *sniffer, QWidget *p
     // ── Signal connections ─────────────────────────────────────────────────
     connect(m_learnBtn,       &QPushButton::clicked, this, &CanModuleProfilerWidget::onStartLearning);
     connect(m_cancelLearnBtn, &QPushButton::clicked, this, &CanModuleProfilerWidget::onCancelLearning);
+    connect(m_bgLearnBtn,  &QPushButton::clicked, this, &CanModuleProfilerWidget::onStartBackgroundLearning);
+    connect(m_bgCancelBtn, &QPushButton::clicked, this, &CanModuleProfilerWidget::onCancelBackgroundLearning);
     connect(m_detectBtn,      &QPushButton::clicked, this, &CanModuleProfilerWidget::onStartDetecting);
     connect(m_stopDetectBtn,  &QPushButton::clicked, this, &CanModuleProfilerWidget::onStopDetecting);
     connect(m_simulateBtn,    &QPushButton::clicked, this, &CanModuleProfilerWidget::onStartSimulation);
@@ -169,6 +204,52 @@ void CanModuleProfilerWidget::onLearningProgress(int pct) {
     m_progressBar->setValue(pct);
 }
 
+// ── Background (phase 2) learning ────────────────────────────────────────────
+
+void CanModuleProfilerWidget::onStartBackgroundLearning() {
+    if (m_pendingPhase1.isEmpty()) {
+        QMessageBox::warning(this, "Brak fazy 1",
+                             "Najpierw wykonaj fazę 1 (uczenie z modułem).");
+        return;
+    }
+    int durationMs = m_bgDurationSpin->value() * 1000;
+    m_bgLearnBtn->setEnabled(false);
+    m_bgCancelBtn->setEnabled(true);
+    m_bgProgressBar->setValue(0);
+    m_bgProgressBar->setVisible(true);
+    m_statusLabel->setText(
+        QString("Status: uczenie tła '%1'...").arg(m_pendingPhase1.name));
+
+    m_profiler->startLearningBackground(m_pendingPhase1, m_pendingPhase1.name, durationMs);
+}
+
+void CanModuleProfilerWidget::onCancelBackgroundLearning() {
+    m_profiler->cancelBackgroundLearning();
+    m_bgLearnBtn->setEnabled(true);
+    m_bgCancelBtn->setEnabled(false);
+    m_bgProgressBar->setVisible(false);
+    m_statusLabel->setText("Status: uczenie tła anulowane");
+}
+
+void CanModuleProfilerWidget::onBackgroundLearningProgress(int pct) {
+    m_bgProgressBar->setValue(pct);
+}
+
+void CanModuleProfilerWidget::onBackgroundLearningFinished(const ModuleProfile &profile) {
+    m_bgLearnBtn->setEnabled(true);
+    m_bgCancelBtn->setEnabled(false);
+    m_bgProgressBar->setVisible(false);
+    m_bgLearnGroup->setVisible(false);
+
+    m_profiles.append(profile);
+    updateProfileList();
+    m_profileList->setCurrentRow(m_profiles.size() - 1);
+
+    m_statusLabel->setText(
+        QString("Status: profil różnicowy gotowy — '%1' (%2 ID modułu)")
+            .arg(profile.name).arg(profile.periodicIds.size()));
+}
+
 void CanModuleProfilerWidget::onLearningFinished(const ModuleProfile &profile) {
     m_learnBtn->setEnabled(true);
     m_cancelLearnBtn->setEnabled(false);
@@ -183,6 +264,10 @@ void CanModuleProfilerWidget::onLearningFinished(const ModuleProfile &profile) {
     m_statusLabel->setText(
         QString("Status: uczenie gotowe — '%1' (%2 ID cyklicznych, %3 par req/resp)")
             .arg(profile.name).arg(nIds).arg(nRr));
+
+    // Show phase 2 group box so user can optionally refine into a differential profile
+    m_pendingPhase1 = profile;
+    m_bgLearnGroup->setVisible(true);
 }
 
 // ── Detection ─────────────────────────────────────────────────────────────────
@@ -340,7 +425,8 @@ void CanModuleProfilerWidget::onLoadProfiles() {
 void CanModuleProfilerWidget::updateProfileList() {
     m_profileList->clear();
     for (const auto &p : m_profiles) {
-        QString label = QString("%1  (%2 ID cykl., %3 req/resp)")
+        QString label = QString("%1%2  (%3 ID cykl., %4 req/resp)")
+                            .arg(p.isDifferential ? "[diff] " : "")
                             .arg(p.name)
                             .arg(p.periodicIds.size())
                             .arg(p.reqResPairs.size());
@@ -350,7 +436,9 @@ void CanModuleProfilerWidget::updateProfileList() {
 
 void CanModuleProfilerWidget::updateDetails(const ModuleProfile &p) {
     QString txt;
-    txt += QString("Profil: %1\n").arg(p.name);
+    txt += QString("Profil: %1%2\n")
+               .arg(p.isDifferential ? "[RÓŻNICOWY] " : "")
+               .arg(p.name);
     txt += QString("Czas uczenia: %1 s\n\n").arg(p.learnDurationMs / 1000.0, 0, 'f', 1);
 
     txt += "── Cykliczne ID (heartbeat) ─────────────────\n";

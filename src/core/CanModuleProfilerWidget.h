@@ -6,6 +6,7 @@
 class CanAlertEngine;
 class CanPeriodicSender;
 class CanSniffer;
+class QGroupBox;
 class QListWidget;
 class QProgressBar;
 class QTextEdit;
@@ -30,6 +31,10 @@ private slots:
     void onCancelLearning();
     void onLearningFinished(const ModuleProfile &profile);
     void onLearningProgress(int pct);
+    void onStartBackgroundLearning();
+    void onCancelBackgroundLearning();
+    void onBackgroundLearningProgress(int pct);
+    void onBackgroundLearningFinished(const ModuleProfile &profile);
     void onStartDetecting();
     void onStopDetecting();
     void onStartSimulation();
@@ -56,6 +61,14 @@ private:
     QPushButton  *m_learnBtn;
     QPushButton  *m_cancelLearnBtn;
     QProgressBar *m_progressBar;
+
+    // Phase 2 — background learning (differential mode)
+    QGroupBox    *m_bgLearnGroup;
+    QSpinBox     *m_bgDurationSpin;
+    QPushButton  *m_bgLearnBtn;
+    QPushButton  *m_bgCancelBtn;
+    QProgressBar *m_bgProgressBar;
+    ModuleProfile m_pendingPhase1;  // phase 1 result waiting to be refined
 
     QListWidget  *m_profileList;
     QPushButton  *m_detectBtn;
