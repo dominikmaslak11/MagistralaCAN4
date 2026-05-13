@@ -2,7 +2,7 @@
 
 **Wysokowydajny, wielowątkowy sniffer CAN / CAN FD** z zaawansowanym uczeniem asocjacyjnym, silnikiem skryptowym Lua, akceleracją GPU i serwerem WebSocket.
 
-![Version](https://img.shields.io/badge/version-2.1.0-00ffaa)
+![Version](https://img.shields.io/badge/version-2.2.0-00ffaa)
 ![C++](https://img.shields.io/badge/C++-17-blue)
 ![Qt](https://img.shields.io/badge/Qt-6.x-green)
 ![License](https://img.shields.io/badge/license-MIT-red)
@@ -32,13 +32,17 @@ flowchart TB
         TAB_DETAIL["Szczegóły ramki<br/>siatka bitów 8×8"]
         TAB_OFFLINE["Analiza offline<br/>odtwarzanie candump"]
         TAB_DASH["Dashboard CAN<br/>sygnały DBC live"]
+        TAB_DB["Frame DB<br/>SQLite / PCAP"]
+        TAB_ALERT["Alerts<br/>reguły + tray"]
+        TAB_TIMELINE["Timeline<br/>scatter chart"]
     end
 
     subgraph Output["📤 Wyjście"]
         TRAY["System tray<br/>powiadomienia"]
         LOG["Logger<br/>~/magistrala_can4.log"]
         WS_OUT["WebSocket clients<br/>przeglądarki, narzędzia"]
-        EXPORT["Eksport<br/>candump, HTML, JSON, Lua"]
+        EXPORT["Eksport<br/>candump, HTML, JSON, Lua, PCAP"]
+        SQLITE["SQLite DB<br/>frame storage"]
     end
 
     CAN --> SNIFFER
@@ -46,11 +50,15 @@ flowchart TB
     SNIFFER -->|"newFrame signal"| LUA
     SNIFFER -->|"newFrame signal"| TAB_DASH
     SNIFFER -->|"processFrame"| TAB_LEARN
+    SNIFFER -->|"frameProcessed"| TAB_DB
+    SNIFFER -->|"frameProcessed"| TAB_ALERT
+    SNIFFER -->|"frameProcessedThrottled"| TAB_TIMELINE
     MODEL --> TAB_CAN
     TAB_CAN -->|"kliknięcie"| TAB_DETAIL
     LUA -->|"sendFrame"| SNIFFER
     DBC --> TAB_DETAIL
     DBC --> TAB_DASH
+    DBC --> TAB_TIMELINE
     TAB_LEARN --> GPU
     TAB_LEARN --> LUA
     MODEL -->|"frameUpdated"| WS
@@ -58,6 +66,9 @@ flowchart TB
     TAB_LEARN --> EXPORT
     TAB_LEARN --> TRAY
     TAB_LEARN --> LOG
+    TAB_DB --> SQLITE
+    TAB_DB --> EXPORT
+    TAB_ALERT --> TRAY
 ```
 
 ---
@@ -75,10 +86,17 @@ flowchart TB
 | **Rdzeń** | `DbcParser` | Parsowanie plików `.dbc`, dekompozycja sygnałów |
 | **Rdzeń** | `GpuCorrelator` | Obliczenia macierzy podobieństw (OpenCL z fallbackiem CPU) |
 | **Rdzeń** | `WebSocketServer` | Stream JSON ramek CAN do klientów (port 9000) |
-| **GUI** | `MainWindow` | QTabWidget z 5 zakładkami, toolbar, system tray |
+| **Rdzeń** | `CanObservationDb` | SQLite-backed storage ramek: sesje, indeksy, analityka (WAL, batch insert) |
+| **Rdzeń** | `CanAlertEngine` | Rule-based alert pipeline: NewCanId, DlcChange, ByteValue, RateAnomaly |
+| **Rdzeń** | `PcapExporter` | Eksport ramek do PCAP (LINKTYPE\_CAN\_SOCKETCAN=227, kompatybilny z Wireshark) |
+| **Rdzeń** | `CanTimelineModel` | Pure C++ model ring-buffer per ID, top-N wg częstości, lazy rebuild |
+| **GUI** | `MainWindow` | QTabWidget, toolbar, system tray, throttling `frameProcessedThrottled` |
 | **GUI** | `FrameDetailWidget` | Siatka bitów 8×8, podświetlanie zmian, edycja ramek |
 | **GUI** | `CanDashboard` | Live dashboard sygnałów DBC |
 | **GUI** | `OfflineAnalyzer` | Odtwarzanie plików candump ze zmienną prędkością |
+| **GUI** | `CanObservationDbWidget` | UI do SQLite DB: sesje, query by ID, reset, eksport PCAP |
+| **GUI** | `CanAlertWidget` | Edytor reguł alertów + log tabeli + tray powiadomienia |
+| **GUI** | `CanProtocolTimelineWidget` | QChart scatter plot — oś czasu protokołu CAN, okno ruchome |
 
 ### Przepływ ramki CAN
 
@@ -137,6 +155,42 @@ Live dashboard sygnałów DBC.
 - Po wczytaniu pliku `.dbc` automatycznie tworzy panele dla wszystkich sygnałów
 - Wyświetla nazwę sygnału, aktualną wartość i jednostkę
 - Aktualizowany na żywo dla każdej ramki CAN
+
+### 6. Frame DB (Baza danych ramek — SQLite)
+
+Trwały storage ramek CAN z możliwością zapytań i eksportu.
+
+- **Sesje**: każde nagrywanie tworzy sesję (`sessions` + `frames` z indeksami)
+- **WAL mode + batch insert**: zapisy co 200 ramek lub 2 s — minimalne opóźnienie
+- **Zapytania**: filtrowanie wg CAN ID, zakres czasu (`queryTimeRange`), anomalie DLC (`findDlcAnomalies`), histogram częstości (`computeIdFrequencies`)
+- **Eksport PCAP**: `exportToPcap()` — format LINKTYPE\_CAN\_SOCKETCAN (227), kompatybilny z Wireshark
+- **Reset**: usuwa wszystkie dane z potwierdzeniem dialogu
+
+### 7. Alerts (Pipeline alertów)
+
+Konfigurowalny system alertów z powiadomieniami w system tray.
+
+| Typ reguły | Opis |
+|-----------|------|
+| `NewCanId` | Alarmuje przy każdym nowym ID CAN niewidzianym wcześniej w sesji |
+| `DlcChange` | Wykrywa zmianę DLC dla danego ID |
+| `ByteValue` | Monitoruje bajt[N] z operatorem porównania (GT, LT, GTE, LTE, EQ, NEQ) |
+| `RateAnomaly` | Wykrywa anomalie częstości — sliding window 20 próbek, próg odchylenia ±% |
+
+- Edytor reguł z dynamicznym pokazywaniem/ukrywaniem kontrolek ByteValue vs RateAnomaly
+- Log tabeli alertów z czerwonym tłem kolumny nazwy reguły
+- Powiadomienia system tray: tytuł = `CAN Alert: <ruleName>`, treść = opis
+
+### 8. Timeline (Oś czasu protokołu)
+
+Wizualizacja sekwencji wiadomości CAN w czasie za pomocą scatter chart.
+
+- **QScatterSeries** — jeden per tracked CAN ID, 16-kolorowa paleta
+- **Oś X**: czas w ms, ruchome okno (5 / 10 / 30 / 60 / 120 s)
+- **Oś Y**: kategorie CAN ID z nazwami DBC (po wczytaniu pliku `.dbc`)
+- **Top-N IDs**: spinner 2–16, sortowanie wg częstości (najczęstszy na górze)
+- **Odświeżanie**: 250 ms timer, tryb Pause, przycisk Clear
+- **Throttling**: zasilany sygnałem `frameProcessedThrottled` (co 16-tą ramkę)
 
 ---
 
@@ -402,7 +456,9 @@ Parser DBC wspiera standardowe pliki `.dbc` (Vector CANdb++).
 |-----------|--------|--------------------------|
 | C++17 compiler | GCC 9+ / Clang 10+ | `build-essential` |
 | CMake | ≥ 3.16 | `cmake` |
-| Qt6 | ≥ 6.2 | `qt6-base-dev qt6-charts-dev qt6-websockets-dev` |
+| Qt6 | ≥ 6.2 | `qt6-base-dev qt6-charts-dev qt6-websockets-dev qt6-serialport-dev` |
+| Qt6 SQL | ≥ 6.2 | `libqt6sql6-sqlite` (QSQLITE driver) |
+| Google Test | ≥ 1.12 | pobierany automatycznie przez CMake FetchContent |
 | Lua | 5.3 / 5.4 | `liblua5.4-dev` |
 | OpenCL | 1.2+ | `opencl-headers ocl-icd-opencl-dev` |
 | XCB | — | `libxcb1-dev` |
@@ -443,40 +499,51 @@ cangen vcan0 -v -I 123 -L 8 -g 10
 
 ```
 MagistralaCAN4/
-├── CMakeLists.txt              # Konfiguracja CMake
+├── CMakeLists.txt              # Konfiguracja CMake (CI-aware: ENV{CI} guard)
 ├── main.cpp                    # Punkt wejścia
 ├── README.md                   # Ten plik
-├── deploy_websocket.sh         # Skrypt wdrożeniowy WebSocket
+├── README.tex                  # Dokumentacja LaTeX (cyberpunk theme)
 ├── send_frame.lua              # Przykładowy skrypt Lua
+├── .github/workflows/          # GitHub Actions CI/CD
+│   ├── ci.yml                  # Linux + ASAN + coverage + clang-tidy + Windows
+│   └── build.yml               # Dodatkowy build Windows MSYS2
 ├── src/
 │   ├── core/                   # Rdzeń aplikacji
-│   │   ├── CanFrame.h          # Struktura CanFrame (max 64 B)
-│   │   ├── CanSniffer.h/.cpp   # Odczyt/zapis socketCAN
-│   │   ├── CanFrameModel.h/.cpp # Model tabeli Qt
+│   │   ├── CanFrame.h          # Struktura CanFrame (max 64 B, CAN FD)
+│   │   ├── CanSniffer.h/.cpp   # Odczyt/zapis socketCAN, QtConcurrent
+│   │   ├── CanFrameModel.h/.cpp # Model tabeli Qt, batch 33 ms
 │   │   ├── AssociativeLearner.h/.cpp # UI uczenia asocjacyjnego
-│   │   ├── LearningEngine.h/.cpp  # Czysty C++ silnik ML (37 algorytmów)
-│   │   ├── GpuCompute.h/.cpp      # Akceleracja GPU (OpenCL)
-│   │   ├── CandidateModel.h/.cpp # Model tabeli kandydatów
-│   │   ├── GpuCorrelator.h/.cpp # Korelacje GPU (OpenCL)
-│   │   ├── LuaScriptEngine.h/.cpp # Silnik Lua
+│   │   ├── LearningEngine.h/.cpp  # Silnik ML (37 algorytmów)
+│   │   ├── GpuCorrelator.h/.cpp   # Korelacje GPU (OpenCL)
+│   │   ├── LuaScriptEngine.h/.cpp # Silnik Lua 5.4
 │   │   ├── DbcParser.h/.cpp    # Parser plików DBC
-│   │   ├── OfflineAnalyzer.h/.cpp # Analiza offline
-│   │   ├── FrameDetailWidget.h/.cpp # Szczegóły ramki
-│   │   ├── CanDashboard.h/.cpp # Dashboard CAN
-│   │   ├── CanExporter.h/.cpp  # Eksport danych
-│   │   ├── CanInterfaceEnumerator.h/.cpp # Lista interfejsów
-│   │   ├── WebSocketServer.h/.cpp # Serwer WebSocket
+│   │   ├── OfflineAnalyzer.h/.cpp # Analiza offline (candump)
+│   │   ├── FrameDetailWidget.h/.cpp # Siatka bitów 8×8
+│   │   ├── CanDashboard.h/.cpp # Dashboard sygnałów DBC
+│   │   ├── WebSocketServer.h/.cpp # WebSocket JSON stream (port 9000)
+│   │   ├── CanObservationDb.h/.cpp    # ★ SQLite frame storage (WAL, batch)
+│   │   ├── CanObservationDbWidget.h/.cpp # ★ UI bazy danych ramek
+│   │   ├── CanAlertEngine.h/.cpp      # ★ Alert pipeline (4 typy reguł)
+│   │   ├── CanAlertWidget.h/.cpp      # ★ UI alertów + edytor reguł
+│   │   ├── PcapExporter.h/.cpp        # ★ Eksport PCAP (LINKTYPE_CAN=227)
+│   │   ├── CanTimelineModel.h/.cpp    # ★ Ring-buffer model top-N IDs
+│   │   ├── CanProtocolTimelineWidget.h/.cpp # ★ Scatter chart timeline
 │   │   └── Logger.h/.cpp       # Logger zdarzeń
 │   └── gui/                    # Interfejs użytkownika
-│       └── MainWindow.h/.cpp   # Główne okno (toolbar, zakładki)
-├── tests/                      # Testy jednostkowe (Google Test + QTest)
-│   ├── test_canframe.cpp
-│   ├── test_canframemodel.cpp
-│   ├── test_dbcparser.cpp
-│   ├── test_learningengine.cpp
-│   └── test_ringbuffer.cpp
-└── .ws_backup_*/               # Backupy skryptów wdrożeniowych
+│       └── MainWindow.h/.cpp   # Główne okno (toolbar, zakładki, tray)
+└── tests/                      # Testy jednostkowe (Google Test, 344 testów)
+    ├── test_canframe.cpp
+    ├── test_canframemodel.cpp
+    ├── test_dbcparser.cpp
+    ├── test_learningengine.cpp
+    ├── test_ringbuffer.cpp
+    ├── test_canobservationdb.cpp  # ★ 13 testów SQLite DB
+    ├── test_canalertengine.cpp    # ★ testy alertów
+    ├── test_pcapexporter.cpp      # ★ testy PCAP
+    └── test_cantimelinemodel.cpp  # ★ 14 testów CanTimelineModel
 ```
+
+> **★** — komponenty dodane w v2.2.0
 
 ---
 
@@ -493,11 +560,15 @@ MagistralaCAN4/
 ## Technologie
 
 - **C++17** — standard języka
-- **Qt 6.10** — Widgets, Charts, Concurrent, WebSockets
-- **CMake 3.16+** — system budowania
+- **Qt 6.x** — Widgets, Charts, Concurrent, WebSockets, SerialPort, Sql
+- **CMake 3.16+** — system budowania (CI-aware: `ENV{CI}` guard dla static vs dynamic Qt6)
+- **SQLite** (przez Qt6::Sql / QSQLITE) — trwały storage ramek, WAL mode
+- **Google Test 1.12+** — testy jednostkowe (344 testów, FetchContent)
+- **GitHub Actions** — CI: Linux GCC, ASAN, coverage, clang-tidy, Windows MSYS2
 - **Linux socketCAN** — `PF_CAN` / `SOCK_RAW`
 - **OpenCL 3.0** — akceleracja GPU (fallback CPU)
 - **Lua 5.4** — interpreter skryptowy
+- **PCAP** — LINKTYPE\_CAN\_SOCKETCAN (227), kompatybilny z Wireshark/tshark
 - **XCB** — protokół X Window (skróty klawiszowe)
 
 ---

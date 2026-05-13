@@ -155,8 +155,8 @@
     \vspace{-2cm}
     {\Huge\color{accent}\textbf{MagistralaCAN4}}\\[8pt]
     {\Large\color{pink}Wysokowydajny sniffer CAN / CAN FD}\\[4pt]
-    {\normalsize\color{fg}Uczenie asocjacyjne \,\textbullet{} \, Silnik Lua \,\textbullet{} \, Akceleracja GPU \,\textbullet{} \, WebSocket}\\[12pt]
-    {\small\color{orange}Wersja 2.0.0 \,|\, C++17 \,|\, Qt\,6.10 \,|\, Linux socketCAN}
+    {\normalsize\color{fg}Uczenie asocjacyjne \,\textbullet{} \, Silnik Lua \,\textbullet{} \, Alert Pipeline \,\textbullet{} \, SQLite \,\textbullet{} \, PCAP \,\textbullet{} \, Timeline}\\[12pt]
+    {\small\color{orange}Wersja 2.2.0 \,|\, C++17 \,|\, Qt\,6.x \,|\, Linux socketCAN \,|\, 344 testów}
 }
 \author{\color{fg}CustomLabs}
 \date{\color{fg}\today}
@@ -294,11 +294,16 @@
     \item Wielowątkowy odczyt CAN/CAN FD przez socketCAN
     \item Zaawansowane uczenie asocjacyjne (14 tabel analitycznych, klastrowanie, PCA, anomalie)
     \item Silnik skryptowy Lua z API CAN (sendFrame, log, getTick)
+    \item \textbf{Alert Pipeline} — 4 typy reguł (NewCanId, DlcChange, ByteValue, RateAnomaly) + tray
+    \item \textbf{SQLite frame storage} — sesje, WAL mode, batch insert, analityka, eksport PCAP
+    \item \textbf{Protocol Timeline} — QChart scatter plot, oś czasu sekwencji ramek, top-N IDs
     \item Akceleracja GPU przez OpenCL (fallback CPU)
     \item Serwer WebSocket streamujący ramki jako JSON
-    \item Parser DBC z integracją sygnałów w dashboardzie
+    \item Parser DBC z integracją sygnałów w dashboardzie i osi Y Timeline
     \item Analiza offline plików candump
     \item Interaktywny edytor ramek z siatką bitów
+    \item CI/CD: GitHub Actions — Linux GCC, ASAN, coverage, clang-tidy, Windows MSYS2
+    \item 344 testów jednostkowych (Google Test, FetchContent)
 \end{itemize}
 \end{infobox}
 
@@ -356,6 +361,10 @@ LuaScriptEngine & Interpreter Lua 5.4 z API CAN: \texttt{sendFrame}, \texttt{log
 DbcParser & Parsowanie plików \texttt{.dbc}, dekompozycja sygnałów. \\
 GpuCorrelator & Obliczenia macierzy podobieństw na GPU (OpenCL) lub CPU. \\
 WebSocketServer & Serwer WebSocket na porcie 9000, stream JSON ramek CAN. \\
+\color{pink}CanObservationDb & SQLite-backed storage ramek: sesje, WAL mode, batch insert, \texttt{queryByCanId}, \texttt{findDlcAnomalies}, \texttt{exportToPcap}. \\
+\color{pink}CanAlertEngine & Rule-based alert pipeline: \textit{NewCanId}, \textit{DlcChange}, \textit{ByteValue}, \textit{RateAnomaly}. Sliding window, lazy state update. \\
+\color{pink}PcapExporter & Eksport ramek do formatu PCAP (LINKTYPE\_CAN\_SOCKETCAN=227). Kompatybilny z Wireshark. \\
+\color{pink}CanTimelineModel & Pure C++ ring-buffer model; \texttt{std::deque} per ID; top-N wg totalCount; lazy \texttt{rebuildTracked()}. \\
 Logger & Zapis zdarzeń do \texttt{\textasciitilde/magistrala\_can4.log}. \\
 \bottomrule
 \end{tabularx}
@@ -396,8 +405,52 @@ Odtwarzacz plików candump:
 
 Dashboard sygnałów DBC aktualizowany na żywo. Po wczytaniu pliku .dbc automatycznie tworzy panele (QLabel) dla wszystkich sygnałów, wyświetlając nazwę, aktualną wartość i jednostkę.
 
+\subsection{Frame DB --- SQLite Frame Storage \textnormal{\color{pink}(v2.2.0)}}
+
+Zakładka \textbf{Frame DB} zapewnia trwałe przechowywanie ramek CAN w bazie SQLite z pełnym API analitycznym.
+
+\begin{itemize}[nosep]
+    \item \textbf{Sesje}: każde nagrywanie tworzy sesję (\texttt{sessions} + \texttt{frames} z 3 indeksami)
+    \item \textbf{WAL mode + batch insert}: zapisy co 200 ramek lub 2 s — minimalne opóźnienie UI
+    \item \textbf{Zapytania}: \texttt{queryByCanId}, \texttt{queryTimeRange}, \texttt{findDlcAnomalies}, \texttt{computeIdFrequencies}
+    \item \textbf{Eksport PCAP}: \texttt{exportToPcap()} — LINKTYPE\_CAN\_SOCKETCAN (227), kompatybilny z Wireshark/tshark
+\end{itemize}
+
+\subsection{Alerts --- Pipeline alertów \textnormal{\color{pink}(v2.2.0)}}
+
+Konfigurowalny system alertów z powiadomieniami w system tray.
+
+\begin{center}
+\begin{tabularx}{0.95\textwidth}{@{}>{\color{accent}\bfseries\ttfamily}lX@{}}
+\toprule
+\rowcolor{darkbg} Typ reguły & Opis \\
+\midrule
+NewCanId   & Alarmuje przy pierwszym wystąpieniu nowego ID CAN w sesji \\
+DlcChange  & Wykrywa zmianę DLC dla danego ID \\
+ByteValue  & Monitoruje bajt[N] z operatorem (GT, LT, GTE, LTE, EQ, NEQ) i progiem \\
+RateAnomaly & Sliding window 20 próbek; alarm gdy inter-frame interval odbiega od baseline o $\pm N\%$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{warnbox}
+Stan wewnętrzny (\texttt{m\_seenIds}, \texttt{m\_knownDlc}, \texttt{m\_rateState}) jest aktualizowany \textbf{po} ewaluacji reguł --- dzięki temu pierwsza ramka danego ID poprawnie wyzwala regułę \textit{NewCanId}.
+\end{warnbox}
+
+\subsection{Timeline --- Oś czasu protokołu \textnormal{\color{pink}(v2.2.0)}}
+
+Wizualizacja sekwencji wiadomości CAN za pomocą wykresu scatter (QChart).
+
+\begin{itemize}[nosep]
+    \item Jedna \texttt{QScatterSeries} per tracked CAN ID, 16-kolorowa paleta
+    \item Oś X: czas w ms, ruchome okno 5/10/30/60/120 s
+    \item Oś Y: kategorie z nazwami DBC (po wczytaniu pliku .dbc) lub hex ID
+    \item Top-N IDs: spinner 2--16, sortowanie wg totalCount descending
+    \item Zasilany sygnałem \texttt{frameProcessedThrottled} (co 16-tą ramkę --- ok.\ 30 fps wizualnych)
+\end{itemize}
+
 % ═══════════════════════════════════════════════════════════════
-\section{Uczenie asocjacyjne — szczegółowy opis}
+\section{Uczenie asocjacyjne --- szczegółowy opis}
 % ═══════════════════════════════════════════════════════════════
 
 \subsection{Filozofia działania}
@@ -637,13 +690,13 @@ ws.onmessage = (e) => {
 
 \node[dep] (gcc) {GCC 9+ / Clang 10+};
 \node[dep,right=of gcc] (cmake) {CMake $\ge$ 3.16};
-\node[dep,right=of cmake] (qt6) {Qt 6.2+\\Widgets, Charts\\Concurrent, WebSockets};
+\node[dep,right=of cmake] (qt6) {Qt 6.2+\\Widgets, Charts\\WebSockets, Sql};
 \node[dep,right=of qt6] (lua) {Lua 5.3/5.4};
 
 \node[dep,below=of gcc] (ocl) {OpenCL 1.2+};
 \node[dep,below=of cmake] (xcb) {XCB};
 \node[dep,below=of qt6] (linux) {Linux\\socketCAN};
-\node[dep,below=of lua] (can) {moduły can/vcan};
+\node[dep,below=of lua] (can) {Google Test\\$\ge$ 1.12};
 
 \end{tikzpicture}
 \end{center}
@@ -736,13 +789,14 @@ Enter & Następna ramka (OfflineAnalyzer) & Zakładka offline \\
 ]
 
 \node[tech,draw=pink] (cpp) {C++17};
-\node[tech,right=of cpp,draw=orange] (qt) {Qt 6.10};
+\node[tech,right=of cpp,draw=orange] (qt) {Qt 6.x};
 \node[tech,right=of qt,draw=accent] (cmake) {CMake};
 \node[tech,below=of cpp,draw=orange] (lua) {Lua 5.4};
 \node[tech,below=of qt,draw=pink] (ocl) {OpenCL 3.0};
 \node[tech,below=of cmake,draw=accent] (xcb) {XCB};
 \node[tech,below=of lua,xshift=1.2cm,draw=pink] (can) {socketCAN};
-\node[tech,below=of ocl,xshift=1.2cm,draw=orange] (git) {Git};
+\node[tech,below=of ocl,xshift=1.2cm,draw=orange] (git) {SQLite};
+\node[tech,right=of cmake,draw=accent] (gtest) {GTest};
 
 \end{tikzpicture}
 \end{center}
@@ -753,7 +807,7 @@ Enter & Następna ramka (OfflineAnalyzer) & Zakładka offline \\
     \draw[red,line width=1.5pt] (0,0) -- (\textwidth-2cm,0);
     \draw[accent,line width=0.5pt] (0,-0.3) -- (\textwidth-2cm,-0.3);
     \node[font=\footnotesize\color{fg!60},above=0.4cm] at (\textwidth/2-1cm,0)
-        {© 2025--2026 CustomLabs \,|\, Licencja MIT};
+        {© 2025--2026 CustomLabs \,|\, Licencja MIT \,|\, v2.2.0 \,|\, 344 testów};
 \end{tikzpicture}
 \end{center}
 
