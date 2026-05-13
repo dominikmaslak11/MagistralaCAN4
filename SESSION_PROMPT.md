@@ -883,3 +883,73 @@ Opcjonalna faza 2 uczenia, która pozwala izolować ID modułu od tła magistral
 2. **LogComparatorWidget** — porównanie dwóch plików candump
 3. **CANopen/OBD-II parsery** — PDO/SDO + OBD-II PID decode
 4. **MQTT bridge testy** — testy jednostkowe dla MqttBridge
+
+---
+
+## Sesja 2026-05-13 (część 9): CanPrototypeExporter — eksport kodu do Python/Lua/Arduino ✅
+
+### Testy: 419 → 435 (+16 testów, 30 suites)
+### Commit: `3bc6c62`
+
+### Opis funkcjonalności
+Generuje gotowy kod prototypowy do symulacji badanego modułu CAN na podstawie analizy ruchu.
+
+### Formaty wyjściowe
+| Format | Opis | Użycie |
+|--------|------|--------|
+| **Python** (python-can) | Klasy wiadomości, wątki periodyczne, obsługa sygnałów DBC, konfiguracja socketcan/pcan/... | PC (Linux/Win), Raspberry Pi |
+| **Lua** | Tabele z metodą encode(), pętla symulacji, kompatybilny z lua-can | PC, embedded Lua runtime |
+| **Arduino C++** | Szkic `.ino` z MCP2515 library, setup()/loop(), timing millis() | Arduino Uno/Mega/Nano + MCP2515 |
+
+### Źródła danych (kombinowane)
+- **CanFrameModel** — aktualne unikalne ramki + ostatnie dane jako sample payload
+- **DbcParser** — definicje sygnałów → encode() z scale/offset per sygnał
+- **ModuleProfile.periodicIds** — okresy heartbeat → dokładne stałe PERIOD
+- **Historia krocząca** — ostatnie 64 ramki/ID → detekcja liczników auto-increment
+
+### Detekcja auto-increment (rolling counters)
+Dla każdej pozycji bajtowej: ≥60% par kolejnych ramek ma `byte[n+1] - byte[n] == 1 (mod 256)` → bajt = licznik cykliczny → generowany jako `_ctr_byteN++` w encode().
+
+### Generowany Python (python-can) — cechy
+- Klasa per wiadomość z `ID`, `PERIOD`, `DLC`, `EXT` jako stałe klasy
+- `__init__` z atrybutami per sygnał (z jednostkami i nazwami DBC)
+- `encode()` z operacjami bit-shift na sygnałach byte-aligned; `_pack_bits()` helper dla złożonych
+- `build_message() → can.Message`
+- Pomocnik `_periodic(msg, bus, stop_event)` dla wątków
+- `main()` z threading.Thread per wiadomość periodyczna + obsługa Ctrl+C
+- Opcjonalna pętla `rx_loop` (checkbox)
+
+### Generowany Arduino C++ — cechy
+- `#include <SPI.h>` + `#include <mcp_can.h>`
+- Zmienne globalne per wiadomość: `txBuf_`, `lastTx_`, `ctr_*`
+- Zmienne per sygnał z `float varname = offset;` jako punkt konfiguracji
+- `encode_X()` z `constrain()` + cast per sygnał
+- `setup()` z init CAN i wartościami początkowymi
+- `loop()` z `millis()` timing per wiadomość
+- Opcjonalny odbiór przez `CAN.checkReceive()` / `readMsgBuf()`
+
+### Widget ("Eksport kodu")
+- Selektor formatu, interfejsu, kanału, prędkości, checkbox RX loop
+- Statystyki: IDs śledzone, heartbeaty, sygnały DBC, liczniki
+- Podgląd kodu (monospace, read-only)
+- Przycisk "Eksportuj do pliku" → .py/.lua/.ino
+- `onFrame()` slot buduje historię (64 ramki/ID) dla detekcji liczników
+- Podpięty do `frameProcessed` w MainWindow
+- DBC parser ustawiany we wszystkich 4 ścieżkach ładowania DBC
+
+### Testy (16 nowych)
+Python: GeneratesHeader, ClassAndPeriod, SignalEncoding, CounterByte, EmptyFrames, WithReceiver
+Lua: GeneratesHeader, EncodeMethod, CounterByte
+Arduino: GeneratesSketch, SignalEncode, CounterByte, PeriodInLoop, WithReceiver
+Plus: MultipleMessages, NonPeriodicFrame
+
+### Łączny stan projektu (2026-05-13, część 9)
+- **Testy**: 435/435 w 30 suites
+- **Nowa zakładka**: "Eksport kodu" (CanPrototypeExporterWidget)
+- **Eksport**: candump, CSV, MDF4, PCAP, **Python/Lua/Arduino prototype**
+
+### Roadmapa (następna sesja — priorytety)
+1. **CanGaugeWidget integracja z DBC** — bindowanie sygnałów DBC do wskaźników
+2. **LogComparatorWidget** — porównanie dwóch plików candump  
+3. **CANopen/OBD-II parsery** — PDO/SDO + OBD-II PID decode
+4. **MQTT bridge testy** — testy jednostkowe dla MqttBridge
