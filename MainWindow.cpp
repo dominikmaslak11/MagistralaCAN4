@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "core/WebSocketServer.h"
 #include <QToolBar>
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -25,6 +26,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // Ustawienia timer’a batchowego (co 33 ms)
     m_batchTimer.setInterval(33);
+
+    // --- WebSocket Server ---
+    m_wsServer = new WebSocketServer(this);
+    connect(m_wsServer, &WebSocketServer::errorOccurred, this, [this](const QString &msg) {
+        QMessageBox::warning(this, QStringLiteral("Błąd WebSocket"), msg);
+    });
+    connect(m_model, &CanFrameModel::frameUpdated, m_wsServer, &WebSocketServer::broadcastFrame);
     connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
 
     // Sniffer – sygnały
@@ -82,6 +90,18 @@ void MainWindow::updateTableBatch() {
     m_tableView->scrollToBottom();
 }
 
+void MainWindow::toggleWebSocket() {
+    if (!m_wsRunning) {
+        m_wsServer->start(9000);
+        m_wsRunning = true;
+        m_btnWsServer->setText(QStringLiteral("🔌 WS Stop"));
+    } else {
+        m_wsServer->stop();
+        m_wsRunning = false;
+        m_btnWsServer->setText(QStringLiteral("🔌 WS Start"));
+    }
+}
+
 void MainWindow::setupToolBar() {
     auto *toolbar = addToolBar("Główne");
     toolbar->setMovable(false);
@@ -93,6 +113,12 @@ void MainWindow::setupToolBar() {
     // Placeholdery na inne akcje
     toolbar->addSeparator();
     toolbar->addAction("🗙 Wyczyść", this, [this]() {
+
+    // WebSocket
+    toolbar->addSeparator();
+    m_btnWsServer = new QPushButton(QStringLiteral("🔌 WS Start"));
+    connect(m_btnWsServer, &QPushButton::clicked, this, &MainWindow::toggleWebSocket);
+    toolbar->addWidget(m_btnWsServer);
         m_model->removeRows(0, m_model->rowCount());
     });
 }

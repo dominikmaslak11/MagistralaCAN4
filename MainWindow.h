@@ -6,6 +6,7 @@
 #include <QVector>
 #include "core/CanSniffer.h"
 #include "core/CanFrameModel.h"
+class WebSocketServer;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -17,6 +18,7 @@ private slots:
     void toggleSniffing();
     void onNewFrame(const CanFrame &frame);
     void updateTableBatch();
+    void toggleWebSocket();
 
 private:
     void setupStyle();
@@ -27,8 +29,11 @@ private:
     CanFrameModel *m_model;
     QTableView *m_tableView;
     QPushButton *m_btnStartStop;
+    QPushButton *m_btnWsServer;
+    WebSocketServer *m_wsServer;
 
     QTimer m_batchTimer;
     QVector<CanFrame> m_frameBuffer;  // bufor zbierający ramki z wątku sniffera
     bool m_sniffing = false;
+    bool m_wsRunning = false;
 };
