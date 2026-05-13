@@ -504,3 +504,53 @@ w kolejnych parach ramek. Jeśli jakikolwiek bit zmienia się w >40% par → baj
 3. **AUTOSAR ARXML import** — sygnały z ARXML bez DBC
 4. **CanObservationDb → ML integration** — trenowanie modeli na danych historycznych z SQLite
 5. **Eksport do Wireshark PCAP** — `.pcap` z enkapsulaacją socketcan
+
+---
+
+## Sesja 2026-05-13 (część 2): Alert Pipeline + PCAP + SQLite Analytics ✅
+
+### Testy: 307 → 330 (+23 testów, 23 test suites)
+### Commit: `5e8539f`
+
+### CanAlertEngine — rule-based alert system
+
+- ✅ `src/core/CanAlertEngine.h/cpp` — silnik reguł alertów, oceniany na każdej ramce
+  - **4 typy reguł**: `NewCanId` (pierwsze wystąpienie ID), `DlcChange` (DLC zmieniony vs pierwsze widzenie), `ByteValue` (byte[N] op threshold, operatory GT/LT/GTE/LTE/EQ/NEQ), `RateAnomaly` (aktualna częstość odbiega >N% od baseline)
+  - `RateAnomaly`: sliding window 20 timestamp'ów per ID, baseline uczony po 8+ próbkach, porównanie inter-frame interval
+  - `reset()` czyści stan uczenia (seenIds, knownDlc, rateState) i licznik alertów
+  - Reguły ewaluowane przed aktualizacją stanu — pierwsza ramka triggeruje NewCanId/DlcChange poprawnie
+- ✅ `src/core/CanAlertWidget.h/cpp` — Qt UI:
+  - Edytor reguł: name, type, action (Log/Tray/Both), parametry ByteValue (ID filter, byteIdx, op, threshold), rateDeviationPct
+  - Tabela aktywnych reguł + kolorowany log alertów (czerwone tło dla ruleName)
+  - Podpięty do `frameProcessed` (każda ramka), triggery tray przez `showTrayNotification`
+- ✅ 15 testów: NewCanId (trigger/noRepeat/multiId), DlcChange (firstFrame/trigger/sameDlc), ByteValue (GT/LT/EQ/idFilter), disabled rule, multiple rules, reset, totalAlertCount, description content
+
+### PcapExporter — eksport PCAP Wireshark-compatible
+
+- ✅ `src/core/PcapExporter.h/cpp` — eksport do formatu PCAP z LINKTYPE_CAN_SOCKETCAN (227)
+  - Global header: magic `0xa1b2c3d4` (LE, µs), version 2.4, snaplen 65535, network 227
+  - Per-frame: 16-byte packet header (ts_sec, ts_usec, incl_len=16, orig_len=16) + 16-byte socketcan payload (can_id z EFF/FD flag, len, 3 pad, 8 data)
+  - EFF flag (bit 31) ustawiany dla extended frames — Wireshark filtruje poprawnie
+- ✅ Przycisk "🦈 Eksportuj PCAP" w toolbarze MainWindow (eksportuje wszystkie ramki z modelu)
+- ✅ `CanObservationDb::exportToPcap(path, canId, sessionId, limit)` — query-to-pcap w jednym wywołaniu
+- ✅ 8 testów: emptyHeader, singleFrameSize, multipleFrames, canIdCorrect, extendedFlag, timestamps, payload, badPath
+
+### CanObservationDb — nowe metody analityczne
+
+- ✅ `queryTimeRange(fromUs, toUs, sessionId, limit)` — zapytanie po oknie czasowym
+- ✅ `findDlcAnomalies(sessionId)` — wykrywa ramki gdzie DLC != najczęstszy DLC dla danego ID (SQL GROUP BY + mode detection)
+- ✅ `computeIdFrequencies(sessionId)` — per-ID: frameCount + avgIntervalUs (z MIN/MAX ts_us)
+- ✅ `exportToPcap(path, canId, sessionId, limit)` — integracja z PcapExporter
+
+### Łączny stan projektu (2026-05-13)
+- **Testy**: 330/330 w 23 suites
+- **Nowe zakładki**: "Alerts" (CanAlertWidget)
+- **Eksport**: candump, CSV, MDF4, **PCAP (Wireshark)**
+- **Alert Pipeline**: reguły → logi + tray notifications — ML output ma teraz output channel
+
+### Roadmapa (następna sesja — priorytety)
+1. **Protocol Sequence Diagram** — wizualna oś czasu wymiany komunikatów (MSC/ladder diagram)
+2. **CAN FD extended stats** — Bit Timing, TDC, ESI tracking per-ID
+3. **AUTOSAR ARXML import** — sygnały z ARXML bez DBC
+4. **Alert → ML integration** — reguła `IsolationForestScore` (score >threshold z LearningEngine)
+5. **Lua hook w Alert Pipeline** — `on_alert(rule, frame)` callback dla zaawansowanych akcji
