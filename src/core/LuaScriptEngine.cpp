@@ -110,6 +110,39 @@ void LuaScriptEngine::onNewFrame(const CanFrame &frame) {
 #endif
 }
 
+void LuaScriptEngine::callOnAlert(const CanAlert &alert) {
+#ifdef HAS_LUA
+    if (!m_lua) return;
+
+    lua_getglobal(m_lua, "onAlert");
+    if (!lua_isfunction(m_lua, -1)) {
+        lua_pop(m_lua, 1);
+        return;  // onAlert is optional
+    }
+
+    lua_pushstring(m_lua, alert.ruleName.toUtf8().constData());
+    lua_pushinteger(m_lua, alert.frame.id);
+    lua_pushstring(m_lua, alert.description.toUtf8().constData());
+
+    // data table
+    lua_newtable(m_lua);
+    for (int i = 0; i < alert.frame.dlc && i < 64; ++i) {
+        lua_pushinteger(m_lua, alert.frame.data[i]);
+        lua_rawseti(m_lua, -2, i + 1);
+    }
+
+    lua_pushinteger(m_lua, static_cast<lua_Integer>(alert.timestampUs));
+
+    if (lua_pcall(m_lua, 5, 0, 0) != LUA_OK) {
+        const char *err = lua_tostring(m_lua, -1);
+        emit errorOccurred(QString("Błąd w onAlert: %1").arg(err));
+        lua_pop(m_lua, 1);
+    }
+#else
+    Q_UNUSED(alert);
+#endif
+}
+
 #ifdef HAS_LUA
 int LuaScriptEngine::api_sendFrame(lua_State *L) {
     LuaScriptEngine *engine = (LuaScriptEngine*)lua_touserdata(L, lua_upvalueindex(1));

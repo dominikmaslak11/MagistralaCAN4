@@ -3,6 +3,7 @@
 #include <QString>
 #include <QTimer>
 #include "CanFrame.h"
+#include "CanAlertEngine.h"
 
 #ifdef HAS_LUA
 extern "C" {
@@ -28,6 +29,7 @@ public:
 
 public slots:
     void onNewFrame(const CanFrame &frame);
+    void callOnAlert(const CanAlert &alert);
 
 signals:
     void logMessage(const QString &msg);

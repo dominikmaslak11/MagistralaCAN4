@@ -241,6 +241,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                 if (a.frame.id != 0 || !a.description.isEmpty())
                     showTrayNotification("CAN Alert: " + a.ruleName, a.description);
             });
+    connect(m_alertWidget->engine(), &CanAlertEngine::alertTriggered,
+            m_luaEngine, &LuaScriptEngine::callOnAlert);
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
