@@ -181,12 +181,13 @@ jobs:
             mingw-w64-ucrt-x86_64-qt6-charts
             mingw-w64-ucrt-x86_64-qt6-websockets
             mingw-w64-ucrt-x86_64-qt6-serialport
+            mingw-w64-ucrt-x86_64-qt6-sql
 
       - name: Configure (Windows)
         run: |
           cmake -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH=/ucrt64/qt6-static
+            -DCMAKE_PREFIX_PATH=/ucrt64
 
       - name: Build tests
         run: cmake --build build --target MagistralaCAN4_tests -j4

@@ -16,11 +16,13 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # ── Qt6 (wspólne) ──
-# Na Windows wymuszamy statycznego Qt6 (brak zależności od DLL)
+# Statyczne Qt6 tylko lokalnie (nie na CI — tam Qt6 jest dynamiczne z /ucrt64)
 if(WIN32 OR MINGW)
-    set(CMAKE_PREFIX_PATH "C:/msys64/ucrt64/qt6-static" CACHE PATH "Static Qt6 prefix (MSYS2 UCRT64)")
+    if(NOT DEFINED ENV{CI} AND EXISTS "C:/msys64/ucrt64/qt6-static")
+        set(CMAKE_PREFIX_PATH "C:/msys64/ucrt64/qt6-static" CACHE PATH "Static Qt6 prefix (MSYS2 UCRT64)")
+    endif()
 endif()
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Concurrent Charts WebSockets OpenGLWidgets SerialPort Sql)
 
 # ── zstd (kompresja nagrań) ──
 if(WIN32 OR MINGW)
@@ -109,6 +111,8 @@ set(SOURCES
     src/core/CanSignalMonitorWidget.cpp
     src/core/CanPeriodicSender.cpp
     src/core/CanPeriodicSenderWidget.cpp
+    src/core/CanObservationDb.cpp
+    src/core/CanObservationDbWidget.cpp
     src/core/CanGaugeWidget.cpp
     src/core/LogComparatorWidget.cpp
     src/core/CanOpenParser.cpp
@@ -210,6 +214,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::WebSockets
     Qt6::OpenGLWidgets
     Qt6::SerialPort
+    Qt6::Sql
     $<$<BOOL:${ZSTD_FOUND}>:PkgConfig::ZSTD>
 )
 
@@ -243,8 +248,10 @@ endif()
 if(WIN32 OR MINGW)
     # Windows resource file (icon + version info)
     target_sources(${PROJECT_NAME} PRIVATE app.rc)
-    # Statyczne linkowanie MinGW runtime (brak zależności od libgcc_s_seh-1.dll itp.)
-    target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -static)
+    # Statyczne linkowanie MinGW runtime — tylko lokalnie ze statycznym Qt6
+    if(NOT DEFINED ENV{CI})
+        target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -static)
+    endif()
 
     # ── Post-build: sygnalizacja gotowości ──
     # Binarka i DLL-e pozostają w build_native/ (jeden katalog wyjściowy)
@@ -280,6 +287,7 @@ set(TEST_SOURCES
     tests/test_canreplayfilter.cpp
     tests/test_cansignalmonitor.cpp
     tests/test_canperiodicsender.cpp
+    tests/test_canobservationdb.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -307,6 +315,7 @@ set(TEST_SOURCES
     src/core/CanReplayFilter.cpp
     src/core/CanSignalMonitor.cpp
     src/core/CanPeriodicSender.cpp
+    src/core/CanObservationDb.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
@@ -318,12 +327,15 @@ target_link_libraries(${PROJECT_NAME}_tests PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Test
+    Qt6::Sql
 )
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE UNIT_TEST)
 
 if(WIN32 OR MINGW)
     target_compile_definitions(${PROJECT_NAME}_tests PRIVATE Q_OS_WIN)
-    target_link_options(${PROJECT_NAME}_tests PRIVATE -static-libgcc -static-libstdc++ -static)
+    if(NOT DEFINED ENV{CI})
+        target_link_options(${PROJECT_NAME}_tests PRIVATE -static-libgcc -static-libstdc++ -static)
+    endif()
 endif()
 
 # Register tests with CTest

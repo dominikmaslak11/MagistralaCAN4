@@ -47,6 +47,7 @@
 #include "core/CanReplayFilterWidget.h"
 #include "core/CanSignalMonitorWidget.h"
 #include "core/CanPeriodicSenderWidget.h"
+#include "core/CanObservationDbWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -140,6 +141,7 @@ private:
     CanReplayFilterWidget  *m_replayFilterWidget;
     CanSignalMonitorWidget  *m_signalMonitorWidget;
     CanPeriodicSenderWidget *m_periodicSenderWidget;
+    CanObservationDbWidget  *m_observationDbWidget;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

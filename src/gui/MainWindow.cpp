@@ -106,6 +106,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_replayFilterWidget   = new CanReplayFilterWidget(&m_sniffer);
     m_signalMonitorWidget  = new CanSignalMonitorWidget;
     m_periodicSenderWidget = new CanPeriodicSenderWidget(&m_sniffer);
+    m_observationDbWidget  = new CanObservationDbWidget;
     m_restServer.setModel(m_model);
     connect(&m_restServer, &HttpRestServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
     connect(&m_restServer, &HttpRestServer::stopRequested, this, [this]() { if (m_sniffing) toggleSniffing(); });
@@ -219,6 +220,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessed,          m_idStatsWidget,         &CanIdStatsWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_signalMonitorWidget,   &CanSignalMonitorWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
+    connect(this, &MainWindow::frameProcessed, m_observationDbWidget,
+            [this](const CanFrame &f) { m_observationDbWidget->onFrame(f); });
     connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::onUserScroll);
     connect(m_luaEngine, &LuaScriptEngine::logMessage, this, [](const QString &msg) { qDebug() << "[Lua]" << msg; });
     connect(m_luaEngine, &LuaScriptEngine::errorOccurred, this, [](const QString &err) { qWarning() << "[Lua ERROR]" << err; });
@@ -672,6 +675,7 @@ void MainWindow::setupCentralWidget() {
     tabs->addTab(m_replayFilterWidget,  "Replay Filter");
     tabs->addTab(m_signalMonitorWidget,  "Live Signals");
     tabs->addTab(m_periodicSenderWidget, "Periodic Sender");
+    tabs->addTab(m_observationDbWidget,  "Frame DB");
     // Wtyczki z plugins/
     for (auto *plugin : m_pluginLoader.plugins())
         if (auto *w = plugin->widget())

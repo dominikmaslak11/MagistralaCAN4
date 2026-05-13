@@ -32,6 +32,7 @@ jobs:
             mingw-w64-ucrt-x86_64-qt6-charts
             mingw-w64-ucrt-x86_64-qt6-websockets
             mingw-w64-ucrt-x86_64-qt6-serialport
+            mingw-w64-ucrt-x86_64-qt6-sql
             mingw-w64-ucrt-x86_64-lua
             mingw-w64-ucrt-x86_64-opencl-headers
             mingw-w64-ucrt-x86_64-opencl-icd
@@ -40,12 +41,15 @@ jobs:
         run: |
           cmake -B build_ci -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_CXX_COMPILER=g++
+            -DCMAKE_CXX_COMPILER=g++ \
+            -DCMAKE_PREFIX_PATH=/ucrt64
 
-      - name: Build
-        run: ninja -C build_ci -j$(nproc)
+      - name: Build tests
+        run: cmake --build build_ci --target MagistralaCAN4_tests -j$(nproc)
 
       - name: Test
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: ctest --test-dir build_ci --output-on-failure -j$(nproc)
 
   # ═══════════════════════════════════════════════════════════════
