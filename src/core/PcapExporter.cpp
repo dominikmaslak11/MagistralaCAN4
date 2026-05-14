@@ -72,3 +72,21 @@ bool PcapExporter::exportFrames(const QString &path,
     f.flush();
     return true;
 }
+
+bool PcapExporter::writeHeader(const QString &path) {
+    QFile f(path);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return false;
+
+    QDataStream ds(&f);
+    writeU32LE(ds, PCAP_MAGIC_LE);
+    writeU16LE(ds, PCAP_MAJOR);
+    writeU16LE(ds, PCAP_MINOR);
+    writeU32LE(ds, 0);            // thiszone
+    writeU32LE(ds, 0);            // sigfigs
+    writeU32LE(ds, PCAP_SNAPLEN);
+    writeU32LE(ds, PCAP_LINKTYPE_CAN);
+
+    f.flush();
+    return true;
+}

@@ -147,3 +147,124 @@ TEST(CanGateway, NullSinkDoesNotCrash) {
     EXPECT_EQ(gw.stats().forwarded, 1u); // still counted
     gw.stop();
 }
+
+TEST(CanGateway, DropFlagBlocksInPassAllMode) {
+    // drop=true should block even when FilterMode is PassAll
+    StubDriver sink;
+    CanGateway gw;
+    gw.setSink(&sink);
+    gw.setFilterMode(CanGateway::FilterMode::PassAll);
+    gw.setRules({{ 0x100, 0, true }}); // drop=true → goes to blacklist
+    gw.start();
+
+    gw.processFrame(makeFrame(0x100)); // explicitly dropped
+    gw.processFrame(makeFrame(0x200)); // not in rules → passes
+
+    EXPECT_EQ(sink.written.size(), 1u);
+    EXPECT_EQ(sink.written[0].id, 0x200u);
+    EXPECT_EQ(gw.stats().blocked,   1u);
+    EXPECT_EQ(gw.stats().forwarded, 1u);
+    gw.stop();
+}
+
+TEST(CanGateway, WhitelistAllowsMultipleIds) {
+    StubDriver sink;
+    CanGateway gw;
+    gw.setSink(&sink);
+    gw.setFilterMode(CanGateway::FilterMode::Whitelist);
+    gw.setRules({{ 0x100, 0, false }, { 0x200, 0, false }});
+    gw.start();
+
+    gw.processFrame(makeFrame(0x100));
+    gw.processFrame(makeFrame(0x200));
+    gw.processFrame(makeFrame(0x300)); // not whitelisted
+
+    EXPECT_EQ(sink.written.size(), 2u);
+    EXPECT_EQ(gw.stats().forwarded, 2u);
+    EXPECT_EQ(gw.stats().blocked,   1u);
+    gw.stop();
+}
+
+TEST(CanGateway, BlacklistModeAllowsUnlistedIds) {
+    StubDriver sink;
+    CanGateway gw;
+    gw.setSink(&sink);
+    gw.setFilterMode(CanGateway::FilterMode::Blacklist);
+    gw.setRules({{ 0x200, 0, true }}); // explicitly block 0x200
+    gw.start();
+
+    gw.processFrame(makeFrame(0x100)); // not blocked
+    gw.processFrame(makeFrame(0x200)); // blocked
+    gw.processFrame(makeFrame(0x300)); // not blocked
+
+    EXPECT_EQ(sink.written.size(), 2u);
+    EXPECT_EQ(gw.stats().blocked,   1u);
+    EXPECT_EQ(gw.stats().forwarded, 2u);
+    gw.stop();
+}
+
+TEST(CanGateway, FrameContentPreservedOnRemap) {
+    StubDriver sink;
+    CanGateway gw;
+    gw.setSink(&sink);
+    gw.setFilterMode(CanGateway::FilterMode::PassAll);
+    gw.setRules({{ 0x100, 0x500, false }});
+    gw.start();
+
+    CanFrame f = makeFrame(0x100, 5);
+    f.data[0] = 0xAA; f.data[1] = 0xBB; f.data[2] = 0xCC;
+    gw.processFrame(f);
+
+    ASSERT_EQ(sink.written.size(), 1u);
+    const auto &w = sink.written[0];
+    EXPECT_EQ(w.id, 0x500u);    // remapped
+    EXPECT_EQ(w.dlc, 5u);       // dlc unchanged
+    EXPECT_EQ(w.data[0], 0xAA); // payload unchanged
+    EXPECT_EQ(w.data[1], 0xBB);
+    EXPECT_EQ(w.data[2], 0xCC);
+    gw.stop();
+}
+
+TEST(CanGateway, StartWithNoSourceNotRunning) {
+    CanGateway gw;
+    // No source driver set
+    gw.start();
+    EXPECT_FALSE(gw.isRunning()); // start() with no source sets running=false
+}
+
+TEST(CanGateway, TotalEqualsForwardedPlusBlocked) {
+    StubDriver sink;
+    CanGateway gw;
+    gw.setSink(&sink);
+    gw.setFilterMode(CanGateway::FilterMode::Whitelist);
+    gw.setRules({{ 0x100, 0, false }});
+    gw.start();
+
+    for (int i = 0; i < 5; ++i) gw.processFrame(makeFrame(0x100)); // forwarded
+    for (int i = 0; i < 3; ++i) gw.processFrame(makeFrame(0x999)); // blocked
+
+    auto s = gw.stats();
+    EXPECT_EQ(s.forwarded + s.blocked, s.total);
+    EXPECT_EQ(s.total, 8u);
+    gw.stop();
+}
+
+TEST(CanGateway, MultipleRemaps) {
+    StubDriver sink;
+    CanGateway gw;
+    gw.setSink(&sink);
+    gw.setFilterMode(CanGateway::FilterMode::PassAll);
+    gw.setRules({{ 0x100, 0x500, false }, { 0x200, 0x600, false }});
+    gw.start();
+
+    gw.processFrame(makeFrame(0x100));
+    gw.processFrame(makeFrame(0x200));
+    gw.processFrame(makeFrame(0x300)); // no remap
+
+    ASSERT_EQ(sink.written.size(), 3u);
+    EXPECT_EQ(sink.written[0].id, 0x500u);
+    EXPECT_EQ(sink.written[1].id, 0x600u);
+    EXPECT_EQ(sink.written[2].id, 0x300u);
+    EXPECT_EQ(gw.stats().remapped, 2u);
+    gw.stop();
+}
