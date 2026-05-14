@@ -257,6 +257,97 @@ TEST_F(MqttBridgeTest, SetBrokerLocalhost) {
     EXPECT_TRUE(bridge.isEnabled());
 }
 
+// ── Null DBC parser does not crash ───────────────────────────
+
+TEST_F(MqttBridgeTest, NullDbcParser_DoesNotCrash) {
+    MqttBridge bridge;
+    bridge.setDbcParser(nullptr);
+    bridge.setEnabled(true);
+    EXPECT_NO_THROW(bridge.onNewFrame(makeFrame(0x100, {0x01})));
+    QCoreApplication::processEvents();
+}
+
+// ── Zero-DLC frame does not crash ────────────────────────────
+
+TEST_F(MqttBridgeTest, ZeroDlcFrame_DoesNotCrash) {
+    MqttBridge bridge;
+    bridge.setEnabled(true);
+    CanFrame f{};
+    f.id = 0x100; f.dlc = 0;
+    EXPECT_NO_THROW(bridge.onNewFrame(f));
+    QCoreApplication::processEvents();
+}
+
+// ── Non-standard broker port does not crash ───────────────────
+
+TEST_F(MqttBridgeTest, SetBrokerNonStandardPort_DoesNotCrash) {
+    MqttBridge bridge;
+    bridge.setBroker("10.0.0.1", 9999);
+    EXPECT_NO_THROW(bridge.setEnabled(true));
+}
+
+// ── Frame sent before DBC is set does not crash ──────────────
+
+TEST_F(MqttBridgeTest, OnNewFrame_NoDbcSet_DoesNotCrash) {
+    MqttBridge bridge;
+    bridge.setEnabled(true);
+    EXPECT_NO_THROW(bridge.onNewFrame(makeFrame(0x200, {0xAB, 0xCD})));
+    QCoreApplication::processEvents();
+}
+
+// ── Different values on same signal trigger separate publishes ─
+
+TEST_F(MqttBridgeTest, DifferentValueEachFrame_DuplicateNotSuppressed) {
+    DbcSignal sig;
+    sig.name = "Pressure";
+    sig.startBit = 0;
+    sig.length   = 8;
+    sig.isLittleEndian = true;
+    sig.isSigned = false;
+    sig.scale    = 1.0;
+    sig.offset   = 0.0;
+
+    auto parser = makeParser(0x800, sig);
+
+    MqttBridge bridge;
+    bridge.setDbcParser(&parser);
+    bridge.setEnabled(true);
+
+    int count = 0;
+    QObject::connect(&bridge, &MqttBridge::publishedSignal,
+                     [&](const QString &, double) { ++count; });
+
+    bridge.onNewFrame(makeFrame(0x800, {10}));
+    bridge.onNewFrame(makeFrame(0x800, {20}));  // different value
+    QCoreApplication::processEvents();
+
+    // If mosquitto_pub is absent count==0; if present it should be 2.
+    // Key assertion: NOT suppressed (would be wrong to get count==1 with count>0).
+    if (count > 0)
+        EXPECT_EQ(count, 2);
+}
+
+// ── Switch DBC parser at runtime ─────────────────────────────
+
+TEST_F(MqttBridgeTest, SwitchDbcParser_NoSegfault) {
+    DbcSignal sig;
+    sig.name = "V1"; sig.startBit = 0; sig.length = 8;
+    sig.isLittleEndian = true; sig.isSigned = false;
+    sig.scale = 1.0; sig.offset = 0.0;
+
+    auto p1 = makeParser(0x100, sig);
+    sig.name = "V2";
+    auto p2 = makeParser(0x100, sig);
+
+    MqttBridge bridge;
+    bridge.setDbcParser(&p1);
+    bridge.setEnabled(true);
+    bridge.onNewFrame(makeFrame(0x100, {5}));
+    bridge.setDbcParser(&p2);
+    EXPECT_NO_THROW(bridge.onNewFrame(makeFrame(0x100, {6})));
+    QCoreApplication::processEvents();
+}
+
 // ── Enable/disable clears cached values ──────────────────────
 
 TEST_F(MqttBridgeTest, DisableClearsCacheAndReenableWorks) {

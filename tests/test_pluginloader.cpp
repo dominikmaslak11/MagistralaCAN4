@@ -147,3 +147,63 @@ TEST(PluginLoaderTest, StubPlugin_ProcessFrame_CountsInvocations) {
     p.processFrame(f);
     EXPECT_EQ(p.processCount, 2);
 }
+
+// ══════════════════════════════════════════════════════════════
+// StubPlugin additional interface coverage
+// ══════════════════════════════════════════════════════════════
+
+TEST(PluginLoaderTest, StubPlugin_Description_ReturnsText) {
+    StubPlugin p;
+    EXPECT_FALSE(p.description().isEmpty());
+}
+
+TEST(PluginLoaderTest, StubPlugin_ProcessCount_StartsAtZero) {
+    StubPlugin p;
+    EXPECT_EQ(p.processCount, 0);
+}
+
+TEST(PluginLoaderTest, StubPlugin_IsRelevant_DefaultTargetMatchesNothing) {
+    StubPlugin p; // targetId = 0xFFFFFFFF by default
+    CanFrame f{};
+    f.id = 0x7FF; // max standard CAN id
+    EXPECT_FALSE(p.isRelevant(f));
+    f.id = 0x1FFFFFFF; // max extended CAN id
+    EXPECT_FALSE(p.isRelevant(f));
+}
+
+TEST(PluginLoaderTest, StubPlugin_IsRelevant_ZeroIdMatchesZeroTarget) {
+    StubPlugin p;
+    p.targetId = 0;
+    CanFrame f{};
+    f.id = 0;
+    EXPECT_TRUE(p.isRelevant(f));
+}
+
+// ══════════════════════════════════════════════════════════════
+// Two loaders are independent
+// ══════════════════════════════════════════════════════════════
+
+TEST(PluginLoaderTest, TwoLoaders_IndependentState) {
+    PluginLoader a, b;
+    EXPECT_EQ(a.plugins().size(), b.plugins().size());
+    // Loading from a bad dir into one should not affect the other
+    a.loadFromDirectory("/no/such/dir");
+    EXPECT_EQ(a.plugins().size(), 0);
+    EXPECT_EQ(b.plugins().size(), 0);
+}
+
+// ══════════════════════════════════════════════════════════════
+// broadcastFrame with no plugins — idempotent, no state leak
+// ══════════════════════════════════════════════════════════════
+
+TEST(PluginLoaderTest, BroadcastFrame_ManyFrames_NoStateAccumulation) {
+    PluginLoader loader;
+    for (int i = 0; i < 1000; ++i) {
+        CanFrame f{};
+        f.id = static_cast<uint32_t>(i % 256);
+        f.dlc = 8;
+        loader.broadcastFrame(f);
+    }
+    // Must remain empty — 1000 broadcasts don't magically load plugins
+    EXPECT_TRUE(loader.plugins().isEmpty());
+}
