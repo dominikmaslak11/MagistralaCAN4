@@ -7,7 +7,7 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 - **Repozytorium**: https://github.com/dominikmaslak11/MagistralaCAN4
 
 ## Stan projektu (2026-05-14)
-- **Testy**: +28 (IcSimDecoder) — wszystkie zielone (GoogleTest)
+- **Testy**: +21 (CanDashboardConfig) → 1190 razem, 10 pre-existing RemoteCan failures (wymagają Python)
 - **Protokoły**: CAN classic, CAN FD (BRS/ESI), LIN, J1939, UDS (ISO 14229), KWP2000 (ISO 14230), XCP, SOME/IP, DoIP (ISO 13400), CANopen, OBD-II
 - **Formaty sygnałów**: DBC (Vector), ARXML (AUTOSAR 4.x)
 - **Eksport**: candump, CSV, MDF4, PCAP (Wireshark), Python/Lua/Arduino prototype code
@@ -29,8 +29,17 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 | `CanByteHeatmapWidget` | Custom paintEvent — heatmapa wartości bajtów per ID w czasie |
 | `IcSimDecoder` | Decoder/encoder ramek ICSim (Open Garages) — speed/doors/signals |
 | `IcSimWidget` | Panel sterowania symulatorem ICSim — dashboard, slider, przyciski drzwi/sygnałów |
+| `CanDashboardConfig` | Dane: `GaugeConfig` + `DashboardLayout` — JSON serialization, addGauge/removeGauge/clear |
+| `CanCustomDashboard` | Konfigurowalny dashboard — wybór sygnałów DBC, tryb edycji, persist QSettings/JSON |
 
-## Ostatnia sesja — część 10: ICSim integration (commit `4bfb9d4`)
+## Ostatnia sesja — część 11: CanCustomDashboard (commit TBD)
+- `CanDashboardConfig.h/cpp` — model danych: `GaugeConfig` (signalName, canId, style, useDbcRange, rangeMin/Max, unit) + `DashboardLayout` (columns, QVector<GaugeConfig>), JSON serialization
+- `CanCustomDashboard.h/cpp` — Qt6 widget: siatka CanGaugeWidget, tryb edycji (przycisk ✕ per gauge), dialog dodawania (wybór sygnału DBC, styl, zakres), zapis/odczyt JSON + QSettings
+- +21 testów (GaugeConfig, DashboardLayout round-trip, edge cases)
+- Integracja z MainWindow: nowa zakładka "Konfigurowalny Dashboard" w grupie Przechwytywanie
+- setDbcParser podpięte we wszystkich miejscach ładowania DBC/ARXML
+
+## Poprzednia sesja — część 10: ICSim integration (commit `4bfb9d4`)
 - `IcSimDecoder.h/cpp` — pure C++ decoder ramek ICSim: speed (0x244), doors (0x19B), signals (0x188)
 - `IcSimWidget.h/cpp` — Qt6 widget z custom paintEvent (speedometr 0-90 mph, 270°, drzwi, strzałki)
 - Obsługa seeded ICSim (`icsim -s <seed>`) — konfigurowalne CAN ID przez QSpinBox (hex)
@@ -55,7 +64,7 @@ Fix kompilacji GCC 15 / Qt 6.10 na Kali Linux:
 - +16 testów → 435/435
 
 ## Aktualny roadmap (priorytety malejące)
-1. **CanGaugeWidget integracja z DBC** — bindowanie sygnałów DBC do wskaźników analogowych/cyfrowych w MainWindow
+1. ~~**CanGaugeWidget integracja z DBC**~~ — DONE: `CanCustomDashboard` (część 11)
 2. **LogComparatorWidget** — porównanie dwóch plików candump (diff timeline)
 3. **CANopen/OBD-II parsery** — PDO/SDO decode + OBD-II PID decode z tabelą Mode/PID
 4. **MQTT bridge testy** — testy jednostkowe dla `MqttBridge`

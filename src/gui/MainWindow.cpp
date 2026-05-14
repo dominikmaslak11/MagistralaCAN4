@@ -80,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_frameDetail = new FrameDetailWidget;
     m_frameDetail->setSniffer(&m_sniffer);
     m_canDashboard = new CanDashboard;
+    m_customDashboard = new CanCustomDashboard;
     m_j1939Widget = new J1939Widget;
     m_learner->setJ1939Parser(m_j1939Widget->parser());
     m_model->setJ1939Parser(m_j1939Widget->parser());
@@ -217,7 +218,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessed, &m_mdf4Writer, &Mdf4Writer::recordFrame);
     connect(this, &MainWindow::frameProcessed, &m_mqttBridge, &MqttBridge::onNewFrame);
     // Throttlowane sloty — co N-tą ramkę: dashboard, widgety diagnostyczne, pluginy
-    connect(this, &MainWindow::frameProcessedThrottled, m_canDashboard, &CanDashboard::updateSignal);
+    connect(this, &MainWindow::frameProcessedThrottled, m_canDashboard,    &CanDashboard::updateSignal);
+    connect(this, &MainWindow::frameProcessedThrottled, m_customDashboard, &CanCustomDashboard::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_j1939Widget, &J1939Widget::processFrame);
     // m_udsWidget, m_obdWidget, m_canOpenWidget — lazy: connected in LazyTabWidget factory
     connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter,  &SignalPlotterWidget::processFrame);
@@ -294,6 +296,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_timelineWidget->setDbcParser(parser);
         m_heatmapWidget->setDbcParser(parser);
         m_protoExporterWidget->setDbcParser(const_cast<DbcParser*>(parser));
+        m_customDashboard->setDbcParser(parser);
     });
 
     loadSettings();
@@ -563,6 +566,7 @@ void MainWindow::loadDbcFile() {
         m_timelineWidget->setDbcParser(&m_dbcParser);
         m_heatmapWidget->setDbcParser(&m_dbcParser);
         m_protoExporterWidget->setDbcParser(&m_dbcParser);
+        m_customDashboard->setDbcParser(&m_dbcParser);
         addMruFile(fileName, true);
         Logger::log(QString("Załadowano plik DBC: %1").arg(fileName));
         QMessageBox::information(this, "DBC", "Plik DBC załadowany pomyślnie.");
@@ -608,6 +612,7 @@ void MainWindow::loadArxmlFile() {
     m_timelineWidget->setDbcParser(&m_dbcParser);
     m_heatmapWidget->setDbcParser(&m_dbcParser);
     m_protoExporterWidget->setDbcParser(&m_dbcParser);
+    m_customDashboard->setDbcParser(&m_dbcParser);
 
     Logger::log(QString("ARXML: zaimportowano %1 wiadomości z %2").arg(msgs.size()).arg(fileName));
     QMessageBox::information(this, "ARXML",
@@ -761,6 +766,7 @@ void MainWindow::setupCentralWidget() {
     captureTabs->addTab(canTab,                 "Ruch CAN");
     captureTabs->addTab(m_frameDetail,          "Szczegóły ramki");
     captureTabs->addTab(m_canDashboard,         "Dashboard CAN");
+    captureTabs->addTab(m_customDashboard,      "Konfigurowalny Dashboard");
     captureTabs->addTab(m_busLoadWidget,        "Obciążenie magistrali");
     captureTabs->addTab(m_idStatsWidget,        "ID Statistics");
     captureTabs->addTab(m_observationDbWidget,  "Frame DB");
@@ -1229,6 +1235,7 @@ void MainWindow::updateMruMenus() {
                         m_timelineWidget->setDbcParser(&m_dbcParser);
                         m_heatmapWidget->setDbcParser(&m_dbcParser);
                         m_protoExporterWidget->setDbcParser(&m_dbcParser);
+                        m_customDashboard->setDbcParser(&m_dbcParser);
                         addMruFile(path, true);
                     }
                 } else {
