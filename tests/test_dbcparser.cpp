@@ -197,3 +197,110 @@ TEST(DbcParser, signalDescriptions) {
     EXPECT_TRUE(desc.contains("RPM"));
     EXPECT_TRUE(desc.contains("1000"));
 }
+
+// ── Signed signal — negative value ──
+
+TEST(DbcParser, decodeSignedNegativeValue) {
+    DbcParser parser;
+    const QString dbc = QStringLiteral(
+        "VERSION \"\"\n\n"
+        "BO_ 300 SignedMsg: 8 Vector__XXX\n"
+        " SG_ TempOffset : 0|8@1- (1,0) [-128|127] \"degC\" Vector__XXX\n"
+    );
+    ASSERT_TRUE(parseDbcContent(dbc, parser));
+
+    // Raw byte 0xFF = -1 as signed 8-bit
+    uint8_t data[8] = {0xFF, 0, 0, 0, 0, 0, 0, 0};
+    auto values = parser.decodeSignals(300, data, 8);
+    ASSERT_TRUE(values.contains("TempOffset"));
+    EXPECT_DOUBLE_EQ(values["TempOffset"], -1.0);
+}
+
+// ── Multiple signals in one message ──
+
+TEST(DbcParser, decodeMultipleSignals) {
+    DbcParser parser;
+    const QString dbc = QStringLiteral(
+        "VERSION \"\"\n\n"
+        "BO_ 400 MultiSig: 8 Vector__XXX\n"
+        " SG_ Speed : 0|8@1+ (1,0) [0|255] \"km/h\" Vector__XXX\n"
+        " SG_ Throttle : 8|8@1+ (0.5,0) [0|100] \"%\" Vector__XXX\n"
+    );
+    ASSERT_TRUE(parseDbcContent(dbc, parser));
+
+    // Speed=100, Throttle=50 (raw 100 * 0.5 = 50.0)
+    uint8_t data[8] = {100, 100, 0, 0, 0, 0, 0, 0};
+    auto values = parser.decodeSignals(400, data, 8);
+    EXPECT_DOUBLE_EQ(values["Speed"], 100.0);
+    EXPECT_DOUBLE_EQ(values["Throttle"], 50.0);
+}
+
+// ── Load from nonexistent file ──
+
+TEST(DbcParser, loadNonexistentFile_ReturnsFalse) {
+    DbcParser parser;
+    EXPECT_FALSE(parser.load("/no/such/file.dbc"));
+    EXPECT_TRUE(parser.messages().isEmpty());
+}
+
+// ── Unit string preserved in signal ──
+
+TEST(DbcParser, unitStringPreserved) {
+    DbcParser parser;
+    const QString dbc = QStringLiteral(
+        "VERSION \"\"\n\n"
+        "BO_ 500 Units: 8 Vector__XXX\n"
+        " SG_ Voltage : 0|16@1+ (0.001,0) [0|65] \"V\" Vector__XXX\n"
+    );
+    ASSERT_TRUE(parseDbcContent(dbc, parser));
+    ASSERT_EQ(parser.messages().size(), 1);
+    ASSERT_EQ(parser.messages()[0].sigList.size(), 1);
+    EXPECT_EQ(parser.messages()[0].sigList[0].unit, "V");
+}
+
+// ── Serialize → parse roundtrip ──
+
+TEST(DbcParser, serializeRoundtrip) {
+    DbcParser original;
+    const QString dbc = QStringLiteral(
+        "VERSION \"\"\n\n"
+        "BO_ 256 EngineData: 8 Vector__XXX\n"
+        " SG_ EngineSpeed : 0|16@1+ (1,0) [0|65535] \"rpm\" Vector__XXX\n"
+    );
+    ASSERT_TRUE(parseDbcContent(dbc, original));
+
+    QString serialized = DbcParser::serialize(original.messages());
+    EXPECT_FALSE(serialized.isEmpty());
+
+    DbcParser reparsed;
+    ASSERT_TRUE(parseDbcContent(serialized, reparsed));
+    ASSERT_EQ(reparsed.messages().size(), 1);
+    EXPECT_EQ(reparsed.messages()[0].id, 256u);
+    EXPECT_EQ(reparsed.messages()[0].name, "EngineData");
+    EXPECT_EQ(reparsed.messages()[0].sigList[0].name, "EngineSpeed");
+}
+
+// ── messageForId unknown returns empty ──
+
+TEST(DbcParser, messageForIdUnknownReturnsEmpty) {
+    DbcParser parser;
+    parseDbcContent("VERSION \"\"\n", parser);
+    auto msg = parser.messageForId(0xBEEF);
+    EXPECT_EQ(msg.id, 0u);
+    EXPECT_TRUE(msg.name.isEmpty());
+}
+
+// ── decodeSignals DLC shorter than signal — no crash ──
+
+TEST(DbcParser, decodeSignals_ShortDlc_NoCrash) {
+    DbcParser parser;
+    const QString dbc = QStringLiteral(
+        "VERSION \"\"\n\n"
+        "BO_ 600 Msg: 8 Vector__XXX\n"
+        " SG_ BigSig : 0|64@1+ (1,0) [0|0] \"\" Vector__XXX\n"
+    );
+    ASSERT_TRUE(parseDbcContent(dbc, parser));
+
+    uint8_t data[2] = {0xFF, 0xFF};  // only 2 bytes when 8 expected
+    EXPECT_NO_THROW(parser.decodeSignals(600, data, 2));
+}
