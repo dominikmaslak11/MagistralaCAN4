@@ -17,6 +17,7 @@ bool CanRecorder::startRecording(const QString &filePath) {
     if (!m_file.open(QIODevice::WriteOnly)) return false;
 
     m_stream.setDevice(&m_file);
+    m_stream.setByteOrder(QDataStream::LittleEndian);
     // Nagłówek pliku
     m_stream << (quint32)MAGIC << (quint32)VERSION;
 
