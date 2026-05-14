@@ -150,3 +150,168 @@ TEST(UdsSequenceRunner, MultiStepAllPass) {
     for (const auto &r : runner.results())
         EXPECT_EQ(r.status, UdsStepResult::Pass);
 }
+
+TEST(UdsSequenceRunner, StepCompleted_SignalEmittedPerStep) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x10, 0x01}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "DSC";
+    runner.setSteps({s, s});
+
+    int completedCount = 0;
+    QObject::connect(&runner, &UdsSequenceRunner::stepCompleted,
+                     [&](int, UdsStepResult) { ++completedCount; });
+
+    runner.start();
+    runner.processFrame(makeResponse(0x7E8, {0x50, 0x01}));
+    runner.processFrame(makeResponse(0x7E8, {0x50, 0x01}));
+
+    EXPECT_EQ(completedCount, 2);
+}
+
+TEST(UdsSequenceRunner, ResponseDataCapturedInResult) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x22, 0xF1, 0x90}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "ReadVIN";
+    runner.setSteps({s});
+
+    runner.start();
+    runner.processFrame(makeResponse(0x7E8, {0x62, 0xF1, 0x90, 0x57, 0x42}));
+
+    ASSERT_EQ(runner.results().size(), 1u);
+    const auto &resp = runner.results()[0].response;
+    ASSERT_GE(resp.size(), 5u);
+    EXPECT_EQ(resp[0], 0x62);
+    EXPECT_EQ(resp[1], 0xF1);
+    EXPECT_EQ(resp[3], 0x57);
+}
+
+TEST(UdsSequenceRunner, NrcCapturedInDetail) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x27, 0x01}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "SecAccess";
+    runner.setSteps({s});
+
+    runner.start();
+    // NRC 0x35 = InvalidKey
+    runner.processFrame(makeResponse(0x7E8, {0x7F, 0x27, 0x35}));
+
+    ASSERT_EQ(runner.results().size(), 1u);
+    EXPECT_EQ(runner.results()[0].status, UdsStepResult::NegResponse);
+    EXPECT_TRUE(runner.results()[0].detail.contains("35", Qt::CaseInsensitive));
+}
+
+TEST(UdsSequenceRunner, StopOnNegResponse_False_Continues) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x10, 0x01}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "S";
+
+    runner.setSteps({s, s});
+
+    bool finished = false; bool allPassed = true;
+    QObject::connect(&runner, &UdsSequenceRunner::sequenceFinished,
+                     [&](bool p) { finished = true; allPassed = p; });
+
+    runner.start();
+    runner.processFrame(makeResponse(0x7E8, {0x7F, 0x10, 0x22})); // neg — but continue
+    EXPECT_TRUE(runner.isRunning()); // step 2 still pending
+
+    runner.processFrame(makeResponse(0x7E8, {0x50, 0x01})); // step 2 passes
+
+    EXPECT_TRUE(finished);
+    EXPECT_FALSE(allPassed); // step 1 was NegResponse
+    EXPECT_EQ(runner.results()[0].status, UdsStepResult::NegResponse);
+    EXPECT_EQ(runner.results()[1].status, UdsStepResult::Pass);
+}
+
+TEST(UdsSequenceRunner, FlowControl_TreatedAsPass) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x10, 0x01}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "FC";
+    runner.setSteps({s});
+
+    runner.start();
+    // 0x30 = FlowControl ContinueSending
+    runner.processFrame(makeResponse(0x7E8, {0x30, 0x00, 0x00}));
+
+    ASSERT_EQ(runner.results().size(), 1u);
+    EXPECT_EQ(runner.results()[0].status, UdsStepResult::Pass);
+    EXPECT_TRUE(runner.results()[0].detail.contains("Flow"));
+}
+
+TEST(UdsSequenceRunner, StatusMessage_EmittedOnStart) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x10, 0x01}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "S";
+    runner.setSteps({s});
+
+    QStringList msgs;
+    QObject::connect(&runner, &UdsSequenceRunner::statusMessage,
+                     [&](const QString &m) { msgs << m; });
+
+    runner.start();
+    EXPECT_GT(msgs.size(), 0);
+}
+
+TEST(UdsSequenceRunner, CurrentStep_AdvancesOnResponse) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x10, 0x01}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "S";
+    runner.setSteps({s, s, s});
+
+    runner.start();
+    EXPECT_EQ(runner.currentStep(), 0);
+    runner.processFrame(makeResponse(0x7E8, {0x50, 0x01}));
+    EXPECT_EQ(runner.currentStep(), 1);
+    runner.processFrame(makeResponse(0x7E8, {0x50, 0x01}));
+    EXPECT_EQ(runner.currentStep(), 2);
+}
+
+TEST(UdsSequenceRunner, SetSteps_WhileRunning_Ignored) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x10, 0x01}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "S";
+    runner.setSteps({s});
+    runner.start();
+    EXPECT_TRUE(runner.isRunning());
+
+    // Attempting to change steps while running should be ignored
+    runner.setSteps({s, s, s});
+    EXPECT_EQ(runner.steps().size(), 1u);  // still 1 step
+
+    runner.abort();
+}
+
+TEST(UdsSequenceRunner, StartTwice_SecondIgnored) {
+    UdsSequenceRunner runner(nullptr);
+
+    UdsStep s; s.txCanId = 0x7DF; s.rxCanId = 0x7E8;
+    s.payload = {0x10}; s.timeoutMs = 500; s.maxRetries = 0;
+    s.stopOnNegResponse = false; s.name = "S";
+    runner.setSteps({s});
+
+    int finishedCount = 0;
+    QObject::connect(&runner, &UdsSequenceRunner::sequenceFinished,
+                     [&](bool) { ++finishedCount; });
+
+    runner.start();
+    runner.start();  // second start while running — should be ignored
+    runner.processFrame(makeResponse(0x7E8, {0x50}));
+
+    EXPECT_EQ(finishedCount, 1);
+}
