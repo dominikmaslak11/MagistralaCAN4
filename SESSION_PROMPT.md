@@ -31,8 +31,16 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 | `IcSimWidget` | Panel sterowania symulatorem ICSim — dashboard, slider, przyciski drzwi/sygnałów |
 | `CanDashboardConfig` | Dane: `GaugeConfig` + `DashboardLayout` — JSON serialization, addGauge/removeGauge/clear |
 | `CanCustomDashboard` | Konfigurowalny dashboard — wybór sygnałów DBC, tryb edycji, persist QSettings/JSON |
+| `CanForensicsWidget` | Panel reverse-engineering: bit profiler, interval stats, payload pattern search |
 
-## Ostatnia sesja — część 11: CanCustomDashboard (commit TBD)
+## Ostatnia sesja — część 12: CanForensicsWidget (commit TBD)
+- `CanForensicsWidget.h/cpp` — panel forensics z 3 zakładkami:
+  - **Profil bitów**: wizualizacja CanBitAnalyzer (alwaysZero/alwaysOne/varying per bajt per ID), kolory zielony→czerwony, tooltip binarny, "Kopiuj raport"
+  - **Interwały**: tabela CanIntervalAnalyzer (mean/stddev/min/max w ms, przerwy, typ cykliczny/sporadyczny)
+  - **Szukaj wzorców**: CanPayloadSearch (hex pattern + maska + ID filter, rolling buffer 200k ramek, highlighting [match] w danych)
+- Integracja MainWindow: nowa zakładka "Forensics" w grupie Analiza, frameProcessedThrottled
+
+## Poprzednia sesja — część 11: CanCustomDashboard (commit fe18887)
 - `CanDashboardConfig.h/cpp` — model danych: `GaugeConfig` (signalName, canId, style, useDbcRange, rangeMin/Max, unit) + `DashboardLayout` (columns, QVector<GaugeConfig>), JSON serialization
 - `CanCustomDashboard.h/cpp` — Qt6 widget: siatka CanGaugeWidget, tryb edycji (przycisk ✕ per gauge), dialog dodawania (wybór sygnału DBC, styl, zakres), zapis/odczyt JSON + QSettings
 - +21 testów (GaugeConfig, DashboardLayout round-trip, edge cases)

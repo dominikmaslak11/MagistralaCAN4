@@ -57,6 +57,7 @@
 #include "core/CanExporter.h"
 #include "core/IcSimWidget.h"
 #include "core/CanCustomDashboard.h"
+#include "core/CanForensicsWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -162,6 +163,7 @@ private:
     CanExporter                  *m_canExporter           = nullptr;
     IcSimWidget                  *m_icSimWidget           = nullptr;
     CanCustomDashboard           *m_customDashboard       = nullptr;
+    CanForensicsWidget           *m_forensicsWidget       = nullptr;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

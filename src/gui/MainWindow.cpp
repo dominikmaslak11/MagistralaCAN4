@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_frameDetail->setSniffer(&m_sniffer);
     m_canDashboard = new CanDashboard;
     m_customDashboard = new CanCustomDashboard;
+    m_forensicsWidget = new CanForensicsWidget;
     m_j1939Widget = new J1939Widget;
     m_learner->setJ1939Parser(m_j1939Widget->parser());
     m_model->setJ1939Parser(m_j1939Widget->parser());
@@ -219,7 +220,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessed, &m_mqttBridge, &MqttBridge::onNewFrame);
     // Throttlowane sloty — co N-tą ramkę: dashboard, widgety diagnostyczne, pluginy
     connect(this, &MainWindow::frameProcessedThrottled, m_canDashboard,    &CanDashboard::updateSignal);
-    connect(this, &MainWindow::frameProcessedThrottled, m_customDashboard, &CanCustomDashboard::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_customDashboard,  &CanCustomDashboard::processFrame);
+    connect(this, &MainWindow::frameProcessedThrottled, m_forensicsWidget,  &CanForensicsWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_j1939Widget, &J1939Widget::processFrame);
     // m_udsWidget, m_obdWidget, m_canOpenWidget — lazy: connected in LazyTabWidget factory
     connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter,  &SignalPlotterWidget::processFrame);
@@ -825,6 +827,7 @@ void MainWindow::setupCentralWidget() {
     analysisTabs->addTab(m_moduleProfilerWidget, "Moduły CAN");
     analysisTabs->addTab(m_alertWidget,          "Alerts");
     analysisTabs->addTab(m_signalMonitorWidget,  "Live Signals");
+    analysisTabs->addTab(m_forensicsWidget,      "Forensics");
 
     // ── Grupa: Narzędzia ──────────────────────────────────────────────────────
     auto *toolsTabs = new LazyTabWidget;

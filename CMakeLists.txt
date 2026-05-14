@@ -153,6 +153,7 @@ set(SOURCES
     src/core/CanExporter.cpp
     src/core/CanDashboardConfig.cpp
     src/core/CanCustomDashboard.cpp
+    src/core/CanForensicsWidget.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
