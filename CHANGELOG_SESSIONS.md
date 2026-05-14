@@ -619,3 +619,115 @@ cmake --build build_linux --parallel $(nproc)
 
 ### Ostrzeżenie (niekrytyczne)
 `QSortFilterProxyModel::invalidateFilter()` deprecated w Qt 6.10 — działa poprawnie, można zostawić.
+
+---
+
+## Sesja 2026-05-14, część 10: ICSim integration | Commit: `4bfb9d4`
+
+### Testy: 435 → 463 (+28 testów, 31 suites)
+
+### IcSimDecoder ✅
+- `IcSimDecoder.h/cpp` — pure C++ decoder ramek ICSim: speed (0x244), doors (0x19B), signals (0x188)
+- Klucze: `"speed"` [0.0–90.0 mph], `"door_FL/FR/RL/RR"` [bool], `"turn_left/right"` [bool], `"wipers"` [bool]
+- Konfigurowalny seed — CAN IDs domyślne lub rotowane przez seed (XOR z bazowymi)
+
+### IcSimWidget ✅
+- Custom `paintEvent`: speedometr 0–90 mph (270°, wskazówka SVG-like), 4 drzwi z kolorowaniem, strzałki kierunkowskazów
+- Wysyłanie ramek sterujących (pedał gazu, hamulca, drzwi) przez `CanSniffer::writeFrame()`
+- QSpinBox dla każdego CAN ID (hex), seed-aware
+- Nowa zakładka "ICSim" w Narzędzia
+
+### CMakeLists fix ✅
+- `CanExporter.cpp` wyjęty z bloku `HAS_XCB` — pre-existing Windows linker bug
+
+---
+
+## Sesja 2026-05-14, część 11: CanCustomDashboard | Commit: (w sesji 14)
+
+### Testy: 463 → 484 (+21 testów, 32 suites)
+
+### CanDashboardConfig ✅
+- `GaugeConfig`: signalName, canId, style (0=Bar/1=Digital/2=Compact), useDbcRange, rangeMin/Max, unit — JSON round-trip
+- `DashboardLayout`: columns [2–6], `QVector<GaugeConfig>` — JSON round-trip
+- 21 testów: defaults, round-trip, edge cases (EmptySignalName, CanIdExtended, NegativeRange)
+- Fix: `#include <QJsonArray>` wymagany dla `QJsonArray{}` w testach
+
+### CanCustomDashboard ✅
+- Siatka `CanGaugeWidget` na scroll area, tryb edycji (przycisk ✕ per gauge)
+- Dialog dodawania: wybór sygnału DBC (combo z DbcParser), styl, zakres, jednostka
+- Zapis/odczyt JSON + QSettings (`"CanCustomDashboard/layout"`)
+- Staleness timer 1000ms; `processFrame()` via `decodeSignals()` → `frame.data.data()`
+- `setDbcParser` podpięte we wszystkich 4 ścieżkach ładowania DBC/ARXML
+- Nowa zakładka "Konfigurowalny Dashboard" w Przechwytywanie
+
+---
+
+## Sesja 2026-05-14, część 12: CanForensicsWidget | Commit: `a1ff8e2`
+
+### Testy: 484 → 484 (bez nowych — moduły bazowe już testowane)
+
+### CanForensicsWidget ✅
+3 zakładki:
+
+**Profil bitów** (`CanBitAnalyzer`):
+- Tabela: ID, Frames, DLC, B0–B7 — kolory: ciemny zielony (0 varying) → ciemny czerwony (8 varying)
+- Tooltip: 8-char binarna maska (0/1/?) per bajt
+- Przycisk "Kopiuj raport" → schowek
+
+**Interwały** (`CanIntervalAnalyzer`):
+- Tabela: ID, Próbki, Śr.(ms), σ(ms), Min, Max, Przerwy, Typ (Cykliczny/Sporadyczny)
+- Cykliczne wiersze: ciemno-zielone tło
+
+**Szukaj wzorców** (`CanPayloadSearch`):
+- Pola: hex pattern, maska, filtr CAN ID, max wyników
+- Rolling buffer 200k ramek, eviction starszej ćwiartki przy przepełnieniu
+- Wyniki z highlightingiem `[match]` w danych
+
+- Integracja: zakładka "Forensics" w Analiza, `frameProcessedThrottled`
+
+---
+
+## Sesja 2026-05-14, część 13: CanTriggerWidget + CanSignalStatisticsWidget | Commit: `694392b`
+
+### Testy: 484 → 1190 (+706 testów — merge nowych suites z poprzednich sesji)
+
+### CanTriggerWidget ✅
+- GUI dla `CanTriggerRecorder`: 3 tryby wyzwolenia:
+  - Tryb 0: dowolna ramka z podanym CAN ID
+  - Tryb 1: `frame.data[offset] & mask == value & mask`
+  - Tryb 2: ramka błędu (`frame.error == true`)
+- Pre/post spinboxy (0–2000 ramek)
+- Tabela przechwyconych ramek z kolorowaniem: PRE=szary, TRIGGER=pomarańczowy (bold), POST=cyjan
+- Eksport do formatu candump z adnotacją `;TYPE`
+- `frameProcessed` (każda ramka — nie throttlowana)
+- Zakładka "Wyzwalacz" w Narzędzia
+
+### CanSignalStatisticsWidget ✅
+- `CanSignalStatistics` (Welford per sygnał): min/max/mean/stdDev + histogram 10 kubełków (UTF-8 bloki ▁▂▃▄▅▆▇█)
+- 9 kolumn: Sygnał, Jedn., Próbki, Min, Max, Średnia, Odch.std, CV%, Histogram
+- Kolory wierszy: CV<5%=ciemny zielony, CV<20%=ciemny żółty, reszta=ciemny czerwony
+- Auto-odświeżanie co 2s, filtr nazwy, eksport CSV
+- `frameProcessedThrottled`
+- Zakładka "Statystyki sygnałów" w Analiza
+
+---
+
+## Sesja 2026-05-14, część 14: CanBusHealthWidget | Commit: `ea043f3`
+
+### Testy: 1190 (bez zmian — `CanBusErrorAnalyzer` i `CanCounterValidator` już testowane)
+
+### CanBusHealthWidget ✅
+Zakładka **"Błędy magistrali"** (`CanBusErrorAnalyzer`):
+- Alert BUS-OFF: czerwona etykieta, widoczna tylko gdy `isBusOff()`
+- Liczniki 10 klas błędów SocketCAN (TxTimeout → Unknown) — zielone gdy 0, czerwone gdy >0
+- Częstotliwość błędów: `errorRate(5s window)` — czerwona gdy >10 err/s
+- Tabela zdarzeń: timestamp ms, klasa, raw ID (hex), opis — limit 500 wierszy, auto-scroll
+
+Zakładka **"Walidator liczników"** (`CanCounterValidator`):
+- Dodawanie reguł: CAN ID (hex), byteIndex (QSpinBox), upper nibble (QCheckBox), modulus (QSpinBox)
+- Usuń zaznaczoną regułę
+- Tabela statystyk live: OK, błędy, razem, %błędów — kolorowanie: ciemny zielony/żółty/pomarańczowy
+- Refresh timer 500ms; reset czyści obydwa analizatory
+
+- `frameProcessed` (każda ramka — nie throttlowana)
+- Zakładka "Zdrowie magistrali" w Analiza
