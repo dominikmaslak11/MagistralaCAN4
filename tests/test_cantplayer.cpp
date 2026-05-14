@@ -198,3 +198,97 @@ TEST(CanTp, FrameTypeDetection) {
     EXPECT_EQ(CanTpLayer::frameType(0x21), CanTpFrameType::ConsecutiveFrame);
     EXPECT_EQ(CanTpLayer::frameType(0x30), CanTpFrameType::FlowControl);
 }
+
+TEST(CanTp, ActiveSessionsZeroInitially) {
+    CanTpLayer tp;
+    EXPECT_EQ(tp.activeSessions(), 0u);
+}
+
+TEST(CanTp, WrongSNAbortsSessionWithError) {
+    CanTpMessage received;
+    CanTpLayer tp([&](const CanTpMessage &m){ received = m; });
+
+    // FF: total=10, 6 bytes in FF
+    tp.processFrame(makeTP(0x7E8, {0x10, 0x0A, 1, 2, 3, 4, 5, 6}));
+    EXPECT_EQ(tp.activeSessions(), 1u);
+
+    // CF with wrong SN (expected 1, sending 2)
+    tp.processFrame(makeTP(0x7E8, {0x22, 7, 8, 9, 10}));
+
+    EXPECT_EQ(tp.activeSessions(), 0u); // session aborted
+    EXPECT_FALSE(received.complete);
+    EXPECT_FALSE(received.error.empty());
+}
+
+TEST(CanTp, SFOverwritesPendingSession) {
+    int count = 0;
+    CanTpMessage last;
+    CanTpLayer tp([&](const CanTpMessage &m){ last = m; ++count; });
+
+    // Start a multi-frame session
+    tp.processFrame(makeTP(0x7E8, {0x10, 0x0A, 1, 2, 3, 4, 5, 6}));
+    EXPECT_EQ(tp.activeSessions(), 1u);
+
+    // SF for same ID cancels pending session and delivers SF
+    tp.processFrame(makeTP(0x7E8, {0x02, 0xAA, 0xBB}));
+
+    // SF delivers one complete message; pending session is gone
+    EXPECT_EQ(tp.activeSessions(), 0u);
+    EXPECT_TRUE(last.complete);
+    EXPECT_EQ(count, 1); // only the SF message, not the aborted session
+}
+
+TEST(CanTp, TwoSessionsConcurrent) {
+    CanTpMessage msg1, msg2;
+    CanTpLayer tp([&](const CanTpMessage &m){
+        if (m.canId == 0x100) msg1 = m;
+        if (m.canId == 0x200) msg2 = m;
+    });
+
+    // Start FF for ID 0x100 (total=10)
+    tp.processFrame(makeTP(0x100, {0x10, 0x0A, 1, 2, 3, 4, 5, 6}));
+    // Start FF for ID 0x200 (total=10)
+    tp.processFrame(makeTP(0x200, {0x10, 0x0A, 11, 12, 13, 14, 15, 16}));
+    EXPECT_EQ(tp.activeSessions(), 2u);
+
+    // Finish 0x100 with CF SN=1 (remaining 4 bytes)
+    tp.processFrame(makeTP(0x100, {0x21, 7, 8, 9, 10}));
+    EXPECT_TRUE(msg1.complete);
+    EXPECT_EQ(msg1.payload.size(), 10u);
+    EXPECT_EQ(tp.activeSessions(), 1u); // 0x200 still pending
+
+    // Finish 0x200 with CF SN=1
+    tp.processFrame(makeTP(0x200, {0x21, 17, 18, 19, 20}));
+    EXPECT_TRUE(msg2.complete);
+    EXPECT_EQ(msg2.payload.size(), 10u);
+    EXPECT_EQ(tp.activeSessions(), 0u);
+}
+
+TEST(CanTp, PurgeKeepsActiveSessions) {
+    CanTpLayer tp;
+    // FF with timestamp=1_000_000
+    tp.processFrame(makeTP(0x7E8, {0x10, 0x0A, 1, 2, 3, 4, 5, 6}));
+    EXPECT_EQ(tp.activeSessions(), 1u);
+
+    // Purge with now=1_200_000 and timeout=500_000 → 200µs elapsed < 500µs timeout
+    tp.purgeTimedOut(1'200'000, 500'000);
+    EXPECT_EQ(tp.activeSessions(), 1u); // not expired
+}
+
+TEST(CanTp, SendEmptyPayloadDoesNothing) {
+    int count = 0;
+    CanTpLayer tp;
+    tp.sendMessage(0x7DF, {}, [&](const CanFrame &){ ++count; });
+    EXPECT_EQ(count, 0);
+}
+
+TEST(CanTp, SendMaxSingleFramePayload) {
+    // 7-byte payload must be sent as a single frame, not multi-frame
+    std::vector<uint8_t> payload = {1, 2, 3, 4, 5, 6, 7};
+    std::vector<CanFrame> out;
+    CanTpLayer tp;
+    tp.sendMessage(0x7DF, payload, [&](const CanFrame &f){ out.push_back(f); });
+    ASSERT_EQ(out.size(), 1u);
+    EXPECT_EQ((out[0].data[0] >> 4), 0x0u); // SF type
+    EXPECT_EQ(out[0].data[0] & 0x0Fu, 7u);  // length=7
+}
