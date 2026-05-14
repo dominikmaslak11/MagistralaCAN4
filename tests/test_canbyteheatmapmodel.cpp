@@ -160,3 +160,66 @@ TEST(CanByteHeatmapModel, NoDataOutsideWindow) {
     // 0xFF frame is outside [4s,5s] window — should NOT appear
     EXPECT_FALSE(sawFF);
 }
+
+TEST(CanByteHeatmapModel, MultipleFramesSameId_CountGrows) {
+    CanByteHeatmapModel m(10);
+    for (int i = 0; i < 7; ++i)
+        m.addFrame(makeFrame(0x100, 2, static_cast<uint8_t>(i)), static_cast<uint64_t>(i) * 1000);
+    EXPECT_EQ(m.frameCount(0x100), 7);
+    EXPECT_EQ(m.totalIds(), 1);
+}
+
+TEST(CanByteHeatmapModel, TotalIds_AfterClear_IsZero) {
+    CanByteHeatmapModel m;
+    m.addFrame(makeFrame(0x1, 1, 0), 1000);
+    m.addFrame(makeFrame(0x2, 1, 0), 2000);
+    ASSERT_EQ(m.totalIds(), 2);
+    m.clear();
+    EXPECT_EQ(m.totalIds(), 0);
+}
+
+TEST(CanByteHeatmapModel, HeatmapZeroBytes_ShowsZero) {
+    CanByteHeatmapModel m;
+    m.addFrame(makeFrame(0x100, 4, 0x00), 500'000);
+    auto data = m.heatmapData(0x100, 1'000'000, 10);
+    for (const auto &row : data) {
+        if (row[0] >= 0.0)
+            EXPECT_NEAR(row[0], 0.0, 0.01);
+    }
+}
+
+TEST(CanByteHeatmapModel, HeatmapOneBucket_AllFramesInWindow) {
+    CanByteHeatmapModel m;
+    m.addFrame(makeFrame(0x100, 1, 0x80), 100'000);
+    m.addFrame(makeFrame(0x100, 1, 0x80), 200'000);
+    // Window 1s, 1 bucket → both frames in single bucket
+    auto data = m.heatmapData(0x100, 1'000'000, 1);
+    ASSERT_EQ(static_cast<int>(data.size()), 1);
+    EXPECT_GE(data[0][0], 0.0);
+    EXPECT_NEAR(data[0][0], 128.0, 1.0);
+}
+
+TEST(CanByteHeatmapModel, FrameCountForUnknownId_IsZero) {
+    CanByteHeatmapModel m;
+    m.addFrame(makeFrame(0x100, 4, 0x42), 1000);
+    EXPECT_EQ(m.frameCount(0xDEAD), 0);
+}
+
+TEST(CanByteHeatmapModel, HeatmapDifferentBytesInSameFrame) {
+    CanByteHeatmapModel m;
+    CanFrame f{};
+    f.id = 0x100; f.dlc = 2;
+    f.data[0] = 0x00;
+    f.data[1] = 0xFF;
+    m.addFrame(f, 500'000);
+    auto data = m.heatmapData(0x100, 1'000'000, 10);
+    bool found = false;
+    for (const auto &row : data) {
+        if (row[0] >= 0.0) {
+            EXPECT_NEAR(row[0],   0.0, 1.0);
+            EXPECT_NEAR(row[1], 255.0, 1.0);
+            found = true;
+        }
+    }
+    EXPECT_TRUE(found);
+}

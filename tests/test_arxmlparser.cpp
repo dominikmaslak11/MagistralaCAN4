@@ -404,3 +404,106 @@ TEST(ArxmlParser, TriggerWithoutFrame_NoMessage) {
     // No matching frame — trigger should be skipped
     EXPECT_TRUE(msgs.isEmpty());
 }
+
+// ── Error is set on missing file ──────────────────────────────────────────────
+
+TEST(ArxmlParser, LoadMissingFile_LastErrorSet) {
+    ArxmlParser p;
+    p.load("/nonexistent/file.arxml");
+    EXPECT_FALSE(p.lastError().isEmpty());
+}
+
+// ── Second successful load clears previous error ──────────────────────────────
+
+TEST(ArxmlParser, SecondLoad_ClearsError) {
+    ArxmlParser p;
+    p.load("/nonexistent/x.arxml");  // sets error
+    ASSERT_FALSE(p.lastError().isEmpty());
+
+    QString path = writeArxml(kMinimalArxml);
+    ASSERT_FALSE(path.isEmpty());
+    p.load(path);
+    QFile::remove(path);
+    EXPECT_TRUE(p.lastError().isEmpty());
+}
+
+// ── Signal with no BYTE-ORDER defaults to little-endian ──────────────────────
+
+TEST(ArxmlParser, SignalNoByteOrder_DefaultsToLittleEndian) {
+    QString arxml = R"(<?xml version="1.0"?>
+<AUTOSAR><AR-PACKAGES><AR-PACKAGE><ELEMENTS>
+  <I-SIGNAL>
+    <SHORT-NAME>NoBE</SHORT-NAME>
+    <BIT-LENGTH>8</BIT-LENGTH>
+  </I-SIGNAL>
+  <I-SIGNAL-I-PDU>
+    <SHORT-NAME>PDU1</SHORT-NAME><LENGTH>1</LENGTH>
+    <I-SIGNAL-TO-I-PDU-MAPPINGS>
+      <I-SIGNAL-TO-I-PDU-MAPPING>
+        <I-SIGNAL-REF>/x/NoBE</I-SIGNAL-REF>
+        <START-POSITION>0</START-POSITION>
+      </I-SIGNAL-TO-I-PDU-MAPPING>
+    </I-SIGNAL-TO-I-PDU-MAPPINGS>
+  </I-SIGNAL-I-PDU>
+  <FRAME><SHORT-NAME>F1</SHORT-NAME><FRAME-LENGTH>1</FRAME-LENGTH>
+    <PDU-TO-FRAME-MAPPINGS><PDU-TO-FRAME-MAPPING>
+      <PDU-REF>/x/PDU1</PDU-REF><START-POSITION>0</START-POSITION>
+    </PDU-TO-FRAME-MAPPING></PDU-TO-FRAME-MAPPINGS>
+  </FRAME>
+  <CAN-FRAME-TRIGGERING>
+    <SHORT-NAME>T1</SHORT-NAME>
+    <IDENTIFIER>0x10</IDENTIFIER>
+    <FRAME-REF>/x/F1</FRAME-REF>
+  </CAN-FRAME-TRIGGERING>
+</ELEMENTS></AR-PACKAGE></AR-PACKAGES></AUTOSAR>)";
+
+    QString path = writeArxml(arxml);
+    ASSERT_FALSE(path.isEmpty());
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    ASSERT_EQ(msgs[0].sigList.size(), 1);
+    EXPECT_TRUE(msgs[0].sigList[0].isLittleEndian);
+}
+
+// ── Message ID matches IDENTIFIER hex value ────────────────────────────────────
+
+TEST(ArxmlParser, MessageIdMatchesIdentifier) {
+    QString path = writeArxml(kMinimalArxml);
+    ASSERT_FALSE(path.isEmpty());
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    EXPECT_EQ(msgs[0].id, 0x0C0u);  // from kMinimalArxml IDENTIFIER=0x0C0
+}
+
+// ── Message name comes from CAN-FRAME-TRIGGERING SHORT-NAME ───────────────────
+
+TEST(ArxmlParser, MessageNameFromFrameShortName) {
+    QString path = writeArxml(kMinimalArxml);
+    ASSERT_FALSE(path.isEmpty());
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    // Name is taken from the FRAME SHORT-NAME, not the CAN-FRAME-TRIGGERING
+    EXPECT_EQ(msgs[0].name, "EngineData");
+}
+
+// ── Signal count matches PDU mappings ─────────────────────────────────────────
+
+TEST(ArxmlParser, SignalCountMatchesMappings) {
+    QString path = writeArxml(kMinimalArxml);
+    ASSERT_FALSE(path.isEmpty());
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    EXPECT_EQ(msgs[0].sigList.size(), 2);
+}
