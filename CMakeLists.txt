@@ -322,6 +322,7 @@ set(TEST_SOURCES
     tests/test_pluginloader.cpp
     tests/test_logger.cpp
     tests/test_canframediff.cpp
+    tests/test_j1939parser.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
