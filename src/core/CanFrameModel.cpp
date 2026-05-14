@@ -247,8 +247,13 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
         m_isBurst[phys] = burst;
 
         m_frames[phys] = frame;
-        if (m_overwrite)
+        if (m_overwrite) {
             m_idToRow.insert(frame.id, logicalRow);
+            // Initialise previousData so the next overwrite can compute changedMask correctly.
+            QVector<uint8_t> cur(64, 0);
+            for (int i = 0; i < frame.dlc && i < 64; ++i) cur[i] = frame.data[i];
+            m_previousData[frame.id] = cur;
+        }
 
         ++appendedCount;
     }
@@ -443,11 +448,6 @@ void CanFrameModel::undo() {
     if (m_undoStack.isEmpty()) return;
 
     // Zapisz bieżący stan na stosie redo
-    {
-        QMutexLocker lock(&m_mutex);
-        if (m_size == 0) return; // nic do cofnięcia
-    }
-
     Snapshot current;
     {
         QMutexLocker lock(&m_mutex);

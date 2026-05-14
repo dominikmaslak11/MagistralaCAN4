@@ -170,3 +170,118 @@ TEST(CanFrameModel, sortDoesNotCrash) {
     EXPECT_NO_THROW(model.sort(CanFrameModel::ID, Qt::AscendingOrder));
     EXPECT_NO_THROW(model.sort(CanFrameModel::ID, Qt::DescendingOrder));
 }
+
+// ── Undo/Redo ──
+
+TEST(CanFrameModel, canUndo_FalseInitially) {
+    CanFrameModel model;
+    EXPECT_FALSE(model.canUndo());
+}
+
+TEST(CanFrameModel, canRedo_FalseInitially) {
+    CanFrameModel model;
+    EXPECT_FALSE(model.canRedo());
+}
+
+TEST(CanFrameModel, canUndo_TrueAfterClear) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100), makeFrame(0x200)});
+    EXPECT_FALSE(model.canUndo());
+    model.clear();
+    EXPECT_TRUE(model.canUndo());
+}
+
+TEST(CanFrameModel, undo_AfterClear_RestoresFrames) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100, 10), makeFrame(0x200, 20)});
+    model.clear();
+    ASSERT_EQ(model.rowCount(), 0);
+
+    model.undo();
+    EXPECT_EQ(model.rowCount(), 2);
+    EXPECT_EQ(model.frameAt(0).id, 0x100u);
+    EXPECT_EQ(model.frameAt(0).data[0], 10);
+    EXPECT_EQ(model.frameAt(1).id, 0x200u);
+}
+
+TEST(CanFrameModel, canRedo_TrueAfterUndo) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100)});
+    model.clear();
+    model.undo();
+    EXPECT_TRUE(model.canRedo());
+}
+
+TEST(CanFrameModel, redo_AfterUndo_ClearsAgain) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100), makeFrame(0x200)});
+    model.clear();
+    model.undo();
+    EXPECT_EQ(model.rowCount(), 2);
+
+    model.redo();
+    EXPECT_EQ(model.rowCount(), 0);
+}
+
+TEST(CanFrameModel, undo_EmptyStack_DoesNotCrash) {
+    CanFrameModel model;
+    EXPECT_NO_THROW(model.undo());  // nothing to undo
+    EXPECT_EQ(model.rowCount(), 0);
+}
+
+TEST(CanFrameModel, redo_EmptyStack_DoesNotCrash) {
+    CanFrameModel model;
+    EXPECT_NO_THROW(model.redo());
+    EXPECT_EQ(model.rowCount(), 0);
+}
+
+TEST(CanFrameModel, undo_AfterSetOverwriteMode_RestoresFrames) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100, 5)});
+
+    model.setOverwriteMode(false);  // triggers saveUndoState + clear
+    ASSERT_EQ(model.rowCount(), 0);
+    EXPECT_TRUE(model.canUndo());
+
+    model.undo();
+    EXPECT_EQ(model.rowCount(), 1);
+    EXPECT_EQ(model.frameAt(0).data[0], 5);
+}
+
+TEST(CanFrameModel, newOperationClearsRedoStack) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100)});
+    model.clear();
+    model.undo();
+    EXPECT_TRUE(model.canRedo());
+
+    // A new destructive operation (clear again) should invalidate redo
+    model.clear();
+    EXPECT_FALSE(model.canRedo());
+}
+
+// ── changedMask ──
+
+TEST(CanFrameModel, changedMask_FirstFrameIsZero) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100, 0xAA)});
+    // First time seeing this ID → no previous data → mask is 0
+    CanFrame f = model.frameAt(0);
+    EXPECT_EQ(f.changedMask, 0u);
+}
+
+TEST(CanFrameModel, changedMask_SetForChangedByte) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100, 0x11)});
+    model.processIncomingFrames({makeFrame(0x100, 0xFF)});  // byte[0] changed
+    CanFrame f = model.frameAt(0);
+    EXPECT_EQ(f.changedMask & 1u, 1u);  // bit 0 set for byte[0]
+}
+
+TEST(CanFrameModel, changedMask_ClearForUnchangedByte) {
+    CanFrameModel model;
+    model.processIncomingFrames({makeFrame(0x100, 0xAA)});
+    model.processIncomingFrames({makeFrame(0x100, 0xAA)});  // no change
+    CanFrame f = model.frameAt(0);
+    EXPECT_EQ(f.changedMask, 0u);
+}
