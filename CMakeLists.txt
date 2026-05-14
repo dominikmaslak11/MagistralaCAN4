@@ -137,6 +137,7 @@ set(SOURCES
     src/core/CanFilterProxy.cpp
     src/core/CanPlayer.cpp
     src/core/CanFrameDiff.cpp
+    src/core/CanBitAnalyzer.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
@@ -325,6 +326,7 @@ set(TEST_SOURCES
     tests/test_j1939parser.cpp
     tests/test_candidatemodel.cpp
     tests/test_cansniffer.cpp
+    tests/test_canbitanalyzer.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -378,6 +380,7 @@ set(TEST_SOURCES
     src/core/Logger.cpp
     src/core/CanFrameDiff.cpp
     src/core/CandidateModel.cpp
+    src/core/CanBitAnalyzer.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
