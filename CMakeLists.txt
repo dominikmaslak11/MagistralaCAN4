@@ -136,6 +136,7 @@ set(SOURCES
     src/core/CanStatsPanel.cpp
     src/core/CanFilterProxy.cpp
     src/core/CanPlayer.cpp
+    src/core/CanFrameDiff.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
@@ -320,6 +321,7 @@ set(TEST_SOURCES
     tests/test_canplayer.cpp
     tests/test_pluginloader.cpp
     tests/test_logger.cpp
+    tests/test_canframediff.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -371,6 +373,7 @@ set(TEST_SOURCES
     src/core/CanFilterProxy.cpp
     src/core/PluginLoader.cpp
     src/core/Logger.cpp
+    src/core/CanFrameDiff.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
