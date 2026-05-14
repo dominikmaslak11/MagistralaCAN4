@@ -193,3 +193,93 @@ TEST(CanReplayFilter, ClearRules) {
     auto result = flt.apply(makeFrame(0x100, {0x00}));
     ASSERT_TRUE(result.has_value()); // no rules → passthrough
 }
+
+// ── Extended frame flag matching ──────────────────────────────────────────────
+
+TEST(CanReplayFilter, UseExtMatchesOnlyExtendedFrames) {
+    CanReplayFilter flt;
+    ReplayRule r;
+    r.srcId  = 0x100;
+    r.useExt = true;
+    r.drop   = true;
+    flt.setRules({r});
+
+    // Standard frame: same ID, not extended → no match → passes through
+    EXPECT_TRUE(flt.apply(makeFrame(0x100, {0x01}, false)).has_value());
+    // Extended frame: same ID, extended → match → dropped
+    EXPECT_FALSE(flt.apply(makeFrame(0x100, {0x01}, true)).has_value());
+}
+
+TEST(CanReplayFilter, UseExtFalseMatchesBothExtendedAndStandard) {
+    CanReplayFilter flt;
+    ReplayRule r;
+    r.srcId  = 0x100;
+    r.useExt = false; // does not discriminate by extended flag
+    r.drop   = true;
+    flt.setRules({r});
+
+    EXPECT_FALSE(flt.apply(makeFrame(0x100, {0x01}, false)).has_value());
+    EXPECT_FALSE(flt.apply(makeFrame(0x100, {0x01}, true)).has_value());
+}
+
+// ── Scale + offset combined ───────────────────────────────────────────────────
+
+TEST(CanReplayFilter, ScaleAndOffsetCombined) {
+    CanReplayFilter flt;
+    ReplayRule r;
+    r.srcId = 0x100;
+    r.byteXforms[0].active = true;
+    r.byteXforms[0].scale  = 2.0;
+    r.byteXforms[0].offset = 5.0;
+    flt.setRules({r});
+
+    // 10 * 2 + 5 = 25
+    auto result = flt.apply(makeFrame(0x100, {10}));
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(result->data[0], 25u);
+}
+
+TEST(CanReplayFilter, LastByteTransformed) {
+    CanReplayFilter flt;
+    ReplayRule r;
+    r.srcId = 0x100;
+    r.byteXforms[7].active = true;
+    r.byteXforms[7].scale  = 3.0;
+    r.byteXforms[7].offset = 0.0;
+    flt.setRules({r});
+
+    auto result = flt.apply(makeFrame(0x100, {0,0,0,0,0,0,0,10})); // byte[7]=10 * 3 = 30
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(result->data[7], 30u);
+    EXPECT_EQ(result->data[0], 0u); // first byte unchanged
+}
+
+// ── DLC preserved ─────────────────────────────────────────────────────────────
+
+TEST(CanReplayFilter, DlcPreservedAfterTransform) {
+    CanReplayFilter flt;
+    ReplayRule r;
+    r.srcId = 0x100;
+    r.byteXforms[0].active = true;
+    r.byteXforms[0].scale  = 2.0;
+    flt.setRules({r});
+
+    auto result = flt.apply(makeFrame(0x100, {1, 2, 3}));
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(result->dlc, 3u);
+}
+
+// ── rules() accessor ─────────────────────────────────────────────────────────
+
+TEST(CanReplayFilter, RulesAccessorReturnsCurrentRules) {
+    CanReplayFilter flt;
+    EXPECT_TRUE(flt.rules().empty());
+
+    ReplayRule r1; r1.srcId = 0x100;
+    ReplayRule r2; r2.srcId = 0x200;
+    flt.setRules({r1, r2});
+    EXPECT_EQ(flt.rules().size(), 2u);
+
+    flt.clearRules();
+    EXPECT_TRUE(flt.rules().empty());
+}
