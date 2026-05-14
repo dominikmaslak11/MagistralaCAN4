@@ -118,8 +118,9 @@ private:
     void loadSettings();
 
     CanSniffer m_sniffer;
-    ICanDriver *m_canDriver = nullptr;
-    ICanDriver *m_slCanDriver = nullptr;  // SLCAN backend (serial port)
+    ICanDriver *m_canDriver    = nullptr;
+    ICanDriver *m_slCanDriver  = nullptr;  // SLCAN backend (serial port)
+    ICanDriver *m_espMcpDriver = nullptr;  // ESP32+MCP2515 backend
     CanFrameModel *m_model;
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;

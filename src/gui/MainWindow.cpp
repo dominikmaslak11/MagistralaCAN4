@@ -8,6 +8,7 @@
 #include "core/CanInterfaceEnumerator.h"
 #endif
 #include "core/SlCanDriver.h"
+#include "core/EspMcpDriver.h"
 
 #include <QToolBar>
 #include <QToolButton>
@@ -93,8 +94,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_busLoadWidget  = new CanBusLoadWidget;
     m_frameSender    = new CanFrameSenderWidget(&m_sniffer);
     m_gatewayWidget  = new CanGatewayWidget;
-    if (m_canDriver)   m_gatewayWidget->addDriver("PCAN/SocketCAN", m_canDriver);
-    if (m_slCanDriver) m_gatewayWidget->addDriver("SLCAN", m_slCanDriver);
+    if (m_canDriver)    m_gatewayWidget->addDriver("PCAN/SocketCAN", m_canDriver);
+    if (m_slCanDriver)  m_gatewayWidget->addDriver("SLCAN", m_slCanDriver);
+    if (m_espMcpDriver) m_gatewayWidget->addDriver("ESP-MCP2515", m_espMcpDriver);
     m_udsSequenceWidget = new UdsSequenceWidget(&m_sniffer);
     // m_linWidget, m_kwp2000Widget, m_xcpWidget, m_replayFilterWidget — lazy (LazyTabWidget)
     m_idStatsWidget  = new CanIdStatsWidget;
@@ -127,6 +129,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 #endif
     // SLCAN – zawsze dostępny (porty szeregowe), cross-platform
     m_slCanDriver = new SlCanDriver();
+    // ESP32+MCP2515 – ASCII serial sniffer, 115200 baud
+    m_espMcpDriver = new EspMcpDriver();
     m_canDriver->setBaudRate("500K");
     m_slCanDriver->setBaudRate("500K");
     m_sniffer.setDriver(m_canDriver);
@@ -314,12 +318,17 @@ void MainWindow::toggleSniffing() {
 
         // Inteligentny wybór drivera po nazwie urządzenia
         ICanDriver *active = m_canDriver;
-        bool isSlCan = (iface.startsWith("COM", Qt::CaseInsensitive) ||
+        bool isEspMcp = iface.contains("[ESP-MCP2515");
+        bool isSlCan  = !isEspMcp &&
+                        (iface.startsWith("COM", Qt::CaseInsensitive) ||
                          iface.startsWith("tty") || iface.startsWith("/dev/tty") ||
                          iface.contains("[SLCAN]") || iface.contains("[Canable]") ||
                          iface.contains("[candleLight]") || iface.contains("[USBtin]") ||
                          iface.contains("[CAN232]") || iface.contains("[Lawicel]"));
-        if (m_slCanDriver && isSlCan) {
+        if (m_espMcpDriver && isEspMcp) {
+            active = m_espMcpDriver;
+            Logger::log(QString("ESP-MCP2515: wybrano sterownik dla %1").arg(iface));
+        } else if (m_slCanDriver && isSlCan) {
             active = m_slCanDriver;
             Logger::log(QString("SLCAN: wybrano sterownik szeregowy dla %1").arg(iface));
         }
@@ -421,6 +430,12 @@ void MainWindow::refreshInterfaces() {
     if (m_slCanDriver) {
         QStringList slIfaces = m_slCanDriver->availableDevices();
         ifaces.append(slIfaces);
+    }
+
+    // Merge ESP32+MCP2515 devices
+    if (m_espMcpDriver) {
+        QStringList espIfaces = m_espMcpDriver->availableDevices();
+        ifaces.append(espIfaces);
     }
 
     m_interfaceCombo->addItems(ifaces);

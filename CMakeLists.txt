@@ -133,6 +133,7 @@ set(SOURCES
     src/core/PluginLoader.cpp
     src/core/HttpRestServer.cpp
     src/core/SlCanDriver.cpp
+    src/core/EspMcpDriver.cpp
     src/core/CanStatsPanel.cpp
     src/core/CanFilterProxy.cpp
     src/core/CanPlayer.cpp
