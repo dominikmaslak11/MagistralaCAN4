@@ -317,6 +317,7 @@ set(TEST_SOURCES
     tests/test_canrecorder.cpp
     tests/test_mdf4writer.cpp
     tests/test_canfilterproxy.cpp
+    tests/test_canplayer.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
