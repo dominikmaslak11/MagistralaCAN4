@@ -5,6 +5,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <atomic>
+#include <QSemaphore>
 #include "CanFrame.h"
 #include "RingBuffer.h"
 
@@ -51,4 +52,5 @@ private:
     RingBuffer<CanFrame> m_ringBuffer;
     QMutex m_waitMutex;              // used only with m_bufferNotFull
     QWaitCondition m_bufferNotFull;  // wake producer when consumer drains
+    QSemaphore m_threadDone{0};      // released when doWork() exits
 };

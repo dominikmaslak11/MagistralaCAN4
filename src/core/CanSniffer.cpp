@@ -50,10 +50,13 @@ void CanSniffer::stop() {
     if (!m_running) return;
     m_running = false;
     if (m_driver) m_driver->close();
+    m_bufferNotFull.wakeAll();       // unblock producer if it's waiting
+    m_threadDone.acquire(1);         // wait for doWork() to exit
     emit statusChanged(false);
 }
 
 void CanSniffer::doWork() {
+    auto releaseOnExit = qScopeGuard([this] { m_threadDone.release(1); });
     while (m_running) {
         CanFrame frame = m_driver->readFrame();
         if (frame.id == 0 && frame.dlc == 0 && !frame.error) {
