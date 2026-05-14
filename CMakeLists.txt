@@ -145,6 +145,7 @@ set(SOURCES
     src/core/CanPayloadSearch.cpp
     src/core/CanSignalEncoder.cpp
     src/core/CanBusErrorAnalyzer.cpp
+    src/core/CanRateFilter.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
@@ -341,6 +342,7 @@ set(TEST_SOURCES
     tests/test_canpayloadsearch.cpp
     tests/test_cansignalencoder.cpp
     tests/test_canbuserroranalyzer.cpp
+    tests/test_canratefilter.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -402,6 +404,7 @@ set(TEST_SOURCES
     src/core/CanPayloadSearch.cpp
     src/core/CanSignalEncoder.cpp
     src/core/CanBusErrorAnalyzer.cpp
+    src/core/CanRateFilter.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
