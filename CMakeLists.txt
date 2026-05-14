@@ -319,6 +319,7 @@ set(TEST_SOURCES
     tests/test_canfilterproxy.cpp
     tests/test_canplayer.cpp
     tests/test_pluginloader.cpp
+    tests/test_logger.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -369,6 +370,7 @@ set(TEST_SOURCES
     src/core/Mdf4Writer.cpp
     src/core/CanFilterProxy.cpp
     src/core/PluginLoader.cpp
+    src/core/Logger.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
