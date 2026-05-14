@@ -148,13 +148,15 @@ set(SOURCES
     src/core/CanBusErrorAnalyzer.cpp
     src/core/CanRateFilter.cpp
     src/core/CanTriggerRecorder.cpp
+    src/core/IcSimDecoder.cpp
+    src/core/IcSimWidget.cpp
+    src/core/CanExporter.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
 
 if(HAS_XCB)
     list(APPEND SOURCES src/core/CanInterfaceEnumerator.cpp)
-    list(APPEND SOURCES src/core/CanExporter.cpp)
 endif()
 
 set(HEADERS
@@ -346,6 +348,7 @@ set(TEST_SOURCES
     tests/test_canbuserroranalyzer.cpp
     tests/test_canratefilter.cpp
     tests/test_cantriggerrecorder.cpp
+    tests/test_icsimdecoder.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -409,6 +412,7 @@ set(TEST_SOURCES
     src/core/CanBusErrorAnalyzer.cpp
     src/core/CanRateFilter.cpp
     src/core/CanTriggerRecorder.cpp
+    src/core/IcSimDecoder.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

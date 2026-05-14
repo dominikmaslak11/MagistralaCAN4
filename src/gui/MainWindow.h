@@ -55,6 +55,7 @@
 #include "core/CanModuleProfilerWidget.h"
 #include "core/CanPrototypeExporterWidget.h"
 #include "core/CanExporter.h"
+#include "core/IcSimWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -158,6 +159,7 @@ private:
     CanModuleProfilerWidget      *m_moduleProfilerWidget  = nullptr;
     CanPrototypeExporterWidget   *m_protoExporterWidget   = nullptr;
     CanExporter                  *m_canExporter           = nullptr;
+    IcSimWidget                  *m_icSimWidget           = nullptr;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

@@ -111,6 +111,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_moduleProfilerWidget->setAlertEngine(m_alertWidget->engine());
     m_protoExporterWidget    = new CanPrototypeExporterWidget(this);
     m_protoExporterWidget->setFrameModel(m_model);
+    m_icSimWidget            = new IcSimWidget(&m_sniffer, this);
     m_restServer.setModel(m_model);
     m_restServer.setAlertEngine(m_alertWidget->engine());
     connect(&m_restServer, &HttpRestServer::startRequested,    this, [this]() { if (!m_sniffing) toggleSniffing(); });
@@ -239,6 +240,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             [this](const CanFrame &f) { m_moduleProfilerWidget->onFrame(f); });
     connect(this, &MainWindow::frameProcessed, m_protoExporterWidget,
             [this](const CanFrame &f) { m_protoExporterWidget->onFrame(f); });
+    connect(this, &MainWindow::frameProcessedThrottled, m_icSimWidget,
+            [this](const CanFrame &f) { m_icSimWidget->processFrame(f); });
     connect(m_alertWidget->engine(), &CanAlertEngine::alertTriggered,
             this, [this](const CanAlert &a) {
                 if (a.frame.id != 0 || !a.description.isEmpty())
@@ -829,6 +832,7 @@ void MainWindow::setupCentralWidget() {
     toolsTabs->addTab(m_protoExporterWidget, "Eksport kodu");
     m_canExporter = new CanExporter(m_model);
     toolsTabs->addTab(m_canExporter,         "Eksport danych");
+    toolsTabs->addTab(m_icSimWidget,         "ICSim");
     toolsTabs->addTab(m_canSimWidget,        "Symulacja CAN");
     toolsTabs->addTab(m_remoteCanWidget,     "Zdalny CAN");
     toolsTabs->addTab(m_dbcEditor,           "Edytor DBC");

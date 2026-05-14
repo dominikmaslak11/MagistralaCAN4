@@ -1,0 +1,35 @@
+czy możliwe jest zmodernizowanie uczenia asocjacyjnego by to wykrywało "bicie serca" konkretnego modułu can czyli jego obecność na magistrali gdy jest podłączony i rozpoznało ramki jakie on wysyła i na …
+
+    Pomysł jest bardzo dobry i technicznie realistyczny. Moje zdanie:
+
+    Dlaczego to ma sens
+
+    Moduły CAN (ECU, sterowniki) mają przewidywalne zachowanie cykliczne — wysyłają określone ID co stały interwał (np. co 10/20/100 ms). To naturalny "heartbeat". LearningEngine już zbiera historię ramek i
+    oblicza częstotliwości — ma więc surowe dane do tego.
+
+    Jak bym to widział architektonicznie
+
+    Faza uczenia ("moduł OBECNY")
+    - Użytkownik klika "Moduł obecny" → silnik startuje okno obserwacyjne (np. 5–10s)
+    - LearningEngine rejestruje: które ID pojawiają się regularnie (niskie odchylenie interwału), które ID "odpowiadają" na inne w oknie czasowym (np. ramka 0x7E0 → odpowiedź 0x7E8 w ciągu 50ms = korelacja
+    request/response)
+    - Wynik: profil modułu — zbiór { id, avg_interval_ms, jitter_ms, is_periodic, responds_to[] }
+
+    Faza detekcji ("moduł NIEOBECNY")
+    - Kliknięcie "Moduł nieobecny" → silnik wie, jakich ID brakuje
+    - Porównanie profilu z bieżącym ruchem: jeśli oczekiwane ID cykliczne nie pojawiły się w avg_interval + 3×jitter → moduł offline → alert
+
+    Detekcja request/response
+    To najciekawsza część. LearningEngine_correlations.cpp już liczy korelacje między ID. Wystarczy dodać okno czasowe (50–150ms) i kierunek — jeśli A pojawia się regularnie po B, to B→A jest parą
+    request/response danego modułu.
+
+    Co bym dodał do UI
+
+    Przycisk dwustanowy "Naucz moduł / Wykrywaj moduł" + lista wyuczonych profili modułów z nazwą (edytowalną przez użytkownika, np. "ABS", "TCU"). W CanAlertWidget nowy typ alertu: ModuleOffline.
+
+    Jedno zastrzeżenie
+
+    Na zatłoczonej magistrali (dużo ECU) rozróżnienie "które ID należą do którego modułu" jest trudne bez fizycznej izolacji (odłączyć wszystko poza jednym modułem podczas uczenia). Dlatego przycisk "moduł
+    obecny/nieobecny" jest kluczowy — to użytkownik daje kontekst, którego algorytm sam nie ma.
+
+    Podsumowując: to rozszerzenie dobrze wpasowuje się w istniejącą architekturę (LearningEngine + CanAlertEngine), ma realne zastosowanie diagnostyczne i jest wykonalne bez przepisywania systemu od zera.
