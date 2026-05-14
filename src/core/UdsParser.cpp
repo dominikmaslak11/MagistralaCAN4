@@ -31,7 +31,7 @@ UdsFrame UdsFrame::fromCanFrame(const CanFrame &frame) {
             // ReadDataByIdentifier positive: bajty 1-2 to DID, 3+ to dane
             uf.did = (static_cast<uint16_t>(frame.data[1]) << 8) | frame.data[2];
         }
-    } else if (firstByte >= 0x30 && firstByte <= 0x3F) {
+    } else if (firstByte >= 0x30 && firstByte <= 0x32) {
         uf.type = FlowControl;
         uf.sid  = firstByte;
     } else {
