@@ -443,3 +443,42 @@ TEST(J1939Frame, PriorityRange) {
         EXPECT_EQ(out.priority, p);
     }
 }
+
+TEST(J1939Frame, IsJ1939_ZeroId_Extended) {
+    // Extended frames with id=0 are technically within the 29-bit range
+    CanFrame f{};
+    f.id = 0;
+    f.extended = true;
+    // Whether id=0 qualifies as J1939 depends on the PF/SA heuristic — just ensure no crash
+    EXPECT_NO_THROW({ (void)J1939Frame::isJ1939(f); });
+}
+
+TEST(J1939Frame, MaxSourceAddress_0xFF) {
+    uint32_t id = buildJ1939Id(6, false, false, 0xFE, 0xCA, 0xFF);
+    J1939Frame out;
+    ASSERT_TRUE(J1939Frame::fromCanFrame(makeExtCan(id, {0xAB}), out));
+    EXPECT_EQ(out.sourceAddress, 0xFFu);
+}
+
+TEST(J1939Frame, PDU1_IsPdu1Flag_True) {
+    // PF=0xEF (239) < 240 → PDU1
+    uint32_t id = buildJ1939Id(6, false, false, 0xEF, 0x50, 0x00);
+    J1939Frame out;
+    ASSERT_TRUE(J1939Frame::fromCanFrame(makeExtCan(id, {}), out));
+    EXPECT_TRUE(out.isPdu1);
+}
+
+TEST(J1939Frame, PDU2_IsPdu1Flag_False) {
+    // PF=0xFE (254) >= 240 → PDU2
+    uint32_t id = buildJ1939Id(6, false, false, 0xFE, 0xCA, 0x00);
+    J1939Frame out;
+    ASSERT_TRUE(J1939Frame::fromCanFrame(makeExtCan(id, {}), out));
+    EXPECT_FALSE(out.isPdu1);
+}
+
+TEST(J1939Frame, CanId_WithDataPage_SetInOutput) {
+    uint32_t id = buildJ1939Id(3, false, true, 0xFE, 0x00, 0x01);
+    J1939Frame out;
+    ASSERT_TRUE(J1939Frame::fromCanFrame(makeExtCan(id, {}), out));
+    EXPECT_EQ(out.canId(), id);
+}
