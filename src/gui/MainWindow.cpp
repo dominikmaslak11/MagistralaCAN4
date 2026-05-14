@@ -84,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_forensicsWidget  = new CanForensicsWidget;
     m_triggerWidget    = new CanTriggerWidget;
     m_signalStatsWidget = new CanSignalStatisticsWidget;
+    m_busHealthWidget   = new CanBusHealthWidget;
     m_j1939Widget = new J1939Widget;
     m_learner->setJ1939Parser(m_j1939Widget->parser());
     m_model->setJ1939Parser(m_j1939Widget->parser());
@@ -226,6 +227,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessedThrottled, m_forensicsWidget,   &CanForensicsWidget::processFrame);
     connect(this, &MainWindow::frameProcessed,          m_triggerWidget,     &CanTriggerWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_signalStatsWidget, &CanSignalStatisticsWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed,          m_busHealthWidget,   &CanBusHealthWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_j1939Widget, &J1939Widget::processFrame);
     // m_udsWidget, m_obdWidget, m_canOpenWidget — lazy: connected in LazyTabWidget factory
     connect(this, &MainWindow::frameProcessedThrottled, m_signalPlotter,  &SignalPlotterWidget::processFrame);
@@ -836,6 +838,7 @@ void MainWindow::setupCentralWidget() {
     analysisTabs->addTab(m_signalMonitorWidget,  "Live Signals");
     analysisTabs->addTab(m_forensicsWidget,      "Forensics");
     analysisTabs->addTab(m_signalStatsWidget,   "Statystyki sygnałów");
+    analysisTabs->addTab(m_busHealthWidget,     "Zdrowie magistrali");
 
     // ── Grupa: Narzędzia ──────────────────────────────────────────────────────
     auto *toolsTabs = new LazyTabWidget;

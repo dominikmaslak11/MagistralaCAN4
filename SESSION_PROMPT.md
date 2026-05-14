@@ -7,7 +7,7 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 - **Repozytorium**: https://github.com/dominikmaslak11/MagistralaCAN4
 
 ## Stan projektu (2026-05-14)
-- **Testy**: +21 (CanDashboardConfig) → 1190 razem, 10 pre-existing RemoteCan failures (wymagają Python)
+- **Testy**: 1190 razem, 10 pre-existing RemoteCan failures (wymagają Python)
 - **Protokoły**: CAN classic, CAN FD (BRS/ESI), LIN, J1939, UDS (ISO 14229), KWP2000 (ISO 14230), XCP, SOME/IP, DoIP (ISO 13400), CANopen, OBD-II
 - **Formaty sygnałów**: DBC (Vector), ARXML (AUTOSAR 4.x)
 - **Eksport**: candump, CSV, MDF4, PCAP (Wireshark), Python/Lua/Arduino prototype code
@@ -34,8 +34,16 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 | `CanForensicsWidget` | Panel reverse-engineering: bit profiler, interval stats, payload pattern search |
 | `CanTriggerWidget` | GUI wyzwalacza: arm/disarm, warunek (ID/bajt/błąd), bufor pre/post, eksport candump |
 | `CanSignalStatisticsWidget` | Statystyki DBC: min/max/mean/σ/CV%/histogram, filtr, CSV export, auto-refresh 2s |
+| `CanBusHealthWidget` | Monitor błędów magistrali (10 klas SocketCAN, BUS-OFF alert, rate) + Walidator liczników AUTOSAR |
 
-## Ostatnia sesja — część 13: CanTriggerWidget + CanSignalStatisticsWidget (commit TBD)
+## Ostatnia sesja — część 14: CanBusHealthWidget (commit TBD)
+- `CanBusHealthWidget.h/cpp` — panel zdrowia magistrali CAN z 2 zakładkami:
+  - **Błędy magistrali**: alert BUS-OFF, liczniki 10 klas błędów SocketCAN (TxTimeout→Unknown), częstotliwość błędów (okno 5s), tabela zdarzeń błędów (czas/klasa/raw ID/opis), limit 500 wpisów
+  - **Walidator liczników**: dodawanie/usuwanie reguł `CanCounterValidator::Config` (CAN ID, byteIndex, upper nibble, modulus), tabela statystyk live (OK, błędy, razem, % błędów), kolorowanie wierszy (zielony/żółty/czerwony)
+- Integracja MainWindow: `frameProcessed` → `processFrame` (każda ramka, nie throttlowana), nowa zakładka "Zdrowie magistrali" w grupie Analiza
+- Testy: 1190 (bez zmian — `CanBusErrorAnalyzer` i `CanCounterValidator` już testowane w poprzednich sesjach)
+
+## Poprzednia sesja — część 13: CanTriggerWidget + CanSignalStatisticsWidget (commit 694392b)
 - `CanTriggerWidget.h/cpp` — GUI dla CanTriggerRecorder: tryby (dowolna ramka z ID / bajt==wartość / ramka błędu), pre/post spinboxy, tabela przechwyconych ramek (PRE/TRIGGER/POST z kolorowaniem), eksport do candump; tab "Wyzwalacz" w Narzędzia
 - `CanSignalStatisticsWidget.h/cpp` — statystyki sygnałów DBC: min/max/mean/stdDev/CV%/histogram UTF-8, auto-odświeżanie 2s, filtr nazwy, eksport CSV; tab "Statystyki sygnałów" w Analiza
 

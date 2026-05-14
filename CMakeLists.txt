@@ -156,6 +156,7 @@ set(SOURCES
     src/core/CanForensicsWidget.cpp
     src/core/CanTriggerWidget.cpp
     src/core/CanSignalStatisticsWidget.cpp
+    src/core/CanBusHealthWidget.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )

@@ -60,6 +60,7 @@
 #include "core/CanForensicsWidget.h"
 #include "core/CanTriggerWidget.h"
 #include "core/CanSignalStatisticsWidget.h"
+#include "core/CanBusHealthWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -168,6 +169,7 @@ private:
     CanForensicsWidget           *m_forensicsWidget       = nullptr;
     CanTriggerWidget             *m_triggerWidget         = nullptr;
     CanSignalStatisticsWidget    *m_signalStatsWidget     = nullptr;
+    CanBusHealthWidget           *m_busHealthWidget       = nullptr;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;
