@@ -309,6 +309,8 @@ set(TEST_SOURCES
     tests/test_remote_can.cpp
     tests/test_remote_can_integration.cpp
     tests/test_mqttbridge.cpp
+    tests/test_obdparser.cpp
+    tests/test_canopenparser.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -349,6 +351,8 @@ set(TEST_SOURCES
     src/core/WebSocketServer.cpp
     src/core/RemoteCanClient.cpp
     src/core/MqttBridge.cpp
+    src/core/CanOpenParser.cpp
+    src/core/ObdParser.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})

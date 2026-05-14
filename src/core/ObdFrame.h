@@ -32,7 +32,7 @@ public:
     QList<uint8_t> knownModes() const { return m_modeDb.keys(); }
 
 private:
-    struct PidDef { QString name; QString unit; double scale; double offset; };
+    struct PidDef { QString name; QString unit; double scale; double offset; int numBytes = 2; };
     QHash<uint8_t, QString> m_modeDb;
     QHash<QPair<uint8_t, uint16_t>, PidDef> m_pidDb;
 };

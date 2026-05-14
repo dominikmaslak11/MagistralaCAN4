@@ -6,7 +6,7 @@ CanOpenFrame CanOpenFrame::fromCanFrame(const CanFrame &frame) {
     co.canId = frame.id; co.timestamp = frame.timestamp; co.dlc = frame.dlc;
     for (int i = 0; i < frame.dlc && i < 8; ++i) co.data[i] = frame.data[i];
 
-    if (frame.extended || frame.dlc < 1) return co;
+    if (frame.extended) return co;
 
     co.funcCode = (frame.id >> 7) & 0x0F;
     co.nodeId   = frame.id & 0x7F;
