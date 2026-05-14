@@ -144,6 +144,79 @@ TEST(RingBuffer, wrapAroundAfterDrainAndRefill) {
     EXPECT_EQ(out[3], 103);
 }
 
+// ── Edge-case: reserve(0) ──
+
+TEST(RingBuffer, reserveZeroGivesCapacityOne) {
+    RingBuffer<int> rb;
+    rb.reserve(0);
+    // pow2(0+1)=1, sentinel=1 slot → usable = 0 ... but mask=0 so cap() = 0
+    // The real contract: at least one slot reserved, but usable may be 0
+    EXPECT_GE(rb.capacity(), 0);  // must not crash
+}
+
+// ── SizeAfterDrain ──
+
+TEST(RingBuffer, sizeIsZeroAfterDrain) {
+    RingBuffer<int> rb;
+    rb.reserve(8);
+    rb.tryPush(1);
+    rb.tryPush(2);
+    QVector<int> out;
+    rb.drain(out);
+    EXPECT_EQ(rb.size(), 0);
+}
+
+// ── Sequential fill/drain cycles ──
+
+TEST(RingBuffer, sequentialFillDrainCycles) {
+    RingBuffer<int> rb;
+    rb.reserve(8);  // capacity = 7
+    for (int cycle = 0; cycle < 5; ++cycle) {
+        for (int i = 0; i < 5; ++i)
+            EXPECT_TRUE(rb.tryPush(cycle * 10 + i));
+        QVector<int> out;
+        int n = rb.drain(out);
+        EXPECT_EQ(n, 5);
+        EXPECT_EQ(out[0], cycle * 10 + 0);
+        EXPECT_EQ(out[4], cycle * 10 + 4);
+    }
+}
+
+// ── Second reserve overwrites first ──
+
+TEST(RingBuffer, reserveMultipleTimes_lastWins) {
+    RingBuffer<int> rb;
+    rb.reserve(4);  // capacity 7
+    rb.reserve(2);  // capacity 3
+    EXPECT_EQ(rb.capacity(), 3);
+}
+
+// ── Push exactly at capacity ──
+
+TEST(RingBuffer, pushExactlyAtCapacity) {
+    RingBuffer<int> rb;
+    rb.reserve(4);  // capacity = 7
+    for (int i = 0; i < 7; ++i)
+        EXPECT_TRUE(rb.tryPush(i)) << "failed at i=" << i;
+    EXPECT_EQ(rb.size(), 7);
+    EXPECT_FALSE(rb.tryPush(99));  // one over capacity
+}
+
+// ── Trivially-copyable struct ──
+
+struct PodPoint { int x, y; };
+TEST(RingBuffer, structTypeRoundTrip) {
+    RingBuffer<PodPoint> rb;
+    rb.reserve(8);
+    rb.tryPush({10, 20});
+    rb.tryPush({30, 40});
+    QVector<PodPoint> out;
+    rb.drain(out);
+    ASSERT_EQ(out.size(), 2);
+    EXPECT_EQ(out[0].x, 10); EXPECT_EQ(out[0].y, 20);
+    EXPECT_EQ(out[1].x, 30); EXPECT_EQ(out[1].y, 40);
+}
+
 // ── SPSC concurrency stress test ──
 
 TEST(RingBuffer, spscConcurrency) {

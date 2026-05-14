@@ -178,3 +178,84 @@ TEST_F(CanObservationDbTest, NoOpenNoRecord) {
     m_db.flush();
     EXPECT_EQ(m_db.totalFrameCount(), 0);
 }
+
+TEST_F(CanObservationDbTest, QueryTimeRange_ReturnsFramesInRange) {
+    ASSERT_TRUE(m_db.open(m_dbPath));
+    m_db.beginSession();
+    m_db.recordFrame(makeFrame(0x100, 8), 1'000);   // 1ms
+    m_db.recordFrame(makeFrame(0x100, 8), 5'000);   // 5ms
+    m_db.recordFrame(makeFrame(0x100, 8), 9'000);   // 9ms
+    m_db.flush();
+
+    auto rows = m_db.queryTimeRange(3'000, 7'000);
+    ASSERT_EQ(rows.size(), 1u);
+    EXPECT_EQ(rows[0].timestampUs, 5'000u);
+}
+
+TEST_F(CanObservationDbTest, QueryTimeRange_EmptyRange) {
+    ASSERT_TRUE(m_db.open(m_dbPath));
+    m_db.beginSession();
+    m_db.recordFrame(makeFrame(0x100, 8), 1'000);
+    m_db.flush();
+
+    auto rows = m_db.queryTimeRange(2'000, 3'000);
+    EXPECT_TRUE(rows.empty());
+}
+
+TEST_F(CanObservationDbTest, FindDlcAnomalies_DetectsChange) {
+    ASSERT_TRUE(m_db.open(m_dbPath));
+    m_db.beginSession();
+    // 5 frames with DLC=8, then 1 with DLC=4 → anomaly
+    for (int i = 0; i < 5; ++i)
+        m_db.recordFrame(makeFrame(0x100, 8), static_cast<uint64_t>(i) * 1000);
+    m_db.recordFrame(makeFrame(0x100, 4), 9000);
+    m_db.flush();
+
+    auto anomalies = m_db.findDlcAnomalies();
+    ASSERT_GE(anomalies.size(), 1u);
+    bool found = false;
+    for (const auto &a : anomalies) {
+        if (a.canId == 0x100u && a.actualDlc == 4) { found = true; break; }
+    }
+    EXPECT_TRUE(found);
+}
+
+TEST_F(CanObservationDbTest, FindDlcAnomalies_NoAnomalyIfConsistent) {
+    ASSERT_TRUE(m_db.open(m_dbPath));
+    m_db.beginSession();
+    for (int i = 0; i < 6; ++i)
+        m_db.recordFrame(makeFrame(0x200, 8), static_cast<uint64_t>(i) * 1000);
+    m_db.flush();
+
+    auto anomalies = m_db.findDlcAnomalies();
+    for (const auto &a : anomalies)
+        EXPECT_NE(a.canId, 0x200u);
+}
+
+TEST_F(CanObservationDbTest, ComputeIdFrequencies_SingleId) {
+    ASSERT_TRUE(m_db.open(m_dbPath));
+    m_db.beginSession();
+    for (int i = 0; i < 3; ++i)
+        m_db.recordFrame(makeFrame(0x300, 4), static_cast<uint64_t>(i) * 10'000);
+    m_db.flush();
+
+    auto freqs = m_db.computeIdFrequencies();
+    auto it = std::find_if(freqs.begin(), freqs.end(),
+                           [](const auto &f){ return f.canId == 0x300u; });
+    ASSERT_NE(it, freqs.end());
+    EXPECT_EQ(it->frameCount, 3);
+    EXPECT_GT(it->avgIntervalUs, 0.0);
+}
+
+TEST_F(CanObservationDbTest, ExportToPcap_CreatesFile) {
+    ASSERT_TRUE(m_db.open(m_dbPath));
+    m_db.beginSession();
+    m_db.recordFrame(makeFrame(0x100, 8), 1'000);
+    m_db.flush();
+
+    QTemporaryFile pcap;
+    pcap.open(); pcap.close();
+    bool ok = m_db.exportToPcap(pcap.fileName(), 0x100);
+    EXPECT_TRUE(ok);
+    EXPECT_GT(QFile(pcap.fileName()).size(), 0);
+}
