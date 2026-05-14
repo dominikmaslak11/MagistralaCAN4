@@ -188,22 +188,12 @@ void CanDashboard::applyFilter(const QString &text) {
 
 void CanDashboard::updateSignal(const CanFrame &frame) {
     if (!m_dbcParser) return;
+    if (m_idToSignals.value(frame.id).isEmpty()) return;
 
-    const auto &signalNames = m_idToSignals.value(frame.id);
-    if (signalNames.isEmpty()) return;
-
-    DbcMessage msg = m_dbcParser->messageForId(frame.id);
-    if (msg.id == 0) return;
-
-    for (const auto &sig : msg.sigList) {
-        int byteIdx = sig.startBit / 8;
-        if (byteIdx < frame.dlc) {
-            uint8_t rawValue = frame.data[byteIdx];
-            double value = rawValue * sig.scale + sig.offset;
-            if (auto *gauge = m_gauges.value(sig.name)) {
-                gauge->setValue(value);
-            }
-        }
+    const auto decoded = m_dbcParser->decodeSignals(frame.id, frame.data.data(), frame.dlc);
+    for (auto it = decoded.cbegin(); it != decoded.cend(); ++it) {
+        if (auto *gauge = m_gauges.value(it.key()))
+            gauge->setValue(it.value());
     }
 }
 

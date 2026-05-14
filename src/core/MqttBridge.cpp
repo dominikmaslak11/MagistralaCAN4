@@ -22,20 +22,23 @@ void MqttBridge::setEnabled(bool on) {
 
 void MqttBridge::onNewFrame(const CanFrame &frame) {
     if (!m_enabled || !m_dbc) return;
+
+    const auto decoded = m_dbc->decodeSignals(frame.id, frame.data.data(), frame.dlc);
+    if (decoded.isEmpty()) return;
+
     DbcMessage msg = m_dbc->messageForId(frame.id);
-    if (msg.id == 0) return;
+    QHash<QString, QString> sigUnits;
+    for (const auto &sig : msg.sigList)
+        sigUnits[sig.name] = sig.unit;
 
-    for (const auto &sig : msg.sigList) {
-        int byteIdx = sig.startBit / 8;
-        if (byteIdx >= frame.dlc) continue;
-        double value = frame.data[byteIdx] * sig.scale + sig.offset;
+    for (auto it = decoded.cbegin(); it != decoded.cend(); ++it) {
+        const QString &name = it.key();
+        double value = it.value();
 
-        // Unikaj duplikatów (ta sama wartość co ostatnio)
-        if (m_lastValues.contains(sig.name) && fabs(m_lastValues[sig.name] - value) < 0.001)
+        if (m_lastValues.contains(name) && fabs(m_lastValues[name] - value) < 0.001)
             continue;
-        m_lastValues[sig.name] = value;
-
-        publish(sig.name, value, sig.unit, frame.timestamp);
+        m_lastValues[name] = value;
+        publish(name, value, sigUnits.value(name), frame.timestamp);
     }
 }
 
