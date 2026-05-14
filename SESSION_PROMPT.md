@@ -6,8 +6,8 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 - **Platformy**: Windows (MSYS2/UCRT64, statyczne Qt6) + Linux (Kali, GCC 15, dynamiczne Qt6)
 - **Repozytorium**: https://github.com/dominikmaslak11/MagistralaCAN4
 
-## Stan projektu (2026-05-13)
-- **Testy**: 435/435 w 30 suites (GoogleTest)
+## Stan projektu (2026-05-14)
+- **Testy**: +28 (IcSimDecoder) — wszystkie zielone (GoogleTest)
 - **Protokoły**: CAN classic, CAN FD (BRS/ESI), LIN, J1939, UDS (ISO 14229), KWP2000 (ISO 14230), XCP, SOME/IP, DoIP (ISO 13400), CANopen, OBD-II
 - **Formaty sygnałów**: DBC (Vector), ARXML (AUTOSAR 4.x)
 - **Eksport**: candump, CSV, MDF4, PCAP (Wireshark), Python/Lua/Arduino prototype code
@@ -27,8 +27,19 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 | `BusLoadAnalyzer` | Sliding-window % wykorzystania pasma, top loaders per ID |
 | `CanProtocolTimelineWidget` | Qt6 Charts scatter — oś czasu zdarzeń protokołów |
 | `CanByteHeatmapWidget` | Custom paintEvent — heatmapa wartości bajtów per ID w czasie |
+| `IcSimDecoder` | Decoder/encoder ramek ICSim (Open Garages) — speed/doors/signals |
+| `IcSimWidget` | Panel sterowania symulatorem ICSim — dashboard, slider, przyciski drzwi/sygnałów |
 
-## Ostatnia sesja — Linux build fix (commit `093d414`)
+## Ostatnia sesja — część 10: ICSim integration (commit `4bfb9d4`)
+- `IcSimDecoder.h/cpp` — pure C++ decoder ramek ICSim: speed (0x244), doors (0x19B), signals (0x188)
+- `IcSimWidget.h/cpp` — Qt6 widget z custom paintEvent (speedometr 0-90 mph, 270°, drzwi, strzałki)
+- Obsługa seeded ICSim (`icsim -s <seed>`) — konfigurowalne CAN ID przez QSpinBox (hex)
+- Wysyłanie ramek sterujących przez CanSniffer::writeFrame()
+- Nowa zakładka "ICSim" w grupie Narzędzia → toolsTabs
+- CMakeLists fix: CanExporter.cpp wyjęty z bloku HAS_XCB (pre-existing Windows linker bug)
+- +28 testów (IcSimDecoder), wszystkie zielone
+
+## Poprzednia sesja — Linux build fix (commit `093d414`)
 Fix kompilacji GCC 15 / Qt 6.10 na Kali Linux:
 - `SocketCanDriver.cpp:90` — `std::min(uint8_t, int)` → `std::min((int)frame.dlc, 64)` (GCC 15 ścisłe typy)
 - `CanObservationDb.cpp` — `int64_t → qlonglong` w `addBindValue` (na Linux `int64_t = long`; Qt nie ma `QVariant(long)`)
