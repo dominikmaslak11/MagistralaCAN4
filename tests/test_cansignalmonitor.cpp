@@ -197,3 +197,97 @@ TEST(CanSignalMonitor, Reset) {
     mon.reset();
     EXPECT_EQ(mon.allValues().size(), 0u);
 }
+
+TEST(CanSignalMonitor, ValueForAfterReset_Null) {
+    DbcSignal sig;
+    sig.name="Sig"; sig.startBit=0; sig.length=8;
+    sig.isLittleEndian=true; sig.isSigned=false; sig.scale=1.0; sig.offset=0.0;
+
+    DbcParser dbc = makeDbcWith(0x100, "Msg", sig);
+    CanSignalMonitor mon; mon.setDbc(&dbc);
+    mon.update(makeFrame(0x100, {0x05}));
+    EXPECT_NE(mon.valueFor("Sig"), nullptr);
+
+    mon.reset();
+    EXPECT_EQ(mon.valueFor("Sig"), nullptr);
+}
+
+TEST(CanSignalMonitor, SetAlarmPreservesOnUpdate) {
+    DbcSignal sig;
+    sig.name="Speed"; sig.startBit=0; sig.length=8;
+    sig.isLittleEndian=true; sig.isSigned=false; sig.scale=1.0; sig.offset=0.0;
+
+    DbcParser dbc = makeDbcWith(0x200, "Veh", sig);
+    CanSignalMonitor mon; mon.setDbc(&dbc);
+
+    // Set alarm before any update — value will exceed max
+    mon.setAlarm("Speed", 0.0, 100.0);
+
+    // Update with value 150 → above max
+    mon.update(makeFrame(0x200, {150}));
+    const auto *sv = mon.valueFor("Speed");
+    ASSERT_NE(sv, nullptr);
+    EXPECT_NEAR(sv->physValue, 150.0, 0.01);
+    EXPECT_TRUE(sv->alarmActive()); // alarm should trigger
+}
+
+TEST(CanSignalMonitor, ActiveAlarmCountZeroInitially) {
+    CanSignalMonitor mon;
+    EXPECT_EQ(mon.activeAlarmCount(), 0);
+}
+
+TEST(CanSignalMonitor, ActiveAlarmCountMultipleViolations) {
+    auto makeSig = [](const QString &name) {
+        DbcSignal s; s.name=name; s.startBit=0; s.length=8;
+        s.isLittleEndian=true; s.isSigned=false; s.scale=1.0; s.offset=0.0;
+        return s;
+    };
+
+    DbcMessage msg; msg.id=0x300; msg.name="M"; msg.dlc=8;
+    msg.sigList.append(makeSig("A"));
+    msg.sigList.append(makeSig("B"));
+    DbcParser dbc; dbc.setMessages({msg});
+
+    CanSignalMonitor mon; mon.setDbc(&dbc);
+    // A at bit0, B also at bit0 (they overlap — both decode from same byte)
+    mon.update(makeFrame(0x300, {200, 0,0,0,0,0,0,0})); // raw=200
+
+    mon.setAlarm("A", 0.0, 100.0); // 200 > 100 → alarm
+    mon.setAlarm("B", 0.0, 100.0); // 200 > 100 → alarm
+
+    EXPECT_EQ(mon.activeAlarmCount(), 2);
+}
+
+TEST(CanSignalMonitor, AlarmBoundaryExactNotActive) {
+    // Strict inequality: exactly at boundary → not active
+    SignalValue sv;
+    sv.physValue = 100.0;
+    sv.alarmMin  = 0.0;
+    sv.alarmMax  = 100.0;
+    EXPECT_FALSE(sv.alarmActive()); // physValue == alarmMax → not active
+
+    sv.physValue = 0.0;
+    EXPECT_FALSE(sv.alarmActive()); // physValue == alarmMin → not active
+}
+
+TEST(CanSignalMonitor, AllValuesSortedByName) {
+    auto makeSig = [](const QString &name, int startBit) {
+        DbcSignal s; s.name=name; s.startBit=startBit; s.length=8;
+        s.isLittleEndian=true; s.isSigned=false; s.scale=1.0; s.offset=0.0;
+        return s;
+    };
+
+    DbcMessage msg; msg.id=0x400; msg.name="M"; msg.dlc=8;
+    msg.sigList.append(makeSig("Zebra", 16));
+    msg.sigList.append(makeSig("Apple", 8));
+    msg.sigList.append(makeSig("Mango", 0));
+    DbcParser dbc; dbc.setMessages({msg});
+
+    CanSignalMonitor mon; mon.setDbc(&dbc);
+    mon.update(makeFrame(0x400, {1,2,3,0,0,0,0,0}));
+
+    auto vals = mon.allValues();
+    ASSERT_EQ(vals.size(), 3u);
+    EXPECT_LT(vals[0].signalName, vals[1].signalName);
+    EXPECT_LT(vals[1].signalName, vals[2].signalName);
+}
