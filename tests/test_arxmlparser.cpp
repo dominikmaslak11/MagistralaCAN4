@@ -223,3 +223,184 @@ TEST(ArxmlParser, MalformedXml) {
     // Parser may or may not return empty, but should not crash
     (void)msgs;
 }
+
+// ── Big-endian byte order ─────────────────────────────────────────────────
+
+TEST(ArxmlParser, BigEndianSignal_IsNotLittleEndian) {
+    QString arxml = R"(<?xml version="1.0"?>
+<AUTOSAR><AR-PACKAGES><AR-PACKAGE><ELEMENTS>
+  <I-SIGNAL>
+    <SHORT-NAME>BigEndSig</SHORT-NAME>
+    <BIT-LENGTH>16</BIT-LENGTH>
+    <BYTE-ORDER>MOST-SIGNIFICANT-BYTE-FIRST</BYTE-ORDER>
+  </I-SIGNAL>
+  <I-SIGNAL-I-PDU>
+    <SHORT-NAME>PDU1</SHORT-NAME><LENGTH>4</LENGTH>
+    <I-SIGNAL-TO-I-PDU-MAPPINGS>
+      <I-SIGNAL-TO-I-PDU-MAPPING>
+        <I-SIGNAL-REF>/x/BigEndSig</I-SIGNAL-REF>
+        <START-POSITION>0</START-POSITION>
+      </I-SIGNAL-TO-I-PDU-MAPPING>
+    </I-SIGNAL-TO-I-PDU-MAPPINGS>
+  </I-SIGNAL-I-PDU>
+  <FRAME><SHORT-NAME>F1</SHORT-NAME><FRAME-LENGTH>4</FRAME-LENGTH>
+    <PDU-TO-FRAME-MAPPINGS><PDU-TO-FRAME-MAPPING>
+      <PDU-REF>/x/PDU1</PDU-REF><START-POSITION>0</START-POSITION>
+    </PDU-TO-FRAME-MAPPING></PDU-TO-FRAME-MAPPINGS>
+  </FRAME>
+  <CAN-FRAME-TRIGGERING>
+    <SHORT-NAME>T1</SHORT-NAME>
+    <IDENTIFIER>0x300</IDENTIFIER>
+    <FRAME-REF>/x/F1</FRAME-REF>
+  </CAN-FRAME-TRIGGERING>
+</ELEMENTS></AR-PACKAGE></AR-PACKAGES></AUTOSAR>)";
+
+    QString path = writeArxml(arxml);
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    ASSERT_EQ(msgs[0].sigList.size(), 1);
+    EXPECT_FALSE(msgs[0].sigList[0].isLittleEndian);
+}
+
+// ── Decimal identifier ────────────────────────────────────────────────────
+
+TEST(ArxmlParser, DecimalIdentifier) {
+    QString arxml = R"(<?xml version="1.0"?>
+<AUTOSAR><AR-PACKAGES><AR-PACKAGE><ELEMENTS>
+  <I-SIGNAL><SHORT-NAME>S1</SHORT-NAME><BIT-LENGTH>8</BIT-LENGTH></I-SIGNAL>
+  <I-SIGNAL-I-PDU>
+    <SHORT-NAME>PDU1</SHORT-NAME><LENGTH>2</LENGTH>
+    <I-SIGNAL-TO-I-PDU-MAPPINGS>
+      <I-SIGNAL-TO-I-PDU-MAPPING>
+        <I-SIGNAL-REF>/x/S1</I-SIGNAL-REF><START-POSITION>0</START-POSITION>
+      </I-SIGNAL-TO-I-PDU-MAPPING>
+    </I-SIGNAL-TO-I-PDU-MAPPINGS>
+  </I-SIGNAL-I-PDU>
+  <FRAME><SHORT-NAME>F1</SHORT-NAME><FRAME-LENGTH>2</FRAME-LENGTH>
+    <PDU-TO-FRAME-MAPPINGS><PDU-TO-FRAME-MAPPING>
+      <PDU-REF>/x/PDU1</PDU-REF><START-POSITION>0</START-POSITION>
+    </PDU-TO-FRAME-MAPPING></PDU-TO-FRAME-MAPPINGS>
+  </FRAME>
+  <CAN-FRAME-TRIGGERING>
+    <SHORT-NAME>T1</SHORT-NAME>
+    <IDENTIFIER>512</IDENTIFIER>
+    <FRAME-REF>/x/F1</FRAME-REF>
+  </CAN-FRAME-TRIGGERING>
+</ELEMENTS></AR-PACKAGE></AR-PACKAGES></AUTOSAR>)";
+
+    QString path = writeArxml(arxml);
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    EXPECT_EQ(msgs[0].id, 512u);
+}
+
+// ── DLC comes from FRAME-LENGTH ───────────────────────────────────────────
+
+TEST(ArxmlParser, DlcFromFrameLength) {
+    QString arxml = R"(<?xml version="1.0"?>
+<AUTOSAR><AR-PACKAGES><AR-PACKAGE><ELEMENTS>
+  <I-SIGNAL><SHORT-NAME>S1</SHORT-NAME><BIT-LENGTH>8</BIT-LENGTH></I-SIGNAL>
+  <I-SIGNAL-I-PDU>
+    <SHORT-NAME>PDU1</SHORT-NAME><LENGTH>4</LENGTH>
+    <I-SIGNAL-TO-I-PDU-MAPPINGS>
+      <I-SIGNAL-TO-I-PDU-MAPPING>
+        <I-SIGNAL-REF>/x/S1</I-SIGNAL-REF><START-POSITION>0</START-POSITION>
+      </I-SIGNAL-TO-I-PDU-MAPPING>
+    </I-SIGNAL-TO-I-PDU-MAPPINGS>
+  </I-SIGNAL-I-PDU>
+  <FRAME><SHORT-NAME>F1</SHORT-NAME><FRAME-LENGTH>6</FRAME-LENGTH>
+    <PDU-TO-FRAME-MAPPINGS><PDU-TO-FRAME-MAPPING>
+      <PDU-REF>/x/PDU1</PDU-REF><START-POSITION>0</START-POSITION>
+    </PDU-TO-FRAME-MAPPING></PDU-TO-FRAME-MAPPINGS>
+  </FRAME>
+  <CAN-FRAME-TRIGGERING>
+    <SHORT-NAME>T1</SHORT-NAME><IDENTIFIER>0x400</IDENTIFIER>
+    <FRAME-REF>/x/F1</FRAME-REF>
+  </CAN-FRAME-TRIGGERING>
+</ELEMENTS></AR-PACKAGE></AR-PACKAGES></AUTOSAR>)";
+
+    QString path = writeArxml(arxml);
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    EXPECT_EQ(msgs[0].dlc, 6);
+}
+
+// ── Unit parsed from UNIT-DISPLAY-NAME ───────────────────────────────────
+
+TEST(ArxmlParser, UnitFromDisplayName) {
+    QString arxml = R"(<?xml version="1.0"?>
+<AUTOSAR><AR-PACKAGES><AR-PACKAGE><ELEMENTS>
+  <I-SIGNAL>
+    <SHORT-NAME>SpeedSig</SHORT-NAME>
+    <BIT-LENGTH>16</BIT-LENGTH>
+    <UNIT-DISPLAY-NAME>km/h</UNIT-DISPLAY-NAME>
+  </I-SIGNAL>
+  <I-SIGNAL-I-PDU>
+    <SHORT-NAME>PDU1</SHORT-NAME><LENGTH>4</LENGTH>
+    <I-SIGNAL-TO-I-PDU-MAPPINGS>
+      <I-SIGNAL-TO-I-PDU-MAPPING>
+        <I-SIGNAL-REF>/x/SpeedSig</I-SIGNAL-REF><START-POSITION>0</START-POSITION>
+      </I-SIGNAL-TO-I-PDU-MAPPING>
+    </I-SIGNAL-TO-I-PDU-MAPPINGS>
+  </I-SIGNAL-I-PDU>
+  <FRAME><SHORT-NAME>F1</SHORT-NAME><FRAME-LENGTH>4</FRAME-LENGTH>
+    <PDU-TO-FRAME-MAPPINGS><PDU-TO-FRAME-MAPPING>
+      <PDU-REF>/x/PDU1</PDU-REF><START-POSITION>0</START-POSITION>
+    </PDU-TO-FRAME-MAPPING></PDU-TO-FRAME-MAPPINGS>
+  </FRAME>
+  <CAN-FRAME-TRIGGERING>
+    <SHORT-NAME>T1</SHORT-NAME><IDENTIFIER>0x500</IDENTIFIER>
+    <FRAME-REF>/x/F1</FRAME-REF>
+  </CAN-FRAME-TRIGGERING>
+</ELEMENTS></AR-PACKAGE></AR-PACKAGES></AUTOSAR>)";
+
+    QString path = writeArxml(arxml);
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    ASSERT_EQ(msgs.size(), 1);
+    ASSERT_EQ(msgs[0].sigList.size(), 1);
+    EXPECT_EQ(msgs[0].sigList[0].unit, "km/h");
+}
+
+// ── lastError empty on success ────────────────────────────────────────────
+
+TEST(ArxmlParser, LastError_EmptyOnSuccess) {
+    QString path = writeArxml(kMinimalArxml);
+    ASSERT_FALSE(path.isEmpty());
+    ArxmlParser p;
+    p.load(path);
+    QFile::remove(path);
+    EXPECT_TRUE(p.lastError().isEmpty());
+}
+
+// ── Trigger without matching frame ref → no message ───────────────────────
+
+TEST(ArxmlParser, TriggerWithoutFrame_NoMessage) {
+    QString arxml = R"(<?xml version="1.0"?>
+<AUTOSAR><AR-PACKAGES><AR-PACKAGE><ELEMENTS>
+  <CAN-FRAME-TRIGGERING>
+    <SHORT-NAME>OrphanTrig</SHORT-NAME>
+    <IDENTIFIER>0x100</IDENTIFIER>
+    <FRAME-REF>/x/NonexistentFrame</FRAME-REF>
+  </CAN-FRAME-TRIGGERING>
+</ELEMENTS></AR-PACKAGE></AR-PACKAGES></AUTOSAR>)";
+
+    QString path = writeArxml(arxml);
+    ArxmlParser p;
+    auto msgs = p.load(path);
+    QFile::remove(path);
+
+    // No matching frame — trigger should be skipped
+    EXPECT_TRUE(msgs.isEmpty());
+}

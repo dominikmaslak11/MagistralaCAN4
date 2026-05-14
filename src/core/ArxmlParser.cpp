@@ -164,6 +164,12 @@ QVector<DbcMessage> ArxmlParser::load(const QString &path) {
             if (inSignal && !inSigMapping && inByteOrder)
                 curSig.bigEndian = val.contains("MOST-SIGNIFICANT-BYTE-FIRST");
 
+            // Signal: unit
+            if (inSignal && !inSigMapping && ctx == "UNIT-REF")
+                curSig.unit = shortRef(val);
+            if (inSignal && !inSigMapping && ctx == "UNIT-DISPLAY-NAME")
+                curSig.unit = val;
+
             // PDU: length
             if (inPdu && ctx == "LENGTH")
                 curPdu.dlcBytes = val.toInt();
