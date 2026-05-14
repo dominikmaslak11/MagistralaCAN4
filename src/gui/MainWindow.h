@@ -58,6 +58,8 @@
 #include "core/IcSimWidget.h"
 #include "core/CanCustomDashboard.h"
 #include "core/CanForensicsWidget.h"
+#include "core/CanTriggerWidget.h"
+#include "core/CanSignalStatisticsWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -164,6 +166,8 @@ private:
     IcSimWidget                  *m_icSimWidget           = nullptr;
     CanCustomDashboard           *m_customDashboard       = nullptr;
     CanForensicsWidget           *m_forensicsWidget       = nullptr;
+    CanTriggerWidget             *m_triggerWidget         = nullptr;
+    CanSignalStatisticsWidget    *m_signalStatsWidget     = nullptr;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

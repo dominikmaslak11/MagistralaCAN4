@@ -154,6 +154,8 @@ set(SOURCES
     src/core/CanDashboardConfig.cpp
     src/core/CanCustomDashboard.cpp
     src/core/CanForensicsWidget.cpp
+    src/core/CanTriggerWidget.cpp
+    src/core/CanSignalStatisticsWidget.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )

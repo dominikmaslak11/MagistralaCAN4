@@ -32,8 +32,14 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 | `CanDashboardConfig` | Dane: `GaugeConfig` + `DashboardLayout` — JSON serialization, addGauge/removeGauge/clear |
 | `CanCustomDashboard` | Konfigurowalny dashboard — wybór sygnałów DBC, tryb edycji, persist QSettings/JSON |
 | `CanForensicsWidget` | Panel reverse-engineering: bit profiler, interval stats, payload pattern search |
+| `CanTriggerWidget` | GUI wyzwalacza: arm/disarm, warunek (ID/bajt/błąd), bufor pre/post, eksport candump |
+| `CanSignalStatisticsWidget` | Statystyki DBC: min/max/mean/σ/CV%/histogram, filtr, CSV export, auto-refresh 2s |
 
-## Ostatnia sesja — część 12: CanForensicsWidget (commit TBD)
+## Ostatnia sesja — część 13: CanTriggerWidget + CanSignalStatisticsWidget (commit TBD)
+- `CanTriggerWidget.h/cpp` — GUI dla CanTriggerRecorder: tryby (dowolna ramka z ID / bajt==wartość / ramka błędu), pre/post spinboxy, tabela przechwyconych ramek (PRE/TRIGGER/POST z kolorowaniem), eksport do candump; tab "Wyzwalacz" w Narzędzia
+- `CanSignalStatisticsWidget.h/cpp` — statystyki sygnałów DBC: min/max/mean/stdDev/CV%/histogram UTF-8, auto-odświeżanie 2s, filtr nazwy, eksport CSV; tab "Statystyki sygnałów" w Analiza
+
+## Poprzednia sesja — część 12: CanForensicsWidget (commit a1ff8e2)
 - `CanForensicsWidget.h/cpp` — panel forensics z 3 zakładkami:
   - **Profil bitów**: wizualizacja CanBitAnalyzer (alwaysZero/alwaysOne/varying per bajt per ID), kolory zielony→czerwony, tooltip binarny, "Kopiuj raport"
   - **Interwały**: tabela CanIntervalAnalyzer (mean/stddev/min/max w ms, przerwy, typ cykliczny/sporadyczny)
