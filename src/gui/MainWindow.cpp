@@ -812,6 +812,8 @@ void MainWindow::setupCentralWidget() {
         return m_replayFilterWidget;
     });
     toolsTabs->addTab(m_protoExporterWidget, "Eksport kodu");
+    m_canExporter = new CanExporter(m_model);
+    toolsTabs->addTab(m_canExporter,         "Eksport danych");
     toolsTabs->addTab(m_canSimWidget,        "Symulacja CAN");
     toolsTabs->addTab(m_remoteCanWidget,     "Zdalny CAN");
     toolsTabs->addTab(m_dbcEditor,           "Edytor DBC");

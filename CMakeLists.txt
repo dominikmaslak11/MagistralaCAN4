@@ -311,6 +311,8 @@ set(TEST_SOURCES
     tests/test_mqttbridge.cpp
     tests/test_obdparser.cpp
     tests/test_canopenparser.cpp
+    tests/test_cannodesimulator.cpp
+    tests/test_canexporter.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -353,6 +355,9 @@ set(TEST_SOURCES
     src/core/MqttBridge.cpp
     src/core/CanOpenParser.cpp
     src/core/ObdParser.cpp
+    src/core/CanNodeSimulator.cpp
+    src/core/CanExporter.cpp
+    src/core/CanPlayer.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
@@ -368,6 +373,7 @@ target_link_libraries(${PROJECT_NAME}_tests PRIVATE
     Qt6::Sql
     Qt6::Network
     Qt6::WebSockets
+    $<$<BOOL:${ZSTD_FOUND}>:PkgConfig::ZSTD>
 )
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE UNIT_TEST)
 

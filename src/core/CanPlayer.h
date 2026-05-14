@@ -32,7 +32,9 @@ public:
     bool isPlaying() const { return m_playing; }
     bool isPaused() const  { return m_loaded && !m_playing; }
     int totalFrames() const { return m_frames.size(); }
+    int frameCount()  const { return m_frames.size(); }
     int currentFrame() const { return m_currentIndex; }
+    CanFrame frameAt(int idx) const { return (idx >= 0 && idx < m_frames.size()) ? m_frames[idx] : CanFrame{}; }
 
     /// Ustawia mnożnik prędkości (0.5 = pół, 2.0 = podwójna, 0 = max).
     void setSpeed(float multiplier);
