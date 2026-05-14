@@ -112,3 +112,67 @@ TEST(CanPeriodicSender, InitiallyNotRunning) {
     CanPeriodicSender sender(nullptr);
     EXPECT_FALSE(sender.isRunning());
 }
+
+TEST(CanPeriodicSender, UpdateOutOfRange) {
+    CanPeriodicSender sender(nullptr);
+    PeriodicEntry e; e.frame = makeFrame(0x100); sender.addEntry(e);
+    PeriodicEntry updated; updated.frame = makeFrame(0x999);
+    sender.updateEntry(5, updated); // no crash
+    EXPECT_EQ(sender.entryCount(), 1);
+    EXPECT_EQ(sender.entries()[0].frame.id, 0x100u); // unchanged
+}
+
+TEST(CanPeriodicSender, LabelPreservedOnAdd) {
+    CanPeriodicSender sender(nullptr);
+    PeriodicEntry e;
+    e.frame = makeFrame(0x100);
+    e.label = "rpm_signal";
+    sender.addEntry(e);
+    EXPECT_EQ(sender.entries()[0].label, "rpm_signal");
+}
+
+TEST(CanPeriodicSender, FramePayloadPreservedOnAdd) {
+    CanPeriodicSender sender(nullptr);
+    CanFrame f; f.id = 0x200; f.dlc = 4;
+    f.data[0] = 0xDE; f.data[1] = 0xAD; f.data[2] = 0xBE; f.data[3] = 0xEF;
+    PeriodicEntry e; e.frame = f;
+    sender.addEntry(e);
+    const auto &stored = sender.entries()[0].frame;
+    EXPECT_EQ(stored.dlc, 4u);
+    EXPECT_EQ(stored.data[0], 0xDE);
+    EXPECT_EQ(stored.data[3], 0xEF);
+}
+
+TEST(CanPeriodicSender, RemoveLastEntry) {
+    CanPeriodicSender sender(nullptr);
+    PeriodicEntry e; e.frame = makeFrame(0x100); sender.addEntry(e);
+    sender.removeEntry(0);
+    EXPECT_EQ(sender.entryCount(), 0);
+}
+
+TEST(CanPeriodicSender, AddAfterClear) {
+    CanPeriodicSender sender(nullptr);
+    for (int i = 0; i < 3; ++i) {
+        PeriodicEntry e; e.frame = makeFrame(i); sender.addEntry(e);
+    }
+    sender.clearAll();
+    PeriodicEntry e; e.frame = makeFrame(0xABC); e.periodMs = 200;
+    sender.addEntry(e);
+    EXPECT_EQ(sender.entryCount(), 1);
+    EXPECT_EQ(sender.entries()[0].frame.id, 0xABCu);
+}
+
+TEST(CanPeriodicSender, TxCountInitiallyZeroAfterAdd) {
+    CanPeriodicSender sender(nullptr);
+    PeriodicEntry e; e.frame = makeFrame(0x1); e.txCount = 999; // should be reset
+    sender.addEntry(e);
+    EXPECT_EQ(sender.entries()[0].txCount, 0u); // addEntry() resets to 0
+}
+
+TEST(CanPeriodicSender, DefaultEnabledIsTrue) {
+    CanPeriodicSender sender(nullptr);
+    PeriodicEntry e; e.frame = makeFrame(0x1);
+    // PeriodicEntry default: enabled = true
+    sender.addEntry(e);
+    EXPECT_TRUE(sender.entries()[0].enabled);
+}
