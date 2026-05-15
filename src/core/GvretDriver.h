@@ -29,9 +29,14 @@ public:
 
     static QStringList detectDevices(int timeoutMs = 400);
 
+    // Public for unit testing — pure protocol logic, no hardware
+    static CanFrame    parseGvretFrame(QByteArray &rxBuf);
+    static QByteArray  buildGvretTxPacket(const CanFrame &frame);
+    static QByteArray  buildSetupBusPacket(uint32_t canBps);
+    static uint32_t    baudStringToBps(const QString &baudStr);
+
 private:
     void sendSetupBus();
-    CanFrame tryParseFrame();
 
     QSerialPort *m_port    = nullptr;
     QByteArray   m_rxBuffer;

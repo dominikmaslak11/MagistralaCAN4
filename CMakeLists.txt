@@ -294,7 +294,7 @@ endif()
 # ═══════════════════════════════════════════════════════════════
 # ── Testy jednostkowe (Google Test + QTest) ──
 # ═══════════════════════════════════════════════════════════════
-find_package(Qt6 REQUIRED COMPONENTS Test Network)
+find_package(Qt6 REQUIRED COMPONENTS Test Network SerialPort)
 
 set(TEST_SOURCES
     # Test files
@@ -359,6 +359,7 @@ set(TEST_SOURCES
     tests/test_icsimdecoder.cpp
     tests/test_candashboardconfig.cpp
     tests/test_logcomparatorwidget.cpp
+    tests/test_gvretdriver.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -425,6 +426,7 @@ set(TEST_SOURCES
     src/core/IcSimDecoder.cpp
     src/core/CanDashboardConfig.cpp
     src/core/LogComparatorWidget.cpp
+    src/core/GvretDriver.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
@@ -440,6 +442,7 @@ target_link_libraries(${PROJECT_NAME}_tests PRIVATE
     Qt6::Sql
     Qt6::Network
     Qt6::WebSockets
+    Qt6::SerialPort
     $<$<BOOL:${ZSTD_FOUND}>:PkgConfig::ZSTD>
 )
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE UNIT_TEST)
