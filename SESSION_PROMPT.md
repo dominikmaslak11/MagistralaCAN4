@@ -6,8 +6,8 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 - **Platformy**: Windows (MSYS2/UCRT64, statyczne Qt6) + Linux (Kali, GCC 15, dynamiczne Qt6)
 - **Repozytorium**: https://github.com/dominikmaslak11/MagistralaCAN4
 
-## Stan projektu (2026-05-14)
-- **Testy**: 1190 razem, 10 pre-existing RemoteCan failures (wymagają Python)
+## Stan projektu (2026-05-15)
+- **Testy**: 1202 razem (part 17-18), 10 pre-existing RemoteCan failures (wymagają Python)
 - **Protokoły**: CAN classic, CAN FD (BRS/ESI), LIN, J1939, UDS (ISO 14229), KWP2000 (ISO 14230), XCP, SOME/IP, DoIP (ISO 13400), CANopen, OBD-II
 - **Formaty sygnałów**: DBC (Vector), ARXML (AUTOSAR 4.x)
 - **Eksport**: candump, CSV, MDF4, PCAP (Wireshark), Python/Lua/Arduino prototype code
@@ -111,9 +111,12 @@ Fix kompilacji GCC 15 / Qt 6.10 na Kali Linux:
 
 ## Aktualny roadmap (priorytety malejące)
 1. ~~**CanGaugeWidget integracja z DBC**~~ — DONE: `CanCustomDashboard` (część 11)
-2. **LogComparatorWidget** — porównanie dwóch plików candump (diff timeline)
-3. **CANopen/OBD-II parsery** — PDO/SDO decode + OBD-II PID decode z tabelą Mode/PID
-4. **MQTT bridge testy** — testy jednostkowe dla `MqttBridge`
+2. ~~**LogComparatorWidget**~~ — DONE (part 17): tryb per-ID + podświetlenie bajtów + bugfix parsera
+3. ~~**MqttBridge**~~ — DONE (part 18): natywny klient TCP MQTT 3.1.1, bez mosquitto_pub
+4. ~~**CanOpenWidget heartbeat**~~ — DONE (part 18): monitor węzłów, SDO decode, filtr węzła
+5. **ObdWidget rozszerzenia** — DTC decode (Mode 3/7/0A), multi-frame ISO-TP reassembly, PID gauge
+6. **CanNodeSimulator testy integracyjne** — skomplikowany komponent, słabo pokryty testami
+7. **GvretDriver testy** — unit testy parsera pakietów + writeFrame
 
 ## Uwagi architektoniczne (pułapki)
 - `ArxmlParser`: zmienna `signals` → `sigDefs` (Qt `#define signals = public` powoduje conflict)
