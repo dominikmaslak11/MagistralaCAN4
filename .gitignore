@@ -18,3 +18,9 @@ patch_eh.py
 todo.txt
 *.log
 autosave_learner.json
+
+# Arduino-cli toolchain (gigabajty, nie do repozytorium)
+esp_mcp/.tools/arduino-data/
+esp_mcp/.tools/arduino-cli/
+esp_mcp/.tools/*.zip
+esp_mcp/.tools/*.yaml

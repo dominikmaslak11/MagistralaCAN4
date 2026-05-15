@@ -83,12 +83,21 @@ void handleCanRx() {
     // echo every received frame to USB
     printCanFrame("RX", isExtended, id, canMsg.can_dlc, canMsg.data);
 
-    // legacy behaviour: EXT ID 0x1421003F, DLC 8 → relay 0 follows data[1]
-    if (isExtended && id == 0x1421003F && canMsg.can_dlc == 8) {
-        if (canMsg.data[1] == 0x01) {
-            setRelay(0, true);
-        } else if (canMsg.data[1] == 0x00) {
-            setRelay(0, false);
+    // EXT ID 0x1421003F: relay 0 ON/OFF wg data[1] lub data[3]
+    if (isExtended && id == 0x1421003F) {
+        if (canMsg.can_dlc >= 2) {
+            if (canMsg.data[1] == 0x01) {
+                setRelay(0, true);
+            } else if (canMsg.data[1] == 0x00) {
+                setRelay(0, false);
+            }
+        }
+        if (canMsg.can_dlc >= 4) {
+            if (canMsg.data[3] == 0x01) {
+                setRelay(0, true);
+            } else if (canMsg.data[3] == 0x00) {
+                setRelay(0, false);
+            }
         }
     }
 }
@@ -116,8 +125,37 @@ void processCommand(char* cmd) {
     char* token = strtok(cmd, " \t");
     if (token == nullptr) return;
 
+    // --- SIM EXT|STD <ID_HEX> <DLC> <B0> … <BN> — inject frame into RX handler --
+    if (strcasecmp(token, "SIM") == 0) {
+        char* typeStr = strtok(nullptr, " \t");
+        char* idStr   = strtok(nullptr, " \t");
+        char* dlcStr  = strtok(nullptr, " \t");
+
+        if (!typeStr || !idStr || !dlcStr) {
+            Serial.println("ERR usage: SIM <EXT|STD> <ID_HEX> <DLC> <B0>..<BN>");
+            return;
+        }
+
+        bool extended = (strcasecmp(typeStr, "EXT") == 0);
+        uint32_t id   = strtoul(idStr, nullptr, 16);
+        uint8_t  dlc  = atoi(dlcStr);
+
+        if (dlc > 8) { Serial.println("ERR DLC must be 0-8"); return; }
+
+        canMsg.can_id  = extended ? (id | CAN_EFF_FLAG) : id;
+        canMsg.can_dlc = dlc;
+        memset(canMsg.data, 0, 8);
+        for (uint8_t i = 0; i < dlc; i++) {
+            char* byteStr = strtok(nullptr, " \t");
+            if (!byteStr) { Serial.println("ERR not enough data bytes"); return; }
+            canMsg.data[i] = strtoul(byteStr, nullptr, 16);
+        }
+
+        Serial.println("OK SIM");
+        handleCanRx();
+
     // --- TX EXT|STD <ID_HEX> <DLC> <B0> … <BN> ---------------------------------
-    if (strcasecmp(token, "TX") == 0) {
+    } else if (strcasecmp(token, "TX") == 0) {
         char* typeStr = strtok(nullptr, " \t");
         char* idStr   = strtok(nullptr, " \t");
         char* dlcStr  = strtok(nullptr, " \t");

@@ -712,6 +712,107 @@ cmake --build build_linux --parallel $(nproc)
 
 ---
 
+## Sesja 2026-05-15: ESP MCP — wgranie firmware + sterowanie przekaźnikami ✅
+
+### Zakres
+Praca przy subprojekcie `esp_mcp/` (ESP32 + MCP2515 CAN bridge) — bez zmian w głównym projekcie C++/Qt6.
+
+### Diagnoza problemu z firmware
+- ESP32 na COM3 bootował i wypisywał `CAN OK` + `CAN BUS Ready`, ale **nie odpowiadał na komendy seryjne**
+- Boot log urywał się przed `(250 kbps, all IDs)` i `Type HELP for commands` — potwierdzono surową analizą bajtów CR/LF
+- Przyczyna: na płytce był wgrany **starszy firmware** niż aktualny `esp_mcp.ino`
+
+### Instalacja arduino-cli dla Windows
+- Plik `.tools/arduino-cli/arduino-cli` był binarny ELF (Linux) — nie uruchamiał się na Windows
+- Pobrano `arduino-cli_latest_Windows_64bit.zip` (18 MB) → wypakowano `arduino-cli.exe` do `.tools/arduino-cli/`
+- Skonfigurowano lokalny data dir: `.tools/arduino-data/` (izolacja od systemu)
+- Dodano URL ESP32: `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
+- Zainstalowano platformę `esp32:esp32 v3.3.8` (~200 MB)
+- Biblioteka `autowp-mcp2515 v1.3.1` była już zainstalowana (user scope)
+
+### Kompilacja i upload
+```
+arduino-cli compile --fqbn esp32:esp32:esp32   # 296 kB (22% flash)
+arduino-cli upload --fqbn esp32:esp32:esp32 --port COM3
+# esptool v5.2.0 — ESP32-D0WD-V3 rev3.1, MAC: 44:1d:64:f6:3f:24
+# Prędkość uploadu: ~921600 baud, weryfikacja hash OK
+```
+
+### Sterowanie przekaźnikami (protokół serial 115200 baud)
+Komendy wysyłane przez PowerShell `System.IO.Ports.SerialPort` z `DtrEnable=false` (brak auto-resetu):
+| Komenda | Odpowiedź |
+|---------|-----------|
+| `RELAY 0 ON` | `OK RELAY 0 = ON` |
+| `RELAY 5 ON` + `RELAY 0 OFF` | `OK RELAY 5 = ON` + `OK RELAY 0 = OFF` |
+| `RELAY 0..5 OFF` (pętla) | `OK RELAY 0..5 = OFF` |
+| `RELAY 0..5 ON` (pętla) | `OK RELAY 0..5 = ON` |
+
+### Uwagi techniczne
+- Reset przez RTS toggle (`RtsEnable=true` → `false`) — standardowy schemat ESP32/CH340
+- Po wgraniu firmware odpowiedź na komendy pojawia się bez dodatkowego resetu (port otwierany z `DtrEnable=false`)
+- 6 przekaźników na GPIO: 2, 15, 13, 12, 25, 26 (indeksy 0–5)
+
+### Modyfikacja firmware — logika CAN → przekaźnik 0
+Zmiana warunku w `handleCanRx()`:
+```cpp
+// było (zbyt restrykcyjne):
+if (isExtended && id == 0x1421003F && canMsg.can_dlc == 8)
+// jest (DLC >= 2 wystarczy — drugi bajt musi istnieć):
+if (isExtended && id == 0x1421003F && canMsg.can_dlc >= 2)
+```
+Logika: ramka EXT `0x1421003F`, `data[1]==0x01` → relay 0 ON; `data[1]==0x00` → relay 0 OFF; pozostałe bajty ignorowane.
+
+### Dodanie komendy SIM (wstrzykiwanie ramki bez fizycznej magistrali)
+Nowa komenda `SIM EXT|STD <ID_HEX> <DLC> <B0>..<BN>` — bezpośrednio wypełnia `canMsg` i wywołuje `handleCanRx()`, omijając fizyczną magistralę CAN.
+Przydatna do testowania logiki RX bez podłączonego sprzętu CAN.
+
+### Wyniki testu
+| Komenda | Odpowiedź | Status przekaźników |
+|---------|-----------|---------------------|
+| `STATUS` | `STATUS relays: 000000` | wszystkie OFF |
+| `SIM EXT 1421003F 2 00 01` | `OK SIM` + `RX EXT 1421003F 2 00 01` | `100000` (relay 0 ON) |
+| `SIM EXT 1421003F 2 00 00` | `OK SIM` + `RX EXT 1421003F 2 00 00` | `000000` (relay 0 OFF) |
+
+---
+
+## Sesja 2026-05-15 (cd.): SLCAN bugfixy + GVRET firmware dla SavvyCAN ✅
+
+### Diagnoza problemów
+- **MagistralaCAN4**: `SlCanDriver::open()` zwracał `false` mimo poprawnego połączenia → 3 błędy w `SlCanDriver.cpp`
+- **SavvyCAN**: używa binarnego protokołu **GVRET** (nie SLCAN) — brak kompatybilnego firmware
+
+### Naprawione błędy w `SlCanDriver.cpp`
+| Lokalizacja | Błąd | Fix |
+|-------------|------|-----|
+| `open()` line 62 | `ver.isEmpty()` → fail, bo odpowiedź `O\r` trymuje do `""` | zmieniono na `ver.contains('\a')` (BEL = SLCAN error) |
+| `parseIncoming()` line 280 | `dlcLen = 2` dla extended frames → czytał 2 cyfry DLC, przesuwał ofset danych | zmieniono na `dlcLen = 1` (DLC zawsze 1 cyfra w SLCAN) |
+| `writeFrame()` line 128 | `.arg(frame.dlc, 2, 16, QChar('0'))` → wysyłał "02" zamiast "2" | zmieniono na `.arg(frame.dlc)` (1 cyfra dziesiętna) |
+
+### Nowy firmware `esp_gvret/esp_gvret.ino`
+Protokół GVRET (binarny, 115200 baud) — kompatybilny z SavvyCAN → Serial Connection:
+| Komenda | Opis |
+|---------|------|
+| `F1 08` | Device info: 1 bus, 250kbps, build date, "ESP32-MCP2515" |
+| `F1 09` | Keepalive echo |
+| `F1 02 [ts:4LE]` | Time sync echo |
+| `F1 06 [speed:4LE] [busNum] [flags]` | Setup CAN bus (speed w bps, bit0=listenOnly) |
+| `F1 01 [id:4LE] [len_bus] [data]` | Wyślij ramkę na magistralę |
+| `F1 00 [ts:4LE] [id:4LE] [len_bus] [data]` | Ramka odebrana → SavvyCAN |
+
+Implementacja: ring buffer 512B + state machine parsowania binarnego, `rbPeek`/`rbPop`/`rbConsume`.
+
+### Rebuild MagistralaCAN4.exe
+Po poprawkach `SlCanDriver.cpp`: kompilacja + linkowanie OK, `build_native/MagistralaCAN4.exe` zaktualizowany.
+
+### Instrukcja użycia
+**MagistralaCAN4** (esp_slcan firmware):
+- Przeflashuj `esp_slcan/esp_slcan.ino`, Driver: SLCAN, Port: COM3
+
+**SavvyCAN** (esp_gvret firmware — aktualnie wgrany):
+- `Connection → Add New Device Connection → Serial Connection → COM3`
+
+---
+
 ## Sesja 2026-05-14, część 14: CanBusHealthWidget | Commit: `ea043f3`
 
 ### Testy: 1190 (bez zmian — `CanBusErrorAnalyzer` i `CanCounterValidator` już testowane)

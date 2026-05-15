@@ -57,9 +57,9 @@ bool SlCanDriver::open(const QString &device) {
     sendCommand("C", 50);   // Close any existing session
     m_port->clear();
 
-    // Otwórz kanał CAN
+    // Otwórz kanał CAN — odpowiedź OK to samo '\r' (trimuje do ""), błąd to '\a' (BEL)
     QString ver = sendCommand("O", 100);
-    if (ver.isEmpty() || ver.contains("ERROR", Qt::CaseInsensitive)) {
+    if (ver.contains('\a') || ver.contains("ERROR", Qt::CaseInsensitive)) {
         qWarning() << "SlCanDriver: O command failed on" << portName;
         m_port->close();
         delete m_port;
@@ -122,10 +122,10 @@ void SlCanDriver::writeFrame(const CanFrame &frame) {
 
     QByteArray cmd;
     if (frame.extended) {
-        // T + 8-cyfrowy ID + 2-cyfrowy DLC + dane
+        // T + 8-cyfrowy ID (hex) + 1-cyfrowy DLC (decimal) + dane
         cmd = QString("T%1%2")
                   .arg(frame.id & 0x1FFFFFFF, 8, 16, QChar('0'))
-                  .arg(frame.dlc, 2, 16, QChar('0'))
+                  .arg(frame.dlc)
                   .toLatin1();
     } else {
         // t + 3-cyfrowy ID + 1-cyfrowy DLC + dane
@@ -278,7 +278,7 @@ CanFrame SlCanDriver::parseIncoming(const QByteArray &line) const {
     if (prefix == 'T' || prefix == 'R') {
         isExtended = true;
         idLen = 8;      // extended ID: 8 hex digits
-        dlcLen = 2;     // extended DLC: 2 hex digits
+        dlcLen = 1;     // DLC: always 1 decimal digit in SLCAN
     } else if (prefix == 't' || prefix == 'r') {
         isExtended = false;
         idLen = 3;
