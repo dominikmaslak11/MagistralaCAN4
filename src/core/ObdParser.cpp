@@ -85,6 +85,27 @@ ObdParser::ObdParser() {
         {p(0x01, 0x46), {"Ambient Air Temperature", "°C", 1,          -40,   1}},
     };
 
+    // More Mode 0x01 PIDs
+    m_pidDb.insert({
+        {p(0x01, 0x22), {"Fuel Rail Pressure (rel)", "kPa",  0.079,       0,    2}},
+        {p(0x01, 0x23), {"Fuel Rail Pressure (abs)", "kPa",  10,          0,    2}},
+        {p(0x01, 0x2C), {"Commanded EGR",            "%",    100.0/255,   0,    1}},
+        {p(0x01, 0x2E), {"Commanded Evap. Purge",    "%",    100.0/255,   0,    1}},
+        {p(0x01, 0x2F), {"Fuel Level Input",         "%",    100.0/255,   0,    1}},
+        {p(0x01, 0x30), {"Warm-ups Since Clear",     "",     1,           0,    1}},
+        {p(0x01, 0x31), {"Distance Since Clear",     "km",   1,           0,    2}},
+        {p(0x01, 0x43), {"Absolute Load Value",      "%",    100.0/255,   0,    2}},
+        {p(0x01, 0x45), {"Relative Throttle Pos",    "%",    100.0/255,   0,    1}},
+        {p(0x01, 0x46), {"Ambient Air Temperature",  "°C",   1,          -40,   1}},
+        {p(0x01, 0x47), {"Abs. Throttle Position B", "%",    100.0/255,   0,    1}},
+        {p(0x01, 0x49), {"Accel. Pedal Position D",  "%",    100.0/255,   0,    1}},
+        {p(0x01, 0x4C), {"Cmd. Throttle Actuator",   "%",    100.0/255,   0,    1}},
+        {p(0x01, 0x4D), {"Time MIL On",              "min",  1,           0,    2}},
+        {p(0x01, 0x4E), {"Time Since DTC Cleared",   "min",  1,           0,    2}},
+        {p(0x01, 0x5C), {"Engine Oil Temperature",   "°C",   1,          -40,   1}},
+        {p(0x01, 0x5E), {"Engine Fuel Rate",         "L/h",  0.05,        0,    2}},
+    });
+
     // Mode 0x09 PIDs
     m_pidDb[qMakePair(uint8_t(0x09), uint16_t(0x02))] = {"VIN (chars 1-4)", "", 1, 0, 1};
     m_pidDb[qMakePair(uint8_t(0x09), uint16_t(0x04))] = {"Calibration ID",  "", 1, 0, 1};
@@ -116,4 +137,35 @@ double ObdParser::decodePidValue(uint8_t mode, uint16_t pid, const uint8_t *data
         return raw * it->scale + it->offset;
     }
     return data[3] * it->scale + it->offset;
+}
+
+QString ObdParser::decodeDtc(uint16_t rawCode) {
+    if (rawCode == 0) return "";
+    static const char cats[4] = {'P', 'C', 'B', 'U'};
+    char cat = cats[(rawCode >> 14) & 0x3];
+    uint8_t d1 = (rawCode >> 12) & 0x3;
+    uint8_t d2 = (rawCode >>  8) & 0xF;
+    uint8_t d3 = (rawCode >>  4) & 0xF;
+    uint8_t d4 =  rawCode        & 0xF;
+    return QString("%1%2%3%4%5")
+        .arg(cat).arg(d1)
+        .arg(d2, 1, 16).arg(d3, 1, 16).arg(d4, 1, 16)
+        .toUpper();
+}
+
+QStringList ObdParser::parseDtcs(const ObdFrame &f) const {
+    QStringList codes;
+    if (f.type != ObdFrame::Response) return codes;
+    if (f.mode != 0x03 && f.mode != 0x07 && f.mode != 0x0A) return codes;
+    // data[0]=ISO-TP len, data[1]=mode+0x40, data[2..] = DTC pairs (2 bytes each, big-endian)
+    int dtcBytes = (f.len > 1) ? (f.len - 1) : 0;
+    int numDtcs  = dtcBytes / 2;
+    for (int i = 0; i < numDtcs; ++i) {
+        int idx = 2 + i * 2;
+        if (idx + 1 >= static_cast<int>(f.dlc)) break;
+        uint16_t raw = (static_cast<uint16_t>(f.data[idx]) << 8) | f.data[idx + 1];
+        QString dtc = decodeDtc(raw);
+        if (!dtc.isEmpty()) codes.append(dtc);
+    }
+    return codes;
 }

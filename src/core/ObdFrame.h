@@ -29,7 +29,10 @@ public:
     QString pidName(uint8_t mode, uint16_t pid) const;
     QString pidUnit(uint8_t mode, uint16_t pid) const;
     double decodePidValue(uint8_t mode, uint16_t pid, const uint8_t *data, int len) const;
+    QStringList parseDtcs(const ObdFrame &f) const;
     QList<uint8_t> knownModes() const { return m_modeDb.keys(); }
+
+    static QString decodeDtc(uint16_t rawCode);
 
 private:
     struct PidDef { QString name; QString unit; double scale; double offset; int numBytes = 2; };

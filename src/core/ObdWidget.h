@@ -1,11 +1,14 @@
 #pragma once
 #include <QWidget>
 #include <QTableView>
+#include <QTableWidget>
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
+#include <QTabWidget>
 #include <QAbstractTableModel>
 #include <QVector>
+#include <QHash>
 #include "ObdFrame.h"
 
 class ObdTableModel : public QAbstractTableModel {
@@ -34,9 +37,19 @@ public slots:
     void processFrame(const CanFrame &frame);
 private:
     void setupUi();
-    ObdParser m_parser;
-    ObdTableModel *m_model;
-    QTableView *m_table;
-    QLabel *m_statusLabel;
-    QPushButton *m_clearBtn;
+    void updateDtcTable(const QStringList &dtcs, uint8_t mode);
+    void updateLivePidTable(const ObdFrame &f);
+
+    ObdParser       m_parser;
+    ObdTableModel  *m_model     = nullptr;
+    QTableView     *m_table     = nullptr;
+    QTableWidget   *m_dtcTable  = nullptr;
+    QTableWidget   *m_liveTable = nullptr;
+    QLabel         *m_statusLabel = nullptr;
+    QPushButton    *m_clearBtn    = nullptr;
+
+    // PID → {name, value, unit} for live panel
+    struct LiveEntry { QString name; double value; QString unit; };
+    QHash<uint16_t, LiveEntry> m_liveValues;
+    int m_totalFrames = 0;
 };
