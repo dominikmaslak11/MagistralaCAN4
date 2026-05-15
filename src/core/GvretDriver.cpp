@@ -5,14 +5,52 @@
 #include <QSerialPortInfo>
 
 // GVRET protocol constants
-static constexpr uint8_t GVRET_MAGIC     = 0xF1;
-static constexpr uint8_t CMD_FRAME_OUT   = 0x00;
-static constexpr uint8_t CMD_FRAME_IN    = 0x01;
-static constexpr uint8_t CMD_GET_INFO    = 0x08;
-static constexpr uint8_t CMD_KEEPALIVE   = 0x09;
+static constexpr uint8_t GVRET_MAGIC   = 0xF1;
+static constexpr uint8_t CMD_FRAME_OUT = 0x00;
+static constexpr uint8_t CMD_FRAME_IN  = 0x01;
+static constexpr uint8_t CMD_SETUP_BUS = 0x06;
+static constexpr uint8_t CMD_GET_INFO  = 0x08;
 
 GvretDriver::GvretDriver()  = default;
 GvretDriver::~GvretDriver() { close(); }
+
+// ═══════════════════════════════════════════════════════════════
+// setBaudRate — maps GUI string ("500K", "250K", …) → bps
+// ═══════════════════════════════════════════════════════════════
+
+void GvretDriver::setBaudRate(const QString &baudStr) {
+    static const QHash<QString, uint32_t> map = {
+        {"1M",   1000000}, {"800K", 800000}, {"500K", 500000},
+        {"250K",  250000}, {"125K", 125000}, {"100K", 100000},
+        {"50K",    50000}, {"20K",   20000}, {"10K",   10000},
+    };
+    if (map.contains(baudStr)) {
+        m_canBps = map[baudStr];
+        qDebug() << "GvretDriver: CAN speed queued ->" << baudStr << "(" << m_canBps << "bps)";
+        if (m_port && m_port->isOpen())
+            sendSetupBus();
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// sendSetupBus — sends CMD_SETUP_BUS (F1 06) with current m_canBps
+// ═══════════════════════════════════════════════════════════════
+
+void GvretDriver::sendSetupBus() {
+    if (!m_port || !m_port->isOpen()) return;
+    uint8_t buf[8];
+    buf[0] = GVRET_MAGIC;
+    buf[1] = CMD_SETUP_BUS;
+    buf[2] = (uint8_t)(m_canBps);
+    buf[3] = (uint8_t)(m_canBps >> 8);
+    buf[4] = (uint8_t)(m_canBps >> 16);
+    buf[5] = (uint8_t)(m_canBps >> 24);
+    buf[6] = 0;   // busNum = 0
+    buf[7] = 0;   // flags: 0 = normal mode
+    m_port->write(reinterpret_cast<const char *>(buf), 8);
+    m_port->waitForBytesWritten(100);
+    qDebug() << "GvretDriver: CMD_SETUP_BUS sent ->" << m_canBps << "bps";
+}
 
 // ═══════════════════════════════════════════════════════════════
 // Core API
@@ -37,33 +75,39 @@ bool GvretDriver::open(const QString &device) {
     }
 
     m_port->clear();
+    m_rxBuffer.clear();
 
-    // Send CMD_GET_INFO and verify response contains F1 08
+    // Send CMD_GET_INFO — confirms GVRET device is alive
     const uint8_t probe[2] = {GVRET_MAGIC, CMD_GET_INFO};
     m_port->write(reinterpret_cast<const char *>(probe), 2);
     m_port->waitForBytesWritten(100);
 
+    // Wait briefly for response (F1 08 ... device info)
     QByteArray resp;
     QElapsedTimer t;
     t.start();
-    while (t.elapsed() < 500) {
-        int rem = 500 - static_cast<int>(t.elapsed());
-        if (rem <= 0) break;
-        if (m_port->waitForReadyRead(rem))
+    while (t.elapsed() < 500 && resp.size() < 32) {
+        if (m_port->waitForReadyRead(50))
             resp.append(m_port->readAll());
         for (int i = 0; i + 1 < resp.size(); ++i) {
-            if ((uint8_t)resp[i] == GVRET_MAGIC && (uint8_t)resp[i + 1] == CMD_GET_INFO) {
-                m_rxBuffer.clear();
-                qDebug() << "GvretDriver: opened" << portName;
-                return true;
+            if ((uint8_t)resp[i] == GVRET_MAGIC &&
+                (uint8_t)resp[i + 1] == CMD_GET_INFO) {
+                qDebug() << "GvretDriver: GET_INFO confirmed on" << portName;
+                goto info_ok;
             }
         }
-        if (resp.size() > 6) break;  // got a response but no F1 08 — still accept
     }
+    qDebug() << "GvretDriver: opened" << portName << "(GET_INFO timeout — continuing)";
 
-    // Accept anyway if port opened — device may still be initialising
-    qDebug() << "GvretDriver: opened" << portName << "(no GET_INFO response, continuing)";
+info_ok:
+    // Flush any remaining response bytes — don't leave them in readFrame() buffer
+    m_port->clear();
     m_rxBuffer.clear();
+
+    // Set CAN bus speed on device
+    sendSetupBus();
+
+    qDebug() << "GvretDriver: ready on" << portName << "@" << m_canBps << "bps";
     return true;
 }
 
@@ -83,22 +127,29 @@ bool GvretDriver::isValid() const {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// Odczyt ramki — nieblokujący
+// Odczyt ramki — nieblokujący, bezpieczny w wątku bez event-loop
 // ═══════════════════════════════════════════════════════════════
 
 CanFrame GvretDriver::readFrame() {
     if (!m_port || !m_port->isOpen()) return {};
+
+    // If buffer already has a complete frame, return it immediately
+    CanFrame cached = tryParseFrame();
+    if (cached.dlc || cached.id || cached.error) return cached;
+
+    // waitForReadyRead is safe in non-event-loop threads (synchronous native I/O)
+    if (!m_port->waitForReadyRead(5)) return {};
 
     m_rxBuffer.append(m_port->readAll());
     return tryParseFrame();
 }
 
 CanFrame GvretDriver::tryParseFrame() {
-    // Scan for F1 00 (CMD_FRAME_OUT)
     while (m_rxBuffer.size() >= 2) {
+        // Scan for F1 00 (CMD_FRAME_OUT)
         int pos = -1;
         for (int i = 0; i + 1 < m_rxBuffer.size(); ++i) {
-            if ((uint8_t)m_rxBuffer[i] == GVRET_MAGIC &&
+            if ((uint8_t)m_rxBuffer[i]     == GVRET_MAGIC &&
                 (uint8_t)m_rxBuffer[i + 1] == CMD_FRAME_OUT) {
                 pos = i;
                 break;
@@ -106,17 +157,16 @@ CanFrame GvretDriver::tryParseFrame() {
         }
 
         if (pos < 0) {
-            // No F1 00 found; keep last byte in case it's a split magic
-            m_rxBuffer = m_rxBuffer.right(1);
+            // No F1 00 — keep last byte (might be split F1 | 00 across reads)
+            if (!m_rxBuffer.isEmpty())
+                m_rxBuffer = m_rxBuffer.right(1);
             return {};
         }
 
-        if (pos > 0) {
-            m_rxBuffer.remove(0, pos);  // discard leading garbage
-        }
+        if (pos > 0)
+            m_rxBuffer.remove(0, pos);
 
-        // F1 00 [ts:4LE] [id:4LE] [len_bus:1] [data:dlc]
-        // minimum packet: 2 + 4 + 4 + 1 = 11 bytes
+        // F1 00 [ts:4LE] [id:4LE] [len_bus:1] [data:dlc]  → min 11 bytes
         if (m_rxBuffer.size() < 11) return {};
 
         uint8_t len_bus = static_cast<uint8_t>(m_rxBuffer[10]);
@@ -125,9 +175,6 @@ CanFrame GvretDriver::tryParseFrame() {
 
         int pktLen = 11 + dlc;
         if (m_rxBuffer.size() < pktLen) return {};
-
-        // Parse timestamp (unused but consumed)
-        // uint32_t ts = ...
 
         uint32_t id = (uint8_t)m_rxBuffer[6]
                     | ((uint32_t)(uint8_t)m_rxBuffer[7]  << 8)
@@ -147,6 +194,9 @@ CanFrame GvretDriver::tryParseFrame() {
             f.data[i] = static_cast<uint8_t>(m_rxBuffer[11 + i]);
 
         m_rxBuffer.remove(0, pktLen);
+
+        // Skip zero-ID/zero-DLC frames that CanSniffer treats as "no data"
+        if (f.id == 0 && f.dlc == 0) continue;
         return f;
     }
     return {};
@@ -163,7 +213,7 @@ void GvretDriver::writeFrame(const CanFrame &frame) {
     if (frame.extended) id |= 0x80000000UL;
 
     uint8_t dlc     = frame.dlc <= 8 ? frame.dlc : 8;
-    uint8_t len_bus = dlc;  // bus 0, dlc in lower nibble
+    uint8_t len_bus = dlc;  // bus=0 in upper nibble (= 0), dlc in lower nibble
 
     uint8_t buf[14];
     int idx = 0;
@@ -188,7 +238,7 @@ QStringList GvretDriver::availableDevices() const {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// Auto-detekcja
+// Auto-detekcja — sonduje port F1 08, szuka odpowiedzi F1 08
 // ═══════════════════════════════════════════════════════════════
 
 QStringList GvretDriver::detectDevices(int timeoutMs) {
@@ -231,15 +281,15 @@ QStringList GvretDriver::detectDevices(int timeoutMs) {
 
         bool isGvret = false;
         for (int i = 0; i + 1 < resp.size(); ++i) {
-            if ((uint8_t)resp[i] == GVRET_MAGIC && (uint8_t)resp[i + 1] == CMD_GET_INFO) {
+            if ((uint8_t)resp[i]     == GVRET_MAGIC &&
+                (uint8_t)resp[i + 1] == CMD_GET_INFO) {
                 isGvret = true;
                 break;
             }
         }
 
         if (isGvret) {
-            QString entry = QString("%1 [GVRET-ESP32]").arg(info.portName());
-            found.append(entry);
+            found.append(QString("%1 [GVRET-ESP32]").arg(info.portName()));
             qDebug() << "GvretDriver: found GVRET device on" << info.portName();
         }
     }

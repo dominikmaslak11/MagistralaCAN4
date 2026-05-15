@@ -23,14 +23,17 @@ public:
     CanFrame readFrame() override;
     bool isValid() const override;
     void writeFrame(const CanFrame &frame) override;
+    void setBaudRate(const QString &baudStr) override;
     QStringList availableDevices() const override;
     QString backendName() const override { return QStringLiteral("GVRET"); }
 
     static QStringList detectDevices(int timeoutMs = 400);
 
 private:
+    void sendSetupBus();
     CanFrame tryParseFrame();
 
-    QSerialPort *m_port = nullptr;
+    QSerialPort *m_port    = nullptr;
     QByteArray   m_rxBuffer;
+    uint32_t     m_canBps  = 250000;   // CAN speed in bps (default 250K)
 };
