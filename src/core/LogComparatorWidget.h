@@ -4,29 +4,18 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QLabel>
-#include <QSpinBox>
 #include <QComboBox>
-#include <QProgressBar>
+#include <QCheckBox>
+#include <QSplitter>
 #include "CanFrame.h"
 
-/**
- * @brief Porównywarka logów CAN – ładuje dwa pliki candump,
- *        porównuje ramki i pokazuje różnice z kolorowaniem.
- *
- * Kolory:
- *  - Zielony  = identyczne (ten sam ID i dane na tej samej pozycji)
- *  - Czerwony = różne dane przy tym samym ID i pozycji
- *  - Żółty    = tylko w lewym pliku
- *  - Niebieski = tylko w prawym pliku
- *
- * Tryby porównania:
- *  - Exact position: ramka[i] vs ramka[i]
- *  - Timestamp window: dopasowanie w oknie czasowym
- */
 class LogComparatorWidget : public QWidget {
     Q_OBJECT
 public:
     explicit LogComparatorWidget(QWidget *parent = nullptr);
+
+    // Public for unit testing
+    static QVector<CanFrame> parseCandumpContent(const QString &content);
 
 private slots:
     void loadLeft();
@@ -35,41 +24,61 @@ private slots:
     void applyFilter();
     void exportReport();
     void onScrollSync(int value);
+    void onModeChanged(int index);
 
 private:
+    enum CompareMode { ModePositional, ModeById };
+    enum DiffStatus  { Identical, Different, LeftOnly, RightOnly, Skipped };
+
+    struct IdSummary {
+        uint32_t id;
+        int leftCount  = 0;
+        int rightCount = 0;
+        int diffCount  = 0;
+    };
+
     void setupUi();
+    void runPositional();
+    void runById();
+    void fillTable(QTableWidget *tbl, const QVector<CanFrame> &frames,
+                   const QVector<DiffStatus> &status,
+                   const QVector<QVector<bool>> &changedBytes);
     void updateStats();
+    void fillIdSummaryTable();
 
     QVector<CanFrame> loadCandump(const QString &path);
+    static QString dataHex(const CanFrame &f, int highlightByte = -1);
 
-    // --- UI ---
-    QPushButton *m_loadLeftBtn;
-    QPushButton *m_loadRightBtn;
-    QPushButton *m_compareBtn;
-    QPushButton *m_exportBtn;
-    QLabel      *m_leftFileLabel;
-    QLabel      *m_rightFileLabel;
-    QLabel      *m_statsLabel;
+    // ── UI ──
+    QPushButton  *m_loadLeftBtn;
+    QPushButton  *m_loadRightBtn;
+    QPushButton  *m_compareBtn;
+    QPushButton  *m_exportBtn;
+    QLabel       *m_leftFileLabel;
+    QLabel       *m_rightFileLabel;
+    QLabel       *m_statsLabel;
+    QComboBox    *m_modeCombo;
+    QCheckBox    *m_highlightBytesChk;
 
     QTableWidget *m_leftTable;
     QTableWidget *m_rightTable;
+    QTableWidget *m_idSummaryTable;
 
-    // Filtry
-    QLineEdit   *m_filterId;
-    QLineEdit   *m_filterTimeFrom;
-    QLineEdit   *m_filterTimeTo;
-    QPushButton *m_filterApplyBtn;
+    QLineEdit    *m_filterId;
+    QLineEdit    *m_filterTimeFrom;
+    QLineEdit    *m_filterTimeTo;
+    QPushButton  *m_filterApplyBtn;
 
-    // Dane
+    // ── Dane ──
     QVector<CanFrame> m_leftFrames;
     QVector<CanFrame> m_rightFrames;
 
-    // Wynik porównania: dla każdej pozycji w lewej tabeli
-    enum DiffStatus { Identical, Different, LeftOnly, RightOnly, Skipped };
-    QVector<DiffStatus> m_leftStatus;
-    QVector<DiffStatus> m_rightStatus;
+    QVector<DiffStatus>         m_leftStatus;
+    QVector<DiffStatus>         m_rightStatus;
+    QVector<QVector<bool>>      m_leftChangedBytes;
+    QVector<QVector<bool>>      m_rightChangedBytes;
+    QVector<IdSummary>          m_idSummary;
 
-    // Statystyki
     int m_identical = 0;
     int m_different = 0;
     int m_leftOnly  = 0;

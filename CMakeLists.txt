@@ -358,6 +358,7 @@ set(TEST_SOURCES
     tests/test_cantriggerrecorder.cpp
     tests/test_icsimdecoder.cpp
     tests/test_candashboardconfig.cpp
+    tests/test_logcomparatorwidget.cpp
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -423,6 +424,7 @@ set(TEST_SOURCES
     src/core/CanTriggerRecorder.cpp
     src/core/IcSimDecoder.cpp
     src/core/CanDashboardConfig.cpp
+    src/core/LogComparatorWidget.cpp
 )
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
