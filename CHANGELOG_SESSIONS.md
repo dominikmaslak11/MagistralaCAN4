@@ -5,6 +5,25 @@ Aktualny stan projektu i roadmapa → `SESSION_PROMPT.md`.
 
 ---
 
+## Sesja 2026-05-15: LogComparatorWidget modernizacja + commit/push porządkujący (part 17)
+
+### Porównanie lokalnie vs GitHub
+- Push 3 commitów (GvretDriver fix + SlCanDriver bugfixes + esp_mcp SIM + esp firmware) → GitHub
+- `.gitignore` rozszerzony o `esp_mcp/.tools/` (arduino-cli toolchain, GBs binariów)
+- Dodano `esp_gvret/esp_gvret.ino` + `esp_slcan/esp_slcan.ino` + datasheets do repo
+
+### LogComparatorWidget (part 17, commit 1f4fb75)
+- **Nowy tryb "Według ID"** (`runById`): grupuje ramki per CAN ID, porównuje parami
+- **Poprawiony tryb "Pozycyjny"** (`runPositional`): porównanie bajt po bajcie
+- **Podświetlenie zmienionych bajtów**: `[XX]` w kolumnie Dane, CheckBox kontroluje
+- **Zakładka "Podsumowanie per ID"**: tabela ID/cnt-lewy/cnt-prawy/cnt-różnych/status
+- **Bugfix parsera candump (krytyczny)**: stary parser ignorował nazwę interfejsu
+  (np. `vcan0`), przez co ID = 0 i ramka odrzucana — żaden prawdziwy plik nie działał
+  Fix: ID czytane jako ostatni token przed `#` (wyszukiwanie wsteczne)
+- **12 testów** w `test_logcomparatorwidget.cpp` — wszystkie zielone
+
+---
+
 ## Fazy wstępne (przed 2026-05-11)
 
 ### Faza 1: Pipeline "Ruch CAN" ✅
