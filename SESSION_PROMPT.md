@@ -36,7 +36,31 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 | `CanSignalStatisticsWidget` | Statystyki DBC: min/max/mean/σ/CV%/histogram, filtr, CSV export, auto-refresh 2s |
 | `CanBusHealthWidget` | Monitor błędów magistrali (10 klas SocketCAN, BUS-OFF alert, rate) + Walidator liczników AUTOSAR |
 
-## Ostatnia sesja — część 14: CanBusHealthWidget (commit ea043f3)
+## Ostatnia sesja — 2026-05-15: GvretDriver integracja z MagistralaCAN4
+- **`GvretDriver.h/cpp`**: nowy backend ICanDriver — binarny protokół GVRET (EVTV), 115200 baud
+  - Auto-detekcja: sonduje `{F1 08}`, szuka odpowiedzi z `F1 08` → etykieta `"COM3 [GVRET-ESP32]"`
+  - `readFrame()`: parsuje pakiety `F1 00 [ts:4LE] [id:4LE, bit31=ext] [(bus<<4)|dlc] [data]`
+  - `writeFrame()`: buduje `F1 01 [id:4LE, bit31=ext] [dlc] [data]`
+- **MainWindow**: `m_gvretDriver` dodany; `refreshInterfaces()` sonduje GVRET; `toggleSniffing()` wybiera po `[GVRET`; gateway widget dodany
+- **CMakeLists.txt**: `GvretDriver.cpp` w SOURCES, `GvretDriver.h` w HEADERS
+- ESP32 aktualnie ma firmware GVRET (`esp_gvret.ino`); dla MagistralaCAN4-SLCAN flashuj `esp_slcan.ino`
+- MagistralaCAN4.exe odbudowany → `build_native/MagistralaCAN4.exe` (2026-05-15 11:30)
+
+## Poprzednia sesja — 2026-05-15: SLCAN bugfixy + GVRET firmware (SavvyCAN)
+- **3 bugfixy `SlCanDriver.cpp`**: `open()` (`isEmpty` → `contains('\a')`), `parseIncoming()` (`dlcLen=2`→`1`), `writeFrame()` (DLC 2-cyfrowy → 1-cyfrowy dziesiętny) → rebuild MagistralaCAN4.exe
+- **`esp_gvret/esp_gvret.ino`**: binarny protokół GVRET dla SavvyCAN (`Connection → Serial Connection → COM3`)
+- ESP32 aktualnie ma firmware GVRET; dla MagistralaCAN4 flashuj `esp_slcan.ino`
+
+## Poprzednia sesja — 2026-05-15: ESP MCP firmware + CAN → relay logika + SIM
+- Subprojekt `esp_mcp/` — ESP32 + MCP2515 CAN bridge (bez zmian w głównym projekcie Qt6)
+- Diagnoza: stary firmware nie odpowiadał na komendy seryjne; pobrano `arduino-cli.exe` dla Windows
+- Skompilowano i wgrano `esp_mcp.ino` na ESP32-D0WD-V3 rev3.1 (COM3, FQBN `esp32:esp32:esp32`)
+- Sterowanie 6 przekaźnikami przez serial 115200 baud: `RELAY <0-5> <ON|OFF>`
+- Modyfikacja `handleCanRx()`: warunek `dlc==8` → `dlc>=2`; ramka EXT `0x1421003F` `data[1]=1/0` → relay 0 ON/OFF
+- Dodana komenda `SIM EXT|STD <ID> <DLC> <B0..BN>` — wstrzykuje ramkę do `handleCanRx()` bez fizycznej magistrali
+- Test potwierdzony: `SIM EXT 1421003F 2 00 01` → `STATUS relays: 100000`; `SIM EXT 1421003F 2 00 00` → `000000`
+
+## Poprzednia sesja — część 14: CanBusHealthWidget (commit ea043f3)
 - `CanBusHealthWidget.h/cpp` — panel zdrowia magistrali CAN z 2 zakładkami:
   - **Błędy magistrali**: alert BUS-OFF, liczniki 10 klas błędów SocketCAN (TxTimeout→Unknown), częstotliwość błędów (okno 5s), tabela zdarzeń błędów (czas/klasa/raw ID/opis), limit 500 wpisów
   - **Walidator liczników**: dodawanie/usuwanie reguł `CanCounterValidator::Config` (CAN ID, byteIndex, upper nibble, modulus), tabela statystyk live (OK, błędy, razem, % błędów), kolorowanie wierszy (zielony/żółty/czerwony)

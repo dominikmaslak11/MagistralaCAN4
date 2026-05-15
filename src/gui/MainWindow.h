@@ -127,6 +127,7 @@ private:
     ICanDriver *m_canDriver    = nullptr;
     ICanDriver *m_slCanDriver  = nullptr;  // SLCAN backend (serial port)
     ICanDriver *m_espMcpDriver = nullptr;  // ESP32+MCP2515 backend
+    ICanDriver *m_gvretDriver  = nullptr;  // GVRET binary backend (SavvyCAN-compatible)
     CanFrameModel *m_model;
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;

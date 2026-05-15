@@ -134,6 +134,7 @@ set(SOURCES
     src/core/HttpRestServer.cpp
     src/core/SlCanDriver.cpp
     src/core/EspMcpDriver.cpp
+    src/core/GvretDriver.cpp
     src/core/CanStatsPanel.cpp
     src/core/CanFilterProxy.cpp
     src/core/CanPlayer.cpp
@@ -176,6 +177,7 @@ set(HEADERS
     src/core/SocketCanDriver.h
     src/core/PcanDriver.h
     src/core/SlCanDriver.h
+    src/core/GvretDriver.h
     src/core/CanFrameModel.h
     src/core/FrameDetailWidget.h
     src/core/AssociativeLearner.h

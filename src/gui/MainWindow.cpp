@@ -9,6 +9,7 @@
 #endif
 #include "core/SlCanDriver.h"
 #include "core/EspMcpDriver.h"
+#include "core/GvretDriver.h"
 
 #include <QToolBar>
 #include <QToolButton>
@@ -102,6 +103,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     if (m_canDriver)    m_gatewayWidget->addDriver("PCAN/SocketCAN", m_canDriver);
     if (m_slCanDriver)  m_gatewayWidget->addDriver("SLCAN", m_slCanDriver);
     if (m_espMcpDriver) m_gatewayWidget->addDriver("ESP-MCP2515", m_espMcpDriver);
+    if (m_gvretDriver)  m_gatewayWidget->addDriver("GVRET", m_gvretDriver);
     m_udsSequenceWidget = new UdsSequenceWidget(&m_sniffer);
     // m_linWidget, m_kwp2000Widget, m_xcpWidget, m_replayFilterWidget — lazy (LazyTabWidget)
     m_idStatsWidget  = new CanIdStatsWidget;
@@ -137,6 +139,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_slCanDriver = new SlCanDriver();
     // ESP32+MCP2515 – ASCII serial sniffer, 115200 baud
     m_espMcpDriver = new EspMcpDriver();
+    // GVRET – binarny protokół EVTV (SavvyCAN Serial Connection), 115200 baud
+    m_gvretDriver = new GvretDriver();
     m_canDriver->setBaudRate("500K");
     m_slCanDriver->setBaudRate("500K");
     m_sniffer.setDriver(m_canDriver);
@@ -333,14 +337,18 @@ void MainWindow::toggleSniffing() {
 
         // Inteligentny wybór drivera po nazwie urządzenia
         ICanDriver *active = m_canDriver;
-        bool isEspMcp = iface.contains("[ESP-MCP2515");
-        bool isSlCan  = !isEspMcp &&
+        bool isGvret  = iface.contains("[GVRET");
+        bool isEspMcp = !isGvret && iface.contains("[ESP-MCP2515");
+        bool isSlCan  = !isGvret && !isEspMcp &&
                         (iface.startsWith("COM", Qt::CaseInsensitive) ||
                          iface.startsWith("tty") || iface.startsWith("/dev/tty") ||
                          iface.contains("[SLCAN]") || iface.contains("[Canable]") ||
                          iface.contains("[candleLight]") || iface.contains("[USBtin]") ||
                          iface.contains("[CAN232]") || iface.contains("[Lawicel]"));
-        if (m_espMcpDriver && isEspMcp) {
+        if (m_gvretDriver && isGvret) {
+            active = m_gvretDriver;
+            Logger::log(QString("GVRET: wybrano sterownik dla %1").arg(iface));
+        } else if (m_espMcpDriver && isEspMcp) {
             active = m_espMcpDriver;
             Logger::log(QString("ESP-MCP2515: wybrano sterownik dla %1").arg(iface));
         } else if (m_slCanDriver && isSlCan) {
@@ -451,6 +459,12 @@ void MainWindow::refreshInterfaces() {
     if (m_espMcpDriver) {
         QStringList espIfaces = m_espMcpDriver->availableDevices();
         ifaces.append(espIfaces);
+    }
+
+    // Merge GVRET devices (ESP32 z firmware GVRET, SavvyCAN-compatible)
+    if (m_gvretDriver) {
+        QStringList gvretIfaces = m_gvretDriver->availableDevices();
+        ifaces.append(gvretIfaces);
     }
 
     m_interfaceCombo->addItems(ifaces);
