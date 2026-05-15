@@ -116,12 +116,13 @@ void CanNodeSimulator::scheduleResponse(const CanNodeDefinition &node) {
             m_responseTimer.start(node.responseDelayMs);
     } else {
         // Wyślij natychmiast
+        CanFrame out;
+        out.id  = node.responseId;
+        out.dlc = (uint8_t)respData.size();
+        for (int i = 0; i < respData.size() && i < 64; ++i)
+            out.data[i] = respData[i];
+        emit frameReady(out);
         if (m_sniffer && m_sniffer->isSocketValid()) {
-            CanFrame out;
-            out.id  = node.responseId;
-            out.dlc = (uint8_t)respData.size();
-            for (int i = 0; i < respData.size() && i < 64; ++i)
-                out.data[i] = respData[i];
             m_sniffer->writeFrame(out);
             const_cast<CanNodeDefinition&>(node).responseCount++;
         }
@@ -129,8 +130,8 @@ void CanNodeSimulator::scheduleResponse(const CanNodeDefinition &node) {
 }
 
 void CanNodeSimulator::sendPendingResponse() {
-    if (m_pendingResponses.isEmpty() || !m_sniffer || !m_sniffer->isSocketValid())
-        return;
+    if (m_pendingResponses.isEmpty()) return;
+    bool canSend = m_sniffer && m_sniffer->isSocketValid();
 
     for (const auto &pending : m_pendingResponses) {
         CanFrame out;
@@ -138,13 +139,8 @@ void CanNodeSimulator::sendPendingResponse() {
         out.dlc = (uint8_t)pending.data.size();
         for (int i = 0; i < pending.data.size() && i < 64; ++i)
             out.data[i] = pending.data[i];
-        m_sniffer->writeFrame(out);
-    }
-
-    // Zwiększ liczniki dla wszystkich węzłów z opóźnioną odpowiedzią
-    for (auto &node : m_nodes) {
-        if (!node.enabled || node.responseDelayMs <= 0) continue;
-        node.responseCount += m_pendingResponses.size();
+        emit frameReady(out);
+        if (canSend) m_sniffer->writeFrame(out);
     }
 
     m_pendingResponses.clear();

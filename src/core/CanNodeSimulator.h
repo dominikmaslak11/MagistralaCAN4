@@ -65,6 +65,10 @@ public:
     bool loadConfig(const QString &path);
     bool saveConfig(const QString &path) const;
 
+signals:
+    /// Emitowany gdy symulator zbudował ramkę odpowiedzi (przed próbą wysłania przez sniffer).
+    void frameReady(const CanFrame &frame);
+
 public slots:
     /// Odbiera ramkę CAN i sprawdza triggery.
     void onNewFrame(const CanFrame &frame);
