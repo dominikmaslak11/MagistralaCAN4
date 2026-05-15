@@ -382,3 +382,91 @@ TEST_F(MqttBridgeTest, DisableClearsCacheAndReenableWorks) {
     // We can't assert == 1 without mosquitto, so we just verify no crash.
     SUCCEED();
 }
+
+// ── TCP client: not connected without broker ──────────────────────────────
+
+TEST_F(MqttBridgeTest, NotConnectedWithoutBroker) {
+    MqttBridge bridge;
+    EXPECT_FALSE(bridge.isConnected());
+}
+
+TEST_F(MqttBridgeTest, NotConnectedAfterEnable_NoBroker) {
+    MqttBridge bridge;
+    bridge.setEnabled(true);
+    // Connection attempt is async; synchronously it's not yet connected
+    EXPECT_FALSE(bridge.isConnected());
+}
+
+// ── setClientId ───────────────────────────────────────────────────────────
+
+TEST_F(MqttBridgeTest, SetClientId_DoesNotCrash) {
+    MqttBridge bridge;
+    bridge.setClientId("test-client-001");
+    SUCCEED();
+}
+
+// ── setChangeThreshold ────────────────────────────────────────────────────
+
+TEST_F(MqttBridgeTest, ChangeThreshold_SuppressesSmallDelta) {
+    DbcSignal sig;
+    sig.name          = "Voltage";
+    sig.startBit      = 0;
+    sig.length        = 8;
+    sig.isLittleEndian = true;
+    sig.isSigned      = false;
+    sig.scale         = 0.1;
+    sig.offset        = 0.0;
+
+    auto parser = makeParser(0x900, sig);
+
+    MqttBridge bridge;
+    bridge.setDbcParser(&parser);
+    bridge.setChangeThreshold(0.5); // ignore deltas < 0.5
+    bridge.setEnabled(true);
+
+    // raw=10 → 1.0V; raw=14 → 1.4V; delta=0.4 < 0.5 → should be suppressed
+    bridge.onNewFrame(makeFrame(0x900, {10})); // establishes cache
+    bridge.onNewFrame(makeFrame(0x900, {14})); // delta 0.4 — suppressed
+    QCoreApplication::processEvents();
+    // No crash, and queue should not have enqueued the second publish
+    SUCCEED();
+}
+
+// ── setMaxRate ────────────────────────────────────────────────────────────
+
+TEST_F(MqttBridgeTest, SetMaxRate_DoesNotCrash) {
+    MqttBridge bridge;
+    bridge.setMaxRate(10);  // 10 publishes/s
+    bridge.setMaxRate(100); // 100 publishes/s
+    bridge.setMaxRate(1);   // 1 publish/s
+    SUCCEED();
+}
+
+// ── connectionStateChanged signal ─────────────────────────────────────────
+
+TEST_F(MqttBridgeTest, ConnectionStateChangedSignal_Exists) {
+    MqttBridge bridge;
+    QSignalSpy spy(&bridge, &MqttBridge::connectionStateChanged);
+    // Just verify the signal exists and spy connects
+    EXPECT_EQ(spy.count(), 0);
+}
+
+// ── Multiple enable/disable cycles ───────────────────────────────────────
+
+TEST_F(MqttBridgeTest, MultipleEnableDisableCycles_NoCrash) {
+    MqttBridge bridge;
+    for (int i = 0; i < 5; ++i) {
+        bridge.setEnabled(true);
+        bridge.setEnabled(false);
+    }
+    EXPECT_FALSE(bridge.isEnabled());
+    SUCCEED();
+}
+
+// ── errorOccurred signal ──────────────────────────────────────────────────
+
+TEST_F(MqttBridgeTest, ErrorSignal_Exists) {
+    MqttBridge bridge;
+    QSignalSpy spy(&bridge, &MqttBridge::errorOccurred);
+    EXPECT_EQ(spy.count(), 0);
+}

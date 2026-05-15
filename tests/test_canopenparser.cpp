@@ -240,3 +240,76 @@ TEST(CanOpenParserTest, ToString_HeartbeatContainsNodeId) {
     auto co = CanOpenFrame::fromCanFrame(raw(0x705, {0x05}));
     EXPECT_TRUE(co.toString().contains("5"));
 }
+
+// ── SDO index/subindex extraction ────────────────────────────────────────────
+
+TEST(CanOpenParserTest, FromCanFrame_SDO_IdxSubIdx) {
+    // SDO upload initiate: cmd=0x40, idx_lo=0x00, idx_hi=0x18, sub=0x01
+    auto co = CanOpenFrame::fromCanFrame(raw(0x601, {0x40, 0x00, 0x18, 0x01}));
+    EXPECT_EQ(co.type, CanOpenFrame::SDO_RX);
+    EXPECT_EQ(co.dlc, 4);
+    // Index = bytes[2]<<8 | bytes[1] = 0x1800
+    uint16_t idx = (static_cast<uint16_t>(co.data[2]) << 8) | co.data[1];
+    EXPECT_EQ(idx, 0x1800u);
+    EXPECT_EQ(co.data[3], 0x01u); // subindex
+}
+
+TEST(CanOpenParserTest, SdoCommand_DownloadSegment) {
+    CanOpenParser p;
+    // CCS=0 → cmd byte = 0x00..0x1F
+    QString s = p.sdoCommand(0x00);
+    EXPECT_FALSE(s.isEmpty());
+}
+
+TEST(CanOpenParserTest, SdoCommand_UploadSegment) {
+    CanOpenParser p;
+    // CCS=2 → cmd byte = 0x40..0x5F
+    QString s = p.sdoCommand(0x40);
+    EXPECT_FALSE(s.isEmpty());
+}
+
+// ── Multiple nodes — node IDs correct ───────────────────────────────────────
+
+TEST(CanOpenParserTest, MultipleNodeHeartbeats) {
+    auto hb1 = CanOpenFrame::fromCanFrame(raw(0x701, {0x05}));
+    auto hb5 = CanOpenFrame::fromCanFrame(raw(0x705, {0x7F}));
+    auto hb127 = CanOpenFrame::fromCanFrame(raw(0x77F, {0x04}));
+
+    EXPECT_EQ(hb1.nodeId, 1);
+    EXPECT_EQ(hb5.nodeId, 5);
+    EXPECT_EQ(hb127.nodeId, 127);
+
+    EXPECT_EQ(hb1.type, CanOpenFrame::HEARTBEAT);
+    EXPECT_EQ(hb5.type, CanOpenFrame::HEARTBEAT);
+    EXPECT_EQ(hb127.type, CanOpenFrame::HEARTBEAT);
+}
+
+// ── EMCY error code little-endian byte order ─────────────────────────────────
+
+TEST(CanOpenParserTest, EmcyCode_ByteOrder) {
+    // EMCY frame: data[0]=LSB, data[1]=MSB of error code
+    // Error 0x5000 = data[0]=0x00, data[1]=0x50
+    auto co = CanOpenFrame::fromCanFrame(raw(0x085, {0x00, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00}));
+    EXPECT_EQ(co.type, CanOpenFrame::EMCY);
+    uint16_t ec = (static_cast<uint16_t>(co.data[1]) << 8) | co.data[0];
+    EXPECT_EQ(ec, 0x5000u);
+}
+
+// ── FuncCode extracted correctly ─────────────────────────────────────────────
+
+TEST(CanOpenParserTest, FuncCode_NMT) {
+    auto co = CanOpenFrame::fromCanFrame(raw(0x000, {}));
+    EXPECT_EQ(co.funcCode, 0x00u); // NMT = 0x000 >> 7 = 0
+}
+
+TEST(CanOpenParserTest, FuncCode_SDO_TX) {
+    // SDO TX: 0x580..0x5FF → funcCode = 0x0B
+    auto co = CanOpenFrame::fromCanFrame(raw(0x585, {}));
+    EXPECT_EQ(co.funcCode, 0x0Bu);
+}
+
+TEST(CanOpenParserTest, FuncCode_Heartbeat) {
+    // Heartbeat: 0x700..0x77F → funcCode = 0x0E
+    auto co = CanOpenFrame::fromCanFrame(raw(0x705, {0x05}));
+    EXPECT_EQ(co.funcCode, 0x0Eu);
+}
