@@ -75,6 +75,8 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
   2. URL: `ws://127.0.0.1:9001`, Token: dowolny tekst (np. `icsim`)
   3. Klik "Połącz" → ramki ICSim pojawiają się w "Ruch CAN" i uczeniu asocjacyjnym
 - **Architektura przepływu**: ICSim UDP → magistrala_bridge.exe → WebSocket → RemoteCanClient → CanSniffer → CanFrameModel (Ruch CAN) + AssociativeLearner
+- **Bugfix (ta sesja) — bridge multi-client**: oryginalne `br->client` (single pointer) było nadpisywane przy każdym nowym połączeniu WS i zerowane przy rozłączeniu → ramki przestawały płynąć. Naprawione: `struct magistrala_bridge` teraz trzyma `struct mg_mgr *mgr`, nowa funkcja `broadcast_frame()` iteruje `mgr->conns` i wysyła do wszystkich aktywnych klientów WS
+- **Bugfix (ta sesja) — RemoteCanWidget stub**: `RemoteCanWidget::onRemoteFrame()` było stubem (`Q_UNUSED(frame)`) → ramki były porzucane przed dotarciem do sniffera. Naprawione: wywołuje `m_sniffer->submitFrame(frame)`. Dodano `CanSniffer::submitFrame()` (emituje `newFrame` bezpośrednio z wątku GUI, omija SPSC ring buffer)
 
 ## Poprzednia sesja — 2026-05-15: esp_mcp firmware — GVRET + relay control (produkcyjny)
 

@@ -76,6 +76,10 @@ void CanSniffer::doWork() {
     }
 }
 
+void CanSniffer::submitFrame(const CanFrame &frame) {
+    emit newFrame(frame);
+}
+
 void CanSniffer::drainAndEmit() {
     // Called from GUI thread — drains all buffered frames and emits them
     QVector<CanFrame> batch;

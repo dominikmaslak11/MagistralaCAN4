@@ -86,6 +86,29 @@ cd E:\ICSim
 - URL: `ws://127.0.0.1:9001`, Token: `icsim` (dowolny)
 - Ramki ICSim pojawiają się w "Ruch CAN" i uczeniu asocjacyjnym
 
+#### Bugfixy (ta sesja)
+
+**1. Bridge single-client bug** (`E:\ICSim\magistrala_bridge.c`)
+
+Problem: `struct magistrala_bridge` trzymał `struct mg_connection *client` — wskaźnik do jednego klienta WS. Przy każdym nowym połączeniu WS (np. teście diagnostycznym) wskaźnik był nadpisywany. Po rozłączeniu był zerowany. Skutek: MagistralaCAN4 przestawał otrzymywać ramki gdy cokolwiek innego się podłączyło lub rozłączyło.
+
+Naprawa:
+- `br->client` → `br->mgr` (`struct mg_mgr *`)
+- Nowa funkcja `broadcast_frame()` iteruje `mgr->conns`, wysyła do każdego `c->is_websocket && !c->is_draining`
+- `can_poll_timer` wywołuje `broadcast_frame(br, &frame)` zamiast `send_frame_batch(br->client, ...)`
+- `ws_handler` nie ustawia już `br->client` przy otwieraniu/zamykaniu połączenia
+- `main()`: `br.mgr = &mgr;`
+
+**2. RemoteCanWidget stub** (`src/core/RemoteCanWidget.cpp`)
+
+Problem: `onRemoteFrame()` było stubem — `Q_UNUSED(frame)` — ramki z `RemoteCanClient::newFrame` były porzucane przed CanSniffer.
+
+Naprawa: `onRemoteFrame()` wywołuje `m_sniffer->submitFrame(frame)`.
+
+Nowa metoda `CanSniffer::submitFrame(const CanFrame &frame)` (`.h` + `.cpp`): emituje `newFrame(frame)` bezpośrednio z wątku GUI, omijając SPSC ring buffer który wymaga wątku worker.
+
+Uwaga: `RemoteCanClient::newFrame` jest też podpięty bezpośrednio do `MainWindow::onNewFrame` przez `Qt::QueuedConnection` (MainWindow.cpp:288-289), więc ramki trafiałyby do "Ruch CAN" nawet bez `submitFrame`. `submitFrame` dodaje drugą ścieżkę przez `CanSniffer::newFrame` (np. dla IcSimWidget).
+
 ---
 
 ## Sesja 2026-05-16: esp_slcan_relay firmware — SLCAN + relay control

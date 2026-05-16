@@ -242,7 +242,8 @@ void RemoteCanWidget::updateClientStatus(bool connected, const QString &info) {
 }
 
 void RemoteCanWidget::onRemoteFrame(const CanFrame &frame) {
-    Q_UNUSED(frame);
+    if (m_sniffer)
+        m_sniffer->submitFrame(frame);
 }
 
 void RemoteCanWidget::onSendFrame() {

@@ -31,6 +31,10 @@ public:
     /// Called by the GUI thread periodically.
     void drainAndEmit();
 
+    /// Injects an externally-sourced frame directly into the newFrame pipeline.
+    /// Safe to call from the GUI thread (bypasses the SPSC ring buffer).
+    void submitFrame(const CanFrame &frame);
+
     /// Size of the ring buffer.
     int bufferSize() const { return m_ringBuffer.size(); }
 
