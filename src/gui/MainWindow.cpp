@@ -283,13 +283,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_model, &CanFrameModel::frameBatchUpdated,
             m_remoteCanWidget->server(), &WebSocketServer::broadcastFrameBatch);
 
-    // Zdalny CAN – klient: wstrzykiwanie odebranych ramek do pipeline'u
+    // Zdalny CAN – klient: wstrzykiwanie odebranych ramek do pipeline'u.
+    // Jeden connect do onNewFrame wystarczy — frameProcessed rozsyła dalej (learner, lua, itp.).
     connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
             this, &MainWindow::onNewFrame, Qt::QueuedConnection);
-    connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
-            m_learner, &AssociativeLearner::processFrame, Qt::QueuedConnection);
-    connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
-            m_luaEngine, &LuaScriptEngine::onNewFrame, Qt::QueuedConnection);
+
+    // ICSim quick-connect: przycisk "Uruchom ICSim" w zakładce ICSim łączy klienta automatycznie
+    connect(m_icSimWidget, &IcSimWidget::connectRequested,
+            m_remoteCanWidget->client(), &RemoteCanClient::connectToServer);
 
     // Zdalny CAN – serwer: ramki od klientów wstrzykowane do UI i na magistralę
     connect(m_remoteCanWidget->server(), &WebSocketServer::frameReceivedFromClient,

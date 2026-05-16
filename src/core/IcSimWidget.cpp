@@ -7,6 +7,8 @@
 #include <QPainterPath>
 #include <QFont>
 #include <QSizePolicy>
+#include <QFileDialog>
+#include <QMessageBox>
 #include <cmath>
 
 // ── Dashboard paint widget ────────────────────────────────────────────────────
@@ -184,6 +186,11 @@ IcSimWidget::IcSimWidget(CanSniffer *sniffer, QWidget *parent)
     buildLayout();
 }
 
+IcSimWidget::~IcSimWidget()
+{
+    onStopICSim();
+}
+
 void IcSimWidget::buildLayout()
 {
     auto *root = new QVBoxLayout(this);
@@ -201,6 +208,7 @@ void IcSimWidget::buildLayout()
     root->addLayout(ctrlRow);
 
     root->addWidget(buildConfigGroup());
+    root->addWidget(buildLaunchGroup());
     root->addStretch();
 }
 
@@ -435,3 +443,170 @@ void IcSimWidget::sendFrame(const CanFrame &f)
 uint32_t IcSimWidget::speedId()  const { return static_cast<uint32_t>(m_speedIdSpin->value()); }
 uint32_t IcSimWidget::doorId()   const { return static_cast<uint32_t>(m_doorIdSpin->value()); }
 uint32_t IcSimWidget::signalId() const { return static_cast<uint32_t>(m_signalIdSpin->value()); }
+
+// ── ICSim Launcher ────────────────────────────────────────────────────────────
+
+QGroupBox *IcSimWidget::buildLaunchGroup()
+{
+    auto *grp = new QGroupBox("Uruchom ICSim (bridge + symulator)");
+    grp->setStyleSheet(
+        "QGroupBox { color: #ffaa00; font-weight: bold; border: 1px solid #e94560; "
+        "border-radius: 4px; margin-top: 8px; padding-top: 16px; }");
+    auto *lay = new QVBoxLayout(grp);
+
+    // Wiersz: ścieżka do builddir
+    auto *pathRow = new QHBoxLayout;
+    pathRow->addWidget(new QLabel("Katalog builddir:"));
+    m_buildDirEdit = new QLineEdit("E:/ICSim/builddir");
+    m_buildDirEdit->setPlaceholderText("E:/ICSim/builddir");
+    pathRow->addWidget(m_buildDirEdit, 1);
+    auto *browseBtn = new QPushButton("...");
+    browseBtn->setFixedWidth(32);
+    connect(browseBtn, &QPushButton::clicked, this, [this]() {
+        QString dir = QFileDialog::getExistingDirectory(
+            this, "Wybierz katalog builddir ICSim", m_buildDirEdit->text());
+        if (!dir.isEmpty()) m_buildDirEdit->setText(dir);
+    });
+    pathRow->addWidget(browseBtn);
+    lay->addLayout(pathRow);
+
+    // Wiersz: port bridge
+    auto *portRow = new QHBoxLayout;
+    portRow->addWidget(new QLabel("Port bridge:"));
+    m_bridgePort = new QSpinBox;
+    m_bridgePort->setRange(1024, 65535);
+    m_bridgePort->setValue(9001);
+    portRow->addWidget(m_bridgePort);
+    portRow->addStretch();
+    lay->addLayout(portRow);
+
+    // Przyciski
+    auto *btnRow = new QHBoxLayout;
+    m_launchBtn = new QPushButton("▶ Uruchom ICSim");
+    m_launchBtn->setStyleSheet(
+        "QPushButton { background:#1a1a2e; color:#ffaa00; border:1px solid #ffaa00; "
+        "border-radius:4px; padding:5px 15px; font-weight:bold; } "
+        "QPushButton:hover { background:#ffaa00; color:#0a0e17; }");
+    btnRow->addWidget(m_launchBtn);
+
+    m_stopBtn = new QPushButton("■ Zatrzymaj");
+    m_stopBtn->setEnabled(false);
+    m_stopBtn->setStyleSheet(
+        "QPushButton { background:#1a1a2e; color:#ff4444; border:1px solid #ff4444; "
+        "border-radius:4px; padding:5px 15px; font-weight:bold; } "
+        "QPushButton:hover { background:#ff4444; color:#0a0e17; }");
+    btnRow->addWidget(m_stopBtn);
+    btnRow->addStretch();
+    lay->addLayout(btnRow);
+
+    m_launchStatus = new QLabel("Status: zatrzymany");
+    m_launchStatus->setStyleSheet("color: #888888; font-family: Consolas;");
+    lay->addWidget(m_launchStatus);
+
+    auto *hint = new QLabel(
+        "<small style='color:#666;'>Po uruchomieniu klient Remote CAN łączy się automatycznie.<br>"
+        "Ramki będą widoczne w zakładce <b>Ruch CAN</b> i "
+        "<b>Uczenie asocjacyjne</b>.</small>");
+    hint->setWordWrap(true);
+    lay->addWidget(hint);
+
+    connect(m_launchBtn, &QPushButton::clicked, this, &IcSimWidget::onLaunchICSim);
+    connect(m_stopBtn,   &QPushButton::clicked, this, &IcSimWidget::onStopICSim);
+
+    return grp;
+}
+
+void IcSimWidget::onLaunchICSim()
+{
+    QString buildDir = m_buildDirEdit->text().trimmed();
+    if (buildDir.isEmpty()) {
+        QMessageBox::warning(this, "ICSim", "Podaj ścieżkę do katalogu builddir ICSim.");
+        return;
+    }
+
+    QString bridgeExe = buildDir + "/magistrala_bridge.exe";
+    QString simExe    = buildDir + "/icsim_imgui.exe";
+
+    if (!QFile::exists(bridgeExe)) {
+        QMessageBox::warning(this, "ICSim",
+            QString("Nie znaleziono magistrala_bridge.exe w:\n%1\n\n"
+                    "Skompiluj ICSim: cd E:\\ICSim && meson compile -C builddir").arg(buildDir));
+        return;
+    }
+
+    // Uruchom bridge
+    if (!m_bridgeProc) {
+        m_bridgeProc = new QProcess(this);
+        connect(m_bridgeProc, &QProcess::stateChanged,
+                this, &IcSimWidget::onBridgeStateChanged);
+    }
+    if (m_bridgeProc->state() == QProcess::NotRunning) {
+        m_bridgeProc->setWorkingDirectory(buildDir);
+        m_bridgeProc->start(bridgeExe,
+            {"--port", QString::number(m_bridgePort->value()), "vcan0"});
+    }
+
+    // Uruchom symulator (opcjonalnie — może nie istnieć)
+    if (QFile::exists(simExe)) {
+        if (!m_simProc) m_simProc = new QProcess(this);
+        if (m_simProc->state() == QProcess::NotRunning) {
+            m_simProc->setWorkingDirectory(buildDir);
+            m_simProc->start(simExe, {"vcan0"});
+        }
+    }
+
+    // Auto-połącz klienta zdalnego CAN po 400ms (bridge potrzebuje chwili na start)
+    QTimer::singleShot(400, this, [this]() {
+        QString url = QString("ws://127.0.0.1:%1").arg(m_bridgePort->value());
+        emit connectRequested(url, "icsim");
+    });
+
+    updateLaunchStatus();
+}
+
+void IcSimWidget::onStopICSim()
+{
+    if (m_simProc && m_simProc->state() != QProcess::NotRunning) {
+        m_simProc->terminate();
+        m_simProc->waitForFinished(2000);
+        if (m_simProc->state() != QProcess::NotRunning)
+            m_simProc->kill();
+    }
+    if (m_bridgeProc && m_bridgeProc->state() != QProcess::NotRunning) {
+        m_bridgeProc->terminate();
+        m_bridgeProc->waitForFinished(2000);
+        if (m_bridgeProc->state() != QProcess::NotRunning)
+            m_bridgeProc->kill();
+    }
+    updateLaunchStatus();
+}
+
+void IcSimWidget::onBridgeStateChanged(QProcess::ProcessState state)
+{
+    updateLaunchStatus();
+    if (state == QProcess::NotRunning && m_bridgeProc) {
+        int code = m_bridgeProc->exitCode();
+        if (code != 0)
+            m_launchStatus->setText(QString("Bridge zakończył się z kodem %1").arg(code));
+    }
+}
+
+void IcSimWidget::updateLaunchStatus()
+{
+    bool bridgeRunning = m_bridgeProc && m_bridgeProc->state() == QProcess::Running;
+    bool simRunning    = m_simProc    && m_simProc->state()    == QProcess::Running;
+
+    m_launchBtn->setEnabled(!bridgeRunning);
+    m_stopBtn->setEnabled(bridgeRunning || simRunning);
+
+    if (bridgeRunning) {
+        QString url = QString("ws://127.0.0.1:%1").arg(m_bridgePort->value());
+        m_launchStatus->setText(QString("Bridge DZIAŁA — %1  |  Symulator: %2")
+            .arg(url)
+            .arg(simRunning ? "uruchomiony" : "brak"));
+        m_launchStatus->setStyleSheet("color: #00ffaa; font-family: Consolas; font-weight: bold;");
+    } else {
+        m_launchStatus->setText("Status: zatrzymany");
+        m_launchStatus->setStyleSheet("color: #888888; font-family: Consolas;");
+    }
+}
