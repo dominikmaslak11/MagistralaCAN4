@@ -77,6 +77,7 @@ public:
 
     void showTrayNotification(const QString &title, const QString &message);
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
+    void connectRemoteCan(const QString &url, const QString &token);
 
 protected:
     void closeEvent(QCloseEvent *event) override;

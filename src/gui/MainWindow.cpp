@@ -284,9 +284,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             m_remoteCanWidget->server(), &WebSocketServer::broadcastFrameBatch);
 
     // Zdalny CAN – klient: wstrzykiwanie odebranych ramek do pipeline'u.
-    // Jeden connect do onNewFrame wystarczy — frameProcessed rozsyła dalej (learner, lua, itp.).
+    // Remote CAN omija standardowy Start sniffingu, więc uruchamiamy UI/candump tutaj.
     connect(m_remoteCanWidget->client(), &RemoteCanClient::newFrame,
-            this, &MainWindow::onNewFrame, Qt::QueuedConnection);
+            this, [this](const CanFrame &frame) {
+                if (!m_batchTimer.isActive())
+                    m_batchTimer.start();
+                if (m_candumpIface.isEmpty() || m_candumpIface == "remote")
+                    m_candumpIface = "remote";
+                if (!m_candumpStream && m_autoCandumpCheck && m_autoCandumpCheck->isChecked())
+                    startCandumpRecording();
+                onNewFrame(frame);
+            }, Qt::QueuedConnection);
 
     // ICSim quick-connect: przycisk "Uruchom ICSim" w zakładce ICSim łączy klienta automatycznie
     connect(m_icSimWidget, &IcSimWidget::connectRequested,
@@ -330,6 +338,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     updateMruMenus();
 }
 
+
+void MainWindow::connectRemoteCan(const QString &url, const QString &token)
+{
+    if (!m_remoteCanWidget)
+        return;
+    m_remoteCanWidget->client()->connectToServer(url, token);
+    Logger::log(QString("Remote CAN auto-connect requested: %1").arg(url));
+}
 MainWindow::~MainWindow() {
     saveSettings();
     if (m_sniffing) { m_sniffer.stop(); m_batchTimer.stop(); }
@@ -1152,6 +1168,7 @@ void MainWindow::writeFrameToCandump(const CanFrame &frame) {
     for (int i = 0; i < maxData; ++i)
         (*m_candumpStream) << QString("%1").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
     (*m_candumpStream) << "\n";
+    m_candumpStream->flush();
 }
 
 void MainWindow::togglePlayback() {

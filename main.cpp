@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDateTime>
+#include <QTimer>
 #include "gui/MainWindow.h"
 #include "core/CanFrame.h"
 
@@ -82,8 +83,24 @@ int main(int argc, char *argv[])
     logMsg("MainWindow created");
     mainWindow.setWindowTitle("MagistralaCAN4 - Sniffer CAN (GPU accelerated)");
     mainWindow.resize(1280, 800);
+    QString remoteCanUrl;
+    QString remoteCanToken = "icsim";
+    const QStringList args = app.arguments();
+    for (int i = 1; i < args.size(); ++i) {
+        if (args[i] == "--remote-can-url" && i + 1 < args.size())
+            remoteCanUrl = args[++i];
+        else if (args[i] == "--remote-can-token" && i + 1 < args.size())
+            remoteCanToken = args[++i];
+    }
+
     logMsg("Calling mainWindow.show()...");
     mainWindow.show();
+    if (!remoteCanUrl.isEmpty()) {
+        logMsg(QString("Scheduling Remote CAN auto-connect: %1").arg(remoteCanUrl));
+        QTimer::singleShot(700, &mainWindow, [&mainWindow, remoteCanUrl, remoteCanToken]() {
+            mainWindow.connectRemoteCan(remoteCanUrl, remoteCanToken);
+        });
+    }
     logMsg("Entering event loop...");
 
     int ret = app.exec();
