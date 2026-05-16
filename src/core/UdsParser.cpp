@@ -5,47 +5,42 @@
 // UdsFrame – parsowanie
 // ═══════════════════════════════════════════════════════════════
 
-UdsFrame UdsFrame::fromCanFrame(const CanFrame &frame) {
+// ── fromPayload — parsuje gotowy payload ISO-TP (payload[0] = SID) ────────────
+
+UdsFrame UdsFrame::fromPayload(const uint8_t *payload, int len,
+                                uint32_t canId, uint64_t timestampUs, bool multi) {
     UdsFrame uf;
-    uf.canId    = frame.id;
-    uf.timestamp = frame.timestamp;
-    uf.dlc      = frame.dlc;
-    size_t n = std::min<size_t>(frame.dlc, uf.data.size());
-    std::copy_n(std::begin(frame.data), n, std::begin(uf.data));
+    uf.canId      = canId;
+    uf.timestamp  = timestampUs;
+    uf.multiFrame = multi;
+    uf.dlc        = static_cast<uint8_t>(std::min(len, static_cast<int>(uf.data.size())));
+    std::copy_n(payload, uf.dlc, uf.data.begin());
 
-    if (frame.dlc < 1) return uf;
+    if (len < 1) return uf;
 
-    uint8_t firstByte = frame.data[0];
+    uint8_t b0 = payload[0];
 
-    if (firstByte == 0x7F && frame.dlc >= 3) {
-        uf.type = NegativeResponse;
-        uf.sid  = frame.data[1];  // SID żądania
-        uf.nrc  = frame.data[2];
-    } else if (firstByte >= 0x40 && firstByte <= 0x7E) {
-        uf.type = PositiveResponse;
-        uf.sid  = firstByte - 0x40;
-        if (frame.dlc >= 3) {
-            uf.did = (static_cast<uint16_t>(frame.data[1]) << 8) | frame.data[2];
-        }
-        if (uf.sid == 0x22 && frame.dlc >= 4) {
-            // ReadDataByIdentifier positive: bajty 1-2 to DID, 3+ to dane
-            uf.did = (static_cast<uint16_t>(frame.data[1]) << 8) | frame.data[2];
-        }
-    } else if (firstByte >= 0x30 && firstByte <= 0x32) {
+    // ISO-TP FC frame: upper nibble 3, FS byte 0-2 (CTS/Wait/Overflow)
+    if ((b0 & 0xF0) == 0x30 && (b0 & 0x0F) <= 2) {
         uf.type = FlowControl;
-        uf.sid  = firstByte;
-    } else {
+        return uf;
+    }
+
+    if (b0 == 0x7F && len >= 3) {
+        uf.type = NegativeResponse;
+        uf.sid  = payload[1];
+        uf.nrc  = payload[2];
+    } else if (b0 >= 0x40 && b0 <= 0x7E) {
+        uf.type = PositiveResponse;
+        uf.sid  = b0 - 0x40;
+        if (len >= 3)
+            uf.did = (static_cast<uint16_t>(payload[1]) << 8) | payload[2];
+    } else if (b0 >= 0x10 && b0 <= 0x3E) {
         uf.type = Request;
-        uf.sid  = firstByte;
-        if (frame.dlc >= 2) uf.subFunc = frame.data[1];
-        if (frame.dlc >= 3) {
-            uf.did = (static_cast<uint16_t>(frame.data[1]) << 8) | frame.data[2];
-            // Dla niektórych serwisów (0x22) DID jest w bajtach 1-2
-            // Dla innych (0x2E) też
-        }
-        // Dla 0x22/0x2E ReadData/WriteData: bajty 1-2 to DID
-        if ((firstByte == 0x22 || firstByte == 0x2E) && frame.dlc >= 3) {
-            uf.did = (static_cast<uint16_t>(frame.data[1]) << 8) | frame.data[2];
+        uf.sid  = b0;
+        if (len >= 2) uf.subFunc = payload[1];
+        if ((b0 == 0x22 || b0 == 0x2E || b0 == 0x2A || b0 == 0x2F) && len >= 3) {
+            uf.did = (static_cast<uint16_t>(payload[1]) << 8) | payload[2];
             uf.subFunc = 0;
         }
     }
@@ -53,12 +48,23 @@ UdsFrame UdsFrame::fromCanFrame(const CanFrame &frame) {
     return uf;
 }
 
+// ── fromCanFrame — pozostaje dla kompatybilności (deleguje do fromPayload) ────
+
+UdsFrame UdsFrame::fromCanFrame(const CanFrame &frame) {
+    if (frame.dlc < 1) return {};
+    return fromPayload(frame.data.data(), frame.dlc, frame.id, frame.timestamp, false);
+}
+
+// ── looksLikeUds — sprawdza zakres ID diagnostycznego ────────────────────────
+
 bool UdsFrame::looksLikeUds(const CanFrame &frame) {
     if (frame.dlc < 1) return false;
-    uint8_t b0 = frame.data[0];
-    // SID w zakresie 0x10-0x3E (requesty) lub 0x50-0x7E (pozytywne odp.)
-    // lub 0x7F (negatywna odp.)
-    return (b0 >= 0x10 && b0 <= 0x3E) || (b0 >= 0x50 && b0 <= 0x7E) || b0 == 0x7F;
+    if (frame.extended) {
+        // 29-bit: 0x18DAxx__ (physical) lub 0x18DB33F1 (functional)
+        return (frame.id >> 16) == 0x18DAu || frame.id == 0x18DB33F1u;
+    }
+    // 11-bit: zakres diagnostyczny 0x700-0x7FF (UDS/OBD)
+    return frame.id >= 0x700u && frame.id <= 0x7FFu;
 }
 
 QString UdsFrame::toString() const {

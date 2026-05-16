@@ -3,11 +3,10 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QGroupBox>
+#include <QDateTime>
 #include <algorithm>
 
-// ═══════════════════════════════════════════════════════════════
-// UdsTableModel
-// ═══════════════════════════════════════════════════════════════
+// ── UdsTableModel — timestamp naprawiony: µs → sekundy ────────────────────────
 
 UdsTableModel::UdsTableModel(QObject *p) : QAbstractTableModel(p) {}
 
@@ -17,7 +16,7 @@ QVariant UdsTableModel::data(const QModelIndex &idx, int role) const {
 
     if (role == Qt::DisplayRole) {
         switch (idx.column()) {
-        case TIME:    return QString::number(f.timestamp / 1000.0, 'f', 3);
+        case TIME:    return QString::number(f.timestamp / 1'000'000.0, 'f', 3);
         case CAN_ID:  return QString("0x%1").arg(f.canId, 3, 16, QChar('0')).toUpper();
         case DIR:
             switch (f.type) {
@@ -41,9 +40,13 @@ QVariant UdsTableModel::data(const QModelIndex &idx, int role) const {
             if (f.type == UdsFrame::PositiveResponse) return "OK";
             return "";
         case DATA: {
-            QString s; s.reserve(f.dlc * 3);
-            for (int i = 0; i < f.dlc && i < 8; ++i)
+            QString s;
+            int show = std::min(f.dlc, (uint8_t)16);
+            s.reserve(show * 3 + 8);
+            if (f.multiFrame) s = "[MF] ";
+            for (int i = 0; i < show; ++i)
                 s += QString("%1 ").arg(f.data[i], 2, 16, QChar('0')).toUpper();
+            if (f.dlc > 16) s += QString("(+%1 B)").arg(f.dlc - 16);
             return s.trimmed();
         }
         default: return {};
@@ -95,7 +98,19 @@ UdsFrame UdsTableModel::frameAt(int row) const {
 // UdsWidget
 // ═══════════════════════════════════════════════════════════════
 
-UdsWidget::UdsWidget(QWidget *parent) : QWidget(parent) { setupUi(); }
+UdsWidget::UdsWidget(QWidget *parent) : QWidget(parent) {
+    // Podpinamy callback ISO-TP reassembly
+    m_tpLayer.setMessageCallback([this](const CanTpMessage &msg) {
+        onTpMessage(msg);
+    });
+
+    // Co 1s usuwamy przeterminowane sesje ISO-TP
+    m_purgeTimer.setInterval(1000);
+    connect(&m_purgeTimer, &QTimer::timeout, this, &UdsWidget::purgeTimedOutSessions);
+    m_purgeTimer.start();
+
+    setupUi();
+}
 
 void UdsWidget::setupUi() {
     auto *lay = new QVBoxLayout(this);
@@ -156,18 +171,40 @@ void UdsWidget::setupUi() {
 
 void UdsWidget::processFrame(const CanFrame &frame) {
     if (!UdsFrame::looksLikeUds(frame)) return;
-    UdsFrame uf = UdsFrame::fromCanFrame(frame);
+    // Każda ramka wędruje przez ISO-TP — callback onTpMessage wywoła się
+    // gdy payload będzie kompletny (SF od razu, multi-frame po ostatnim CF)
+    m_tpLayer.processFrame(frame);
+}
+
+void UdsWidget::onTpMessage(const CanTpMessage &msg) {
+    if (!msg.complete || msg.payload.empty()) return;
+
+    bool multi = msg.payload.size() > 7;  // SF ≤ 7 bajtów
+    UdsFrame uf = UdsFrame::fromPayload(
+        msg.payload.data(),
+        static_cast<int>(msg.payload.size()),
+        msg.canId,
+        msg.timestamp,
+        multi
+    );
+
+    if (uf.type == UdsFrame::Unknown) return;
 
     // Filtr SID
     if (m_filterEnabled->isChecked()) {
-        QVariant data = m_sidFilter->currentData();
-        if (data.isValid() && data.toUInt() != 0xFFFF) {
-            if (uf.sid != data.toUInt()) return;
+        QVariant fdata = m_sidFilter->currentData();
+        if (fdata.isValid() && fdata.toUInt() != 0xFFFF) {
+            if (uf.sid != fdata.toUInt()) return;
         }
     }
 
     m_model->addFrame(uf);
     m_statusLabel->setText(QString("Ramki UDS: %1").arg(m_model->rowCount()));
+}
+
+void UdsWidget::purgeTimedOutSessions() {
+    uint64_t nowUs = static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch()) * 1000ULL;
+    m_tpLayer.purgeTimedOut(nowUs, 2'000'000ULL);  // 2s timeout na sesję
 }
 
 void UdsWidget::onRowSelected(const QModelIndex &idx) {
@@ -189,6 +226,14 @@ void UdsWidget::onRowSelected(const QModelIndex &idx) {
         if (f.did) lines.append(QString("<span style='color:#00ffaa;'>DID:</span> %1").arg(m_parser.didName(f.did)));
         QString dec = UdsParser::decodeResponseData(f.sid, f.data.data(), f.dlc);
         lines.append(QString("<span style='color:#ffaa00;'>Dane:</span> %1").arg(dec));
+        if (f.multiFrame) {
+            // Pokaż pełny payload hex dla multi-frame
+            QString hex;
+            for (int i = 0; i < f.dlc; ++i)
+                hex += QString("%1 ").arg(f.data[i], 2, 16, QChar('0')).toUpper();
+            lines.append(QString("<span style='color:#66aaff;'>Pełny payload (%1 B):</span><br><tt>%2</tt>")
+                .arg(f.dlc).arg(hex.trimmed()));
+        }
     }
 
     if (f.type == UdsFrame::NegativeResponse) {

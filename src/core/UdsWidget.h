@@ -5,10 +5,12 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QTimer>
 #include <QAbstractTableModel>
 #include <QVector>
 #include "UdsFrame.h"
 #include "UdsParser.h"
+#include "CanTpLayer.h"
 
 class UdsTableModel : public QAbstractTableModel {
     Q_OBJECT
@@ -41,15 +43,21 @@ public slots:
     void processFrame(const CanFrame &frame);
     void onRowSelected(const QModelIndex &idx);
 
+private slots:
+    void purgeTimedOutSessions();
+
 private:
     void setupUi();
+    void onTpMessage(const CanTpMessage &msg);
 
-    UdsParser m_parser;
-    UdsTableModel *m_model;
-    QTableView *m_table;
-    QComboBox *m_sidFilter;
-    QCheckBox *m_filterEnabled;
-    QPushButton *m_clearBtn;
-    QLabel *m_statusLabel;
-    QLabel *m_detailLabel;
+    UdsParser     m_parser;
+    CanTpLayer    m_tpLayer;
+    QTimer        m_purgeTimer;
+    UdsTableModel *m_model      = nullptr;
+    QTableView    *m_table      = nullptr;
+    QComboBox     *m_sidFilter  = nullptr;
+    QCheckBox     *m_filterEnabled = nullptr;
+    QPushButton   *m_clearBtn   = nullptr;
+    QLabel        *m_statusLabel = nullptr;
+    QLabel        *m_detailLabel = nullptr;
 };

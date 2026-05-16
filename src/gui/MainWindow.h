@@ -51,6 +51,7 @@
 #include "core/CanAlertWidget.h"
 #include "core/CanProtocolTimelineWidget.h"
 #include "core/CanByteHeatmapWidget.h"
+#include "core/CanSignalTrendWidget.h"
 #include "core/ArxmlParser.h"
 #include "core/CanModuleProfilerWidget.h"
 #include "core/CanPrototypeExporterWidget.h"
@@ -162,6 +163,7 @@ private:
     CanAlertWidget               *m_alertWidget;
     CanProtocolTimelineWidget    *m_timelineWidget;
     CanByteHeatmapWidget         *m_heatmapWidget;
+    CanSignalTrendWidget         *m_signalTrendWidget;
     CanModuleProfilerWidget      *m_moduleProfilerWidget  = nullptr;
     CanPrototypeExporterWidget   *m_protoExporterWidget   = nullptr;
     CanExporter                  *m_canExporter           = nullptr;

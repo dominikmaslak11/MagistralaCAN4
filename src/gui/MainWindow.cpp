@@ -113,7 +113,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_alertWidget          = new CanAlertWidget;
     m_alertWidget->setScorer([this]() { return m_learner->scoreLatestWindow(); });
     m_timelineWidget       = new CanProtocolTimelineWidget;
-    m_heatmapWidget          = new CanByteHeatmapWidget;
+    m_heatmapWidget        = new CanByteHeatmapWidget;
+    m_signalTrendWidget    = new CanSignalTrendWidget;
     m_moduleProfilerWidget   = new CanModuleProfilerWidget(&m_sniffer, this);
     m_moduleProfilerWidget->setAlertEngine(m_alertWidget->engine());
     m_protoExporterWidget    = new CanPrototypeExporterWidget(this);
@@ -250,6 +251,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             [this](const CanFrame &f) { m_timelineWidget->processFrame(f); });
     connect(this, &MainWindow::frameProcessedThrottled, m_heatmapWidget,
             [this](const CanFrame &f) { m_heatmapWidget->processFrame(f); });
+    connect(this, &MainWindow::frameProcessedThrottled, m_signalTrendWidget,
+            [this](const CanFrame &f) { m_signalTrendWidget->processFrame(f); });
     connect(this, &MainWindow::frameProcessed, m_moduleProfilerWidget,
             [this](const CanFrame &f) { m_moduleProfilerWidget->onFrame(f); });
     connect(this, &MainWindow::frameProcessed, m_protoExporterWidget,
@@ -307,6 +310,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_signalMonitorWidget->setDbc(parser);
         m_timelineWidget->setDbcParser(parser);
         m_heatmapWidget->setDbcParser(parser);
+        m_signalTrendWidget->setDbcParser(parser);
         m_protoExporterWidget->setDbcParser(const_cast<DbcParser*>(parser));
         m_customDashboard->setDbcParser(parser);
         m_signalStatsWidget->setDbcParser(parser);
@@ -588,6 +592,7 @@ void MainWindow::loadDbcFile() {
         m_signalMonitorWidget->setDbc(&m_dbcParser);
         m_timelineWidget->setDbcParser(&m_dbcParser);
         m_heatmapWidget->setDbcParser(&m_dbcParser);
+        m_signalTrendWidget->setDbcParser(&m_dbcParser);
         m_protoExporterWidget->setDbcParser(&m_dbcParser);
         m_customDashboard->setDbcParser(&m_dbcParser);
         m_signalStatsWidget->setDbcParser(&m_dbcParser);
@@ -635,6 +640,7 @@ void MainWindow::loadArxmlFile() {
     m_signalMonitorWidget->setDbc(&m_dbcParser);
     m_timelineWidget->setDbcParser(&m_dbcParser);
     m_heatmapWidget->setDbcParser(&m_dbcParser);
+    m_signalTrendWidget->setDbcParser(&m_dbcParser);
     m_protoExporterWidget->setDbcParser(&m_dbcParser);
     m_customDashboard->setDbcParser(&m_dbcParser);
     m_signalStatsWidget->setDbcParser(&m_dbcParser);
@@ -797,6 +803,7 @@ void MainWindow::setupCentralWidget() {
     captureTabs->addTab(m_observationDbWidget,  "Frame DB");
     captureTabs->addTab(m_heatmapWidget,        "Byte Heatmap");
     captureTabs->addTab(m_timelineWidget,       "Timeline");
+    captureTabs->addTab(m_signalTrendWidget,    "Trend sygnałów");
 
     // ── Grupa: Protokoły (lazy — parsery tworzone przy pierwszym otwarciu zakładki) ──
     auto *protocolTabs = new LazyTabWidget;
@@ -1263,6 +1270,7 @@ void MainWindow::updateMruMenus() {
                         m_signalMonitorWidget->setDbc(&m_dbcParser);
                         m_timelineWidget->setDbcParser(&m_dbcParser);
                         m_heatmapWidget->setDbcParser(&m_dbcParser);
+                        m_signalTrendWidget->setDbcParser(&m_dbcParser);
                         m_protoExporterWidget->setDbcParser(&m_dbcParser);
                         m_customDashboard->setDbcParser(&m_dbcParser);
                         m_signalStatsWidget->setDbcParser(&m_dbcParser);

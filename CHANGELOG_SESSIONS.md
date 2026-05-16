@@ -5,6 +5,191 @@ Aktualny stan projektu i roadmapa → `SESSION_PROMPT.md`.
 
 ---
 
+## Sesja 2026-05-16b: esp_slcan_relay v2 (modernizacja) + ICSim bridge
+
+### Firmware v2: `esp_slcan_relay\esp_slcan_relay.ino`
+Gruntowna modernizacja firmware — 9 zaawansowanych funkcji.
+
+#### Nowe struktury
+- `RelayRule`: canId, isExtended, byteIndex, bitMask, watchdogMs, debounceMs, mode (LATCH/PULSE), pulseMs, minOnMs, bootState (BOOT_ON/BOOT_OFF)
+- `RelayState`: current, watchdogArmed, lastMatchMs, lastChangeMs, inPulse, pulseEndMs, onSinceMs
+- `StatusConfig`: canId, isExtended — domyślnie STD 0x7FF
+- `HeartbeatConfig`: canId=0 (wyłączony), isExtended, intervalMs=1000
+
+#### Nowe funkcje
+| Funkcja | Opis |
+|---------|------|
+| `checkWatchdogs()` | force-OFF jeśli brak pasującej ramki przez watchdogMs |
+| `checkPulses()` | auto-OFF po pulseMs w trybie PULSE |
+| `checkHeartbeat()` | wyłączona — `canId=0`, urządzenie działa anonimowo |
+| `setRelayGpio(idx, state, force)` | debounce + minOnMs, chyba że force=true |
+| `applyRelayLogic(f)` | pasuje ramkę do reguł, obsługuje LATCH i PULSE |
+| `loadConfig()` / `saveConfig()` | NVS (Preferences) — przeżywa restart |
+| `printConfig()` | SHOWCONFIG — wydruk konfiguracji na serial |
+
+#### Komendy serial
+```
+SETRELAY <id> <canId_hex> <EXT|STD> <byte> <mask_hex> [wdog_ms] [dbnc_ms]
+SETMODE  <id> LATCH | PULSE <ms>
+SETMINON <id> <ms>
+SETBOOT  <id> ON | OFF
+SETSTATUS    <canId_hex> <EXT|STD> | SETSTATUS OFF
+SETHEARTBEAT <canId_hex> <EXT|STD> <ms> | SETHEARTBEAT OFF
+SAVECONFIG / SHOWCONFIG
+RELAY <id> <0|1|ON|OFF>
+STATUS
+```
+
+#### Testy (wszystkie zaliczone)
+- Watchdog: relay OFF po 5s braku ramki 0x1421003F ✓
+- Debounce 50ms: szybkie impulsy zignorowane ✓
+- NVS: konfiguracja przeżywa restart ESP32 ✓
+- Status frame: 0x7FF DLC=1 bitmapa po każdej zmianie stanu ✓
+- PULSE mode: relay ON na 500ms, potem auto-OFF ✓
+- MinOnMs: blokada wyłączenia przez n ms ✓
+- Boot state: relay startuje w zadanym stanie ✓
+- Heartbeat: wyłączony (canId=0), urządzenie anonimowe ✓
+
+#### Kompilacja / wgranie
+- Flash: 308 296 B (23%), RAM: 22 740 B (6%)
+- Wgrane na COM3 (ESP32-D0WD-V3 rev3.1, MAC 00:4b:12:9a:1a:04) — 2026-05-16
+
+---
+
+### ICSim → MagistralaCAN4 bridge
+
+#### Architektura
+```
+ICSim icsim_imgui.exe
+  ↕ UDP multicast (239.255.x.x)
+magistrala_bridge.exe (WebSocket serwer :9001)
+  ↕ ws://127.0.0.1:9001
+MagistralaCAN4 RemoteCanClient
+  ↓
+CanSniffer → CanFrameModel (Ruch CAN) + AssociativeLearner
+```
+
+#### Pliki
+- `E:\ICSim\magistrala_bridge.c` — WebSocket serwer, JSON protocol, CAN injection
+- `E:\ICSim\builddir\magistrala_bridge.exe` — skompilowany 16.05.2026 20:30
+- `E:\ICSim\run_windows_magistrala.ps1` — start script (builddir domyślny jest poprawny)
+
+#### Uruchomienie
+```powershell
+cd E:\ICSim
+.\run_windows_magistrala.ps1           # start bridge + dashboard + controls + MagistralaCAN4
+.\run_windows_magistrala.ps1 -NoNoise  # bez szumu CAN
+```
+
+#### Podłączenie MagistralaCAN4
+- Zakładka "Zdalny CAN" → Klient
+- URL: `ws://127.0.0.1:9001`, Token: `icsim` (dowolny)
+- Ramki ICSim pojawiają się w "Ruch CAN" i uczeniu asocjacyjnym
+
+---
+
+## Sesja 2026-05-16: esp_slcan_relay firmware — SLCAN + relay control
+
+### Nowy plik: `esp_slcan_relay\esp_slcan_relay.ino`
+Firmware SLCAN z logiką przekaźnikową — alternatywa dla GVRET (`esp_mcp.ino`).
+
+### Protokół SLCAN (Lawicel)
+- Detekcja MagistralaCAN4: `V\r` → `V1010\r` ✓
+- Odbiór EXT: `T<8hexID><DLC><data>\r` | STD: `t<3hexID><DLC><data>\r`
+- Komendy: S0-S8, O, L, C, V, N, F, Z, t, T + RELAY, STATUS
+
+### Logika przekaźnika (identyczna jak `esp_mcp.ino`)
+- `applyRelayLogic()`: EXT `0x1421003F`, `data[1]` bit 0 → relay 0 ON/OFF
+- Wywoływana: CAN RX + TX przez 't'/'T' komendy SLCAN
+
+### Bezpieczeństwo komend RELAY vs SLCAN 'R'
+- SLCAN RTR to `R` + hex cyfry (0-9, A-F); "RELAY" to `R` + `E` → nigdy kolizja
+
+### Testy (PCAN + PowerShell SerialPort)
+```
+V          → V1010                              detekcja SLCAN ✓
+0x1421003F 0x00 → T1421003F80000000000000000   relay OFF ✓
+0x1421003F 0x01 → T1421003F80001000000000000   relay ON  ✓
+0x123 DEADBEEF  → t1234DEADBEEF                STD frame ✓
+```
+
+### Bugfix (ta sama sesja)
+- **Błąd**: `loop()` czytał CAN tylko gdy `channelOpen == true` → relay nie reagował bez otwartego kanału SLCAN
+- **Naprawa**: MCP2515 czyta ramki zawsze; `sendSlcanFrame()` tylko gdy `channelOpen`; `applyRelayLogic()` zawsze
+- **Test potwierdzający**: 5× ON/OFF na przemian przez PCAN → przekaźnik kliknął 10 razy ✓
+
+### Kompilacja / wgranie
+- Rozmiar: 295 484 B Flash (22%), 22 364 B RAM (6%)
+- Wgrane na COM3, 2026-05-16
+
+---
+
+## Sesja 2026-05-15: esp_mcp firmware — GVRET + relay control (produkcyjny)
+
+### Cel
+Połączenie firmware GVRET (`esp_gvret.ino`) z logiką przekaźnikową (`esp_mcp.ino`) w jeden plik produkcyjny.
+
+### Zmiany w `esp_mcp\esp_mcp.ino`
+- Dodany pełny protokół GVRET binary: ring buffer 512 B, `sendFrameToPC()`, `sendDeviceInfo()`, `processGVRET()`
+- Nowa funkcja `applyRelayLogic()`: EXT `0x1421003F`, `data[1]` bit 0 → przekaźnik 0 ON/OFF
+  - Wywoływana przy: fizycznym RX z magistrali + CMD_FRAME_IN (TX z MagistralaCAN4) + ASCII `TX`/`SIM`
+- Dual-parser pętla: każdy bajt serial → ring buffer (GVRET) + ASCII bufor równoległy
+- Zachowane ASCII komendy: `RELAY`, `STATUS`, `TX`, `SIM`, `BAUD`, `HELP`
+- Usunięte: `printCanFrame()` (zastąpione przez `sendFrameToPC()`), `handleCanRx()`-z-ASCII
+- HW version w `sendDeviceInfo()` zmienione na `"ESP32-MCP2515-RELAY"`
+
+### Test (PCAN → GVRET → relay)
+```
+PCAN TX: EXT 0x1421003F  data=00 01 00 00 00 00 00 00  →  relay 0 ON   ✓
+PCAN TX: EXT 0x1421003F  data=00 00 00 00 00 00 00 00  →  relay 0 OFF  ✓
+PCAN TX: EXT 0x1421003F  data=00 01 00 00 00 00 00 00  →  relay 0 ON   ✓
+PCAN TX: EXT 0x1421003F  data=00 00 00 00 00 00 00 00  →  relay 0 OFF  ✓
+```
+Ramki widoczne w MagistralaCAN4 (COM3 [GVRET-ESP32]). Przekaźnik fizycznie klikał.
+
+### Dane kompilacji / wgrania
+- Rozmiar: 296 908 B Flash (22%), 22 812 B RAM (6%)
+- FQBN: `esp32:esp32:esp32`, arduino-cli v1.4.1
+- Wgrane na COM3 (ESP32-D0WD-V3 rev3.1, MAC 00:4b:12:9a:1a:04), 2026-05-15
+- Firmware do wgrania jutro na urządzenie docelowe w maszynie: ten sam `esp_mcp\esp_mcp.ino`
+
+### Komendy do wgrania na nowe urządzenie (jutro)
+```powershell
+$cli  = "E:\MagistralaCAN4\esp_mcp\.tools\arduino-cli\arduino-cli.exe"
+$data = "E:\MagistralaCAN4\esp_mcp\.tools\arduino-data"
+$sketch = "E:\MagistralaCAN4\esp_mcp"
+# Kompilacja (build/ już istnieje, można pominąć):
+# & $cli compile --fqbn esp32:esp32:esp32 --config-dir $data --build-path "$sketch\build" $sketch
+# Wgranie (zmień COMx na właściwy port):
+& $cli upload --fqbn esp32:esp32:esp32 --config-dir $data --build-path "$sketch\build" --port COMx $sketch
+```
+
+---
+
+## Sesja 2026-05-15: GvretDriver weryfikacja end-to-end (PCAN ↔ GVRET loopback)
+
+### Cel
+Weryfikacja kompletnej komunikacji dwukierunkowej: ESP32+MCP2515+SN65HVD230 (GVRET) ↔ PEAK PCAN USB.
+
+### Wyniki testów
+- **GVRET TX → PCAN RX**: potwierdzone wcześniej (ID 0x123, 0x456 odebrane przez PCAN)
+- **PCAN TX → GVRET RX**: potwierdzone w tej sesji — wszystkie 6 ramek widoczne w MagistralaCAN4:
+  - STD: `0x7AB`, `0x1A2`, `0x3C4`, `0x5D6`, `0x7E8` (dane: 11 22 33 44 55 66 77 88)
+  - EXT: `0x1FFFF777` (dane: DE AD BE EF)
+- **SN65HVD230 (3.3V) + MCP2515 (5V)**: bez problemu — wcześniejsza hipoteza o niezgodności napięć okazała się niepotrzebna
+- **Wcześniejszy "brak ramek"**: spowodowany brakiem ruchu na fizycznej magistrali, nie usterką sprzętową
+
+### Metoda testu
+PowerShell P/Invoke (`Add-Type` C# wrapper) → `PCANBasic.dll` (`C:\Windows\System32\PCANBasic.dll`):
+- `CAN_Initialize(0x51, 0x011C, 0, 0, 0)` — PCAN_USBBUS1, 250K
+- `CAN_Write()` × 6 — STD + EXT frames
+- `CAN_Uninitialize(0x51)`
+
+### Status GvretDriver
+`GvretDriver` w pełni sprawny — obie kierunki RX/TX działają poprawnie na fizycznej magistrali CAN.
+
+---
+
 ## Sesja 2026-05-15: LogComparatorWidget modernizacja + commit/push porządkujący (part 17)
 
 ### Porównanie lokalnie vs GitHub
