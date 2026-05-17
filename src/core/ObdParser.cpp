@@ -1,4 +1,46 @@
 #include "ObdFrame.h"
+#include <QByteArray>
+#include <QtGlobal>
+
+ObdFrame ObdFrame::fromPayload(uint32_t canId, uint64_t ts, const QByteArray &payload) {
+    ObdFrame o;
+    o.canId    = canId;
+    o.timestamp = ts;
+
+    if (payload.isEmpty())
+        return o;
+
+    // Mirror the single-frame layout that parseDtcs() and decodePidValue() expect:
+    //   data[0] = payload length (fake ISO-TP byte)
+    //   data[1] = mode byte (or mode+0x40 for responses)
+    //   data[2..] = remaining payload
+    // This keeps all downstream parsers compatible without modification.
+    int payLen = qMin(payload.size(), 63); // 63 so total <= 64 with header byte
+    o.len = static_cast<uint8_t>(payLen);
+    o.dlc = static_cast<uint8_t>(payLen + 1);
+    o.data[0] = o.len;
+    for (int i = 0; i < payLen; ++i)
+        o.data[i + 1] = static_cast<uint8_t>(payload.at(i));
+
+    bool isRespId = (canId >= 0x7E8 && canId <= 0x7EF);
+    bool isReqId  = (canId == 0x7DF) || (canId >= 0x7E0 && canId <= 0x7E7);
+    if (!isReqId && !isRespId)
+        return o;
+
+    uint8_t b0 = static_cast<uint8_t>(payload.at(0));
+    if (b0 >= 0x41 && b0 <= 0x4A) {
+        o.type = Response;
+        o.mode = b0 - 0x40;
+    } else if (b0 >= 0x01 && b0 <= 0x0A) {
+        o.type = Request;
+        o.mode = b0;
+    }
+
+    if (payload.size() >= 2)
+        o.pid = static_cast<uint8_t>(payload.at(1));
+
+    return o;
+}
 
 ObdFrame ObdFrame::fromCanFrame(const CanFrame &frame) {
     ObdFrame o;

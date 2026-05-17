@@ -129,6 +129,7 @@ set(SOURCES
     src/core/CanOpenWidget.cpp
     src/core/ObdParser.cpp
     src/core/ObdWidget.cpp
+    src/core/IsoTpReassembler.cpp
     src/core/CanRecorder.cpp
     src/core/MqttBridge.cpp
     src/core/Mdf4Writer.cpp
@@ -200,6 +201,7 @@ set(HEADERS
     src/core/CanOpenWidget.h
     src/core/ObdFrame.h
     src/core/ObdWidget.h
+    src/core/IsoTpReassembler.h
     src/core/CanRecorder.h
     src/core/MqttBridge.h
     src/core/Mdf4Writer.h
@@ -405,6 +407,7 @@ set(TEST_SOURCES
     src/core/MqttBridge.cpp
     src/core/CanOpenParser.cpp
     src/core/ObdParser.cpp
+    src/core/IsoTpReassembler.cpp
     src/core/CanNodeSimulator.cpp
     src/core/CanExporter.cpp
     src/core/CanPlayer.cpp

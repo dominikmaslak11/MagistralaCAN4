@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "core/ObdFrame.h"
+#include "core/IsoTpReassembler.h"
 
 // ── Helper ───────────────────────────────────────────────────
 
@@ -299,4 +300,171 @@ TEST(ObdParserTest, DecodeOilTemp_OneByte) {
     ObdParser p;
     const uint8_t data[] = {0x03, 0x41, 0x5C, 140};  // 140 - 40 = 100°C
     EXPECT_NEAR(p.decodePidValue(0x01, 0x5C, data, 4), 100.0, 0.01);
+}
+
+// ── IsoTpReassembler ─────────────────────────────────────────────────────────
+
+TEST(IsoTpTest, SingleFrame_ReturnsPayloadImmediately) {
+    IsoTpReassembler r;
+    // 7E8 04 41 0C 0F A0 — Mode 1 RPM response (single frame, len=4)
+    CanFrame f = makeRaw(0x7E8, {0x04, 0x41, 0x0C, 0x0F, 0xA0, 0x00, 0x00, 0x00});
+    IsoTpReassembler::Result out;
+    ASSERT_TRUE(r.feed(f, out));
+    EXPECT_EQ(out.canId, 0x7E8u);
+    ASSERT_EQ(out.payload.size(), 4);
+    EXPECT_EQ(static_cast<uint8_t>(out.payload[0]), 0x41u);
+    EXPECT_EQ(static_cast<uint8_t>(out.payload[1]), 0x0Cu);
+    EXPECT_EQ(static_cast<uint8_t>(out.payload[2]), 0x0Fu);
+    EXPECT_EQ(static_cast<uint8_t>(out.payload[3]), 0xA0u);
+}
+
+TEST(IsoTpTest, SingleFrame_NonObdId_Ignored) {
+    IsoTpReassembler r;
+    CanFrame f = makeRaw(0x200, {0x04, 0x41, 0x0C, 0x0F, 0xA0});
+    IsoTpReassembler::Result out;
+    EXPECT_FALSE(r.feed(f, out));
+}
+
+TEST(IsoTpTest, SingleFrame_ZeroLength_Ignored) {
+    IsoTpReassembler r;
+    CanFrame f = makeRaw(0x7E8, {0x00, 0x41, 0x0C});
+    IsoTpReassembler::Result out;
+    EXPECT_FALSE(r.feed(f, out));
+}
+
+TEST(IsoTpTest, MultiFrame_TwoFrames_ReassemblesCorrectly) {
+    // 4 DTCs: mode 03 payload = 1 (mode) + 8 (DTC bytes) = 9 bytes
+    // FF: len=0x0009, first 6 payload bytes [0x43, DTC1_H, DTC1_L, DTC2_H, DTC2_L, DTC3_H]
+    // CF: seq=1, next 3 bytes [DTC3_L, DTC4_H, DTC4_L] + padding
+    IsoTpReassembler r;
+    IsoTpReassembler::Result out;
+
+    CanFrame ff = makeRaw(0x7E8, {0x10, 0x09, 0x43, 0x03, 0x00, 0x01, 0x00, 0x02});
+    EXPECT_FALSE(r.feed(ff, out));
+
+    CanFrame cf = makeRaw(0x7E8, {0x21, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
+    ASSERT_TRUE(r.feed(cf, out));
+
+    EXPECT_EQ(out.canId, 0x7E8u);
+    ASSERT_EQ(out.payload.size(), 9);
+    EXPECT_EQ(static_cast<uint8_t>(out.payload[0]), 0x43u);   // mode 03 response
+    EXPECT_EQ(static_cast<uint8_t>(out.payload[1]), 0x03u);   // DTC1 high
+    EXPECT_EQ(static_cast<uint8_t>(out.payload[2]), 0x00u);   // DTC1 low → P0300
+}
+
+TEST(IsoTpTest, MultiFrame_SequenceError_AbandonedSession) {
+    IsoTpReassembler r;
+    IsoTpReassembler::Result out;
+
+    CanFrame ff = makeRaw(0x7E8, {0x10, 0x09, 0x43, 0x03, 0x00, 0x01, 0x00, 0x02});
+    EXPECT_FALSE(r.feed(ff, out));
+
+    // Wrong sequence (expect 0x21, send 0x22)
+    CanFrame bad = makeRaw(0x7E8, {0x22, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
+    EXPECT_FALSE(r.feed(bad, out));
+
+    // Correct sequence after error — session was abandoned
+    CanFrame cf = makeRaw(0x7E8, {0x21, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
+    EXPECT_FALSE(r.feed(cf, out));
+}
+
+TEST(IsoTpTest, MultiFrame_ConcurrentSessions_DifferentCanIds) {
+    IsoTpReassembler r;
+    IsoTpReassembler::Result out;
+
+    CanFrame ff1 = makeRaw(0x7E8, {0x10, 0x09, 0x43, 0x03, 0x00, 0x01, 0x00, 0x02});
+    CanFrame ff2 = makeRaw(0x7E9, {0x10, 0x09, 0x43, 0x05, 0x00, 0x06, 0x00, 0x07});
+    EXPECT_FALSE(r.feed(ff1, out));
+    EXPECT_FALSE(r.feed(ff2, out));
+
+    // Complete ECU 2 first
+    CanFrame cf2 = makeRaw(0x7E9, {0x21, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00});
+    ASSERT_TRUE(r.feed(cf2, out));
+    EXPECT_EQ(out.canId, 0x7E9u);
+
+    // Complete ECU 1
+    CanFrame cf1 = makeRaw(0x7E8, {0x21, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
+    ASSERT_TRUE(r.feed(cf1, out));
+    EXPECT_EQ(out.canId, 0x7E8u);
+}
+
+TEST(IsoTpTest, FlowControl_Ignored) {
+    IsoTpReassembler r;
+    IsoTpReassembler::Result out;
+    CanFrame fc = makeRaw(0x7E0, {0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
+    EXPECT_FALSE(r.feed(fc, out));
+}
+
+TEST(IsoTpTest, ResetAll_ClearsActiveSession) {
+    IsoTpReassembler r;
+    IsoTpReassembler::Result out;
+
+    CanFrame ff = makeRaw(0x7E8, {0x10, 0x09, 0x43, 0x03, 0x00, 0x01, 0x00, 0x02});
+    EXPECT_FALSE(r.feed(ff, out));
+
+    r.resetAll();
+
+    // Consecutive frame after reset should not produce output (no active session)
+    CanFrame cf = makeRaw(0x7E8, {0x21, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
+    EXPECT_FALSE(r.feed(cf, out));
+}
+
+// ── ObdFrame::fromPayload ─────────────────────────────────────────────────────
+
+TEST(IsoTpTest, FromPayload_ModeAndPidParsed) {
+    // Payload: [0x41, 0x0C, 0x0F, 0xA0] — Mode 1 RPM response
+    QByteArray payload = QByteArray::fromHex("410C0FA0");
+    ObdFrame f = ObdFrame::fromPayload(0x7E8, 12345, payload);
+    EXPECT_EQ(f.type, ObdFrame::Response);
+    EXPECT_EQ(f.mode, 0x01u);
+    EXPECT_EQ(f.pid, 0x0Cu);
+    EXPECT_EQ(f.canId, 0x7E8u);
+    EXPECT_EQ(f.timestamp, 12345u);
+}
+
+TEST(IsoTpTest, FromPayload_DecodePidValue_Correct) {
+    // RPM = (0x0F * 256 + 0xA0) * 0.25 = 1000 rpm
+    QByteArray payload = QByteArray::fromHex("410C0FA0");
+    ObdFrame f = ObdFrame::fromPayload(0x7E8, 0, payload);
+    ObdParser p;
+    double rpm = p.decodePidValue(f.mode, f.pid, f.data.data(), f.dlc);
+    EXPECT_NEAR(rpm, 1000.0, 0.01);
+}
+
+TEST(IsoTpTest, FromPayload_DtcParsing_FourDtcs) {
+    // Mode 03 response with 4 DTCs: 0x0300, 0x0100, 0x0200, 0x0400
+    // payload: [0x43, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x04, 0x00]
+    QByteArray payload = QByteArray::fromHex("430300010002000400");
+    ObdFrame f = ObdFrame::fromPayload(0x7E8, 0, payload);
+    EXPECT_EQ(f.mode, 0x03u);
+    EXPECT_EQ(f.type, ObdFrame::Response);
+    ObdParser p;
+    QStringList dtcs = p.parseDtcs(f);
+    ASSERT_EQ(dtcs.size(), 4);
+    EXPECT_EQ(dtcs[0], "P0300");
+    EXPECT_EQ(dtcs[1], "P0100");
+    EXPECT_EQ(dtcs[2], "P0200");
+    EXPECT_EQ(dtcs[3], "P0400");
+}
+
+TEST(IsoTpTest, FromPayload_NonObdId_TypeUnknown) {
+    QByteArray payload = QByteArray::fromHex("410C0FA0");
+    ObdFrame f = ObdFrame::fromPayload(0x200, 0, payload);
+    EXPECT_EQ(f.type, ObdFrame::Unknown);
+}
+
+TEST(IsoTpTest, SingleFrameThenFromPayload_RoundTripRpm) {
+    // Full pipeline: CAN frame → reassembler → fromPayload → decodePidValue
+    IsoTpReassembler r;
+    IsoTpReassembler::Result res;
+    CanFrame f = makeRaw(0x7E8, {0x04, 0x41, 0x0C, 0x1F, 0x40, 0x00, 0x00, 0x00});
+    ASSERT_TRUE(r.feed(f, res));
+
+    ObdFrame of = ObdFrame::fromPayload(res.canId, res.timestamp, res.payload);
+    EXPECT_EQ(of.mode, 0x01u);
+    EXPECT_EQ(of.pid, 0x0Cu);
+
+    // RPM = (0x1F*256 + 0x40) * 0.25 = (7936 + 64) * 0.25 = 2000 rpm
+    ObdParser p;
+    EXPECT_NEAR(p.decodePidValue(of.mode, of.pid, of.data.data(), of.dlc), 2000.0, 0.01);
 }

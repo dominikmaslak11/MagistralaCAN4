@@ -19,6 +19,11 @@ struct ObdFrame {
 
     static ObdFrame fromCanFrame(const CanFrame &frame);
     static bool isObd(const CanFrame &frame);
+
+    // Build an ObdFrame from a fully reassembled ISO-TP payload (starts at the
+    // OBD mode byte — no ISO-TP framing). Used by IsoTpReassembler output.
+    static ObdFrame fromPayload(uint32_t canId, uint64_t timestamp,
+                                const QByteArray &payload);
     QString toString() const;
 };
 
