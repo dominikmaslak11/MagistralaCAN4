@@ -5,6 +5,47 @@ Aktualny stan projektu i roadmapa → `SESSION_PROMPT.md`.
 
 ---
 
+## Sesja 2026-05-17: ISO-TP multi-frame reassembly + OBD PID arc gauges (part 24)
+
+### Nowe pliki
+- `src/core/IsoTpReassembler.h/cpp` — pełna implementacja ISO 15765-2 receive-side state machine
+
+### Architektura IsoTpReassembler
+```
+CanFrame (OBD ID) → feed()
+  ├── PCI[7:4] = 0x0 (Single Frame)   → Result od razu, payload = data[1..len]
+  ├── PCI[7:4] = 0x1 (First Frame)    → otwiera Session, buforuje data[2..7]
+  ├── PCI[7:4] = 0x2 (Consecutive)    → dołącza do Session, zwraca Result gdy buf.size() >= totalLen
+  └── PCI[7:4] = 0x3 (Flow Control)   → ignorowane
+```
+
+### ObdFrame::fromPayload
+Nowa metoda statyczna. Konwertuje payload IsoTpReassembler (zaczyna od bajtu mode) na ObdFrame kompatybilny z istniejącymi `parseDtcs()` i `decodePidValue()` przez symulowanie layoutu single-frame:
+```
+payload: [0x43, DTC1_H, DTC1_L, ...]
+                 ↓
+data:    [len, 0x43, DTC1_H, DTC1_L, ...]   ← fake ISO-TP header byte
+```
+
+### ObdWidget — zmiany
+- `processFrame()` → IsoTpReassembler → fromPayload (zastąpienie fromCanFrame)
+- DTC table: +kolumna "Źródło" (Stored/Pending/Permanent)
+- Tab "Wskaźniki" z 6 × ObdGauge (siatka 3×2)
+
+### ObdGauge — styl wizualny
+- Łuk QPainter: `drawArc(rect, 225*16, -t*270*16)` (od SW przez S do SE)
+- Track: `QColor(0x2A, 0x2A, 0x3C)`, grubość 9px, FlatCap
+- Fill: zielony/pomarańczowy/czerwony na podstawie `t = (v - min)/(max - min)`
+- Tekst wartości (14pt bold), jednostka (8pt), nazwa PID (8pt bold pink)
+
+### Testy
++13 IsoTpTest: 51 testów razem (ObdParserTest + IsoTpTest), wszystkie PASSED
+
+### Commit
+`ae34400 feat: ISO-TP multi-frame reassembly + OBD PID arc gauges (part 24)`
+
+---
+
 ## Sesja 2026-05-16b: esp_slcan_relay v2 (modernizacja) + ICSim bridge
 
 ### Firmware v2: `esp_slcan_relay\esp_slcan_relay.ino`

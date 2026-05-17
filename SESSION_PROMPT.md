@@ -36,7 +36,36 @@ Zaawansowany analizator magistrali CAN z GUI Qt6, uczeniem maszynowym i obsług�
 | `CanSignalStatisticsWidget` | Statystyki DBC: min/max/mean/σ/CV%/histogram, filtr, CSV export, auto-refresh 2s |
 | `CanBusHealthWidget` | Monitor błędów magistrali (10 klas SocketCAN, BUS-OFF alert, rate) + Walidator liczników AUTOSAR |
 
-## Ostatnia sesja — 2026-05-16: esp_slcan_relay v2 (modernizacja) + ICSim bridge
+## Ostatnia sesja — 2026-05-17: ISO-TP reassembly + OBD PID gauges (part 24)
+
+### IsoTpReassembler (`src/core/IsoTpReassembler.h/cpp`)
+- Klasa pełniąca rolę state machine ISO 15765-2: Single Frame → natychmiastowy wynik, First Frame + Consecutive Frame → reassembly per CAN ID
+- `QHash<uint32_t, Session>` — niezależne sesje dla każdego ID ECU
+- Błąd sekwencji → `active=false`, porzucenie sesji
+- Flow Control (0x3x) ignorowany (odbiorca nie musi ich wysyłać)
+- `resetAll()` / `reset(canId)` — czyszczenie stanu po "Wyczyść"
+
+### ObdFrame::fromPayload (nowa metoda statyczna)
+- Przetwarza payload po reassembly (payload[0] = mode/mode+0x40)
+- Symuluje layout single-frame (`data[0]` = fake ISO-TP len) → `parseDtcs()` i `decodePidValue()` bez zmian
+- Payloady > 63 bajtów obcięte (limit `data[64]`) → max ~31 DTCs, wystarczające w praktyce
+
+### ObdWidget refaktoring
+- `processFrame()` → `IsoTpReassembler::feed()` → `ObdFrame::fromPayload()` — jeden spójny pipeline
+- Zakładka "Kody DTC" — dodana kolumna "Źródło" (Stored / Pending / Permanent)
+- **Nowa zakładka "Wskaźniki"** — 6 wskaźników `ObdGauge` w siatce 3×2:
+  - Engine RPM (0–8000 rpm), Vehicle Speed (0–260 km/h), Coolant Temp (−40–215°C)
+  - Engine Load (0–100%), Throttle (0–100%), MAF Air Flow (0–200 g/s)
+
+### ObdGauge (nowa klasa widgetu)
+- Łuk 270° (od 7:30 do 4:30 przez dół) — styl speedometra
+- Kolory: zielony < 65% → pomarańczowy < 85% → czerwony ≥ 85%
+- "--" gdy brak danych; nazwa PID na dole, wartość i jednostka w centrum
+
+### Testy: +13 IsoTpTest (51 razem, wszystkie zielone)
+- SF/FF/CF reassembly, błąd sekwencji, jednoczesne sesje dla różnych ECU, Flow Control, resetAll, fromPayload z DTCs i PIDs
+
+## Poprzednia sesja — 2026-05-16: esp_slcan_relay v2 (modernizacja) + ICSim bridge
 
 ### Firmware v2: `esp_slcan_relay\esp_slcan_relay.ino` (finalna wersja)
 - **Protokół**: Lawicel SLCAN ASCII — kompatybilny z MagistralaCAN4 `SlCanDriver` i SavvyCAN
@@ -172,7 +201,7 @@ Fix kompilacji GCC 15 / Qt 6.10 na Kali Linux:
 2. ~~**LogComparatorWidget**~~ — DONE (part 17): tryb per-ID + podświetlenie bajtów + bugfix parsera
 3. ~~**MqttBridge**~~ — DONE (part 18): natywny klient TCP MQTT 3.1.1, bez mosquitto_pub
 4. ~~**CanOpenWidget heartbeat**~~ — DONE (part 18): monitor węzłów, SDO decode, filtr węzła
-5. **ObdWidget rozszerzenia** — DTC decode (Mode 3/7/0A), multi-frame ISO-TP reassembly, PID gauge
+5. ~~**ObdWidget rozszerzenia**~~ — DONE (part 24): ISO-TP multi-frame reassembly + PID arc gauges
 6. **CanNodeSimulator testy integracyjne** — skomplikowany komponent, słabo pokryty testami
 7. **GvretDriver testy** — unit testy parsera pakietów + writeFrame
 
