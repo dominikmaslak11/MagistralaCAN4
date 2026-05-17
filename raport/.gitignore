@@ -1,0 +1,13 @@
+# LaTeX artifacts
+*.aux
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Pliki tymczasowe / podgląd
+page1_title.png

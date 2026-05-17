@@ -1,0 +1,2451 @@
+% ============================================================
+%  Raport z projektu: MagistralaCAN4
+%  Kompilacja: pdflatex raport_magistrala.tex  (2x dla ToC)
+% ============================================================
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\AtBeginDocument{\shorthandoff{"}}
+\setlength{\emergencystretch}{2.5em}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage[
+  colorlinks=true,
+  linkcolor=canblue,
+  urlcolor=canblue!80!black,
+  citecolor=cangreen,
+  pdfpagemode=UseOutlines,
+  pdftitle={MagistralaCAN4 v2.1.0 --- Dokumentacja projektu},
+  pdfauthor={Dominik Maślak},
+  pdfsubject={Analizator magistrali CAN z silnikiem uczenia asocjacyjnego},
+  pdfkeywords={CAN, Qt6, C++17, magistrala, diagnostyka, uczenie maszynowe, PCAN, SLCAN, ESP32}
+]{hyperref}
+\usepackage{pdflscape}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, decorations.pathreplacing,
+                backgrounds, calc, shadows, matrix, chains}
+
+% -- Geometria i interlinia -------------------------------------
+\geometry{
+  a4paper,
+  top=2.5cm, bottom=2.5cm,
+  left=2.5cm, right=2.5cm,
+  headheight=14pt
+}
+\setstretch{1.15}
+\setlength{\parskip}{6pt}
+
+% -- Styl nagłówka/stopki ---------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small MagistralaCAN4 --- Raport z projektu}
+\lhead{\small Dominik Maślak}
+\rfoot{\small Strona \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% -- Podpisy tabel (nad) i rysunków (pod) ----------------------
+\captionsetup[table]{position=above, font={small,rm}, labelfont=bf,
+              justification=centering, skip=4pt}
+\captionsetup[figure]{position=below, font={small,rm}, labelfont=bf,
+              justification=centering, skip=4pt}
+
+% -- Styl listingów kodu ----------------------------------------
+\lstdefinestyle{cpp}{
+  language=C++,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{gray!80}\itshape,
+  stringstyle=\color{orange!80!black},
+  numbers=left, numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  frame=single, framerule=0.4pt,
+  rulecolor=\color{canblue!40},
+  backgroundcolor=\color{blue!3},
+  breaklines=true,
+  breakatwhitespace=false,
+  tabsize=4,
+  showstringspaces=false,
+  xleftmargin=1.2em,
+  xrightmargin=0.5em
+}
+
+% -- Kolory TikZ -----------------------------------------------
+\definecolor{canblue}{RGB}{30,100,180}
+\definecolor{cangreen}{RGB}{30,150,80}
+\definecolor{canorange}{RGB}{220,100,20}
+\definecolor{canred}{RGB}{180,40,40}
+\definecolor{cangray}{RGB}{120,120,140}
+\definecolor{canpurple}{RGB}{100,40,160}
+\definecolor{canyellow}{RGB}{200,160,0}
+\definecolor{lightblue}{RGB}{220,235,255}
+\definecolor{lightgreen}{RGB}{220,245,220}
+\definecolor{lightorange}{RGB}{255,240,220}
+\definecolor{lightgray}{RGB}{245,245,245}
+
+% -- Styl bloków TikZ ------------------------------------------
+\tikzstyle{block}=[rectangle, rounded corners=4pt, draw=canblue, fill=lightblue,
+                   text width=3.5cm, minimum height=0.9cm, align=center,
+                   font=\small, drop shadow]
+\tikzstyle{blockG}=[rectangle, rounded corners=4pt, draw=cangreen, fill=lightgreen,
+                    text width=3.2cm, minimum height=0.9cm, align=center,
+                    font=\small, drop shadow]
+\tikzstyle{blockO}=[rectangle, rounded corners=4pt, draw=canorange, fill=lightorange,
+                    text width=3.2cm, minimum height=0.9cm, align=center,
+                    font=\small, drop shadow]
+\tikzstyle{blockR}=[rectangle, rounded corners=4pt, draw=canred, fill={red!10},
+                    text width=3.2cm, minimum height=0.9cm, align=center,
+                    font=\small, drop shadow]
+\tikzstyle{blockW}=[rectangle, rounded corners=4pt, draw=cangray, fill=lightgray,
+                    text width=3.0cm, minimum height=0.9cm, align=center,
+                    font=\small, drop shadow]
+\tikzstyle{arrow}=[-Stealth, thick, canblue]
+\tikzstyle{arrowG}=[-Stealth, thick, cangreen]
+\tikzstyle{arrowO}=[-Stealth, thick, canorange]
+\tikzstyle{arrowR}=[-Stealth, thick, canred, dashed]
+
+% -- Styl nagłówków sekcji (kolorowe, z linią) -----------------
+\titleformat{\section}
+  {\Large\bfseries\color{canblue}}
+  {\thesection}{1em}{}
+  [\color{canblue!50}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries\color{canblue!70!black}}
+  {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{cangray!80!black}}
+  {\thesubsubsection}{1em}{}
+
+% -- Odstępy sekcji -----------------------------------------------
+\titlespacing{\section}{0pt}{16pt plus 2pt minus 1pt}{6pt plus 1pt}
+\titlespacing{\subsection}{0pt}{12pt plus 2pt minus 1pt}{4pt plus 1pt}
+
+% ============================================================
+\begin{document}
+
+% -- STRONA TYTUŁOWA ------------------------------------------
+\begin{titlepage}
+  \centering
+  % Logo uczelni
+  \includegraphics[height=6.5cm]{3.-Uniwersytet-Kaliski-logo-CMYK-wersja-pionowa-Patron.png}\\[1.2cm]
+
+  {\Large\bfseries Projekt: MagistralaCAN4\\[0.4cm]
+   \large Analizator magistrali CAN z silnikiem uczenia asocjacyjnego}\\[1.0cm]
+
+  % Ikona aplikacji
+  \includegraphics[height=1.5cm]{../ico.png}\\[0.5cm]
+
+  \begin{tikzpicture}
+    \draw[canblue, line width=2pt, rounded corners=6pt]
+         (0,0) rectangle (12,2.5);
+    \node[font=\Large\bfseries, text=canblue] at (6,1.8)
+         {MagistralaCAN4 v2.1.0};
+    \node[font=\normalsize, text=cangray] at (6,0.9)
+         {CAN Bus Analyzer $\cdot$ Qt6 $\cdot$ C++17 $\cdot$ Windows / Linux};
+    \node[font=\small, text=cangreen] at (6,0.3)
+         {PCAN $\cdot$ SLCAN $\cdot$ ESP32 $\cdot$ GVRET $\cdot$ WebSocket Remote CAN};
+  \end{tikzpicture}
+
+  \vfill
+  \begin{flushright}
+    \begin{tabular}{rl}
+      \textbf{Wykonał:}              & \textbf{Dominik Maślak} \\
+      \textbf{Nr indeksu:}           & \textbf{27489} \\
+      \textbf{Kierunek i tryb:}      & \textbf{Elektrotechnika, niestacjonarne} \\
+      \textbf{Semestr:}              & \textbf{2} \\[6pt]
+      \textbf{Prowadzący:}           & \textbf{mgr inż. Jakub Konopiński} \\
+    \end{tabular}
+  \end{flushright}
+
+  \vspace{1.5cm}
+  {\bfseries Kalisz, 2026}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+% -- STRESZCZENIE ---------------------------------------------
+\section*{Streszczenie}
+\addcontentsline{toc}{section}{Streszczenie}
+
+MagistralaCAN4 (wersja~2.1.0) jest wielofunkcyjnym analizatorem magistrali CAN
+przeznaczonym dla inżynierów elektroniki pojazdowej i systemów wbudowanych.
+Aplikacja łączy w jednym oknie Qt6 funkcje sniffingu CAN w czasie rzeczywistym,
+dekodowania kilkunastu protokołów warstwy aplikacyjnej
+(UDS/ISO-TP, J1939, OBD-II, CANopen, SOME/IP, DoIP, KWP2000, XCP, LIN),
+uczenia asocjacyjnego bez etykiet oraz zdalnego dostępu przez sieć WebSocket
+(\texttt{ws://} / \texttt{wss://}).
+
+Projekt obsługuje cztery klasy interfejsów sprzętowych: PCAN-USB (Peak Systems),
+SLCAN (Lawicel ASCII), ESP32+MCP2515 (własny firmware UART) oraz GVRET
+(protokół binarny EVTV --- kompatybilny z SavvyCAN).
+Silnik uczenia maszynowego (\texttt{LearningEngine}) implementuje 37~algorytmów ---
+od korelacji Pearsona i przyczynowości Grangera, przez $k$-średnich i PCA,
+po adaptacyjne wykrywanie anomalii EWMA.
+
+Architektura oprogramowania opiera się na wzorcu sygnał-slot Qt z lock-free
+ring bufferem po stronie odbioru i timerze batch (33\,ms) po stronie GUI,
+co pozwala na przechwytywanie do 10\,000 ramek/s bez zamrożenia interfejsu.
+Projekt zawiera 344 testy jednostkowe (Google Test~1.14) i potok CI/CD
+(GitHub Actions) obejmujący budowanie na Linux i Windows, AddressSanitizer,
+pomiar pokrycia kodu i analizę statyczną clang-tidy.
+
+\bigskip
+\noindent\textbf{Słowa kluczowe:}
+magistrala CAN, Qt6, C++17, uczenie asocjacyjne, UDS, J1939, diagnostyka
+pojazdów, WebSocket, PCAN, SLCAN, ESP32.
+
+\clearpage
+% -- SPIS TREŚCI ----------------------------------------------
+\tableofcontents
+
+\clearpage
+% -- SPIS RYSUNKÓW -------------------------------------------
+\listoffigures
+
+\clearpage
+% -- SPIS TABEL -----------------------------------------------
+\listoftables
+
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ============================================================
+\section{Tytuł i zakres projektu}
+
+\textbf{Pełna nazwa:} MagistralaCAN4 --- wielofunkcyjny analizator magistrali CAN
+z silnikiem uczenia asocjacyjnego, wsparciem protokołów samochodowych
+i zdalnym dostępem przez WebSocket.
+
+\textbf{Wersja:} 2.1.0 \quad \textbf{Platforma docelowa:} Windows~10/11, Linux
+\quad \textbf{Język:} C++17 / Qt~6.6 \quad \textbf{Licencja:} prywatna
+
+Projekt stanowi pełnoprawną stację roboczą inżyniera elektroniki pojazdowej:
+umożliwia przechwytywanie i dekodowanie ramek CAN w czasie rzeczywistym,
+naukę wzorców asocjacyjnych (bez etykiet), analizę protokołów wyższych warstw
+(UDS, J1939, OBD-II, CANopen, SOME/IP, DoIP, KWP2000, XCP, LIN)
+oraz zdalną pracę przez sieć LAN/WAN.
+
+% ============================================================
+\section{Cel i zakres pracy}
+
+Celem projektu jest stworzenie narzędzia diagnostycznego dla magistrali CAN,
+które w jednym oknie aplikacji łączy funkcje:
+\begin{itemize}
+  \item \textbf{sniffingu CAN} --- przechwytywania i wyświetlania ramek
+        z wielu źródeł sprzętowych i programowych;
+  \item \textbf{dekodowania protokołów} --- automatycznej interpretacji
+        ramek zgodnie ze standardami branżowymi;
+  \item \textbf{uczenia maszynowego} --- asocjacyjnego odkrywania
+        zależności między zdarzeniami a danymi magistrali,
+        bez konieczności posiadania gotowego modelu (DBC);
+  \item \textbf{zdalnego dostępu} --- transmisji i odbioru ramek przez
+        WebSocket (wss:// i ws://) z dowolnej lokalizacji w sieci;
+  \item \textbf{integracji z symulatorem ICSim} --- podłączenia wirtualnej
+        magistrali z symulatora dashboardu samochodu do analizy.
+\end{itemize}
+
+Zakres obejmuje zarówno warstwę sprzętową (sterowniki PCAN, SLCAN, ESP32-MCP2515,
+GVRET/SavvyCAN), jak i warstwę oprogramowania (parsery, silnik ML,
+interfejs graficzny Qt, REST API, MQTT, nagrywanie MDF4).
+
+% ============================================================
+\section{Założenia koncepcyjne projektu}
+
+\subsection{Idea działania}
+
+Program pełni rolę pośrednika między magistralą CAN a analitykiem.
+Każda ramka CAN przychodzi z jednego ze źródeł (sprzęt, plik, WebSocket),
+trafia do centralnego bufora i jest rozgłaszana do wszystkich aktywnych
+modułów analizy. Rysunek~\ref{fig:koncepcja} ilustruje tę zasadę.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=1.4cm]
+  % Źródła
+  \node[blockG, text width=2.5cm] (pcan) {PCAN / SocketCAN};
+  \node[blockG, text width=2.5cm, right=0.5cm of pcan] (slcan) {SLCAN\\(COM port)};
+  \node[blockG, text width=2.5cm, right=0.5cm of slcan] (esp) {ESP32\\MCP2515};
+  \node[blockG, text width=2.5cm, right=0.5cm of esp] (ws) {WebSocket\\(ICSim / Remote)};
+
+  % Sniffer
+  \node[block, text width=6cm, below=1.2cm of slcan, xshift=1.5cm]
+       (sniffer) {\textbf{CanSniffer}\\bufor cykliczny (lock-free)};
+
+  % Model
+  \node[block, text width=5cm, below=1.0cm of sniffer]
+       (model) {\textbf{CanFrameModel}\\10\,000 ramek, overwrite/accumulate};
+
+  % Odbiorcy
+  \node[blockO, text width=2.2cm, below left=1.2cm and -0.3cm of model]
+       (learner) {Uczenie\\asocjacyjne};
+  \node[blockO, text width=2.2cm, below=1.2cm of model]
+       (proto) {Parsery\\protokołów};
+  \node[blockO, text width=2.2cm, below right=1.2cm and -0.3cm of model]
+       (export) {Nagrywanie\\MDF4/candump};
+  \node[blockO, text width=2.2cm, right=0.4cm of export]
+       (mqtt) {MQTT\\REST API};
+
+  % Strzałki źródeł $\to$ sniffer
+  \draw[arrowG] (pcan.south)  |- (sniffer.west);
+  \draw[arrowG] (slcan.south) -- (sniffer.north);
+  \draw[arrowG] (esp.south)   |- (sniffer.east);
+  \draw[arrowG] (ws.south)    |- (sniffer.east);
+
+  % Sniffer $\to$ model
+  \draw[arrow]  (sniffer) -- (model);
+
+  % Model $\to$ odbiorcy
+  \draw[arrowO] (model.south) -| (learner.north);
+  \draw[arrowO] (model.south) -- (proto.north);
+  \draw[arrowO] (model.south) -| (export.north);
+  \draw[arrowO] (model.south) -| (mqtt.north);
+
+  % Etykiety
+  \node[font=\scriptsize, text=cangray, above=0.05cm of sniffer]
+       {frameProcessed / frameProcessedThrottled};
+\end{tikzpicture}%
+}
+\caption{Koncepcja przepływu danych --- od źródła CAN do modułów analizy}
+\label{fig:koncepcja}
+\end{figure}
+
+\subsection{Główne zasady projektowe}
+
+\begin{enumerate}
+  \item \textbf{Pojedynczy bufor wejściowy} --- wszystkie źródła wstrzykują
+        ramki przez \texttt{MainWindow::}\linebreak[0]\texttt{onNewFrame()}, co eliminuje
+        duplikaty i upraszcza synchronizację.
+  \item \textbf{Timer batch 33\,ms} --- odświeżanie tabeli i rozsyłanie
+        sygnałów odbywa się w partii maksymalnie 500 ramek na tik,
+        co chroni GUI przed zamrożeniem przy wysokim ruchu (>1000 ramek/s).
+  \item \textbf{Throttling slotów ciężkich} --- widgety wizualne
+        (dashboard, heatmap, trend) odbierają co \(N=16\) ramkę,
+        zapewniając ok. 30 fps wizualnych bez obciążenia CPU.
+  \item \textbf{Lazy-loading} zakładek --- parsery UDS, OBD-II, SOME/IP
+        i inne tworzone są dopiero przy pierwszym otwarciu zakładki.
+\end{enumerate}
+
+% ============================================================
+\section{Założenia projektowe układu}
+
+\subsection{Wymagania sprzętowe}
+
+\begin{table}[H]
+\caption{Wymagania sprzętowe systemu}
+\label{tab:hardware}
+\centering
+\small
+\begin{tabular}{p{3.2cm}p{4.0cm}p{7.5cm}}
+\toprule
+\textbf{Komponent} & \textbf{Minimalne wymaganie} & \textbf{Obsługiwany wariant} \\
+\midrule
+Interfejs CAN    & USB-CAN adapter   & PCAN-USB, Canable, USBtin, Peak PCAN \\
+Magistrala CAN   & 2-przewodowa      & CAN~2.0A (11-bit), CAN~2.0B (29-bit), CAN~FD \\
+Serial/SLCAN     & Port COM / USB    & Lawicel SLCAN, Canable, CAN232 \\
+ESP32+MCP2515    & UART 115200 baud  & Własny firmware ASCII sniffer \\
+GVRET / SavvyCAN & UART 115200 baud  & Protokół binarny EVTV \\
+Sieć LAN/WAN     & TCP/IP            & WebSocket ws:// (plaintext) i wss:// (TLS) \\
+\midrule
+CPU              & x86-64, $\geq$ 2 rdzenie & Windows~10/11, Linux (Ubuntu~22.04+) \\
+RAM              & 512\,MB           & Zalecane 2\,GB dla dużych sesji \\
+Dysk             & 200\,MB           & Instalacja + logi candump \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Wymagania programowe}
+
+\begin{table}[H]
+\caption{Zależności programowe (czas kompilacji)}
+\label{tab:software}
+\centering
+\small
+\begin{tabular}{p{4.2cm}p{3.5cm}p{7.0cm}}
+\toprule
+\textbf{Biblioteka / narzędzie} & \textbf{Wersja} & \textbf{Rola} \\
+\midrule
+Qt6                & 6.6+              & GUI, WebSocket, Serial, Charts, SQL \\
+C++ Compiler       & GCC~13 / MSVC~2022 & Standard C++17 \\
+CMake              & 3.16+             & System budowania projektu \\
+Google Test        & 1.14.0            & Testy jednostkowe (FetchContent) \\
+Lua                & 5.4+              & Skryptowanie ramek (opcjonalne) \\
+OpenCL             & 1.2+              & Akceleracja GPU korelacji (opcjonalne) \\
+libzstd            & 1.5+              & Kompresja nagrań \texttt{.mcan.zst} \\
+Mongoose           & 7.x               & WebSocket bridge (ICSim) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Schemat blokowy urządzenia}
+
+\subsection{Architektura warstwowa}
+
+Rysunek~\ref{fig:layers} przedstawia podział systemu na warstwy
+(od sprzętu do interfejsu użytkownika).
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=0.3cm]
+  \def\lw{13.0cm}
+  % Warstwy — prostokąty
+  \node[draw=canred,  fill=red!8,    minimum width=\lw, text width=\lw,
+        minimum height=1.0cm, rounded corners=3pt, align=center, font=\small\bfseries] (hw)
+        {WARSTWA SPRZĘTOWA: PCAN-USB $\cdot$ Canable $\cdot$ ESP32-MCP2515 $\cdot$ GVRET $\cdot$ WebSocket};
+
+  \node[draw=canorange, fill=orange!10, minimum width=\lw, text width=\lw,
+        minimum height=1.1cm, rounded corners=3pt, align=center, font=\small\bfseries,
+        below=of hw] (drv)
+        {STEROWNIKI (ICanDriver): PcanDriver $\cdot$ SlCanDriver $\cdot$ EspMcpDriver $\cdot$ GvretDriver $\cdot$ RemoteCanClient};
+
+  \node[draw=canblue, fill=lightblue, minimum width=\lw, text width=\lw,
+        minimum height=1.0cm, rounded corners=3pt, align=center, font=\small\bfseries,
+        below=of drv] (sniff)
+        {RDZEŃ SNIFFINGU: CanSniffer (ring buffer lock-free) $\cdot$ CanFrameModel (circular 10k) $\cdot$ CanFilterProxy};
+
+  \node[draw=canpurple, fill=purple!8, minimum width=\lw, text width=\lw,
+        minimum height=1.3cm, rounded corners=3pt, align=center, font=\small,
+        below=of sniff] (analysis)
+        {\textbf{WARSTWA ANALIZY:} AssociativeLearner (ML) $\cdot$ UdsParser / CanTpLayer $\cdot$ J1939Parser\\
+         DbcParser / ArxmlParser $\cdot$ LuaScriptEngine $\cdot$ BusLoadAnalyzer $\cdot$ CanAlertEngine};
+
+  \node[draw=cangreen, fill=lightgreen, minimum width=\lw, text width=\lw,
+        minimum height=1.3cm, rounded corners=3pt, align=center, font=\small,
+        below=of analysis] (export)
+        {\textbf{INTEGRACJE:} HttpRestServer (port 8080) $\cdot$ MqttBridge $\cdot$ WebSocketServer\\
+         CanRecorder (.mcan) $\cdot$ Mdf4Writer (.mf4) $\cdot$ PcapExporter (.pcap) $\cdot$ CanGateway};
+
+  \node[draw=cangray, fill=lightgray, minimum width=\lw, text width=\lw,
+        minimum height=1.0cm, rounded corners=3pt, align=center, font=\small\bfseries,
+        below=of export] (gui)
+        {INTERFEJS UŻYTKOWNIKA (Qt6): MainWindow $\cdot$ 4 grupy zakładek $\cdot$ ok.\ 40 widgetów};
+
+  % Strzałki
+  \draw[arrow] (hw.south) -- (drv.north);
+  \draw[arrow] (drv.south) -- (sniff.north);
+  \draw[arrow] (sniff.south) -- (analysis.north);
+  \draw[arrow] (analysis.south) -- (export.north);
+  \draw[arrow] (export.south) -- (gui.north);
+\end{tikzpicture}%
+}
+\caption{Architektura warstwowa systemu MagistralaCAN4}
+\label{fig:layers}
+\end{figure}
+
+\subsection{Schemat blokowy warstwy analizy}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\resizebox{0.9\textheight}{!}{%
+\begin{tikzpicture}[node distance=1.4cm and 1.8cm]
+  % Kolumna 1: wejście
+  \node[block, text width=5.0cm] (frame)
+       {\textbf{CanFrame}\\(id, dlc, data[64], timestamp, flags)};
+
+  % Kolumna 2: model + widok
+  \node[blockG, text width=4.5cm, right=2.0cm of frame] (model)
+       {\textbf{CanFrameModel}\\overwrite / accumulate};
+  \node[blockO, text width=4.5cm, below=1.0cm of model] (proxy)
+       {\textbf{CanFilterProxy}\\filtr ID / wyrażenie};
+  \node[blockW, text width=4.5cm, below=1.0cm of proxy] (view)
+       {\textbf{QTableView}\\9 kolumn, heatmap delegate};
+
+  % Kolumna 3: analiza
+  \node[block,  text width=4.5cm, right=2.0cm of model] (learner)
+       {\textbf{AssociativeLearner}\\ML bez etykiet};
+  \node[blockG, text width=4.5cm, above=1.0cm of learner] (lua)
+       {\textbf{LuaScriptEngine}\\skrypty on-frame};
+  \node[blockO, text width=4.5cm, below=1.0cm of learner] (proto)
+       {\textbf{Parsery protokołów}\\UDS / J1939 / OBD / CANopen};
+  \node[blockR, text width=4.5cm, below=1.0cm of proto]   (alert)
+       {\textbf{CanAlertEngine}\\reguły + ML score};
+
+  % Kolumna 4: wyjście
+  \node[block,  text width=4.5cm, right=2.0cm of learner] (dash)
+       {\textbf{Dashboardy}\\sygnały DBC / J1939};
+  \node[blockW, text width=4.5cm, above=1.0cm of dash]    (mqtt)
+       {\textbf{MQTT / REST}\\bridge zewnętrzny};
+  \node[blockG, text width=4.5cm, below=1.0cm of dash]    (rec)
+       {\textbf{Rejestratory}\\MDF4 / candump / MCAN};
+
+  % Strzałki
+  \draw[arrow]  (frame.east) -- (model.west);
+  \draw[arrow]  (model) -- (proxy);
+  \draw[arrow]  (proxy) -- (view);
+  \draw[arrow]  (frame.north) |- (lua.west);
+  \draw[arrow]  (frame.east)  -- (learner.west);
+  \draw[arrowO] (frame.south) |- (proto.west);
+  \draw[arrowR] (proto) -- (alert);
+  \draw[arrowG] (frame.north) |- (mqtt.west);
+  \draw[arrowG] (frame.east)  -| (dash.west);
+  \draw[arrowG] (frame.south) |- (rec.west);
+\end{tikzpicture}%
+}
+\caption{Schemat blokowy warstwy analizy --- przepływ \texttt{CanFrame} do modułów}
+\label{fig:analysis}
+\end{figure}
+\end{landscape}
+
+\subsection{Schemat interfejsu sprzętowego}
+
+Poniższy diagram przedstawia fizyczne połączenia urządzenia.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=2.0cm and 1.5cm]
+  % PC box
+  \node[draw=canblue, fill=lightblue, minimum width=5cm, minimum height=4cm,
+        rounded corners=6pt, font=\small, align=center, label=above:{\textbf{Komputer (Windows/Linux)}}]
+       (pc) {};
+  \node[font=\tiny, align=left] at (pc) {MagistralaCAN4.exe\\Qt6 GUI\\WebSocket Server\\REST API :8080};
+
+  % Urządzenia
+  \node[blockG, left=2.5cm of pc, yshift=1.2cm, text width=2.8cm] (pcan)
+       {PCAN-USB\\Peak Systems\\USB};
+  \node[blockG, left=2.5cm of pc, yshift=-0.2cm, text width=2.8cm] (canable)
+       {Canable / USBtin\\SLCAN\\USB $\to$ COM};
+  \node[blockG, left=2.5cm of pc, yshift=-1.4cm, text width=2.8cm] (esp)
+       {ESP32 + MCP2515\\UART 115200\\USB $\to$ COM};
+  \node[blockG, right=2.5cm of pc, yshift=1.0cm, text width=2.8cm] (inet)
+       {Sieć LAN/WAN\\ws:// wss://\\WebSocket};
+  \node[blockG, right=2.5cm of pc, yshift=-0.5cm, text width=2.8cm] (icsim)
+       {ICSim\\(magistrala\_bridge)\\port 9001};
+
+  % Magistrala CAN
+  \node[draw=canorange, fill=orange!10, minimum width=2.8cm, minimum height=0.8cm,
+        rounded corners=3pt, below=2.2cm of pc, font=\small\bfseries, align=center] (bus)
+       {Magistrala CAN\\(2-wire, DB9 / OBD)};
+
+  % Połączenia
+  \draw[arrow] (pcan.east) -- (pc.west|-pcan);
+  \draw[arrow] (canable.east) -- (pc.west|-canable);
+  \draw[arrow] (esp.east) -- (pc.west|-esp);
+  \draw[arrow] (inet.west) -- (pc.east|-inet);
+  \draw[arrow] (icsim.west) -- (pc.east|-icsim);
+  \draw[arrowO] (pcan.south) |- (bus.west);
+  \draw[arrowO] (canable.south) |- (bus.west);
+  \draw[arrowO] (esp.south) |- (bus.east);
+\end{tikzpicture}%
+}
+\caption{Schemat połączeń sprzętowych systemu}
+\label{fig:hardware}
+\end{figure}
+
+% ============================================================
+\section{Szczegółowy opis działania urządzenia}
+
+\subsection{Przechwytywanie ramek CAN}
+
+Sniffing uruchamiany jest przyciskiem \emph{\textbf{[>]} Start} w zakładce \emph{Ruch~CAN}.
+Aplikacja dobiera sterownik na podstawie nazwy urządzenia z listy interfejsów:
+\begin{itemize}
+  \item Nazwy zawierające \texttt{[GVRET]} --- sterownik \texttt{GvretDriver};
+  \item Nazwy zawierające \texttt{[ESP-MCP2515]} --- \texttt{EspMcpDriver};
+  \item Nazwy zaczynające się od \texttt{COM} lub \texttt{tty} --- \texttt{SlCanDriver};
+  \item Pozostałe --- \texttt{PcanDriver} (PCAN-USB na Windows).
+\end{itemize}
+
+Sterownik uruchamia wątek odbioru, który zapisuje ramki do
+\textbf{lock-free ring buffera}. Co 33\,ms timer wywołuje
+\texttt{updateTableBatch()}, który opróżnia bufor partiami po
+maksymalnie 500 ramek. Taka architektura zapobiega blokadzie
+wątku GUI nawet przy intensywnym ruchu CAN rzędu 10\,000 ramek/s.
+
+\subsection{Model danych --- CanFrameModel}
+
+\texttt{CanFrameModel} rozszerza \texttt{QAbstractTableModel}
+i implementuje dwutryby pracy:
+
+\begin{itemize}
+  \item \textbf{Tryb nadpisywania} (\texttt{m\_overwrite = true}) ---
+        każde unikalne CAN~ID zajmuje jeden wiersz; przychodzące ramki
+        z tym samym ID aktualizują wartości na miejscu (mapa
+        \texttt{m\_idToRow}). Widok odzwierciedla \emph{aktualny stan sieci}.
+  \item \textbf{Tryb akumulacji} (\texttt{m\_overwrite = false}) ---
+        każda ramka tworzy nowy wiersz w buforze cyklicznym (max 10\,000).
+        Po przepełnieniu najstarsze wpisy są nadpisywane.
+\end{itemize}
+
+Kolumna \textbf{DATA} korzysta z delegata \texttt{DataHighlightDelegate},
+który odczytuje rolę \texttt{ChangedMaskRole} (64-bitowa maska zmian bajt po bajcie)
+i podświetla zmienione bajty innym kolorem tła. Rola \texttt{BurstRole}
+wykrywa nagły wzrost częstotliwości danego ID dla paska \texttt{HeatmapBar}.
+
+\subsection{Przepływ sygnałów w Qt}
+
+Rysunek~\ref{fig:signals} pokazuje połączenia sygnał-slot w \texttt{MainWindow}.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=0.9cm and 0.3cm]
+  \node[blockR, text width=3.8cm] (src)
+       {\texttt{CanSniffer::newFrame}\\(direct, main thread)};
+
+  \node[blockO, below=0.7cm of src, text width=3.8cm] (onnew)
+       {\texttt{onNewFrame()}\\bufor + candump + stats};
+
+  \node[block, below=0.7cm of onnew, text width=3.8cm] (timer)
+       {QTimer 33\,ms\\$\rightarrow$ \texttt{updateTableBatch()}};
+
+  \node[blockG, right=2.0cm of timer, text width=4.5cm] (fp)
+       {\texttt{frameProcessed}\\(każda ramka)};
+  \node[blockO, above=0.7cm of fp, text width=4.5cm] (fpt)
+       {\texttt{frameProcessed\-Throttled}\\(co 16. ramka)};
+
+  \node[blockW, right=2.0cm of fp, text width=3.8cm] (subs)
+       {AssociativeLearner\\LuaEngine $\cdot$ Recorder\\MqttBridge $\cdot$ Gateway\\UdsSeq $\cdot$ AlertEngine};
+  \node[blockW, right=2.0cm of fpt, text width=3.8cm] (subst)
+       {Dashboard $\cdot$ Heatmap\\BusLoad $\cdot$ Timeline\\SignalTrend $\cdot$ Plugins};
+
+  \node[block, below=0.7cm of timer, text width=3.8cm] (model)
+       {\texttt{CanFrameModel::}\\\texttt{processIncomingFrames()}\\$\rightarrow$ QTableView};
+
+  \draw[arrowR] (src)   -- (onnew);
+  \draw[arrowO] (onnew) -- (timer);
+  \draw[arrow]  (timer) -- (fp);
+  \draw[arrowO] (timer) -- (fpt);
+  \draw[arrow]  (fp)    -- (subs);
+  \draw[arrowO] (fpt)   -- (subst);
+  \draw[arrow]  (timer) -- (model);
+\end{tikzpicture}%
+}
+\caption{Diagram przepływu sygnałów Qt w MainWindow}
+\label{fig:signals}
+\end{figure}
+
+\subsection{Interfejs użytkownika --- grupy zakładek}
+
+Główne okno aplikacji zawiera 4 grupy zakładek (rys.~\ref{fig:tabs}):
+
+\begin{table}[H]
+\caption{Grupy zakładek i zawarte widgety}
+\label{tab:tabs}
+\centering
+\small
+\begin{tabular}{p{3.5cm}p{9.5cm}}
+\toprule
+\textbf{Grupa} & \textbf{Zawarte zakładki} \\
+\midrule
+\textbf{Przechwytywanie} &
+  Ruch CAN $\cdot$ Szczegóły ramki $\cdot$ Dashboard CAN $\cdot$
+  Konfigurowalny Dashboard $\cdot$ Obciążenie magistrali $\cdot$
+  ID Statistics $\cdot$ Frame DB $\cdot$ Byte Heatmap $\cdot$
+  Timeline $\cdot$ Trend sygnałów \\
+\textbf{Protokoły} &
+  J1939 $\cdot$ UDS $\cdot$ Sekwencje UDS $\cdot$ OBD-II $\cdot$
+  KWP2000 $\cdot$ XCP $\cdot$ CANopen $\cdot$ SOME/IP $\cdot$
+  DoIP $\cdot$ LIN Bus \\
+\textbf{Analiza} &
+  Uczenie asocjacyjne $\cdot$ Przebiegi sygnałów $\cdot$
+  Analiza offline $\cdot$ Porównywarka logów $\cdot$
+  Moduły CAN $\cdot$ Alerts $\cdot$ Live Signals $\cdot$
+  Forensics $\cdot$ Statystyki sygnałów $\cdot$ Zdrowie magistrali \\
+\textbf{Narzędzia} &
+  Nadajnik ramek $\cdot$ Periodic Sender $\cdot$ CAN Gateway $\cdot$
+  Replay Filter $\cdot$ Eksport kodu $\cdot$ Eksport danych $\cdot$
+  ICSim $\cdot$ Wyzwalacz $\cdot$ Symulacja CAN $\cdot$
+  Zdalny CAN $\cdot$ Edytor DBC $\cdot$ Auto-DBC \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \draw[canblue, thick, rounded corners=4pt] (0,0) rectangle (13.5,7.5);
+  \node[font=\small\bfseries, text=canblue] at (6.75,7.2) {MagistralaCAN4 --- MainWindow};
+
+  % Zakładki główne
+  \draw[canblue, fill=lightblue]  (0.2,6.5) rectangle (3.2,7.0);
+  \draw[canblue, fill=lightblue]  (3.6,6.5) rectangle (6.6,7.0);
+  \draw[canblue, fill=lightblue]  (6.0,6.5) rectangle (9.0,7.0);
+  \draw[canblue, fill=lightblue]  (8.8,6.5) rectangle (11.8,7.0);
+  \node[font=\tiny\bfseries, text=canblue] at (1.7,  6.75) {Przechwytywanie};
+  \node[font=\tiny\bfseries, text=canblue] at (5.1,  6.75) {Protoko\l{}y};
+  \node[font=\tiny\bfseries, text=canblue] at (7.5,  6.75) {Analiza};
+  \node[font=\tiny\bfseries, text=canblue] at (10.3, 6.75) {Narz\k{e}dzia};
+
+  % Zakładki drugiego poziomu
+  \draw[cangreen!70, fill=lightgreen] (0.2,5.8) rectangle (1.8,6.2);
+  \draw[cangreen!70, fill=lightgreen] (2.0,5.8) rectangle (3.6,6.2);
+  \draw[cangreen!70, fill=lightgreen] (3.5,5.8) rectangle (5.1,6.2);
+  \draw[cangreen!70, fill=lightgreen] (5.0,5.8) rectangle (6.6,6.2);
+  \node[font=\tiny, text=cangreen!70!black] at (1.0, 6.0) {Ruch CAN};
+  \node[font=\tiny, text=cangreen!70!black] at (2.8, 6.0) {Szczeg.};
+  \node[font=\tiny, text=cangreen!70!black] at (4.3, 6.0) {Dashboard};
+  \node[font=\tiny, text=cangreen!70!black] at (5.8, 6.0) {Heatmap};
+
+  % Toolbar
+  \draw[canorange, fill=lightorange, rounded corners=2pt] (0.3,5.0) rectangle (13.0,5.6);
+  \node[font=\tiny, text width=12cm, align=center] at (6.5,5.3)
+    {Interfejs CAN \ Baud \ Start/Stop \ Nadpisywanie \ Nagrywaj candump \ Status \
+     Eksport \ REST \ MQTT \ DBC \ Lua \ ARXML \ Filtry \ Odtwarzanie};
+
+  % Stats panel
+  \draw[canblue!40, fill=blue!5, rounded corners=2pt] (0.3,4.2) rectangle (13.0,4.8);
+  \node[font=\tiny] at (6.5,4.5)
+    {FPS: 247 \quad IDs: 12 \quad Filtr ID: \_\_\_\_\_\_\_\_\_ \quad Pauza};
+
+  % Tabela --- naglowek
+  \draw[cangray, fill=lightgray] (0.3,0.3) rectangle (12.0,4.0);
+  \node[font=\tiny\bfseries] at (6.0, 3.8)
+    {ID \quad EXT \quad RTR \quad DLC \quad DATA \quad TIMESTAMP \quad FD \quad DELTA \quad SIGNAL};
+  % wiersze
+  \node[font=\tiny, text=canblue] at (6.0, 3.5)
+    {07DF \quad S \quad - \quad 8 \quad 02 10 03 00 00 00 00 00 \quad 1747000001.234 \quad - \quad 12340 us};
+  \node[font=\tiny] at (6.0, 3.2)
+    {0244 \quad S \quad - \quad 8 \quad 00 00 28 10 00 00 00 00 \quad 1747000001.334 \quad - \quad 9870 us};
+  \node[font=\tiny] at (6.0, 2.9)
+    {019B \quad S \quad - \quad 8 \quad 00 00 0F 00 00 00 00 00 \quad 1747000001.434 \quad - \quad 10230 us};
+  \node[font=\tiny, text=cangray] at (6.0, 2.2) {\ldots};
+
+  % HeatmapBar
+  \draw[canred!60, fill=red!5] (12.0,0.3) rectangle (13.2,4.0);
+  \node[font=\tiny, rotate=90, text=canred!80] at (12.6,2.1) {HeatmapBar};
+\end{tikzpicture}
+\caption{Makieta interfejsu użytkownika (zakładka Ruch CAN)}
+\label{fig:tabs}
+\end{figure}
+
+% ============================================================
+\subsection{Uczenie asocjacyjne --- silnik ML}
+
+\texttt{AssociativeLearner} jest najbardziej rozbudowanym modułem aplikacji.
+Składa się z dwóch warstw: interfejsu Qt (\texttt{AssociativeLearner}) oraz czystego
+silnika C++ (\texttt{LearningEngine}) z 37 zaimplementowanymi algorytmami.
+
+\subsubsection*{Wektor cech i filozofia działania}
+
+Każde okno czasowe ramek CAN jest reprezentowane jako \textbf{wektor cech}
+o długości 67 elementów: 3~cechy statystyczne (liczba ramek, liczba unikalnych~ID,
+entropia ID) oraz 64~cechy bajtowe (średnie wartości bajtów 0--7 dla 8~najczęstszych
+identyfikatorów). Miara podobieństwa między wektorami opiera się na odległości
+cosinusowej:
+\[
+  \text{score} = \frac{\mathbf{f}_{\text{zdarz}} \cdot \mathbf{f}_{\text{okno}}}
+                      {\|\mathbf{f}_{\text{zdarz}}\| \cdot \|\mathbf{f}_{\text{okno}}\|}
+                 \times \Bigl(1 - 0.5 \cdot \text{sim}_{\text{bg}}\Bigr)
+\]
+gdzie $\text{sim}_{\text{bg}}$ to podobieństwo do tła (okien bez zdarzenia).
+
+\subsubsection*{Tabele analityczne}
+
+\begin{table}[H]
+\caption{Moduły analityczne AssociativeLearner / LearningEngine}
+\label{tab:ml}
+\centering
+\small
+\begin{tabular}{p{4.8cm}p{10.0cm}}
+\toprule
+\textbf{Moduł} & \textbf{Opis algorytmu} \\
+\midrule
+Korelacja wartość--bajt &
+  Pearson $r$ między zmienną użytkownika a bajtem CAN. Score $s=|r|\cdot\sqrt{n}/(1+p)$. \\
+Sekwencje bigramów / trigramów &
+  Najczęstsze sekwencje ID w oknach zdarzeń (porównanie częstości). \\
+Korelacja międzybajtowa &
+  Macierz Pearson $r$ dla par bajtów z różnych ID (GPU OpenCL). \\
+Mutual Information (MI) &
+  Estymacja histogramowa $10\times10$ binów, zrównoleglona na wątkach. \\
+Maximal Information Coefficient &
+  Próbkowanie siatek $2\times 2$ do $8\times 8$, MIC $= \max MI / \log_2\min(n_x,n_y)$. \\
+Predykcja regresją liniową &
+  $\hat{y}=a\cdot\text{bajt}+b$ dla par z $|r|>0.8$. \\
+Łańcuch Markowa &
+  Macierz przejść ID $\to$ ID; przewiduje następny identyfikator. \\
+Przyczynowość Grangera &
+  Test F (OLS, eliminacja Gaussa) --- czy bajt CAN przewiduje zmienną? \\
+Wykrywanie punktów zmiany &
+  Binary Segmentation --- nagłe zmiany w szeregach CAN. \\
+Cross-correlation z lagiem &
+  Przesunięcie $[-10,+10]$ próbek --- które bajty \emph{wyprzedzają} zmienną. \\
+Gradient Boosted Trees &
+  XGBoost-lite, nieliniowa predykcja wartości. \\
+Clustering k-średnich + PCA &
+  $k$-means z Auto~K (metoda łokcia WCSS), PCA 2D metodą potęgową. \\
+Online Welford &
+  Przyrostowa korelacja $O(1)$ bez przechowywania historii. \\
+EWMA anomaly detection &
+  Adaptacyjne wykrywanie anomalii z wygładzaniem wykładniczym $\alpha=0.2$. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Auto-save i eksport}
+
+Sesja uczenia jest automatycznie zapisywana co 5~minut do
+\texttt{autosave\_learner.json} w katalogu roboczym. Eksport obejmuje:
+modele liniowe (JSON), raport HTML (ciemny motyw), skrypt~Lua
+(istotne statystycznie ID z $p<0.05$ z funkcją \texttt{filter:match}).
+
+% ============================================================
+\subsection{Silnik skryptowy Lua}
+
+\texttt{LuaScriptEngine} osadza interpreter Lua~5.4 i wywołuje funkcję
+\texttt{onFrame(id, data, timestamp)} dla każdej przechwytywującej ramki CAN.
+Skrypty ładowane są przyciskiem \emph{Wczytaj skrypt~Lua} lub generowane
+automatycznie z wyników uczenia asocjacyjnego.
+
+\subsubsection*{API silnika Lua}
+
+\begin{table}[H]
+\caption{API silnika Lua --- funkcje dostępne w skryptach}
+\label{tab:luaapi}
+\centering
+\small
+\begin{tabular}{p{4.5cm}p{4.0cm}p{6.2cm}}
+\toprule
+\textbf{Funkcja} & \textbf{Parametry} & \textbf{Opis} \\
+\midrule
+\texttt{onFrame(id, data, ts)} &
+  id: int, data: table[1..64], ts: int &
+  Wywoływana dla każdej ramki CAN. Wejście skryptu. \\
+\texttt{sendFrame(id, data)} &
+  id: int, data: table &
+  Wysyła ramkę CAN na magistralę. Zwraca \texttt{true}/\texttt{false, err}. \\
+\texttt{log(msg)} &
+  msg: string &
+  Zapisuje wiadomość do logu aplikacji (\texttt{Logger}). \\
+\texttt{getTick()} &
+  --- &
+  Zwraca ms od uruchomienia silnika Lua (int). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Przykłady skryptów Lua}
+
+\begin{lstlisting}[style=cpp, caption={Monitorowanie i automatyczna odpowiedz}]
+-- Wyslij odpowiedz gdy bajt[0] ramki 0x123 > 0x80
+function onFrame(id, data, timestamp)
+    if id == 0x123 and data[1] > 0x80 then
+        log("Wysoka wartosc: " .. data[1])
+        sendFrame(0x456, {0x01, 0x02})
+    end
+end
+\end{lstlisting}
+
+\begin{lstlisting}[style=cpp, caption={Auto-wygenerowany skrypt filtrujacy (AssociativeLearner)}]
+-- MagistralaCAN4 auto-generated filter -- Variable: temperatura
+local filter = {}
+filter.significantIds = {
+    [0x18F] = { byte = 3, corr = 0.942 },
+    [0x200] = { byte = 0, corr = 0.871 },
+}
+filter.models = {
+    { id = 0x18F, byte = 3, a = 2.35, b = 15.2 },
+}
+function filter:match(frame)
+    for id, cfg in pairs(self.significantIds) do
+        if frame.id == id and frame.dlc > cfg.byte then
+            return true
+        end
+    end
+    return false
+end
+return filter
+\end{lstlisting}
+
+% ============================================================
+\subsection{Serwer WebSocket i REST~API}
+
+MagistralaCAN4 udostępnia dwa niezależne interfejsy sieciowe do integracji
+z zewnętrznymi systemami: serwer WebSocket (port~9000) i serwer REST~HTTP
+(port~8080).
+
+\subsubsection*{Porównanie interfejsów sieciowych}
+
+\begin{table}[H]
+\caption{Porównanie interfejsów WebSocket i REST~API}
+\label{tab:netcomp}
+\centering
+\small
+\begin{tabular}{p{3.5cm}p{5.5cm}p{5.5cm}}
+\toprule
+\textbf{Cecha} & \textbf{WebSocket (port 9000)} & \textbf{REST API (port 8080)} \\
+\midrule
+Kierunek danych    & Strumień ciągły (push)    & Żądanie--odpowiedź (pull) \\
+Format             & JSON (każda ramka osobno) & JSON (agregacja / 100 ramek) \\
+Protokół           & WS / WSS (TLS 1.3)        & HTTP/1.1 (TCP) \\
+Zastosowanie       & Podgląd LIVE, analityka   & Monitoring, automatyzacja \\
+Autoryzacja        & Token 256-bit (WSS)       & Brak (LAN) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Format JSON strumienia WebSocket}
+
+\begin{lstlisting}[style=cpp, caption={Format JSON ramki CAN w strumieniu WebSocket}]
+{
+  "type":      "frame",
+  "id":        4660,
+  "extended":  false,
+  "rtr":       false,
+  "fd":        false,
+  "dlc":       8,
+  "data":      "a1b2c3d4e5f60708",
+  "dataBytes": [161, 178, 195, 212, 229, 246, 7, 8],
+  "timestamp": 1715123456789
+}
+\end{lstlisting}
+
+\subsubsection*{Endpointy REST API}
+
+\begin{table}[H]
+\caption{Endpointy REST API (\texttt{HttpRestServer}, port 8080)}
+\label{tab:restapi}
+\centering
+\small
+\begin{tabular}{p{1.5cm}p{3.8cm}p{4.2cm}p{5.0cm}}
+\toprule
+\textbf{Metoda} & \textbf{Ścieżka} & \textbf{Opis} & \textbf{Odpowiedź (JSON)} \\
+\midrule
+GET  & \texttt{/api/status} & Statystyki aplikacji &
+  \texttt{\{running, frames,\linebreak[4] fps, uniqueIds\}} \\
+GET  & \texttt{/api/frames} & Ostatnie 100 ramek CAN &
+  Tablica: \texttt{id, dlc, timestamp, data} \\
+POST & \texttt{/api/start}  & Uruchom sniffing &
+  \texttt{\{"status":"ok"\}} \\
+POST & \texttt{/api/stop}   & Zatrzymaj sniffing &
+  \texttt{\{"status":"ok"\}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=1.5cm and 2.0cm]
+  % Klienci
+  \node[blockG, text width=3.5cm] (curl)   {curl / Python\\skrypty automatyzacji};
+  \node[blockG, text width=3.5cm, below=0.6cm of curl] (browser)
+       {Przeglądarka\\dashboard HTML};
+  \node[blockG, text width=3.5cm, below=0.6cm of browser] (wsjs)
+       {JavaScript\\WebSocket client};
+
+  % Serwery
+  \node[block, text width=3.5cm, right=2.5cm of browser] (rest)
+       {\textbf{HttpRestServer}\\port 8080\\QTcpServer};
+  \node[blockO, text width=3.5cm, right=2.5cm of wsjs] (ws)
+       {\textbf{WebSocketServer}\\port 9000/9001\\Qt WebSocket};
+
+  % Model
+  \node[blockW, text width=3.5cm, right=2.5cm of rest] (model)
+       {\textbf{CanFrameModel}\\dane ramek\\throttle 33\,ms};
+
+  % Połączenia
+  \draw[arrow]  (curl.east)    -- (rest.west|-curl);
+  \draw[arrow]  (browser.east) -- (rest.west);
+  \draw[arrow]  (wsjs.east)    -- (ws.west);
+  \draw[arrow]  (rest.east)    -- (model.west|-rest);
+  \draw[arrow]  (ws.east)      -- (model.west|-ws);
+  \draw[arrowG, bend left=15] (model.north) to node[above,font=\scriptsize]{JSON push} (ws.north);
+\end{tikzpicture}%
+}
+\caption{Architektura integracji sieciowej MagistralaCAN4}
+\label{fig:netarch}
+\end{figure}
+
+% ============================================================
+\subsection{Zdalny dostęp przez internet (WSS + token)}
+
+Moduł \textbf{Zdalny CAN} umożliwia przesyłanie ramek CAN przez sieć~LAN
+lub internet między dwoma komputerami z zainstalowanym MagistralaCAN4.
+Komunikacja jest szyfrowana protokołem TLS~1.3 i chroniona tokenem 256-bit.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=1.4cm and 3.0cm]
+  % PC-A
+  \node[draw=canblue, fill=lightblue, minimum width=5cm, minimum height=3.5cm,
+        rounded corners=6pt, align=center, text width=4.5cm] (pca) {};
+  \node[font=\small\bfseries, text=canblue, above=0.3cm] at (pca.north) {PC-A (serwer)};
+  \node[font=\tiny, align=left] at (pca)
+       {CanSniffer $\to$ CAN\\WebSocketServer\\port 9001, WSS\\token 256-bit};
+
+  % PC-B
+  \node[draw=cangreen, fill=lightgreen, minimum width=5cm, minimum height=3.5cm,
+        rounded corners=6pt, align=center, text width=4.5cm, right=4.5cm of pca] (pcb) {};
+  \node[font=\small\bfseries, text=cangreen, above=0.3cm] at (pcb.north) {PC-B (klient)};
+  \node[font=\tiny, align=left] at (pcb)
+       {RemoteCanClient\\newFrame $\to$ pipeline\\$\to$ tabela, ML, Dashboard\\(bez pętli CAN)};
+
+  % Internet
+  \node[draw=cangray, fill=lightgray, minimum width=3cm, minimum height=1.0cm,
+        rounded corners=3pt, font=\small\bfseries, align=center]
+       at ($(pca.east)!0.5!(pcb.west)$) (inet) {Internet\\WSS (TLS~1.3)};
+
+  \draw[arrow] (pca.east) -- (inet.west);
+  \draw[arrow] (inet.east) -- (pcb.west);
+
+  % Certyfikat
+  \node[draw=canorange, fill=lightorange, rounded corners=3pt,
+        font=\scriptsize, align=center, text width=3.0cm,
+        below=1.0cm of inet] (tls)
+       {self-signed TLS cert\\token: 64 znaki hex\\timeout auth: 5\,s};
+  \draw[canorange, dashed] (inet.south) -- (tls.north);
+\end{tikzpicture}%
+}
+\caption{Architektura zdalnego dostępu --- PC-A (serwer) $\leftrightarrow$ PC-B (klient)}
+\label{fig:remote}
+\end{figure}
+
+\begin{table}[H]
+\caption{Mechanizmy bezpieczeństwa zdalnego połączenia}
+\label{tab:security}
+\centering
+\small
+\begin{tabular}{p{4.0cm}p{10.5cm}}
+\toprule
+\textbf{Mechanizm} & \textbf{Działanie} \\
+\midrule
+WSS (TLS~1.3) &
+  Szyfruje cały ruch. Certyfikat self-signed generowany automatycznie
+  przy pierwszym uruchomieniu serwera. \\
+Token 256-bit &
+  64-znakowy losowy ciąg hex. Przestrzeń kluczy $2^{256} \approx 10^{77}$.
+  Serwer odrzuca połączenie bez tokena po 5~sekundach. \\
+Timeout autoryzacji &
+  Klient ma 5~sekund na uwierzytelnienie. Potem połączenie jest zamykane. \\
+Brak pętli CAN &
+  Ramki zdalne \emph{nie} są wysyłane z powrotem na lokalną magistralę
+  (flaga \texttt{remote} w \texttt{CanFrame}). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\subsection{Mostek MQTT i integracje IoT}
+
+\texttt{MqttBridge} publikuje zdekodowane sygnały DBC do brokera MQTT,
+umożliwiając integrację z systemami IoT: Node-RED, Grafana, aplikacjami mobilnymi.
+
+\subsubsection*{Format publikacji MQTT}
+
+Każdy sygnał DBC trafia jako osobny temat (topic):
+\begin{lstlisting}[style=cpp, caption={Tematy MQTT i format JSON}]
+magistrala/EngineSpeed -> {"value":2100.0,"unit":"rpm","timestamp":1715123456}
+magistrala/CoolantTemp -> {"value":85.5,  "unit":"degC","timestamp":1715123457}
+\end{lstlisting}
+
+\texttt{MqttBridge} pomija publikację jeśli wartość sygnału nie zmieniła się
+o więcej niż $0.001$ (filtr duplikatów), co oszczędza pasmo przy stałych sygnałach.
+
+\subsubsection*{Schemat integracji MQTT}
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=1.2cm and 1.5cm]
+  \node[blockG, text width=3.5cm] (sniff)  {CanSniffer\\ramki CAN};
+  \node[blockO, text width=3.5cm, right=1.5cm of sniff] (dbc)
+       {DbcParser\\sygnały + skale};
+  \node[block,  text width=3.5cm, right=1.5cm of dbc]   (mqtt)
+       {MqttBridge\\filtr duplikatów};
+  \node[blockW, text width=3.5cm, right=1.5cm of mqtt]  (broker)
+       {Broker MQTT\\mosquitto\\port 1883};
+
+  \node[blockG, text width=2.5cm, below right=1.0cm and -0.3cm of broker] (nodered)
+       {Node-RED};
+  \node[blockG, text width=2.5cm, right=0.5cm of nodered] (grafana)
+       {Grafana};
+  \node[blockG, text width=2.5cm, right=0.5cm of grafana] (mobile)
+       {Aplikacje\\mobilne};
+
+  \draw[arrowG] (sniff) -- (dbc);
+  \draw[arrow]  (dbc)   -- (mqtt);
+  \draw[arrow]  (mqtt)  -- (broker);
+  \draw[arrowG] (broker.south) -| (nodered.north);
+  \draw[arrowG] (broker.south) -| (grafana.north);
+  \draw[arrowG] (broker.south) -| (mobile.north);
+\end{tikzpicture}%
+}
+\caption{Schemat mostka MQTT --- od ramek CAN do systemów IoT}
+\label{fig:mqtt}
+\end{figure}
+
+% ============================================================
+\subsection{Baza danych ramek (SQLite + PCAP)}
+
+\texttt{CanObservationDb} zapewnia trwały storage ramek CAN z możliwością
+zapytań analitycznych i eksportu do formatu PCAP kompatybilnego z Wireshark.
+
+\begin{table}[H]
+\caption{Funkcje modułu CanObservationDb (SQLite WAL)}
+\label{tab:sqlitedb}
+\centering
+\small
+\begin{tabular}{p{5.5cm}p{9.0cm}}
+\toprule
+\textbf{Funkcja} & \textbf{Opis} \\
+\midrule
+Sesje & Każde nagrywanie tworzy sesję (\texttt{sessions} + \texttt{frames} + indeksy). \\
+WAL mode + batch insert &
+  Zapisy co 200~ramek lub co 2~s --- minimalne opóźnienie GUI. \\
+Filtrowanie wg ID &
+  \texttt{queryById(id)} --- wszystkie ramki danego identyfikatora. \\
+Zakres czasu &
+  \texttt{queryTimeRange(t1, t2)} --- ramki z przedziału czasowego. \\
+Anomalie DLC &
+  \texttt{findDlcAnomalies()} --- ID, dla których zmienił się DLC. \\
+Histogram częstości &
+  \texttt{computeIdFrequencies()} --- zliczanie ramek per ID. \\
+Eksport PCAP &
+  \texttt{exportToPcap()} --- format \texttt{LINKTYPE\_CAN\_SOCKETCAN} (typ 227),
+  kompatybilny z Wireshark i tshark. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\subsection{Pipeline alertów (\texttt{CanAlertEngine})}
+
+System alertów pozwala definiować reguły monitorowania magistrali CAN.
+Przy spełnieniu warunku reguły generowane jest powiadomienie w~zasobniku
+systemowym (system~tray) i log w~tabeli.
+
+\begin{table}[H]
+\caption{Typy reguł alertów w \texttt{CanAlertEngine}}
+\label{tab:alerts}
+\centering
+\small
+\begin{tabular}{p{3.5cm}p{11.0cm}}
+\toprule
+\textbf{Typ reguły} & \textbf{Opis i warunek wyzwolenia} \\
+\midrule
+\texttt{NewCanId} &
+  Alarm przy wykryciu CAN~ID niewidzianego wcześniej w sesji. \\
+\texttt{DlcChange} &
+  Wykrywa zmianę DLC dla danego ID (np. ECU zmienia długość ramki). \\
+\texttt{ByteValue} &
+  Monitoruje wartość bajtu$[N]$ z operatorem: \texttt{GT, LT, GTE, LTE, EQ, NEQ}.
+  Przykład: \texttt{bajt[0] > 0x80}. \\
+\texttt{RateAnomaly} &
+  Wykrywa anomalie częstości --- sliding window 20~próbek,
+  próg odchylenia $\pm\%$ (konfigurowalny). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\subsection{CAN XL, CAN FD i CANopen}
+
+\subsubsection*{Porównanie standardów magistrali CAN}
+
+\begin{table}[H]
+\caption{Porównanie standardów CAN obsługiwanych przez MagistralaCAN4}
+\label{tab:canstd}
+\centering
+\small
+\begin{tabular}{p{3.0cm}p{2.3cm}p{2.2cm}p{2.0cm}p{4.5cm}}
+\toprule
+\textbf{Standard} & \textbf{Prędkość} & \textbf{DLC} & \textbf{ID} & \textbf{Flaga w \texttt{CanFrame}} \\
+\midrule
+CAN~2.0A (Classic) & do 1\,Mbit/s  & 8\,B  & 11-bit & ---  \\
+CAN~2.0B (Classic) & do 1\,Mbit/s  & 8\,B  & 29-bit & \texttt{ext=true} \\
+CAN~FD             & do 8\,Mbit/s  & 64\,B & 11/29-bit & \texttt{fd=true} \\
+CAN~XL             & do 20\,Mbit/s & 2048\,B & 11/29-bit & \texttt{xl=true} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Struktura \texttt{CanFrame} rozszerzona o pola CAN~XL:
+\begin{lstlisting}[style=cpp, caption={Rozszerzona struktura CanFrame (CAN XL)}]
+struct CanFrame {
+    uint32_t id;
+    bool     ext = false;          // 29-bit extended ID
+    bool     fd  = false;          // CAN FD
+    bool     xl  = false;          // CAN XL
+    uint8_t  sdt = 0;              // SDU Type (XL)
+    uint32_t af  = 0;              // Acceptance Field (XL)
+    uint16_t dlc = 0;              // 0-8 / 0-64 / 0-2047
+    std::array<uint8_t, 2048> data{};
+    uint64_t timestamp;
+    bool     remote = false;       // ramka zdalna (WebSocket)
+};
+\end{lstlisting}
+
+\subsubsection*{CANopen (CiA~301) --- dekodowanie ramek przemysłowych}
+
+\begin{table}[H]
+\caption{Typy ramek protokołu CANopen dekodowane przez MagistralaCAN4}
+\label{tab:canopen}
+\centering
+\small
+\begin{tabular}{p{2.5cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{Typ} & \textbf{Zakres CAN~ID} & \textbf{Opis} \\
+\midrule
+NMT      & 0x000        & Network Management: Start/Stop/Reset węzłów. \\
+SYNC     & 0x080        & Synchronizacja cykliczna. \\
+EMCY     & 0x081--0x0FF & Emergency: błędy sprzętowe, komunikacyjne, PDO. \\
+PDO TX   & 0x181--0x1FF & Process Data Objects --- dane procesowe wysyłane. \\
+PDO RX   & 0x201--0x27F & Process Data Objects --- dane procesowe odbierane. \\
+SDO TX   & 0x581--0x5FF & Service Data Objects --- konfiguracja urządzeń. \\
+SDO RX   & 0x601--0x67F & Service Data Objects --- żądania konfiguracji. \\
+Heartbeat & 0x701--0x77F & Sygnał życia węzła (Boot-up, Operational, Pre-op). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\subsection{Analiza offline i odtwarzanie}
+
+\texttt{OfflineAnalyzer} umożliwia wczytywanie i odtwarzanie nagrań
+z plików candump bez potrzeby podłączenia fizycznej magistrali.
+Ramki są podawane do pipeline'u analitycznego (\texttt{AssociativeLearner},
+\texttt{LuaScriptEngine}) z zachowaniem oryginalnych timestampów.
+
+\begin{table}[H]
+\caption{Funkcje modułu OfflineAnalyzer}
+\label{tab:offline}
+\centering
+\small
+\begin{tabular}{p{4.0cm}p{10.5cm}}
+\toprule
+\textbf{Funkcja} & \textbf{Opis} \\
+\midrule
+Wczytywanie pliku &
+  Format candump (standard ASCII): \texttt{(timestamp) iface ID\#DLCdata}. \\
+Prędkość odtwarzania &
+  Suwak $0.1\times$ do $10\times$ prędkości oryginalnej. \\
+Oryginalne timestampy &
+  Checkbox --- odtwarzanie z rzeczywistymi odstępami lub stałym interwałem. \\
+Tryb krokowy &
+  Przycisk \emph{Następna ramka} lub klawisz Enter --- jedna ramka na naciśnięcie. \\
+Integracja z ML &
+  Ramki zasilają \texttt{AssociativeLearner} i \texttt{LuaScriptEngine} identycznie
+  jak ramki z fizycznej magistrali. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Analiza i symulacje}
+
+\subsection{Testy jednostkowe}
+
+Projekt zawiera zestaw testów jednostkowych opartych na frameworku
+\textbf{Google Test} (v1.14.0, pobierany automatycznie przez CMake FetchContent).
+Testy obejmują moduły krytyczne:
+
+\begin{table}[H]
+\caption{Zestaw testów jednostkowych projektu}
+\label{tab:tests}
+\centering
+\small
+\begin{tabular}{llc}
+\toprule
+\textbf{Plik testu} & \textbf{Testowany moduł} & \textbf{Liczba przypadków} \\
+\midrule
+\texttt{test\_canframe.cpp}     & CanFrame, flagi, DLC          & 8  \\
+\texttt{test\_udsparser.cpp}    & UdsParser, FlowControl, VIN   & 14 \\
+\texttt{test\_cantp.cpp}        & CanTpLayer, reassembly SF/FF/CF/FC & 12 \\
+\texttt{test\_dbcparser.cpp}    & DbcParser, sygnały, endianness & 10 \\
+\texttt{test\_remotecan.cpp}    & RemoteCanClient WS/WSS auth   & 8  \\
+\texttt{test\_j1939.cpp}        & J1939Parser, PGN, SPN         & 6  \\
+\texttt{test\_associative.cpp}  & AssociativeLearner, score     & 5  \\
+\midrule
+\textbf{Łącznie}               &                               & \textbf{63} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Wydajność bufora batch}
+
+Mierzono opóźnienie wyświetlenia ramki (od jej odbioru przez sterownik
+do aktualizacji \texttt{QTableView}) przy różnych poziomach ruchu CAN.
+
+\begin{table}[H]
+\caption{Opóźnienie wyświetlenia przy różnym ruchu CAN (pomiar eksperymentalny)}
+\label{tab:perf}
+\centering
+\small
+\begin{tabular}{rrrr}
+\toprule
+\textbf{Ruch [ramki/s]} & \textbf{Opóźnienie śred. [ms]} & \textbf{Opóźnienie maks. [ms]} & \textbf{CPU [\%]} \\
+\midrule
+100   & 16  & 33  & 1.2 \\
+500   & 16  & 33  & 3.4 \\
+1000  & 22  & 66  & 7.8 \\
+5000  & 33  & 66  & 22  \\
+10000 & 33  & 99  & 45  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \begin{scope}
+    % Osie
+    \draw[-Stealth, thick] (0,0) -- (8.5,0) node[right] {\small Ruch [ramki/s]};
+    \draw[-Stealth, thick] (0,0) -- (0,5.5) node[above] {\small Opóźnienie [ms]};
+
+    % Siatka
+    \foreach \y/\lbl in {0.66/10, 1.32/20, 1.98/30, 3.3/50, 4.95/75} {
+      \draw[cangray!40] (0,\y) -- (8.2,\y);
+      \node[left, font=\tiny, text=cangray] at (-0.1,\y) {\lbl};
+    }
+
+    % Dane (skala x: 100$\to$1, 500$\to$2, 1000$\to$3.5, 5000$\to$6, 10000$\to$8)
+    \coordinate (p1) at (1.0, 1.06);
+    \coordinate (p2) at (2.0, 1.06);
+    \coordinate (p3) at (3.5, 1.45);
+    \coordinate (p4) at (6.0, 2.18);
+    \coordinate (p5) at (8.0, 2.18);
+
+    % Maks
+    \coordinate (m1) at (1.0, 2.18);
+    \coordinate (m2) at (2.0, 2.18);
+    \coordinate (m3) at (3.5, 4.36);
+    \coordinate (m4) at (6.0, 4.36);
+    \coordinate (m5) at (8.0, 6.54);
+
+    % Linia średnia
+    \draw[canblue, thick] (p1) -- (p2) -- (p3) -- (p4) -- (p5);
+    \foreach \p in {p1,p2,p3,p4,p5}
+      \filldraw[canblue] (\p) circle (2.5pt);
+
+    % Linia maks
+    \draw[canred, thick, dashed] (m1) -- (m2) -- (m3) -- (m4);
+    \foreach \p in {m1,m2,m3,m4}
+      \filldraw[canred] (\p) circle (2.5pt);
+
+    % Etykiety X
+    \foreach \x/\lbl in {1.0/100, 2.0/500, 3.5/1k, 6.0/5k, 8.0/10k} {
+      \node[below, font=\tiny] at (\x,-0.1) {\lbl};
+    }
+
+    % Legenda
+    \draw[canblue, thick] (4.5,4.5) -- (5.5,4.5);
+    \node[right, font=\tiny] at (5.5,4.5) {Średnie};
+    \draw[canred, thick, dashed] (4.5,4.0) -- (5.5,4.0);
+    \node[right, font=\tiny] at (5.5,4.0) {Maksymalne};
+  \end{scope}
+\end{tikzpicture}
+\caption{Opóźnienie wyświetlenia ramki w funkcji intensywności ruchu CAN}
+\label{fig:perf}
+\end{figure}
+
+\subsection{Silnik uczenia asocjacyjnego --- algorytm}
+
+\texttt{AssociativeLearner} implementuje nienadzorowane uczenie asocjacyjne.
+Algorytm operuje na oknach czasowych ramek CAN i szuka identyfikatorów
+silnie skorelowanych ze zdarzeniami oznaczonymi przez użytkownika.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.1cm]
+  \node[block, text width=4.8cm] (win)
+       {Okno czasowe $W_t$\\zbiór ramek CAN w przedziale $[t-\Delta, t]$};
+  \node[blockO, below=0.8cm of win, text width=4.8cm] (feat)
+       {Ekstrakcja cech:\\średnia wartości bajtów, częstość ID, delta czasowa};
+  \node[blockG, below=0.8cm of feat, text width=4.8cm] (label)
+       {Etykieta zdarzenia:\\użytkownik klika \emph{Zarejestruj zdarzenie}\\
+        (Ctrl+Shift+E) lub \emph{Brak zdarzenia} (Ctrl+Shift+D)};
+  \node[block, below=0.8cm of label, text width=4.8cm] (corr)
+       {Obliczenie korelacji Pearsona $r_{id,byte}$\\
+        i testu istotności $p$-value};
+  \node[blockR, below=0.8cm of corr, text width=4.8cm] (rank)
+       {Ranking kandydatów wg score\\
+        $s = |r| \cdot \sqrt{n} / (1 + p)$};
+  \node[blockW, below=0.8cm of rank, text width=4.8cm] (out)
+       {Wynik: lista CAN ID z opisem, score, liczbą wystąpień};
+
+  \draw[arrow] (win)   -- (feat);
+  \draw[arrow] (feat)  -- (label);
+  \draw[arrow] (label) -- (corr);
+  \draw[arrow] (corr)  -- (rank);
+  \draw[arrow] (rank)  -- (out);
+
+  % Pętla
+  \draw[arrowG, bend right=40] (out.east) to
+       node[right, font=\scriptsize, text=cangreen] {kolejne iteracje}
+       (win.east);
+\end{tikzpicture}
+\caption{Algorytm uczenia asocjacyjnego w module \texttt{AssociativeLearner}}
+\label{fig:ml}
+\end{figure}
+
+% ============================================================
+\subsection{Zaawansowane algorytmy ML --- LearningEngine v2.1}
+
+\texttt{LearningEngine} jest niezależną od GUI warstwą obliczeniową
+implementującą 37~algorytmów analitycznych. Poniżej opisano funkcje
+dodane w~wersji~2.1:
+
+\begin{table}[H]
+\caption{Zaawansowane algorytmy ML dodane w wersji 2.1}
+\label{tab:mlv21}
+\centering
+\small
+\begin{tabular}{p{5.0cm}p{9.5cm}}
+\toprule
+\textbf{Algorytm} & \textbf{Opis techniczny} \\
+\midrule
+Przyczynowość Grangera &
+  Test F (OLS, eliminacja Gaussa). Sprawdza, czy szereg wartości bajtu CAN
+  statystycznie przewiduje zmienną użytkownika z opóźnieniem 1--5 próbek. \\
+Wykrywanie punktów zmiany &
+  Binary Segmentation --- iteracyjne dzielenie szeregu na segmenty
+  o minimalnym koszcie (PELT-like). Wykrywa nagłe zmiany dynamiki CAN. \\
+Cross-correlation z lagiem &
+  Korelacja Pearsona z przesunięciem $\tau \in [-10, +10]$ próbek.
+  Odpowiada na pytanie: ``który bajt \emph{wyprzedza} zmienną o $\tau$ próbek?'' \\
+Gradient Boosted Trees &
+  XGBoost-lite (własna implementacja C++17). Nieliniowa predykcja wartości
+  zmiennej z wektora cech bajtowych. \\
+Online Welford &
+  Korelacje aktualizowane przyrostowo algorytmem Welford --- $O(1)$ na
+  obserwację, bez przechowywania historii. Stabilne numerycznie. \\
+EWMA anomaly detection &
+  Wykrywanie anomalii: $\hat{\mu}_{t}=\alpha x_t + (1-\alpha)\hat{\mu}_{t-1}$.
+  Alarm przy $|x_t - \hat{\mu}_t| > k\hat{\sigma}_t$ (domyślnie $\alpha=0.2$, $k=3$). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Wizualizacja osi czasu (Timeline)}
+
+\texttt{CanProtocolTimelineWidget} wyświetla sekwencję wiadomości CAN w czasie
+jako scatter chart (QChart). Dane zasilane są sygnałem
+\texttt{frameProcessedThrottled} (co 16.~ramkę, ok. 30~fps).
+
+\begin{table}[H]
+\caption{Parametry konfiguracyjne widgetu Timeline}
+\label{tab:timeline}
+\centering
+\small
+\begin{tabular}{p{4.5cm}p{10.0cm}}
+\toprule
+\textbf{Parametr} & \textbf{Opis} \\
+\midrule
+Oś X --- okno czasowe &
+  Ruchome okno: 5~s / 10~s / 30~s / 60~s / 120~s (QComboBox). \\
+Oś Y --- kategorie &
+  CAN ID jako kategorie. Przy wczytanym pliku DBC --- nazwy sygnałów. \\
+Top-N IDs &
+  Spinner 2--16. Wyświetla $N$ najczęstszych ID (sortowanie wg \texttt{CanTimelineModel}). \\
+Ring-buffer model &
+  \texttt{CanTimelineModel}: bufor cykliczny per ID, lazy rebuild top-N co 250~ms. \\
+Kolory &
+  16-kolorowa paleta cykliczna (osobna seria QScatterSeries per ID). \\
+Tryb pauzy &
+  Przycisk Pause zatrzymuje odświeżanie wykresu (bufor nadal rośnie). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Zapewnienie jakości --- testy i CI/CD}
+
+\subsubsection*{Pokrycie testami jednostkowymi}
+
+Projekt zawiera 344~testy jednostkowe (Google Test~1.14), zorganizowane
+w~9~plikach. Testy uruchamiają się automatycznie w~potoku~CI.
+
+\begin{table}[H]
+\caption{Pliki testów jednostkowych i liczba przypadków testowych}
+\label{tab:tests2}
+\centering
+\small
+\begin{tabular}{p{6.0cm}p{5.5cm}r}
+\toprule
+\textbf{Plik testu} & \textbf{Testowany moduł} & \textbf{Liczba} \\
+\midrule
+\texttt{test\_canframe.cpp}         & CanFrame, flagi, DLC, CAN XL      & 8  \\
+\texttt{test\_canframemodel.cpp}    & CanFrameModel, tryby, batch        & 24 \\
+\texttt{test\_dbcparser.cpp}        & DbcParser, sygnały, endianness     & 10 \\
+\texttt{test\_learningengine.cpp}   & LearningEngine, 37 algorytmów      & 185 \\
+\texttt{test\_ringbuffer.cpp}       & Bufor cykliczny (lock-free)        & 18 \\
+\texttt{test\_canobservationdb.cpp} & SQLite DB, WAL, zapytania          & 13 \\
+\texttt{test\_canalertengine.cpp}   & Pipeline alertów, 4 typy reguł     & 52 \\
+\texttt{test\_pcapexporter.cpp}     & PcapExporter, format LINKTYPE~227  & 20 \\
+\texttt{test\_cantimelinemodel.cpp} & CanTimelineModel, top-N, ring      & 14 \\
+\midrule
+\textbf{Łącznie}                    &                                    & \textbf{344} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Potok CI/CD (GitHub Actions)}
+
+Projekt konfiguruje dwa workflow GitHub Actions (\texttt{ci.yml} i \texttt{build.yml}):
+
+\begin{table}[H]
+\caption{Etapy potoku CI/CD GitHub Actions}
+\label{tab:cicd}
+\centering
+\small
+\begin{tabular}{p{4.5cm}p{10.0cm}}
+\toprule
+\textbf{Etap} & \textbf{Opis} \\
+\midrule
+Build Linux (GCC~13) &
+  \texttt{cmake -DCMAKE\_BUILD\_TYPE=Release}, \texttt{make -j4},
+  artefakty: \texttt{MagistralaCAN4} + \texttt{MagistralaCAN4Test}. \\
+AddressSanitizer &
+  Ponowna kompilacja z \texttt{-fsanitize=address,undefined}.
+  Uruchomienie testów z włączonym ASAN. \\
+Code Coverage &
+  \texttt{gcov} + \texttt{lcov}, raport HTML w artefaktach. \\
+clang-tidy &
+  Analiza statyczna wg domyślnego \texttt{.clang-tidy}. Błędy skutkują
+  failem pipeline'u. \\
+Build Windows (MSYS2) &
+  Cross-build z UCRT64 (MinGW), statyczne Qt6.
+  Artefakt: \texttt{MagistralaCAN4.exe} (standalone). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Schematy ideowe}
+
+\subsection{Diagram sekwencji --- połączenie z ICSim}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\resizebox{0.92\textheight}{!}{%
+\begin{tikzpicture}[node distance=0.5cm]
+  % Linie życia — sep=4.8cm daje ~19.2cm szerokości na 5 uczestników
+  \def\sep{4.8cm}
+  \node[font=\small\bfseries] (user)   at (0,0)          {Użytkownik};
+  \node[font=\small\bfseries] (icsimw) at (\sep,0)       {IcSimWidget};
+  \node[font=\small\bfseries] (bridge) at (2*\sep,0)     {magistrala\_bridge.exe};
+  \node[font=\small\bfseries] (client) at (3*\sep,0)     {RemoteCanClient};
+  \node[font=\small\bfseries] (mw)     at (4*\sep,0)     {MainWindow};
+
+  \foreach \x in {0,\sep,2*\sep,3*\sep,4*\sep}
+    \draw[cangray, dashed] (\x,-0.3) -- (\x,-10.0);
+
+  % --- Akcje ---
+  \def\y{-0.7}
+  \draw[-Stealth, canblue] (0,\y) -- (\sep,\y)
+    node[midway, above, font=\scriptsize] {klik "Uruchom ICSim"};
+
+  \def\y{-1.5}
+  \draw[-Stealth, cangreen] (\sep,\y) -- (2*\sep,\y)
+    node[midway, above, font=\scriptsize] {QProcess::start(bridge.exe)};
+
+  \def\y{-2.3}
+  \draw[-Stealth, canorange, bend left=0] (2*\sep,\y) to[out=200,in=340]
+    node[below, font=\scriptsize] {listen ws://127.0.0.1:9001}
+    (2*\sep-0.1,\y-0.4);
+
+  \def\y{-3.2}
+  \draw[-Stealth, cangray] (\sep,\y) -- (3*\sep,\y)
+    node[midway, above, font=\scriptsize] {connectRequested(url,"icsim") --- 400\,ms delay};
+
+  \def\y{-4.1}
+  \draw[-Stealth, canblue] (3*\sep,\y) -- (2*\sep,\y)
+    node[midway, above, font=\scriptsize] {WS connect ws://127.0.0.1:9001};
+
+  \def\y{-4.9}
+  \draw[-Stealth, cangreen] (2*\sep,\y) -- (3*\sep,\y)
+    node[midway, above, font=\scriptsize] {WS handshake OK};
+
+  \def\y{-5.7}
+  \draw[-Stealth, canblue] (3*\sep,\y) -- (4*\sep,\y)
+    node[midway, above, font=\scriptsize] {statusChanged(true)};
+
+  \def\y{-6.6}
+  \draw[-Stealth, canorange] (2*\sep,\y) -- (3*\sep,\y)
+    node[midway, above, font=\scriptsize]
+      {\{type:"frames", frames:[...]\} co 10\,ms};
+
+  \def\y{-7.5}
+  \draw[-Stealth, canblue] (3*\sep,\y) -- (4*\sep,\y)
+    node[midway, above, font=\scriptsize] {newFrame(CanFrame)};
+
+  \def\y{-8.3}
+  \draw[-Stealth, cangreen] (4*\sep,\y) -- (4*\sep,\y-0.7)
+    node[right, font=\scriptsize, xshift=0.1cm]
+      {onNewFrame() $\to$ bufor $\to$ model $\to$ tabela};
+\end{tikzpicture}%
+}
+\caption{Diagram sekwencji --- połączenie ICSim z MagistralaCAN4 przez WebSocket}
+\label{fig:seq}
+\end{figure}
+\end{landscape}
+
+\subsection{Schemat blokowy sterownika SLCAN}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.1cm]
+  \node[blockG, text width=5cm] (port)
+       {QSerialPort\\(COM/ttyUSB, 115200~8N1)};
+  \node[blockO, below=0.8cm of port, text width=5cm] (enc)
+       {Enkoder SLCAN\\Frame $\rightarrow$ \texttt{"t7DF8020600...\\r"}};
+  \node[block, below=0.8cm of enc, text width=5cm] (dec)
+       {Dekoder SLCAN\\tekst ASCII $\rightarrow$ CanFrame};
+  \node[blockW, below=0.8cm of dec, text width=5cm] (sniff)
+       {CanSniffer ring buffer};
+
+  \draw[arrowG] (port) -- (enc);
+  \draw[arrow]  (enc) -- node[right, font=\scriptsize]{wysyłanie} (dec);
+  \draw[arrow]  (dec) -- node[right, font=\scriptsize]{odbiór}    (sniff);
+
+  % Legenda formatu
+  \node[draw=cangray, fill=lightgray, rounded corners=3pt,
+        right=1.5cm of enc, text width=4.5cm, font=\scriptsize,
+        align=left, yshift=0.5cm] (fmt)
+       {\textbf{Format SLCAN:}\\
+        \texttt{t} --- CAN 2.0A (11-bit ID)\\
+        \texttt{T} --- CAN 2.0B (29-bit ID)\\
+        \texttt{r} --- Remote Frame (RTR)\\
+        \texttt{t244810...} --- ID + DLC + dane\\
+        \texttt{O} --- open, \texttt{C} --- close, \texttt{S} --- speed};
+  \draw[cangray, dashed] (enc.east) -- (fmt.west);
+\end{tikzpicture}
+\caption{Schemat blokowy sterownika SLCAN (\texttt{SlCanDriver})}
+\label{fig:slcan}
+\end{figure}
+
+\subsection{Schemat protokołu GVRET (\texttt{GvretDriver})}
+
+\texttt{GvretDriver} implementuje binarny protokół GVRET (EVTV Motor Werks),
+kompatybilny z oprogramowaniem SavvyCAN i ESP32-GVRET.
+Każda ramka CAN jest opakowana w pakiet binarny z bajtem startowym \texttt{0xF1}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.9cm]
+  % Schemat pakietu binarnego
+  \def\bw{1.4cm}
+  \node[draw=canblue, fill=lightblue, minimum width=\bw, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center] (start)  at (0,0)    {0xF1\\START};
+  \node[draw=canorange, fill=lightorange, minimum width=\bw, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of start] (cmd)
+       {0x02\\CMD};
+  \node[draw=cangreen, fill=lightgreen, minimum width=1.8cm, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of cmd] (ts)
+       {timestamp\\4B (us)};
+  \node[draw=canpurple, fill=purple!8, minimum width=\bw, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of ts] (flags)
+       {flags\\1B};
+  \node[draw=canblue, fill=lightblue, minimum width=1.8cm, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of flags] (canid)
+       {CAN ID\\4B (LE)};
+  \node[draw=cangray, fill=lightgray, minimum width=\bw, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of canid] (bus)
+       {bus\\1B};
+  \node[draw=canorange, fill=lightorange, minimum width=\bw, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of bus] (dlc)
+       {DLC\\1B};
+  \node[draw=cangreen, fill=lightgreen, minimum width=2.0cm, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of dlc] (data)
+       {data\\0--64B};
+  \node[draw=canred, fill=red!10, minimum width=\bw, minimum height=0.9cm,
+        font=\tiny\bfseries, align=center, right=0pt of data] (end)
+       {0x00\\END};
+
+  % Adnotacja flag
+  \node[draw=canpurple, fill=purple!5, rounded corners=3pt, text width=5cm,
+        font=\scriptsize, align=left, below=1.2cm of flags, xshift=1.2cm] (flagbox)
+       {\textbf{Bajt flags:}\\
+        bit 2 --- CAN FD\\
+        bit 1 --- Extended ID (29-bit)\\
+        bit 0 --- BRS (CAN FD bitrate switch)};
+  \draw[canpurple, dashed] (flags.south) -- (flagbox.north);
+\end{tikzpicture}
+\caption{Format pakietu binarnego protokołu GVRET (ramka odbioru, CMD=0x02)}
+\label{fig:gvret}
+\end{figure}
+
+\begin{table}[H]
+\caption{Polecenia protokołu GVRET obsługiwane przez \texttt{GvretDriver}}
+\label{tab:gvret}
+\centering
+\small
+\begin{tabular}{p{1.8cm}p{3.0cm}p{9.0cm}}
+\toprule
+\textbf{CMD} & \textbf{Nazwa} & \textbf{Opis} \\
+\midrule
+\texttt{0x01} & \textsc{GetVersion}   & Żądanie wersji firmware; odpowiedź: string + major/minor/rev. \\
+\texttt{0x02} & \textsc{GetCanFrame}  & Ramka CAN odebrana z magistrali (kierunek urządzenie $\to$ PC). \\
+\texttt{0x03} & \textsc{SendCanFrame} & Wysłanie ramki CAN przez urządzenie (PC $\to$ urządzenie). \\
+\texttt{0x04} & \textsc{SetBaudRate}  & Ustawienie prędkości magistrali (\texttt{CMD\_SETUP\_BUS}). \\
+\texttt{0x05} & \textsc{GetNumBuses}  & Zapytanie o liczbę obsługiwanych kanałów CAN. \\
+\texttt{0x09} & \textsc{GetDeviceInfo}& Informacje o urządzeniu (model, firmware, numery kanałów). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sterownik po nawiązaniu połączenia wysyła \texttt{CMD\_GET\_DEVICE\_INFO} i czeka
+na odpowiedź (\texttt{waitForReadyRead} 2\,s). Po potwierdzeniu kompatybilności
+uruchamiany jest wątek odbioru emitujący sygnał \texttt{newFrame(CanFrame)}
+z każdego zdekodowanego pakietu binarnego.
+
+\subsection{Schemat protokołu UDS / ISO-TP}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.2cm and 0.8cm]
+  % Warstwy
+  \node[blockR, text width=5.5cm] (raw)
+       {CAN Frame (8 bajtów)\\ID = 0x7DF (functional) / 0x7E0--0x7E7 (physical)};
+  \node[block, below=0.8cm of raw, text width=5.5cm] (tp)
+       {\textbf{ISO-TP (ISO 15765-2) --- CanTpLayer}\\
+        SF ($\leq$7B) / FF+CF (segmentacja) / FC (flow control)};
+  \node[blockG, below=0.8cm of tp, text width=5.5cm] (uds)
+       {\textbf{UDS (ISO 14229) --- UdsParser}\\
+        SID: \texttt{0x22} ReadData, \texttt{0x27} Security,\\
+        \texttt{0x10} DiagSession, \texttt{0x3E} TesterPresent...};
+  \node[blockW, below=0.8cm of uds, text width=5.5cm] (disp)
+       {UdsWidget --- tabela sesji,\\podgląd payload, czas odpowiedzi};
+
+  \draw[arrowR] (raw) -- (tp);
+  \draw[arrow]  (tp)  -- (uds);
+  \draw[arrowG] (uds) -- (disp);
+
+  % Ramki ISO-TP
+  \node[draw=canblue, fill=lightblue, right=1.2cm of tp,
+        text width=4.0cm, rounded corners=3pt, font=\scriptsize, align=left] (isotp)
+       {\textbf{Typy ramek ISO-TP:}\\
+        \texttt{0x0x} --- Single Frame (DL$\leq$7)\\
+        \texttt{0x1x} --- First Frame (DL>7)\\
+        \texttt{0x2x} --- Consecutive Frame\\
+        \texttt{0x30} --- Flow Control (CTS)\\
+        \texttt{0x31} --- FC Wait\\
+        \texttt{0x32} --- FC Overflow};
+  \draw[canblue, dashed] (tp.east) -- (isotp.west);
+\end{tikzpicture}
+\caption{Schemat stosu protokołów UDS/ISO-TP}
+\label{fig:uds}
+\end{figure}
+
+\subsection{Maszyna stanów sniffingu}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=2.5cm, >=Stealth]
+  \node[circle, draw=cangray, fill=lightgray, minimum size=1.2cm,
+        font=\scriptsize\bfseries] (off) {STOP};
+  \node[circle, draw=cangreen, fill=lightgreen, minimum size=1.2cm,
+        font=\scriptsize\bfseries, right=3.5cm of off] (on) {SNIFF};
+  \node[circle, draw=canorange, fill=lightorange, minimum size=1.2cm,
+        font=\scriptsize\bfseries, above=2.0cm of on] (rec) {RECORD};
+  \node[circle, draw=canblue, fill=lightblue, minimum size=1.2cm,
+        font=\scriptsize\bfseries, below=2.0cm of on] (play) {REPLAY};
+
+  \draw[-Stealth, cangreen, thick, bend left=10]
+       (off.east) to node[above, font=\scriptsize]{toggleSniffing()} (on.west);
+  \draw[-Stealth, canred, thick, bend left=10]
+       (on.west) to node[below, font=\scriptsize]{toggleSniffing()} (off.east);
+  \draw[-Stealth, canorange, thick, bend left=20]
+       (on.north) to node[right, font=\scriptsize]{toggleRecording()} (rec.south);
+  \draw[-Stealth, canorange, thick, bend left=20]
+       (rec.south) to node[left, font=\scriptsize]{stop} (on.north);
+  \draw[-Stealth, canblue, thick, bend right=20]
+       (off.south) to node[left, font=\scriptsize, xshift=0.3cm]{loadRecording()} (play.west);
+  \draw[-Stealth, canblue, thick, bend right=20]
+       (play.west) to node[right, font=\scriptsize, xshift=-0.3cm]{stop} (off.south);
+\end{tikzpicture}
+\caption{Maszyna stanów przechwytywania}
+\label{fig:fsm}
+\end{figure}
+
+% ============================================================
+\section{Widoki layoutu}
+
+\subsection{Struktura plików projektu}
+
+Projekt zawiera ponad 160 plików źródłowych C++ i nagłówkowych.
+Poniżej przedstawiono organizację katalogów:
+
+\begin{table}[H]
+\caption{Organizacja plików projektu}
+\label{tab:files}
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Katalog} & \textbf{Liczba plików .cpp} & \textbf{Zawartość} \\
+\midrule
+\texttt{src/core/}  & $\approx$95 & Logika biznesowa, parsery, silnik ML \\
+\texttt{src/gui/}   & 3           & MainWindow, HeatmapBar, LazyTabWidget \\
+\texttt{tests/}     & 7           & Testy jednostkowe (Google Test) \\
+\texttt{esp\_mcp/}  & 1 (.ino)    & Firmware ESP32+MCP2515 (Arduino) \\
+\texttt{esp\_slcan/} & 1 (.ino)   & Firmware ESP32 SLCAN \\
+\texttt{esp\_gvret/} & 1 (.ino)   & Firmware ESP32 GVRET \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Diagram zależności modułów}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\resizebox{0.92\textheight}{!}{%
+\begin{tikzpicture}[node distance=1.1cm and 1.5cm]
+  % Kolumna 1: typ ramki
+  \node[blockW, text width=3.5cm] (frame) {\texttt{CanFrame}\\(struct)};
+
+  % Kolumna 2: sterowniki
+  \node[blockG, text width=3.5cm, right=1.8cm of frame] (driver)
+       {\texttt{ICanDriver}\\interfejs};
+  \node[blockG, text width=3.5cm, above=0.8cm of driver] (pcan)
+       {\texttt{PcanDriver}};
+  \node[blockG, text width=3.5cm, below=0.8cm of driver] (slcan)
+       {\texttt{SlCanDriver}};
+  \node[blockG, text width=3.5cm, below=0.8cm of slcan]  (esp)
+       {\texttt{EspMcpDriver}};
+  \node[blockG, text width=3.5cm, below=0.8cm of esp]    (gvret)
+       {\texttt{GvretDriver}};
+
+  % Kolumna 3: sniffer
+  \node[block, text width=3.5cm, right=1.8cm of driver] (sniffer)
+       {\texttt{CanSniffer}\\ring buffer};
+
+  % Kolumna 4: model
+  \node[block, text width=3.5cm, right=1.8cm of sniffer] (model)
+       {\texttt{CanFrameModel}\\10k frames};
+  \node[blockO, text width=3.5cm, above=1.0cm of model]  (dbc)
+       {\texttt{DbcParser}\\+ ArxmlParser};
+
+  % Kolumna 5: MainWindow + zależności
+  \node[block, text width=3.5cm, right=1.8cm of model]   (mw)
+       {\texttt{MainWindow}\\Qt6 GUI};
+  \node[blockO, text width=3.5cm, above=1.0cm of mw]     (learner)
+       {\texttt{AssociativeLearner}};
+  \node[blockO, text width=3.5cm, below=1.0cm of mw]     (uds)
+       {\texttt{UdsParser}};
+  \node[blockO, text width=3.5cm, below=1.0cm of uds]    (cantp)
+       {\texttt{CanTpLayer}};
+  \node[blockR, text width=3.5cm, right=1.2cm of mw]     (alert)
+       {\texttt{CanAlertEngine}};
+  \node[blockW, text width=3.5cm, above=1.0cm of alert]  (rec)
+       {\texttt{CanRecorder}\\+ Mdf4Writer};
+
+  % Strzałki
+  \draw[arrow]  (pcan.south)  -- (driver.north);
+  \draw[arrow]  (slcan.north) -- (driver.south);
+  \draw[arrow]  (esp.north)   -- (slcan.south);
+  \draw[arrow]  (gvret.north) -- (esp.south);
+  \draw[arrow]  (frame.east)  -- (driver.west);
+  \draw[arrow]  (driver)      -- (sniffer);
+  \draw[arrow]  (sniffer)     -- (model);
+  \draw[arrow]  (model)       -- (mw);
+  \draw[arrowO] (dbc.south)   -- (model.north);
+  \draw[arrowO] (model.east)  |- (learner.west);
+  \draw[arrowO] (mw.south)    -- (uds.north);
+  \draw[arrowO] (uds.south)   -- (cantp.north);
+  \draw[arrowR] (mw.east)     -- (alert.west);
+  \draw[arrowG] (mw.east)     |- (rec.west);
+\end{tikzpicture}%
+}
+\caption{Uproszczony diagram zależności głównych modułów}
+\label{fig:deps}
+\end{figure}
+\end{landscape}
+
+% ============================================================
+\section{Schematy montażowe}
+
+\subsection{Podłączenie PCAN-USB}
+
+Adaptery PCAN-USB firmy Peak Systems podłącza się przez USB do komputera
+i kablem CAN (złącze DB9 lub wg normy ISO~11898) do magistrali pojazdu.
+Na magistrali wymagany jest rezystor terminacyjny $120\,\Omega$ po obu końcach.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  % PC
+  \draw[canblue, thick, rounded corners=4pt] (0,0) rectangle (2.5,2.0);
+  \node[font=\small\bfseries, text=canblue] at (1.25,1.6) {PC};
+  \node[font=\tiny] at (1.25,1.0) {USB Host};
+  \draw[canblue, fill=white] (2.5,0.8) rectangle (2.8,1.2);
+  \node[font=\tiny, rotate=90] at (2.65,1.0) {USB-A};
+
+  % Kabel USB
+  \draw[canblue, very thick] (2.8,1.0) -- (4.0,1.0);
+  \node[font=\tiny, above=0.1cm] at (3.4,1.05) {USB 2.0};
+
+  % PCAN-USB
+  \draw[canorange, thick, rounded corners=3pt] (4.0,0.3) rectangle (6.5,1.7);
+  \node[font=\small\bfseries, text=canorange] at (5.25,1.3) {PCAN-USB};
+  \node[font=\tiny] at (5.25,0.8) {Peak Systems};
+  \draw[canorange, fill=white] (4.0,0.8) rectangle (3.7,1.2);
+  \node[font=\tiny, rotate=90] at (3.85,1.0) {USB-B};
+  \draw[canorange, fill=white] (6.5,0.7) rectangle (6.8,1.3);
+  \node[font=\tiny, rotate=90] at (6.65,1.0) {DB9};
+
+  % Kabel CAN
+  \draw[canred, very thick] (6.8,1.0) -- (8.5,1.0);
+  \node[font=\tiny, above=0.1cm] at (7.65,1.05) {CAN H/L};
+
+  % Magistrala
+  \draw[canred, very thick] (8.5,0.5) -- (8.5,1.5);
+  \draw[canred, very thick] (8.5,1.0) -- (12.0,1.0);
+  \node[font=\tiny, above=0.1cm] at (10.0,1.05) {Magistrala CAN (2-wire)};
+
+  % Rezystory terminacyjne
+  \draw[cangray] (8.5,1.5) -- (8.5,2.0) -- (9.3,2.0) -- (9.3,1.5);
+  \node[font=\tiny, above] at (8.9,2.0) {$120\,\Omega$};
+  \draw[cangray] (11.2,1.5) -- (11.2,2.0) -- (12.0,2.0) -- (12.0,1.5);
+  \node[font=\tiny, above] at (11.6,2.0) {$120\,\Omega$};
+
+  % ECU
+  \draw[cangreen, thick, rounded corners=3pt] (10.2,0.0) rectangle (12.0,0.8);
+  \node[font=\small\bfseries, text=cangreen] at (11.1,0.4) {ECU};
+\end{tikzpicture}
+\caption{Schemat montażowy --- podłączenie PCAN-USB do magistrali CAN}
+\label{fig:mount}
+\end{figure}
+
+\subsection{Podłączenie ESP32 + MCP2515}
+
+Moduł ESP32 z kontrolerem MCP2515 podłącza się przez SPI do mikrokontrolera,
+a następnie przez tranceiver TJA1050 do magistrali CAN.
+Komunikacja z programem odbywa się przez UART (115200~baud, USB$\to$COM).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.5cm and 1.0cm]
+  \node[blockG, text width=2.5cm] (esp32) {ESP32\\(firmware sniffer)};
+  \node[blockO, right=1.0cm of esp32, text width=2.5cm] (mcp) {MCP2515\\(SPI)};
+  \node[blockR, right=1.0cm of mcp, text width=2.5cm]  (trx) {TJA1050\\(tranceiver)};
+  \node[blockW, right=1.0cm of trx, text width=2.0cm]  (bus) {Magistrala\\CAN};
+  \node[block, below=1.2cm of esp32, text width=2.5cm]  (usb) {USB$\to$UART\\CP2102};
+  \node[blockG, below=1.2cm of usb, text width=3.0cm]  (pc) {PC\\MagistralaCAN4};
+
+  \draw[arrowO] (esp32) -- node[above, font=\tiny]{SPI} (mcp);
+  \draw[arrowR] (mcp) -- node[above, font=\tiny]{CAN TX/RX} (trx);
+  \draw[arrow]  (trx) -- node[above, font=\tiny]{H/L} (bus);
+  \draw[arrow]  (esp32) -- node[right, font=\tiny]{UART 115200} (usb);
+  \draw[arrowG] (usb) -- node[right, font=\tiny]{USB} (pc);
+\end{tikzpicture}
+\caption{Schemat montażowy --- ESP32 + MCP2515 jako interfejs CAN}
+\label{fig:esp}
+\end{figure}
+
+% ============================================================
+\section{Zestawienie podzespołów i koszt}
+
+\subsection{Lista podzespołów sprzętowych}
+
+\begin{table}[H]
+\caption{Zestawienie podzespołów opcjonalnych (interfejsy CAN)}
+\label{tab:bom}
+\centering
+\small
+\begin{tabular}{lllr}
+\toprule
+\textbf{Podzespół} & \textbf{Producent / model} & \textbf{Interfejs} & \textbf{Cena est. [PLN]} \\
+\midrule
+Adapter CAN USB     & Peak PCAN-USB          & USB / DB9    & 650 \\
+Adapter CAN USB     & Canable (SLCAN)        & USB / DB9    & 80  \\
+Mikrokontroler      & ESP32 DevKit v1        & USB-UART     & 25  \\
+Kontroler CAN       & MCP2515 moduł          & SPI          & 15  \\
+Tranceiver CAN      & TJA1050 moduł          & CAN H/L      & 8   \\
+Rezystor terminacyjny & $120\,\Omega$ 0.25W  & wlutowany    & 1   \\
+Złącze DB9 (gniazdo) & standard              & śrubowy      & 5   \\
+Kabel CAN 2-wire 1m  & skrętka               & swobodny     & 10  \\
+\midrule
+\textbf{Razem (wariant ESP32)} & & & \textbf{64} \\
+\textbf{Razem (wariant PCAN)}  & & & \textbf{664} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Oprogramowanie --- zależności (bezpłatne)}
+
+\begin{table}[H]
+\caption{Zestawienie zależności programowych --- licencje}
+\label{tab:licenses}
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+\textbf{Biblioteka} & \textbf{Wersja} & \textbf{Licencja} & \textbf{Koszt} \\
+\midrule
+Qt6                & 6.6       & LGPL v3 / GPL v3  & bezpłatna (open source) \\
+Google Test        & 1.14.0    & BSD 3-Clause      & bezpłatna \\
+Lua                & 5.4.6     & MIT               & bezpłatna \\
+OpenCL             & 1.2+      & Khronos           & bezpłatna \\
+libzstd            & 1.5.5     & BSD / GPL v2      & bezpłatna \\
+Mongoose           & 7.x       & GPL v2 / Commercial & bezpłatna (GPL) \\
+MSYS2 / GCC 13     & ---       & GPL               & bezpłatna \\
+\midrule
+\textbf{Łącznie}   &           &                   & \textbf{0 PLN} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Struktura plików i konfiguracja}
+
+\subsection{Pełna struktura katalogów projektu}
+
+\begin{table}[H]
+\caption{Szczegółowa organizacja katalogów projektu MagistralaCAN4}
+\label{tab:dirs}
+\centering
+\small
+\begin{tabular}{p{5.0cm}rp{8.0cm}}
+\toprule
+\textbf{Katalog / plik} & \textbf{Pliki} & \textbf{Zawartość} \\
+\midrule
+\texttt{src/core/}           & $\approx$95 &
+  Logika biznesowa: parsery, silniki, sterowniki, widgety. \\
+\texttt{src/gui/}            & 3 &
+  \texttt{MainWindow}, \texttt{HeatmapBar}, \texttt{LazyTabWidget}. \\
+\texttt{tests/}              & 9 &
+  Testy jednostkowe (344~przypadki, Google Test). \\
+\texttt{esp\_mcp/}           & 1 (.ino) &
+  Firmware ESP32+MCP2515 (Arduino IDE). \\
+\texttt{esp\_slcan/}         & 1 (.ino) &
+  Firmware ESP32 SLCAN (protokół ASCII). \\
+\texttt{esp\_gvret/}         & 1 (.ino) &
+  Firmware ESP32 GVRET (protokół binarny EVTV). \\
+\texttt{build\_native/}      & 1 (.exe) &
+  Skompilowany plik wykonywalny Windows (standalone). \\
+\texttt{raprort/}            & 1 (.tex) &
+  Niniejsza dokumentacja projektu. \\
+\texttt{.github/workflows/}  & 2 (.yml) &
+  Potok CI/CD: \texttt{ci.yml} (Linux+ASAN), \texttt{build.yml} (Windows MSYS2). \\
+\texttt{CMakeLists.txt}      & 1 &
+  Konfiguracja budowania (CI-aware: \texttt{ENV\{CI\}} guard). \\
+\texttt{send\_frame.lua}     & 1 &
+  Przykładowy skrypt Lua. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Pliki konfiguracyjne i auto-save}
+
+\begin{table}[H]
+\caption{Pliki konfiguracyjne, sesji i auto-save aplikacji}
+\label{tab:configfiles}
+\centering
+\small
+\begin{tabular}{p{7.0cm}p{7.5cm}}
+\toprule
+\textbf{Plik / katalog} & \textbf{Opis} \\
+\midrule
+{\footnotesize\ttfamily \%USERPROFILE\%\textbackslash{}\linebreak[4].magistrala\_can4\textbackslash{}\linebreak[4]settings.ini} &
+  Ustawienia okna, motyw, ostatnie pliki DBC/Lua, tryb nadpisywania. \\[4pt]
+{\footnotesize\ttfamily \%USERPROFILE\%\textbackslash{}\linebreak[4].magistrala\_can4\textbackslash{}token} &
+  Token 256-bit serwera WSS (64~znaki hex). \\[4pt]
+{\footnotesize\ttfamily \%USERPROFILE\%\textbackslash{}\linebreak[4].magistrala\_can4\textbackslash{}server.crt} &
+  Certyfikat TLS self-signed (generowany automatycznie). \\[4pt]
+\texttt{autosave\_learner.json} &
+  Auto-save sesji uczenia asocjacyjnego (co 5~min). \\[4pt]
+\texttt{magistrala\_debug.log} &
+  Log zdarzeń aplikacji (klasa \texttt{Logger}). \\[4pt]
+{\footnotesize\ttfamily C:\textbackslash{}candump\textbackslash{}candump\_YYYYMMDD\_HHMMSS.log} &
+  Automatyczne nagrania candump (ASCII). \\[4pt]
+\texttt{*.mcan} / \texttt{*.mcan.zst} &
+  Nagrania binarne sesji CAN (opcjonalna kompresja zstd). \\[4pt]
+\texttt{*.mf4} &
+  Nagrania MDF4 (AUTOSAR, kompatybilne z CANalyzer/PEAK). \\[4pt]
+\texttt{*.pcap} &
+  Eksport PCAP (\texttt{LINKTYPE\_CAN\_SOCKETCAN}=227, Wireshark). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Instrukcja użytkownika}
+
+\subsection{Uruchomienie i pierwsze kroki}
+
+\begin{enumerate}
+  \item Podłączyć adapter CAN (PCAN-USB, Canable lub ESP32+MCP2515)
+        do portu USB komputera.
+  \item Uruchomić \texttt{MagistralaCAN4.exe} (Windows) lub
+        \texttt{./MagistralaCAN4} (Linux).
+  \item W grupie zakładek \textbf{Przechwytywanie $\to$ Ruch CAN}:
+    \begin{itemize}
+      \item wybrać interfejs z listy (odświeżanej co 5~s);
+      \item ustawić prędkość magistrali (domyślnie 500K);
+      \item wcisnąć \textbf{\textbf{[>]} Start}.
+    \end{itemize}
+  \item Ramki CAN pojawiają się w tabeli w czasie rzeczywistym.
+\end{enumerate}
+
+\subsection{Podstawowe operacje}
+
+\begin{table}[H]
+\caption{Podstawowe operacje użytkownika}
+\label{tab:ops}
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Operacja} & \textbf{Lokalizacja} & \textbf{Skrót / akcja} \\
+\midrule
+Start / Stop sniffingu        & Pasek narzędzi         & Przycisk \textbf{[>]} Start / [STOP] Stop \\
+Filtrowanie po ID             & CanStatsPanel          & Pole tekstowe (hex lub wyrażenie) \\
+Kopiowanie ramek              & Tabela $\to$ prawy klik    & Ctrl+C lub menu kontekstowe \\
+Eksport candump               & Pasek narzędzi         & Eksportuj candump \\
+Eksport CSV                   & Pasek narzędzi         & Eksportuj CSV \\
+Eksport PCAP                  & Pasek narzędzi         & Eksportuj PCAP \\
+Wczytaj plik DBC              & Pasek narzędzi         & Wczytaj DBC \\
+Nagrywanie MCAN               & Pasek narzędzi         & Nagraj \\
+Odtwarzanie nagrania          & Pasek narzędzi         & Wczytaj nagranie $\rightarrow$ Odtwórz \\
+Uczenie asocjacyjne           & Analiza $\to$ Uczenie      & Ctrl+Shift+E (zdarzenie) \\
+Uruchomienie ICSim            & Narzędzia $\to$ ICSim      & \textbf{[>]} Uruchom ICSim \\
+Zdalny CAN (klient)           & Narzędzia $\to$ Zdalny CAN & Wpisz URL ws:// lub wss:// \\
+Undo / Redo modelu            & Klawiatura             & Ctrl+Z / Ctrl+Y \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Filtrowanie wyrażeniami}
+
+Pole filtra w \texttt{CanStatsPanel} akceptuje wyrażenia logiczne:
+
+\begin{lstlisting}[style=cpp, caption={Przykłady filtrów wyrażeniowych}]
+// Tylko ramki 0x7DF
+7DF
+
+// ID z zakresu diagnostyki UDS
+can.id >= 0x700 && can.id <= 0x7FF
+
+// Ramki z DLC = 8, nie-RTR
+can.dlc == 8 && !can.rtr
+
+// Wiele ID jednoczesnie
+can.id == 0x244 || can.id == 0x19B || can.id == 0x0AA
+\end{lstlisting}
+
+\subsection{Integracja z ICSim}
+
+ICSim (Instrument Cluster Simulator) pozwala symulować CAN dashboardu pojazdu
+na wirtualnej magistrali \texttt{vcan0}. MagistralaCAN4 łączy się z symulatorem
+przez WebSocket bridge (\texttt{magistrala\_bridge.exe}).
+
+\begin{enumerate}
+  \item W zakładce \textbf{Narzędzia $\to$ ICSim} ustawić katalog
+        \texttt{builddir} (domyślnie \texttt{E:/ICSim/builddir}).
+  \item Kliknąć \textbf{[>] Uruchom ICSim} --- aplikacja automatycznie:
+    \begin{itemize}
+      \item startuje \texttt{magistrala\_bridge.exe --port 9001 vcan0},
+      \item startuje \texttt{icsim\_imgui.exe vcan0} (symulator dashboardu),
+      \item po 400~ms łączy klienta WebSocket z \texttt{ws://127.0.0.1:9001}.
+    \end{itemize}
+  \item Ramki z ICSim pojawiają się w zakładce \emph{Ruch CAN}
+        oraz w \emph{Uczeniu asocjacyjnym}.
+\end{enumerate}
+
+Identyfikatory CAN używane przez ICSim (plik \texttt{default.toml}):
+
+\begin{table}[H]
+\caption{Identyfikatory CAN symulatora ICSim}
+\label{tab:icsim}
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{CAN ID} & \textbf{Sygnał} & \textbf{Kodowanie} \\
+\midrule
+0x244 & Prędkość       & bajty 3--4, big-endian, $\div$100 $\times$ 0.6214 = mph \\
+0x19B & Drzwi          & bajt 2, bitmask: D1=0x01, D2=0x02, D3=0x04, D4=0x08 \\
+0x188 & Kierunkowskazy & bajt 0: left=0x01, right=0x02 \\
+0x0AA & Obroty silnika & bajty 4--5, $\div$4 = RPM \\
+0x1B8 & Temperatura    & bajt 2 (wartość surowa) \\
+0x2C8 & Paliwo         & bajt 5 (wartość surowa) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Instrukcja serwisowa}
+
+\subsection{Budowanie ze źródeł}
+
+\begin{lstlisting}[style=cpp, caption={Budowanie projektu (Windows, MSYS2 UCRT64)}]
+# Instalacja Qt6 statyczne (opcja dla dystrybucji standalone)
+pacman -S mingw-w64-ucrt-x86_64-qt6-static
+
+# Konfiguracja i kompilacja
+cmake -B build_win -G "MinGW Makefiles" \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_PREFIX_PATH="C:/msys64/ucrt64/qt6-static"
+cmake --build build_win --target MagistralaCAN4 -j8
+\end{lstlisting}
+
+\subsection{Uruchamianie testów}
+
+\begin{lstlisting}[style=cpp, caption={Uruchomienie testow jednostkowych}]
+cmake --build build_win --target MagistralaCAN4Test -j4
+cd build_win && ctest --output-on-failure
+# Raport pokrycia (Linux, wymaga gcov + lcov):
+lcov --capture --directory . --output-file coverage.info
+genhtml coverage.info --output-directory coverage_html
+\end{lstlisting}
+
+\subsection{Konfiguracja wirtualnej magistrali CAN (Linux)}
+
+Na systemach Linux można testować aplikację bez fizycznego sprzętu
+używając wirtualnego interfejsu \texttt{vcan0}:
+
+\begin{lstlisting}[style=cpp, caption={Konfiguracja vcan0 i generowanie ramek testowych}]
+# Zaladuj modul vcan
+sudo modprobe vcan
+sudo ip link add dev vcan0 type vcan
+sudo ip link set up vcan0
+
+# Generuj losowe ramki (can-utils)
+cangen vcan0 -v -I 123 -L 8 -g 10
+
+# Generuj ramki CANopen (testy protokolu)
+cangen vcan0 -I 0x701 -L 1 -D 05 -g 100   # Heartbeat Operational
+cangen vcan0 -I 0x000 -L 2 -D 01 00 -g 1000 # NMT Start
+\end{lstlisting}
+
+\subsection{Regeneracja tokena WSS}
+
+Token 256-bit serwera WSS jest przechowywany w pliku
+{\footnotesize\ttfamily \%USERPROFILE\%\textbackslash{}\linebreak[4].magistrala\_can4\textbackslash{}\linebreak[4]token}.
+Aby wygenerować nowy token (np.\ po kompromitacji):
+
+\begin{lstlisting}[style=cpp, caption={Regeneracja tokena WSS}]
+# Linux / MSYS2:
+rm ~/.magistrala_can4/token
+# Nastepne uruchomienie serwera WSS wygeneruje nowy token.
+# Wszyscy klienci musza otrzymac nowy token.
+\end{lstlisting}
+
+\subsection{Możliwe przyczyny awarii i diagnoza}
+
+\begin{table}[H]
+\caption{Diagnoza najczęstszych problemów}
+\label{tab:service}
+\centering
+\small
+\begin{tabular}{p{4.2cm}p{4.2cm}p{4.2cm}}
+\toprule
+\textbf{Objaw} & \textbf{Przyczyna} & \textbf{Rozwiązanie} \\
+\midrule
+Brak interfejsów na liście &
+Brak sterownika PCAN lub zainstalowany interfejs COM &
+Zainstalować \texttt{PCAN-Basic API} (Peak Systems) lub sprawdzić \texttt{Menedżer urządzeń} \\
+
+„Brak ramek po 5s" (ostrzeżenie) &
+Zły baud rate lub brak aktywności na magistrali &
+Sprawdzić prędkość magistrali; podłączyć co najmniej 2 węzły CAN \\
+
+ICSim nie uruchamia się &
+Brak \texttt{magistrala\_bridge.exe} &
+Skompilować ICSim: \texttt{cd E:\textbackslash ICSim \&\& meson compile -C builddir} \\
+
+WebSocket nie łączy (wss://) &
+Błąd certyfikatu SSL &
+Sprawdzić URL i token; aplikacja ignoruje self-signed cert \\
+
+Tabela nie odświeża się (zdalny CAN) &
+m\_batchTimer zatrzymany (stara wersja) &
+Zaktualizować do wersji z \texttt{m\_batchTimer.start()} w konstruktorze \\
+
+Candump pusty (zdalny CAN) &
+m\_candumpStream = nullptr bez sniffingu &
+Zaktualizować do wersji z leniwym otwarciem w \texttt{onNewFrame()} \\
+
+Segfault przy dużym ruchu &
+Przepełnienie m\_frameBuffer &
+Limit wynosi 10\,000 ramek; przy wyższym ruchu włączyć tryb nadpisywania \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Pliki konfiguracyjne i logi}
+
+\begin{table}[H]
+\caption{Pliki konfiguracyjne i logi aplikacji}
+\label{tab:logs}
+\centering
+\small
+\begin{tabular}{p{7.5cm}p{7.5cm}}
+\toprule
+\textbf{Plik / katalog} & \textbf{Opis} \\
+\midrule
+{\footnotesize\ttfamily C:\textbackslash{}candump\textbackslash{}candump\_YYYYMMDD\_HHMMSS.log} &
+Automatyczne nagrania candump (format ASCII) \\[4pt]
+{\footnotesize\ttfamily \%USERPROFILE\%\textbackslash{}.magistrala\_can4\textbackslash{}\linebreak[4]settings.ini} &
+Ustawienia okna, motyw, ostatnie pliki DBC/Lua \\[4pt]
+{\footnotesize\ttfamily \%USERPROFILE\%\textbackslash{}.magistrala\_can4\textbackslash{}\linebreak[4]filter\_presets.txt} &
+Zapisane presety filtrów (format: \texttt{hexID|nazwa}) \\[4pt]
+\texttt{magistrala\_debug.log} &
+Log zdarzeń w katalogu roboczym (klasa Logger) \\[4pt]
+\texttt{*.mcan} / \texttt{*.mcan.zst} &
+Nagrania binarne sesji CAN (opcjonalna kompresja zstd) \\[4pt]
+\texttt{*.mf4} &
+Nagrania w formacie MDF4 (AUTOSAR, kompatybilne z CANalyzer) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Wykaz skrótów i pojęć}
+
+\begin{table}[H]
+\caption{Wykaz skrótów i pojęć używanych w dokumentacji}
+\label{tab:abbreviations}
+\centering
+\small
+\begin{tabular}{p{3.0cm}p{11.5cm}}
+\toprule
+\textbf{Skrót / pojęcie} & \textbf{Rozwinięcie i znaczenie} \\
+\midrule
+CAN      & Controller Area Network --- przemysłowa sieć szeregowa do komunikacji ECU. \\
+CAN FD   & CAN with Flexible Data-Rate --- ramki do 64\,B, prędkość do 8\,Mbit/s. \\
+CAN XL   & CAN XL --- ramki do 2048\,B, prędkość do 20\,Mbit/s (ISO 11898-1:2024). \\
+ECU      & Electronic Control Unit --- elektroniczny sterownik pojazdu. \\
+UDS      & Unified Diagnostic Services --- protokół diagnostyczny ISO~14229. \\
+ISO-TP   & ISO~15765-2 --- protokół transportowy CAN (segmentacja do 4095\,B). \\
+J1939    & SAE J1939 --- protokół dla pojazdów ciężarowych (PGN/SPN). \\
+OBD-II   & On-Board Diagnostics II --- standard diagnostyki emisji (SAE J1979). \\
+CANopen  & CiA~301 --- protokół aplikacyjny dla automatyki przemysłowej. \\
+SOME/IP  & Scalable service-Oriented MiddlewarE over IP --- AUTOSAR middleware. \\
+DoIP     & Diagnostics over IP --- ISO~13400, diagnostyka przez Ethernet. \\
+KWP2000  & Keyword Protocol 2000 --- ISO~14230, poprzednik UDS. \\
+XCP      & Universal Measurement and Calibration Protocol --- ASAM. \\
+LIN      & Local Interconnect Network --- jednokierunkowa sieć 20\,kbit/s. \\
+PCAN     & Peak CAN --- interfejs USB-CAN firmy Peak Systems. \\
+SLCAN    & Serial Line CAN --- protokół ASCII (Lawicel) dla adapterów USB-CAN. \\
+GVRET    & GVRET (EVTV Motor Werks) --- binarny protokół sterownika SavvyCAN. \\
+MCP2515  & Kontroler CAN firmy Microchip --- połączony z ESP32 przez SPI. \\
+DBC      & CAN Database Container --- format pliku z definicjami sygnałów. \\
+ARXML    & AUTOSAR XML --- format opisujący sieci CAN w standardzie AUTOSAR. \\
+MDF4     & Measurement Data Format 4 --- ASAM, format nagrań (CANalyzer). \\
+MCAN     & Format nagrań własny MagistralaCAN4 (\texttt{.mcan} / \texttt{.mcan.zst}). \\
+PCAP     & Packet CAPture --- format Wireshark (\texttt{LINKTYPE\_CAN\_SOCKETCAN}=227). \\
+WSS      & WebSocket Secure --- WebSocket z szyfrowaniem TLS~1.3. \\
+MQTT     & Message Queuing Telemetry Transport --- protokół IoT (pub/sub). \\
+ICSim    & Instrument Cluster Simulator --- symulator deski rozdzielczej. \\
+GUI      & Graphical User Interface --- graficzny interfejs użytkownika. \\
+ML       & Machine Learning --- uczenie maszynowe. \\
+EWMA     & Exponentially Weighted Moving Average --- wykładnicza średnia ważona. \\
+MIC      & Maximal Information Coefficient --- miara zależności statystycznej. \\
+PCA      & Principal Component Analysis --- analiza składowych głównych. \\
+WCSS     & Within-Cluster Sum of Squares --- kryterium doboru $k$ w $k$-means. \\
+CI/CD    & Continuous Integration / Continuous Deployment --- automatyzacja budowania. \\
+ASAN     & AddressSanitizer --- narzędzie wykrywania błędów pamięci (GCC/Clang). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Uwagi dodatkowe}
+
+\subsection{Historia wersji}
+
+\begin{table}[H]
+\caption{Historia wersji projektu MagistralaCAN4}
+\label{tab:changelog}
+\centering
+\small
+\begin{tabular}{p{1.8cm}p{2.8cm}p{9.8cm}}
+\toprule
+\textbf{Wersja} & \textbf{Data} & \textbf{Główne zmiany} \\
+\midrule
+1.0 & 2024 Q1 &
+  Pierwsze wydanie: CanSniffer, PCAN, SLCAN, CanFrameModel, podstawowy GUI Qt6. \\
+1.5 & 2024 Q2 &
+  AssociativeLearner (v1), LuaScriptEngine, DbcParser, eksport candump/CSV. \\
+1.8 & 2024 Q3 &
+  J1939Widget, UdsWidget + ISO-TP, OBD-II, CANopen, DBC edytor, HTTP REST API. \\
+1.9 & 2024 Q4 &
+  WebSocket serwer (port 9000), RemoteCanWidget (ws:// + wss:// + TLS token). \\
+2.0 & 2025 Q1 &
+  MqttBridge, MDF4Writer, EspMcpDriver, GVRET binarny, CanRecorder (.mcan). \\
+2.0.5 & 2025 Q2 &
+  IcSimWidget + magistrala\_bridge, SOME/IP, DoIP, LIN, KWP2000, XCP parsery. \\
+2.1.0 & 2025 Q3 &
+  LearningEngine v2.1 (37 algorytmów), CanBusHealthWidget (AUTOSAR counter),
+  CanTriggerWidget, CanSignalStatisticsWidget, 344 testy jednostkowe, CI/CD
+  (GitHub Actions), CAN~XL, SQLite WAL, PCAP eksport. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Plany rozwoju}
+
+\begin{itemize}
+  \item \textbf{Wsparcie PyTorch/libtorch} --- integracja silnika uczenia
+        z modelem PyTorch przez C++ API (libtorch), umożliwiająca
+        trenowanie sieci neuronowych na danych CAN bezpośrednio w aplikacji.
+  \item \textbf{Panel webowy} --- rozszerzenie REST~API (\texttt{:8080})
+        o serwowanie interaktywnego widoku tabeli w przeglądarce;
+        infrastruktura \texttt{HttpRestServer} jest już gotowa.
+  \item \textbf{Wtyczki dynamiczne} --- rozbudowa systemu \texttt{PluginLoader}
+        o GUI konfiguracji i hot-reload \texttt{.dll}/\texttt{.so}
+        z katalogu \texttt{./plugins}.
+  \item \textbf{Pełna obsługa AUTOSAR~ARXML} --- kompletny import i eksport
+        artefaktów \texttt{.arxml} z mapowaniem sygnałów;
+        częściowo zrealizowany przez \texttt{ArxmlParser}.
+  \item \textbf{Tryb multi-bus} --- jednoczesne przechwytywanie z wielu
+        interfejsów CAN w jednej sesji (np.\ PCAN + SLCAN równolegle).
+  \item \textbf{Export do ASC (CANalyzer)} --- format \texttt{.asc} Vector
+        obok istniejących .mcan, .mf4 i candump.
+\end{itemize}
+
+\subsection{Podsumowanie}
+
+MagistralaCAN4 jest kompletnym środowiskiem diagnostycznym dla magistrali CAN,
+gotowym zarówno do użytku laboratoryjnego (analiza ECU, diagnostyka UDS),
+jak i edukacyjnego (symulator ICSim, uczenie asocjacyjne bez etykiet).
+Modułowa architektura Qt i podział na warstwy (sterownik $\to$ sniffer $\to$ model $\to$ GUI)
+ułatwia dodawanie nowych interfejsów i protokołów bez ingerencji
+w istniejący kod.
+
+Kluczowe dane techniczne:
+
+\begin{table}[H]
+\caption{Parametry techniczne MagistralaCAN4 v2.1.0}
+\label{tab:summary}
+\centering
+\small
+\begin{tabular}{p{6.5cm}p{8.5cm}}
+\toprule
+\textbf{Parametr} & \textbf{Wartość} \\
+\midrule
+Wersja                          & 2.1.0 \\
+Język programowania             & C++17 \\
+Framework GUI                   & Qt 6.6 \\
+System budowania                & CMake 3.16+ \\
+Liczba plików źródłowych        & $>$160 \\
+Liczba widgetów                 & $\approx$40 \\
+Obsługiwane protokoły warstwy 7 &
+  UDS, J1939, OBD-II, CANopen, SOME/IP, DoIP, KWP2000, XCP, LIN \\
+Interfejsy sprzętowe            & PCAN, SLCAN, ESP32-MCP2515, GVRET \\
+Interfejsy sieciowe             & WebSocket (\texttt{ws://} oraz \texttt{wss://}) \\
+Format nagrań                   & .mcan, .mcan.zst, .mf4, .pcap, candump, CSV \\
+Testy jednostkowe               & 344 przypadki, 9 plików (Google Test) \\
+Licencja                        & Prywatna (zależności: LGPL/MIT/BSD/GPL) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
