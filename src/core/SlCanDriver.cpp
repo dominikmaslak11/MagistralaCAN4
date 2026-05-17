@@ -23,23 +23,23 @@ bool SlCanDriver::open(const QString &device) {
         close();
     }
 
-    // Parsuj nazwę – obsługuje "COM3", "COM3 [opis @ 921600bps]", "/dev/ttyACM0"
+    // Parsuj nazwę – obsługuje "COM3", "COM3 (opis)", "COM3 [opis @ 921600bps]", "/dev/ttyACM0"
     QString portName = device.section(' ', 0, 0).trimmed();
 
-    // Wyciągnij prędkość z nazwy jeśli dostępna (np. "COM3 [v1.0 @ 500000bps]")
-    int baudFromLabel = 0;
+    // Backward-compat: wyciągnij UART baud z etykiety (np. "COM3 [v1.0 @ 500000bps]")
+    qint32 uartBaud = m_uartBaudRate;
     int atPos = device.indexOf('@');
     if (atPos >= 0) {
         int bpsPos = device.indexOf("bps", atPos);
         if (bpsPos > atPos) {
             QString baudStr = device.mid(atPos + 1, bpsPos - atPos - 1).trimmed();
-            baudFromLabel = baudStr.toInt();
+            qint32 parsed = baudStr.toInt();
+            if (parsed > 0) uartBaud = parsed;
         }
     }
-    qint32 actualBaud = baudFromLabel > 0 ? baudFromLabel : m_baudRate;
 
     m_port = new QSerialPort(portName);
-    m_port->setBaudRate(actualBaud);
+    m_port->setBaudRate(uartBaud);
     m_port->setDataBits(QSerialPort::Data8);
     m_port->setStopBits(QSerialPort::OneStop);
     m_port->setParity(QSerialPort::NoParity);
@@ -57,6 +57,9 @@ bool SlCanDriver::open(const QString &device) {
     sendCommand("C", 50);   // Close any existing session
     m_port->clear();
 
+    // Ustaw prędkość magistrali CAN (komenda Sx — przed otwarciem kanału)
+    sendCommand(QString("S%1").arg(m_canSpeedCode), 50);
+
     // Otwórz kanał CAN — odpowiedź OK to samo '\r' (trimuje do ""), błąd to '\a' (BEL)
     QString ver = sendCommand("O", 100);
     if (ver.contains('\a') || ver.contains("ERROR", Qt::CaseInsensitive)) {
@@ -67,7 +70,8 @@ bool SlCanDriver::open(const QString &device) {
         return false;
     }
 
-    qDebug() << "SlCanDriver: opened" << portName << "baud" << actualBaud;
+    qDebug() << "SlCanDriver: opened" << portName << "UART baud" << uartBaud
+             << "CAN S" << m_canSpeedCode;
     return true;
 }
 
@@ -148,14 +152,16 @@ void SlCanDriver::writeFrame(const CanFrame &frame) {
 // ═══════════════════════════════════════════════════════════════
 
 void SlCanDriver::setBaudRate(const QString &baudStr) {
-    static const QHash<QString, qint32> map = {
-        {"1M",   1000000}, {"800K",  800000}, {"500K",  500000},
-        {"250K",  250000}, {"125K",  125000}, {"100K",  100000},
-        {"50K",    50000}, {"20K",    20000}, {"10K",    10000},
+    // Maps CAN bus speed string to SLCAN Sx command code (S0-S8).
+    // This does NOT affect the UART baud rate (set separately via setUartBaudRate()).
+    static const QHash<QString, int> slcanMap = {
+        {"10K", 0}, {"20K", 1}, {"50K", 2}, {"100K", 3},
+        {"125K", 4}, {"250K", 5}, {"500K", 6}, {"800K", 7}, {"1M", 8}
     };
-    if (map.contains(baudStr)) {
-        m_baudRate = map[baudStr];
-        qDebug() << "SlCanDriver: baud rate set to" << baudStr << "(" << m_baudRate << ")";
+    if (slcanMap.contains(baudStr)) {
+        m_canSpeedCode = slcanMap[baudStr];
+        qDebug() << "SlCanDriver: CAN speed set to" << baudStr
+                 << "(S" << m_canSpeedCode << "), UART baud unchanged at" << m_uartBaudRate;
     }
 }
 

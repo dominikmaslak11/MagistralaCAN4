@@ -37,17 +37,21 @@ public:
     /// Każda nazwa ma format "COM3 [Canable v1.0]" – część po spacji jest ignorowana przy open().
     static QStringList detectDevices(int timeoutMs = 200);
 
-    /// Ustawia prędkość transmisji UART (domyślnie 921600).
-    void setBaudRate(qint32 baud) { m_baudRate = baud; }
+    /// Ustawia prędkość transmisji UART (np. 115200 dla ESP32, 921600 dla Canable).
+    /// Oddzielna od prędkości magistrali CAN (ustawianej przez setBaudRate(QString)).
+    void setUartBaudRate(qint32 baud) { m_uartBaudRate = baud; }
+    qint32 uartBaudRate() const { return m_uartBaudRate; }
 
     /// Interfejs ICanDriver: akceptuje etykiety "1M", "500K" itp.
+    /// Przechowuje kod prędkości CAN (Sx) — wysyłany do adaptera przed otwarciem kanału.
     void setBaudRate(const QString &baudStr) override;
 
 private:
     CanFrame parseIncoming(const QByteArray &line) const;
     QString sendCommand(const QString &cmd, int waitMs = 100);
 
-    QSerialPort *m_port = nullptr;
-    qint32       m_baudRate = 921600;  // domyślnie jak Canable / candleLight
+    QSerialPort *m_port        = nullptr;
+    qint32       m_uartBaudRate = 115200;  // prędkość UART (fizyczna), nie prędkość CAN
+    int          m_canSpeedCode = 6;       // kod Sx dla komendy SLCAN: 6 = 500K (domyślnie)
     QByteArray   m_rxBuffer;
 };

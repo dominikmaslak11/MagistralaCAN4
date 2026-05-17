@@ -10,6 +10,7 @@
 #include "core/SlCanDriver.h"
 #include "core/EspMcpDriver.h"
 #include "core/GvretDriver.h"
+#include <QSerialPortInfo>
 
 #include <QToolBar>
 #include <QToolButton>
@@ -357,25 +358,50 @@ void MainWindow::toggleSniffing() {
         QString iface = m_interfaceCombo->currentText().trimmed();
         if (iface.isEmpty()) { QMessageBox::warning(this, "Brak interfejsu", "Wybierz interfejs CAN."); return; }
 
-        // Inteligentny wybór drivera po nazwie urządzenia
+        // Wybór sterownika: jawny (m_driverCombo) lub automatyczny (heurystyka nazwy)
         ICanDriver *active = m_canDriver;
-        bool isGvret  = iface.contains("[GVRET");
-        bool isEspMcp = !isGvret && iface.contains("[ESP-MCP2515");
-        bool isSlCan  = !isGvret && !isEspMcp &&
-                        (iface.startsWith("COM", Qt::CaseInsensitive) ||
-                         iface.startsWith("tty") || iface.startsWith("/dev/tty") ||
-                         iface.contains("[SLCAN]") || iface.contains("[Canable]") ||
-                         iface.contains("[candleLight]") || iface.contains("[USBtin]") ||
-                         iface.contains("[CAN232]") || iface.contains("[Lawicel]"));
-        if (m_gvretDriver && isGvret) {
-            active = m_gvretDriver;
-            Logger::log(QString("GVRET: wybrano sterownik dla %1").arg(iface));
-        } else if (m_espMcpDriver && isEspMcp) {
-            active = m_espMcpDriver;
-            Logger::log(QString("ESP-MCP2515: wybrano sterownik dla %1").arg(iface));
-        } else if (m_slCanDriver && isSlCan) {
+        QString driverChoice = m_driverCombo ? m_driverCombo->currentText() : "Auto";
+
+        auto applySerialBaud = [this](SlCanDriver *drv) {
+            if (!drv || !m_serialBaudCombo) return;
+            bool ok;
+            qint32 uartBaud = m_serialBaudCombo->currentText().toInt(&ok);
+            if (ok && uartBaud > 0) drv->setUartBaudRate(uartBaud);
+        };
+
+        if (driverChoice == "SLCAN" && m_slCanDriver) {
+            applySerialBaud(static_cast<SlCanDriver *>(m_slCanDriver));
             active = m_slCanDriver;
-            Logger::log(QString("SLCAN: wybrano sterownik szeregowy dla %1").arg(iface));
+            Logger::log(QString("SLCAN: jawny wybór sterownika dla %1 (UART %2 bps)")
+                .arg(iface).arg(m_serialBaudCombo ? m_serialBaudCombo->currentText() : "?"));
+        } else if (driverChoice == "GVRET" && m_gvretDriver) {
+            active = m_gvretDriver;
+            Logger::log(QString("GVRET: jawny wybór sterownika dla %1").arg(iface));
+        } else if (driverChoice == "ESP-MCP" && m_espMcpDriver) {
+            active = m_espMcpDriver;
+            Logger::log(QString("ESP-MCP2515: jawny wybór sterownika dla %1").arg(iface));
+        } else {
+            // Auto: heurystyka na podstawie nazwy interfejsu
+            bool isGvret  = iface.contains("[GVRET");
+            bool isEspMcp = !isGvret && iface.contains("[ESP-MCP2515");
+            bool isSlCan  = !isGvret && !isEspMcp &&
+                            (iface.startsWith("COM", Qt::CaseInsensitive) ||
+                             iface.startsWith("tty") || iface.startsWith("/dev/tty") ||
+                             iface.contains("[SLCAN]") || iface.contains("[Canable]") ||
+                             iface.contains("[candleLight]") || iface.contains("[USBtin]") ||
+                             iface.contains("[CAN232]") || iface.contains("[Lawicel]"));
+            if (m_gvretDriver && isGvret) {
+                active = m_gvretDriver;
+                Logger::log(QString("Auto→GVRET: wybrano sterownik dla %1").arg(iface));
+            } else if (m_espMcpDriver && isEspMcp) {
+                active = m_espMcpDriver;
+                Logger::log(QString("Auto→ESP-MCP2515: wybrano sterownik dla %1").arg(iface));
+            } else if (m_slCanDriver && isSlCan) {
+                applySerialBaud(static_cast<SlCanDriver *>(m_slCanDriver));
+                active = m_slCanDriver;
+                Logger::log(QString("Auto→SLCAN: wybrano sterownik dla %1 (UART %2 bps)")
+                    .arg(iface).arg(m_serialBaudCombo ? m_serialBaudCombo->currentText() : "?"));
+            }
         }
 
         // Ustaw prędkość magistrali
@@ -394,7 +420,10 @@ void MainWindow::toggleSniffing() {
         m_totalFrames = 0;
         m_statusLabel->setText(QString("Nasłuchuje... (%1, %2)").arg(active->backendName(), baudStr));
         m_btnStartStop->setText("■ Stop"); m_interfaceCombo->setEnabled(false);
-        m_baudCombo->setEnabled(false); m_batchTimer.start();
+        m_baudCombo->setEnabled(false);
+        if (m_driverCombo)     m_driverCombo->setEnabled(false);
+        if (m_serialBaudCombo) m_serialBaudCombo->setEnabled(false);
+        m_batchTimer.start();
 
         if (m_autoCandumpCheck && m_autoCandumpCheck->isChecked())
             startCandumpRecording();
@@ -411,6 +440,8 @@ void MainWindow::toggleSniffing() {
         stopCandumpRecording();
         m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true);
         m_baudCombo->setEnabled(true);
+        if (m_driverCombo)     m_driverCombo->setEnabled(true);
+        if (m_serialBaudCombo) m_serialBaudCombo->setEnabled(true);
         m_statusLabel->setText("Rozłączony");
         m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
         m_frameBuffer.resize(0);  // keep capacity
@@ -466,29 +497,38 @@ void MainWindow::refreshInterfaces() {
     QString current = m_interfaceCombo->currentText();
     m_interfaceCombo->clear();
 
+    QStringList ifaces;
+
+    // Hardware CAN adapters (PCAN on Windows, SocketCAN on Linux)
 #ifdef Q_OS_WIN
-    QStringList ifaces = m_canDriver ? m_canDriver->availableDevices() : QStringList();
+    if (m_canDriver)
+        ifaces.append(m_canDriver->availableDevices());
 #else
-    QStringList ifaces = m_canDriver ? m_canDriver->availableDevices()
-                                     : CanInterfaceEnumerator::availableCanInterfaces();
+    ifaces.append(m_canDriver ? m_canDriver->availableDevices()
+                              : CanInterfaceEnumerator::availableCanInterfaces());
 #endif
 
-    // Merge SLCAN devices (auto-detekcja portów szeregowych)
-    if (m_slCanDriver) {
-        QStringList slIfaces = m_slCanDriver->availableDevices();
-        ifaces.append(slIfaces);
-    }
+    // Serial ports — listed WITHOUT probing to avoid blocking the UI thread and
+    // resetting ESP32/other devices via DTR assertion on port open.
+    // Protocol is selected explicitly via m_driverCombo or auto-detected by name at connect time.
+    QSet<QString> seen;
+    for (const auto &info : QSerialPortInfo::availablePorts()) {
+        // Skip obvious non-CAN system ports
+        QString desc = info.description().toLower();
+        QString mfr  = info.manufacturer().toLower();
+        if (desc.contains("mouse") || desc.contains("keyboard") ||
+            mfr.contains("microsoft") || mfr.contains("logitech"))
+            continue;
 
-    // Merge ESP32+MCP2515 devices
-    if (m_espMcpDriver) {
-        QStringList espIfaces = m_espMcpDriver->availableDevices();
-        ifaces.append(espIfaces);
-    }
+        QString label = info.description().trimmed();
+        QString entry = label.isEmpty()
+                      ? info.portName()
+                      : QString("%1 (%2)").arg(info.portName(), label);
 
-    // Merge GVRET devices (ESP32 z firmware GVRET, SavvyCAN-compatible)
-    if (m_gvretDriver) {
-        QStringList gvretIfaces = m_gvretDriver->availableDevices();
-        ifaces.append(gvretIfaces);
+        if (!seen.contains(info.portName())) {
+            seen.insert(info.portName());
+            ifaces.append(entry);
+        }
     }
 
     m_interfaceCombo->addItems(ifaces);
@@ -681,14 +721,38 @@ void MainWindow::onFrameSelected(const QModelIndex &index) {
 void MainWindow::setupToolBar() {
     auto *toolbar = new QToolBar("Główne", this); toolbar->setMovable(false);
     m_toolBarWidget = toolbar;
-    m_interfaceCombo = new QComboBox; m_interfaceCombo->setEditable(true); m_interfaceCombo->setMinimumWidth(120);
+    m_interfaceCombo = new QComboBox; m_interfaceCombo->setEditable(true); m_interfaceCombo->setMinimumWidth(140);
+    m_interfaceCombo->setToolTip("Interfejs CAN lub port szeregowy (COM/tty)");
     toolbar->addWidget(m_interfaceCombo);
-    auto *refreshBtn = new QPushButton("↻"); connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
+    auto *refreshBtn = new QPushButton("↻");
+    refreshBtn->setToolTip("Odśwież listę interfejsów (nie resetuje urządzeń)");
+    connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshInterfaces);
     toolbar->addWidget(refreshBtn);
+
+    // Protocol selector — explicit driver override
+    m_driverCombo = new QComboBox;
+    m_driverCombo->addItems({"Auto", "SLCAN", "GVRET", "ESP-MCP"});
+    m_driverCombo->setToolTip(
+        "Protokół szeregowy:\n"
+        "Auto — wykrywanie na podstawie nazwy\n"
+        "SLCAN — ESP32/Canable/candleLight/USBtin (protokół Lawicel)\n"
+        "GVRET — EVTV/SavvyCAN binary (kompatybilny z SavvyCAN)\n"
+        "ESP-MCP — ESP32+MCP2515 ASCII sniffer");
+    m_driverCombo->setMinimumWidth(80);
+    toolbar->addWidget(m_driverCombo);
+
+    // UART baud for serial drivers (separate from CAN speed)
+    m_serialBaudCombo = new QComboBox;
+    m_serialBaudCombo->addItems({"115200", "921600", "1000000", "500000", "230400"});
+    m_serialBaudCombo->setCurrentText("115200");
+    m_serialBaudCombo->setToolTip("Prędkość UART portu szeregowego\n115200 = ESP32 SLCAN\n921600 = Canable/candleLight");
+    m_serialBaudCombo->setMinimumWidth(80);
+    toolbar->addWidget(m_serialBaudCombo);
+
     m_baudCombo = new QComboBox;
     m_baudCombo->addItems({"1M", "800K", "500K", "250K", "125K", "100K", "50K", "20K", "10K"});
     m_baudCombo->setCurrentText("500K");
-    m_baudCombo->setToolTip("Prędkość magistrali CAN");
+    m_baudCombo->setToolTip("Prędkość magistrali CAN (komenda Sx dla SLCAN, bezpośrednio dla PCAN)");
     m_baudCombo->setMinimumWidth(70);
     toolbar->addWidget(m_baudCombo);
     toolbar->addSeparator();
@@ -1210,6 +1274,8 @@ void MainWindow::saveSettings() {
     s.setValue("window/state", saveState());
     s.setValue("interface/last", m_interfaceCombo ? m_interfaceCombo->currentText() : QString());
     s.setValue("interface/baud", m_baudCombo ? m_baudCombo->currentText() : QString());
+    s.setValue("interface/driver", m_driverCombo ? m_driverCombo->currentText() : QString("Auto"));
+    s.setValue("interface/serialBaud", m_serialBaudCombo ? m_serialBaudCombo->currentText() : QString("115200"));
     s.setValue("options/overwrite", m_overwriteCheck ? m_overwriteCheck->isChecked() : true);
     s.setValue("options/autoscroll", m_autoScroll);
     s.setValue("options/darkTheme", m_darkTheme);
@@ -1240,6 +1306,20 @@ void MainWindow::loadSettings() {
     if (!lastBaud.isEmpty() && m_baudCombo) {
         int idx = m_baudCombo->findText(lastBaud);
         if (idx >= 0) m_baudCombo->setCurrentIndex(idx);
+    }
+
+    // Protocol driver selector
+    QString lastDriver = s.value("interface/driver", "Auto").toString();
+    if (m_driverCombo) {
+        int idx = m_driverCombo->findText(lastDriver);
+        if (idx >= 0) m_driverCombo->setCurrentIndex(idx);
+    }
+
+    // UART baud rate for serial drivers
+    QString lastSerialBaud = s.value("interface/serialBaud", "115200").toString();
+    if (m_serialBaudCombo) {
+        int idx = m_serialBaudCombo->findText(lastSerialBaud);
+        if (idx >= 0) m_serialBaudCombo->setCurrentIndex(idx);
     }
 
     // Opcje

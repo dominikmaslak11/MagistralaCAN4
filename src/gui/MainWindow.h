@@ -130,6 +130,8 @@ private:
     ICanDriver *m_slCanDriver  = nullptr;  // SLCAN backend (serial port)
     ICanDriver *m_espMcpDriver = nullptr;  // ESP32+MCP2515 backend
     ICanDriver *m_gvretDriver  = nullptr;  // GVRET binary backend (SavvyCAN-compatible)
+    QComboBox  *m_driverCombo      = nullptr;  // explicit protocol selector
+    QComboBox  *m_serialBaudCombo  = nullptr;  // UART baud rate for serial drivers
     CanFrameModel *m_model;
     AssociativeLearner *m_learner;
     LuaScriptEngine *m_luaEngine;
