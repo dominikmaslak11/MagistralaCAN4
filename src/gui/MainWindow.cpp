@@ -161,6 +161,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     m_batchTimer.setInterval(33);
     connect(&m_batchTimer, &QTimer::timeout, this, &MainWindow::updateTableBatch);
+    m_batchTimer.start(); // zawsze aktywny — obsługuje też ramki zdalne (bez aktywnego sniffingu)
 
     connect(&m_sniffer, &CanSniffer::newFrame, this, &MainWindow::onNewFrame);  // direct — ring buffer decouples threads
     connect(&m_sniffer, &CanSniffer::errorOccurred, this, [this](const QString &msg) {
@@ -409,7 +410,7 @@ void MainWindow::toggleSniffing() {
         m_sniffer.stop(); m_sniffing = false;
         stopCandumpRecording();
         m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true);
-        m_baudCombo->setEnabled(true); m_batchTimer.stop();
+        m_baudCombo->setEnabled(true);
         m_statusLabel->setText("Rozłączony");
         m_statusLabel->setStyleSheet("color: #ff4444; font-weight: bold;");
         m_frameBuffer.resize(0);  // keep capacity
@@ -419,6 +420,8 @@ void MainWindow::toggleSniffing() {
 void MainWindow::onNewFrame(const CanFrame &frame) {
     m_totalFrames++;
     m_frameBuffer.append(frame);
+    if (!m_candumpStream && m_autoCandumpCheck && m_autoCandumpCheck->isChecked())
+        startCandumpRecording();
     if (m_candumpStream)
         writeFrameToCandump(frame);
     if (m_canStatsPanel)
@@ -1159,8 +1162,9 @@ void MainWindow::writeFrameToCandump(const CanFrame &frame) {
     if (!m_candumpStream) return;
     bool isFd = frame.fd || frame.xl;
     QString sep = isFd ? "##" : "#";
+    const QString iface = m_candumpIface.isEmpty() ? QStringLiteral("remote") : m_candumpIface;
     (*m_candumpStream) << "(" << frame.timestamp << ") "
-                       << m_candumpIface << " "
+                       << iface << " "
                        << QString::number(frame.id, 16).toUpper()
                        << sep
                        << QString::number(frame.dlc);
