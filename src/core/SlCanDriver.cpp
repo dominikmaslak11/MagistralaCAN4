@@ -98,8 +98,10 @@ bool SlCanDriver::isValid() const {
 CanFrame SlCanDriver::readFrame() {
     if (!m_port || !m_port->isOpen()) return {};
 
-    // Dolej nowe bajty do bufora
-    m_rxBuffer.append(m_port->readAll());
+    // waitForReadyRead uses WaitForSingleObject on Windows — thread-safe, event-loop-free.
+    // 1 ms timeout keeps doWork() responsive without busy-spinning.
+    if (m_port->waitForReadyRead(1))
+        m_rxBuffer.append(m_port->readAll());
 
     // Szukaj kompletnej linii (zakończonej \r lub \n)
     int cr = m_rxBuffer.indexOf('\r');
@@ -310,7 +312,7 @@ CanFrame SlCanDriver::parseIncoming(const QByteArray &line) const {
 
     // Parsuj dane
     int dataStart = 1 + idLen + dlcLen;
-    for (int i = 0; i < dlc && (dataStart + 1) < line.length(); ++i) {
+    for (int i = 0; i < dlc && dataStart + i * 2 + 1 < line.length(); ++i) {
         f.data[i] = line.mid(dataStart + i * 2, 2).toUInt(&ok, 16);
         if (!ok) break;
     }

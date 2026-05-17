@@ -58,7 +58,8 @@ bool EspMcpDriver::isValid() const {
 CanFrame EspMcpDriver::readFrame() {
     if (!m_port || !m_port->isOpen()) return {};
 
-    m_rxBuffer.append(m_port->readAll());
+    if (m_port->waitForReadyRead(1))
+        m_rxBuffer.append(m_port->readAll());
 
     int cr = m_rxBuffer.indexOf('\r');
     int lf = m_rxBuffer.indexOf('\n');

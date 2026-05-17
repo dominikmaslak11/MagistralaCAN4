@@ -57,4 +57,6 @@ private:
     QMutex m_waitMutex;              // used only with m_bufferNotFull
     QWaitCondition m_bufferNotFull;  // wake producer when consumer drains
     QSemaphore m_threadDone{0};      // released when doWork() exits
+    std::atomic<bool> m_openResult{false};  // set by doWork() after open attempt
+    QSemaphore m_openSemaphore{0};          // unblocks start() once open finishes
 };
