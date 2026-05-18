@@ -12,59 +12,78 @@ LuaScriptEngine::~LuaScriptEngine() {
     unloadScript();
 }
 
-bool LuaScriptEngine::loadScript(const QString &fileName) {
+// ── Wspólne jądro: inicjuje stan Lua i rejestruje API ────────────────────────
+#ifdef HAS_LUA
+lua_State *LuaScriptEngine::createState() {
+    lua_State *L = luaL_newstate();
+    if (!L) return nullptr;
+    luaL_openlibs(L);
+
+    lua_pushlightuserdata(L, this);
+    lua_pushcclosure(L, api_sendFrame, 1);
+    lua_setglobal(L, "sendFrame");
+
+    lua_pushlightuserdata(L, this);
+    lua_pushcclosure(L, api_log, 1);
+    lua_setglobal(L, "log");
+
+    lua_pushlightuserdata(L, this);
+    lua_pushcclosure(L, api_getTick, 1);
+    lua_setglobal(L, "getTick");
+
+    return L;
+}
+#endif
+
+bool LuaScriptEngine::loadScriptFromString(const QString &code, const QString &sourceName) {
 #ifdef HAS_LUA
     unloadScript();
 
-    m_lua = luaL_newstate();
+    m_lua = createState();
     if (!m_lua) {
         emit errorOccurred("Nie udało się utworzyć stanu Lua");
         return false;
     }
 
-    luaL_openlibs(m_lua);
-
-    lua_pushlightuserdata(m_lua, this);
-    lua_pushcclosure(m_lua, api_sendFrame, 1);
-    lua_setglobal(m_lua, "sendFrame");
-
-    lua_pushlightuserdata(m_lua, this);
-    lua_pushcclosure(m_lua, api_log, 1);
-    lua_setglobal(m_lua, "log");
-
-    lua_pushlightuserdata(m_lua, this);
-    lua_pushcclosure(m_lua, api_getTick, 1);
-    lua_setglobal(m_lua, "getTick");
-
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        emit errorOccurred("Nie można otworzyć pliku: " + fileName);
-        unloadScript();
-        return false;
-    }
-
-    QByteArray script = file.readAll();
-    file.close();
-
-    if (luaL_dostring(m_lua, script.constData()) != LUA_OK) {
+    QByteArray src  = code.toUtf8();
+    QByteArray name = ("@" + sourceName).toUtf8();
+    if (luaL_loadbuffer(m_lua, src.constData(), src.size(), name.constData()) != LUA_OK
+     || lua_pcall(m_lua, 0, LUA_MULTRET, 0) != LUA_OK) {
         const char *err = lua_tostring(m_lua, -1);
-        emit errorOccurred(QString::fromUtf8(err));
+        emit errorOccurred(QString::fromUtf8(err ? err : "Nieznany błąd Lua"));
         unloadScript();
         return false;
     }
 
     lua_getglobal(m_lua, "onFrame");
-    if (!lua_isfunction(m_lua, -1)) {
-        lua_pop(m_lua, 1);
+    bool hasOnFrame = lua_isfunction(m_lua, -1);
+    lua_pop(m_lua, 1);
+    if (!hasOnFrame) {
         emit errorOccurred("Skrypt nie zawiera funkcji 'onFrame(id, data, timestamp)'");
         unloadScript();
         return false;
     }
-    lua_pop(m_lua, 1);
 
     m_loaded = true;
-    emit logMessage("Skrypt Lua załadowany: " + fileName);
+    emit logMessage(QString("Skrypt Lua załadowany z: %1").arg(sourceName));
     return true;
+#else
+    Q_UNUSED(code); Q_UNUSED(sourceName);
+    emit errorOccurred("Lua nie jest dostępne na tej platformie");
+    return false;
+#endif
+}
+
+bool LuaScriptEngine::loadScript(const QString &fileName) {
+#ifdef HAS_LUA
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        emit errorOccurred("Nie można otworzyć pliku: " + fileName);
+        return false;
+    }
+    QString code = QString::fromUtf8(file.readAll());
+    file.close();
+    return loadScriptFromString(code, fileName);
 #else
     Q_UNUSED(fileName);
     emit errorOccurred("Lua nie jest dostępne na tej platformie");

@@ -163,6 +163,8 @@ set(SOURCES
     src/core/CanBusHealthWidget.cpp
     src/core/CanReplayEditorModel.cpp
     src/core/CanReplayEditorWidget.cpp
+    src/core/LuaSyntaxHighlighter.cpp
+    src/core/CanScriptWidget.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )

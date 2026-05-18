@@ -960,6 +960,10 @@ void MainWindow::setupCentralWidget() {
                 this, &MainWindow::onNewFrame);
         return m_replayEditorWidget;
     });
+    toolsTabs->addLazyTab("Skrypt Lua", [this]() -> QWidget* {
+        m_scriptWidget = new CanScriptWidget(m_luaEngine);
+        return m_scriptWidget;
+    });
     toolsTabs->addTab(m_protoExporterWidget, "Eksport kodu");
     m_canExporter = new CanExporter(m_model);
     toolsTabs->addTab(m_canExporter,         "Eksport danych");

@@ -22,6 +22,7 @@ public:
     ~LuaScriptEngine() override;
 
     bool loadScript(const QString &fileName);
+    bool loadScriptFromString(const QString &code, const QString &sourceName = "<editor>");
     void unloadScript();
     bool isLoaded() const { return m_loaded; }
 
@@ -40,6 +41,7 @@ private:
     static int api_sendFrame(lua_State *L);
     static int api_log(lua_State *L);
     static int api_getTick(lua_State *L);
+    lua_State *createState();
     lua_State *m_lua = nullptr;
 #endif
     CanSniffer *m_sniffer = nullptr;
