@@ -165,6 +165,7 @@ set(SOURCES
     src/core/CanReplayEditorWidget.cpp
     src/core/LuaSyntaxHighlighter.cpp
     src/core/CanScriptWidget.cpp
+    src/core/CanStatsDashboard.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )

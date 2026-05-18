@@ -243,6 +243,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &MainWindow::frameProcessed,          m_gatewayWidget,     &CanGatewayWidget::processFrame);
     connect(this, &MainWindow::frameProcessed,          m_udsSequenceWidget, &UdsSequenceWidget::processFrame);
     connect(this, &MainWindow::frameProcessed,          m_idStatsWidget,         &CanIdStatsWidget::processFrame);
+    connect(this, &MainWindow::frameProcessed,          m_statsDashboard,        &CanStatsDashboard::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, m_signalMonitorWidget,   &CanSignalMonitorWidget::processFrame);
     connect(this, &MainWindow::frameProcessedThrottled, &m_pluginLoader, &PluginLoader::broadcastFrame);
     connect(this, &MainWindow::frameProcessed, m_observationDbWidget,
@@ -884,6 +885,8 @@ void MainWindow::setupCentralWidget() {
     captureTabs->addTab(m_customDashboard,      "Konfigurowalny Dashboard");
     captureTabs->addTab(m_busLoadWidget,        "Obciążenie magistrali");
     captureTabs->addTab(m_idStatsWidget,        "ID Statistics");
+    m_statsDashboard = new CanStatsDashboard;
+    captureTabs->addTab(m_statsDashboard,       "Dashboard v2");
     captureTabs->addTab(m_observationDbWidget,  "Frame DB");
     captureTabs->addTab(m_heatmapWidget,        "Byte Heatmap");
     captureTabs->addTab(m_timelineWidget,       "Timeline");
