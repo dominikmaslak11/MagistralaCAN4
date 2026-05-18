@@ -166,6 +166,8 @@ set(SOURCES
     src/core/LuaSyntaxHighlighter.cpp
     src/core/CanScriptWidget.cpp
     src/core/CanStatsDashboard.cpp
+    src/core/CanSignalMapperModel.cpp
+    src/core/CanSignalMapperWidget.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )

@@ -65,6 +65,7 @@
 #include "core/CanReplayEditorWidget.h"
 #include "core/CanScriptWidget.h"
 #include "core/CanStatsDashboard.h"
+#include "core/CanSignalMapperWidget.h"
 #include "core/ICanDriver.h"
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
@@ -182,6 +183,7 @@ private:
     CanReplayEditorWidget        *m_replayEditorWidget    = nullptr;
     CanScriptWidget              *m_scriptWidget          = nullptr;
     CanStatsDashboard            *m_statsDashboard        = nullptr;
+    CanSignalMapperWidget        *m_signalMapperWidget    = nullptr;
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;

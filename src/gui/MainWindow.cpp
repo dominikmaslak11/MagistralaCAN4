@@ -947,6 +947,12 @@ void MainWindow::setupCentralWidget() {
     analysisTabs->addTab(m_forensicsWidget,      "Forensics");
     analysisTabs->addTab(m_signalStatsWidget,   "Statystyki sygnałów");
     analysisTabs->addTab(m_busHealthWidget,     "Zdrowie magistrali");
+    analysisTabs->addLazyTab("Mapper sygnałów", [this]() -> QWidget* {
+        m_signalMapperWidget = new CanSignalMapperWidget;
+        connect(this, &MainWindow::frameProcessed,
+                m_signalMapperWidget, &CanSignalMapperWidget::processFrame);
+        return m_signalMapperWidget;
+    });
 
     // ── Grupa: Narzędzia ──────────────────────────────────────────────────────
     auto *toolsTabs = new LazyTabWidget;
