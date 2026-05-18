@@ -2,6 +2,8 @@
 #include <QObject>
 #include <QTimer>
 #include <QVector>
+#include <QHash>
+#include <QSet>
 #include "CanFrame.h"
 
 /**
@@ -35,9 +37,29 @@ public:
     int frameCount()  const { return m_frames.size(); }
     int currentFrame() const { return m_currentIndex; }
     CanFrame frameAt(int idx) const { return (idx >= 0 && idx < m_frames.size()) ? m_frames[idx] : CanFrame{}; }
+    /// Zwraca override jeśli istnieje dla idx, inaczej oryginał.
+    CanFrame effectiveFrameAt(int idx) const {
+        if (m_overrides.contains(idx)) return m_overrides[idx];
+        return frameAt(idx);
+    }
 
     /// Ustawia mnożnik prędkości (0.5 = pół, 2.0 = podwójna, 0 = max).
     void setSpeed(float multiplier);
+
+    /// Przeskakuje do ramki o podanym indeksie (bez wznowienia odtwarzania).
+    void seekTo(int idx);
+
+    // ── Override/skip API (dla CanReplayEditorWidget) ──────────────────
+    /// Zastępuje ramkę pod indeksem idx zmodyfikowaną kopią.
+    void setOverride(int idx, const CanFrame &modified);
+    /// Usuwa override dla indeksu idx (powrót do oryginału).
+    void clearOverride(int idx);
+    /// Usuwa wszystkie overrides i skip-i.
+    void clearAllOverrides();
+    /// Oznacza ramkę do pominięcia podczas odtwarzania.
+    void setSkipped(int idx, bool skip);
+    bool isSkipped(int idx) const;
+    bool hasOverride(int idx) const;
 
 signals:
     void frameEmitted(const CanFrame &frame);
@@ -55,4 +77,7 @@ private:
     bool m_loaded = false;
     bool m_playing = false;
     uint64_t m_baseTimestamp = 0;  // pierwszy timestamp w nagraniu
+
+    QHash<int, CanFrame> m_overrides;
+    QSet<int>            m_skippedIndices;
 };

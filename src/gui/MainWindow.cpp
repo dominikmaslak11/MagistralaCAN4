@@ -954,6 +954,12 @@ void MainWindow::setupCentralWidget() {
         m_replayFilterWidget = new CanReplayFilterWidget(&m_sniffer);
         return m_replayFilterWidget;
     });
+    toolsTabs->addLazyTab("Edytor Replay", [this]() -> QWidget* {
+        m_replayEditorWidget = new CanReplayEditorWidget;
+        connect(m_replayEditorWidget, &CanReplayEditorWidget::frameReady,
+                this, &MainWindow::onNewFrame);
+        return m_replayEditorWidget;
+    });
     toolsTabs->addTab(m_protoExporterWidget, "Eksport kodu");
     m_canExporter = new CanExporter(m_model);
     toolsTabs->addTab(m_canExporter,         "Eksport danych");

@@ -161,6 +161,8 @@ set(SOURCES
     src/core/CanTriggerWidget.cpp
     src/core/CanSignalStatisticsWidget.cpp
     src/core/CanBusHealthWidget.cpp
+    src/core/CanReplayEditorModel.cpp
+    src/core/CanReplayEditorWidget.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
@@ -365,6 +367,7 @@ set(TEST_SOURCES
     tests/test_logcomparatorwidget.cpp
     tests/test_gvretdriver.cpp
     tests/test_cansignaltrenddata.cpp
+    # tests/test_canreplayeditor.cpp  -- dodaj po nadaniu uprawnień do tests/
     # Sources under test (no hardware/driver deps)
     src/core/DbcParser.cpp
     src/core/CanFrameModel.cpp
@@ -411,6 +414,7 @@ set(TEST_SOURCES
     src/core/CanNodeSimulator.cpp
     src/core/CanExporter.cpp
     src/core/CanPlayer.cpp
+    src/core/CanReplayEditorModel.cpp
     src/core/UdsParser.cpp
     src/core/CanRecorder.cpp
     src/core/Mdf4Writer.cpp

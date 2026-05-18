@@ -137,6 +137,41 @@ void CanPlayer::setSpeed(float multiplier) {
     m_speed = std::max(0.0f, multiplier);
 }
 
+void CanPlayer::seekTo(int idx) {
+    if (!m_loaded) return;
+    m_currentIndex = std::max(0, std::min(idx, static_cast<int>(m_frames.size()) - 1));
+    emit positionChanged(m_currentIndex, m_frames.size());
+}
+
+void CanPlayer::setOverride(int idx, const CanFrame &modified) {
+    if (idx >= 0 && idx < m_frames.size())
+        m_overrides[idx] = modified;
+}
+
+void CanPlayer::clearOverride(int idx) {
+    m_overrides.remove(idx);
+}
+
+void CanPlayer::clearAllOverrides() {
+    m_overrides.clear();
+    m_skippedIndices.clear();
+}
+
+void CanPlayer::setSkipped(int idx, bool skip) {
+    if (skip)
+        m_skippedIndices.insert(idx);
+    else
+        m_skippedIndices.remove(idx);
+}
+
+bool CanPlayer::isSkipped(int idx) const {
+    return m_skippedIndices.contains(idx);
+}
+
+bool CanPlayer::hasOverride(int idx) const {
+    return m_overrides.contains(idx);
+}
+
 void CanPlayer::emitNextFrame() {
     if (!m_playing || m_currentIndex >= m_frames.size()) {
         m_playing = false;
@@ -145,7 +180,25 @@ void CanPlayer::emitNextFrame() {
         return;
     }
 
-    emit frameEmitted(m_frames[m_currentIndex]);
+    // Pomijaj oznaczone ramki
+    while (m_currentIndex < m_frames.size() && m_skippedIndices.contains(m_currentIndex))
+        ++m_currentIndex;
+
+    if (m_currentIndex >= m_frames.size()) {
+        m_playing = false;
+        emit playbackFinished();
+        return;
+    }
+
+    // Emituj override jeśli istnieje, zachowując oryginalny timestamp dla wyświetlania
+    if (m_overrides.contains(m_currentIndex)) {
+        CanFrame f = m_overrides[m_currentIndex];
+        f.timestamp = m_frames[m_currentIndex].timestamp;
+        emit frameEmitted(f);
+    } else {
+        emit frameEmitted(m_frames[m_currentIndex]);
+    }
+
     ++m_currentIndex;
     emit positionChanged(m_currentIndex, m_frames.size());
 
