@@ -1100,3 +1100,19 @@ Zakładka **"Walidator liczników"** (`CanCounterValidator`):
 
 - `frameProcessed` (każda ramka — nie throttlowana)
 - Zakładka "Zdrowie magistrali" w Analiza
+
+## Sesja 2026-05-18: Diagnoza sprzętowa i wgranie nowego modułu ESP32
+
+### Problem
+Brak sprzętowego potwierdzenia ramek CAN (ACK) pomiędzy ESP32 (z MCP2515) a PCAN-USB, objawiający się błędami typu `bus-off` po stronie PC oraz zapełnieniem buforów TX na ESP32.
+
+### Przeprowadzone testy i kroki naprawcze:
+1.  **Weryfikacja Oprogramowania:** Utworzono testowy firmware (`esp_pcan_bridge.ino`) dla ESP32 pracujący przy **16 MHz** z prędkością **250 kbps**. Zgodność kompilacji potwierdzona przy pomocy narzędzia `arduino-cli`.
+2.  **Skanowanie Prędkości:** Przetestowano skanowanie różnych baud rate'ów na komputerze przy użyciu interfejsu `can0`, brak komunikacji na jakimkolwiek z nich.
+3.  **Diagnoza Wewnętrzna (Loopback Mode):** Przygotowano specjalny firmware ustawiający układ MCP2515 w tryb Loopback. Test zakończył się **pełnym sukcesem**, co ostatecznie potwierdziło, że magistrala SPI, mikrokontroler ESP32 oraz sekcja logiczna układu MCP2515 działają w 100% poprawnie.
+4.  **Diagnoza Zewnętrzna (Fizyczna):** Zalecono sprawdzenie: terminacji 120 Ohm, zasilania 5V transceivera (TJA1050), zgodności przewodów H/L oraz wspólnej masy. Mimo usunięcia problemów z terminacją i podania zasilania zewnętrznego, komunikacja fizyczna nadal zawodziła, co jednoznacznie wskazało na uszkodzenie fizyczne, najprawdopodobniej spalony układ transceivera.
+5.  **Wymiana Modułu:** Użytkownik podłączył nowy moduł ESP32. Wgrano testowe oprogramowanie typu Serial-CAN bridge na nowy sprzęt.
+6.  **Ostateczny Test Komunikacji (Sukces):** Komunikacja powiodła się. Komputer (przez PCAN-USB) pomyślnie wysłał i odebrał sprzętowe ramki CAN. Narzędzie linuksowe `ip -details -statistics link show can0` nareszcie pokazało przyrost odebranych pakietów (`RX packets`).
+
+### Status końcowy
+Sprzęt (nowy moduł) jest sprawny. Odtworzono plik z kodem docelowym (`esp_mcp.ino`). Moduł jest gotowy do wgrania dowolnego, ostatecznego protokołu z katalogu, takiego jak GVRET lub zaawansowany kontroler przekaźników.

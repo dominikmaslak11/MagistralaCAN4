@@ -24,10 +24,10 @@ struct SpnDef {
  * @brief Definicja PGN – grupa parametrów J1939.
  */
 struct PgnDef {
-    uint32_t pgn;
+    uint32_t pgn{};
     QString  name;
     QString  acronym;
-    int      defaultDlc;       // typowe DLC
+    int      defaultDlc{};       // typowe DLC
     QVector<SpnDef> spns;      // lista sygnałów w tej grupie
 };
 

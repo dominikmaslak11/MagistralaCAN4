@@ -42,19 +42,19 @@ private:
 
     // Serwer
     WebSocketServer m_server;
-    QPushButton *m_serverBtn;
-    QSpinBox    *m_serverPort;
-    QLabel      *m_tokenLabel;
-    QLabel      *m_serverStatus;
-    QPushButton *m_copyTokenBtn;
+    QPushButton *m_serverBtn{};
+    QSpinBox    *m_serverPort{};
+    QLabel      *m_tokenLabel{};
+    QLabel      *m_serverStatus{};
+    QPushButton *m_copyTokenBtn{};
 
     // Klient
     RemoteCanClient m_client;
-    QLineEdit   *m_clientUrl;
-    QLineEdit   *m_clientToken;
-    QPushButton *m_clientBtn;
-    QLabel      *m_clientStatus;
-    QLabel      *m_frameCountLabel;
+    QLineEdit   *m_clientUrl{};
+    QLineEdit   *m_clientToken{};
+    QPushButton *m_clientBtn{};
+    QLabel      *m_clientStatus{};
+    QLabel      *m_frameCountLabel{};
 
     // Sekcja wysyłania ramek
     QLineEdit   *m_sendIdEdit       = nullptr;

@@ -64,7 +64,7 @@ std::unordered_set<uint64_t> LearningEngine::detectCyclicNoiseBytes() const {
             int bitToggles[8] = {};
             int totalPairs = 0;
             for (size_t i = 1; i < frames.size(); ++i) {
-                if (b >= (int)frames[i].dlc || b >= (int)frames[i-1].dlc) continue;
+                if (b >= static_cast<int>(frames[i].dlc) || b >= static_cast<int>(frames[i-1].dlc)) continue;
                 uint8_t changed = frames[i-1].data[b] ^ frames[i].data[b];
                 totalPairs++;
                 for (int bit = 0; bit < 8; ++bit)

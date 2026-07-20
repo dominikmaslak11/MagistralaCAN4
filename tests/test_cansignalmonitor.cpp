@@ -68,7 +68,7 @@ TEST(CanSignalMonitor, SingleSignalDecoded) {
     mon.update(makeFrame(0x300, {0x64, 0,0,0,0,0,0,0}, 1000)); // 0x64=100, phys=50.0
 
     ASSERT_EQ(mon.allValues().size(), 1u);
-    auto &sv = mon.allValues()[0];
+    auto sv = mon.allValues()[0];
     EXPECT_EQ(sv.signalName, "Throttle");
     EXPECT_NEAR(sv.physValue, 50.0, 0.01);
     EXPECT_EQ(sv.unit, "%");

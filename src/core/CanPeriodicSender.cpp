@@ -2,11 +2,15 @@
 #include <chrono>
 #include <algorithm>
 
-static uint64_t wallClockMs() {
+namespace {
+
+uint64_t wallClockMs() {
     using namespace std::chrono;
     return static_cast<uint64_t>(
         duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count());
 }
+
+} // namespace
 
 CanPeriodicSender::CanPeriodicSender(CanSniffer *sniffer, QObject *parent)
     : QObject(parent), m_sniffer(sniffer)

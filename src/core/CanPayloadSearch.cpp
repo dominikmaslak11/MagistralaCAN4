@@ -1,8 +1,10 @@
 #include "CanPayloadSearch.h"
 #include <algorithm>
 
-static bool patternMatch(const CanFrame &frame, const CanPayloadSearch::Query &query,
-                         int offset) {
+namespace {
+
+bool patternMatch(const CanFrame &frame, const CanPayloadSearch::Query &query,
+                   int offset) {
     const auto &pat  = query.pattern;
     const auto &mask = query.mask;
     int patLen = static_cast<int>(pat.size());
@@ -16,6 +18,8 @@ static bool patternMatch(const CanFrame &frame, const CanPayloadSearch::Query &q
     }
     return true;
 }
+
+} // namespace
 
 bool CanPayloadSearch::matches(const CanFrame &frame, const Query &query) {
     if (query.pattern.empty()) return false;

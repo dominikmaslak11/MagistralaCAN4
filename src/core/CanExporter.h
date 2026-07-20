@@ -47,22 +47,22 @@ private:
     CanFrameModel *m_model;
 
     // UI
-    QComboBox   *m_formatCombo;
-    QLineEdit   *m_pathEdit;
-    QPushButton *m_browseBtn;
-    QPushButton *m_exportBtn;
-    QProgressBar *m_progress;
+    QComboBox   *m_formatCombo{};
+    QLineEdit   *m_pathEdit{};
+    QPushButton *m_browseBtn{};
+    QPushButton *m_exportBtn{};
+    QProgressBar *m_progress{};
 
     // Filtry
-    QLineEdit   *m_idMinEdit;
-    QLineEdit   *m_idMaxEdit;
-    QCheckBox   *m_timeFilterCheck;
-    QLineEdit   *m_timeFromEdit;
-    QLineEdit   *m_timeToEdit;
+    QLineEdit   *m_idMinEdit{};
+    QLineEdit   *m_idMaxEdit{};
+    QCheckBox   *m_timeFilterCheck{};
+    QLineEdit   *m_timeFromEdit{};
+    QLineEdit   *m_timeToEdit{};
 
     // Status
-    QLabel *m_statsLabel;
-    QLabel *m_resultLabel;
+    QLabel *m_statsLabel{};
+    QLabel *m_resultLabel{};
 
     QFutureWatcher<bool> *m_watcher = nullptr;
 };

@@ -29,7 +29,7 @@ TEST(CandidateModel, InitialRowCountZero) {
 
 TEST(CandidateModel, ColumnCountEqualsEnum) {
     CandidateModel m;
-    EXPECT_EQ(m.columnCount(), static_cast<int>(CandidateModel::_COUNT));
+    EXPECT_EQ(m.columnCount(), static_cast<int>(CandidateModel::Count));
 }
 
 TEST(CandidateModel, ColumnCountIs4) {

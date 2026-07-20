@@ -7,10 +7,14 @@
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-static QString shortRef(const QString &ref) {
+namespace {
+
+QString shortRef(const QString &ref) {
     int idx = ref.lastIndexOf('/');
     return (idx >= 0) ? ref.mid(idx + 1) : ref;
 }
+
+} // namespace
 
 // ── Internal data structures ──────────────────────────────────────────────────
 
@@ -58,7 +62,7 @@ QVector<DbcMessage> ArxmlParser::load(const QString &path) {
     QHash<QString, FrameDef>    frames;    // short-name → def
 
     // {canId, frameShortName}
-    struct Trig { uint32_t id; QString frameShortName; };
+    struct Trig { uint32_t id{}; QString frameShortName; };
     QVector<Trig> triggers;
 
     // ── Parsing state ────────────────────────────────────────────────────────

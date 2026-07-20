@@ -30,11 +30,11 @@ private:
     void refreshTable();
 
     CanSignalMonitor m_monitor;
-    QTableWidget    *m_table;
-    QLabel          *m_infoLabel;
-    QLineEdit       *m_filterEdit;
-    QSpinBox        *m_staleSpin;   // stale threshold in ms
-    QPushButton     *m_resetBtn;
+    QTableWidget    *m_table{};
+    QLabel          *m_infoLabel{};
+    QLineEdit       *m_filterEdit{};
+    QSpinBox        *m_staleSpin{};   // stale threshold in ms
+    QPushButton     *m_resetBtn{};
     QTimer          *m_timer;
 
     static constexpr int kTickMs = 250;

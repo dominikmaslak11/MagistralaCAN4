@@ -10,7 +10,7 @@ int CandidateModel::rowCount(const QModelIndex &parent) const {
 
 int CandidateModel::columnCount(const QModelIndex &parent) const {
     if (parent.isValid()) return 0;
-    return Column::_COUNT;
+    return Column::Count;
 }
 
 QVariant CandidateModel::data(const QModelIndex &index, int role) const {

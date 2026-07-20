@@ -176,8 +176,8 @@ void SignalPlotterWidget::processFrame(const CanFrame &frame) {
 
         double plotVal = m_normalize
             ? (ch.maxVal > ch.minVal
-                ? (val - ch.minVal) / (ch.maxVal - ch.minVal) * (double)i + (double)i
-                : (double)i)
+                ? (val - ch.minVal) / (ch.maxVal - ch.minVal) * static_cast<double>(i) + static_cast<double>(i)
+                : static_cast<double>(i))
             : val;
 
         ch.series->append(tSec, plotVal);

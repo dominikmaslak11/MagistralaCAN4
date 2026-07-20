@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.16)
-project(MagistralaCAN4 VERSION 2.1.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.21)
+project(MagistralaCAN4 VERSION 2.3.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ── Google Test (FetchContent) ──
 include(FetchContent)
@@ -135,6 +136,7 @@ set(SOURCES
     src/core/Mdf4Writer.cpp
     src/core/PluginLoader.cpp
     src/core/HttpRestServer.cpp
+    src/core/McpServer.cpp
     src/core/SlCanDriver.cpp
     src/core/EspMcpDriver.cpp
     src/core/GvretDriver.cpp
@@ -215,6 +217,7 @@ set(HEADERS
     src/core/ProtocolPlugin.h
     src/core/PluginLoader.h
     src/core/HttpRestServer.h
+    src/core/McpServer.h
     src/core/CanStatsPanel.h
     src/core/CanFilterProxy.h
     src/core/CanPlayer.h
@@ -472,4 +475,4 @@ endif()
 
 # Register tests with CTest
 include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME}_tests)
+gtest_discover_tests(${PROJECT_NAME}_tests)

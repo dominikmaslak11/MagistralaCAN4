@@ -38,16 +38,16 @@ private:
     CanTimelineModel   m_model;
     const DbcParser   *m_dbc = nullptr;
 
-    QChart            *m_chart;
-    QChartView        *m_chartView;
-    QValueAxis        *m_axisX;   // time in ms (relative to window start)
-    QCategoryAxis     *m_axisY;   // ID labels
+    QChart            *m_chart{};
+    QChartView        *m_chartView{};
+    QValueAxis        *m_axisX{};   // time in ms (relative to window start)
+    QCategoryAxis     *m_axisY{};   // ID labels
 
-    QComboBox         *m_windowCombo;   // rolling window: 5/10/30/60s
-    QSpinBox          *m_maxIdsSpin;
-    QCheckBox         *m_pauseCheck;
-    QPushButton       *m_clearBtn;
-    QLabel            *m_statsLabel;
+    QComboBox         *m_windowCombo{};   // rolling window: 5/10/30/60s
+    QSpinBox          *m_maxIdsSpin{};
+    QCheckBox         *m_pauseCheck{};
+    QPushButton       *m_clearBtn{};
+    QLabel            *m_statsLabel{};
 
     QTimer             m_refreshTimer;
     bool               m_paused = false;

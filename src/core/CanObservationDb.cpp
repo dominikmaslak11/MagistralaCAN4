@@ -111,7 +111,7 @@ void CanObservationDb::recordFrame(const CanFrame &frame, uint64_t timestampUs) 
             duration_cast<microseconds>(system_clock::now().time_since_epoch()).count());
     }
 
-    PendingRow row;
+    PendingRow row{};
     row.sessionId   = m_sessionId;
     row.timestampUs = timestampUs;
     row.canId       = frame.id;
@@ -174,7 +174,7 @@ std::vector<DbFrameRow> CanObservationDb::queryByCanId(uint32_t id, int64_t sess
     q.exec();
 
     while (q.next()) {
-        DbFrameRow row;
+        DbFrameRow row{};
         row.rowid       = q.value(0).toLongLong();
         row.sessionId   = q.value(1).toLongLong();
         row.timestampUs = static_cast<uint64_t>(q.value(2).toLongLong());
@@ -236,7 +236,7 @@ std::vector<DbFrameRow> CanObservationDb::queryTimeRange(uint64_t fromUs, uint64
     q.exec();
 
     while (q.next()) {
-        DbFrameRow row;
+        DbFrameRow row{};
         row.rowid       = q.value(0).toLongLong();
         row.sessionId   = q.value(1).toLongLong();
         row.timestampUs = static_cast<uint64_t>(q.value(2).toLongLong());
@@ -294,7 +294,7 @@ std::vector<CanObservationDb::DlcAnomaly> CanObservationDb::findDlcAnomalies(int
         uint8_t  dlc = static_cast<uint8_t>(q2.value(2).toInt());
         auto it = modeDlc.find(cid);
         if (it != modeDlc.end() && dlc != it->second) {
-            DlcAnomaly a;
+            DlcAnomaly a{};
             a.rowid       = q2.value(0).toLongLong();
             a.canId       = cid;
             a.expectedDlc = it->second;
@@ -322,7 +322,7 @@ std::vector<CanObservationDb::IdFrequency> CanObservationDb::computeIdFrequencie
     q.exec();
 
     while (q.next()) {
-        IdFrequency f;
+        IdFrequency f{};
         f.canId      = static_cast<uint32_t>(q.value(0).toLongLong());
         f.frameCount = q.value(1).toLongLong();
         uint64_t minTs = static_cast<uint64_t>(q.value(2).toLongLong());

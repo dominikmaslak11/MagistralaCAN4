@@ -12,10 +12,12 @@
 // Intel (LE): startBit = LSBit position, bits consecutive in memory
 // Motorola (BE): startBit = MSBit in DBC bit numbering (byte*8 + bit_within_byte)
 
-static double extractSignal(const uint8_t *data, int dlc,
-                             int startBit, int length,
-                             bool isLittleEndian, bool isSigned,
-                             double scale, double offset)
+namespace {
+
+double extractSignal(const uint8_t *data, int dlc,
+                      int startBit, int length,
+                      bool isLittleEndian, bool isSigned,
+                      double scale, double offset)
 {
     if (length <= 0 || length > 64)
         return std::numeric_limits<double>::quiet_NaN();
@@ -58,6 +60,8 @@ static double extractSignal(const uint8_t *data, int dlc,
         return static_cast<double>(static_cast<int64_t>(raw)) * scale + offset;
     return static_cast<double>(raw) * scale + offset;
 }
+
+} // namespace
 
 // ─────────────────────────────────────────────────────────────────────────────
 

@@ -136,7 +136,7 @@ void CanRecorder::compressAndReplace(const QString &path) {
     }
 
     compressed.resize(cSize);
-    float ratio = raw.size() > 0 ? (float)cSize / raw.size() * 100.0f : 100.0f;
+    float ratio = raw.size() > 0 ? static_cast<float>(cSize) / raw.size() * 100.0f : 100.0f;
 
     QString zstPath = path + ".zst";
     QFile outFile(zstPath);

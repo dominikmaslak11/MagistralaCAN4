@@ -9,7 +9,8 @@
 // ---------------------------------------------------------------------------
 // Pinout
 // ---------------------------------------------------------------------------
-#define CAN_CS  5
+#define CAN_CS       5
+#define CRYSTAL_FREQ MCP_16MHZ
 
 // ---------------------------------------------------------------------------
 // GVRET protocol constants
@@ -75,9 +76,15 @@ static void applyCanSpeed(uint32_t bps, bool lo) {
     canSpeed   = bps;
     listenOnly = lo;
     mcp.reset();
-    mcp.setFilterMask(MCP2515::MASK0, true, 0x00000000);
-    mcp.setFilterMask(MCP2515::MASK1, true, 0x00000000);
-    mcp.setBitrate(bpsToCanSpeed(bps));
+    mcp.setFilterMask(MCP2515::MASK0, false, 0x00000000);
+    mcp.setFilterMask(MCP2515::MASK1, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF0, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF1, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF2, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF3, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF4, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF5, false, 0x00000000);
+    mcp.setBitrate(bpsToCanSpeed(bps), CRYSTAL_FREQ);
     if (lo) mcp.setListenOnlyMode();
     else    mcp.setNormalMode();
 }
@@ -256,9 +263,15 @@ void setup() {
     SPI.begin();
     while (mcp.reset() != MCP2515::ERROR_OK) delay(500);
 
-    mcp.setFilterMask(MCP2515::MASK0, true, 0x00000000);
-    mcp.setFilterMask(MCP2515::MASK1, true, 0x00000000);
-    mcp.setBitrate(CAN_250KBPS);
+    mcp.setFilterMask(MCP2515::MASK0, false, 0x00000000);
+    mcp.setFilterMask(MCP2515::MASK1, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF0, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF1, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF2, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF3, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF4, false, 0x00000000);
+    mcp.setFilter(MCP2515::RXF5, false, 0x00000000);
+    mcp.setBitrate(CAN_250KBPS, CRYSTAL_FREQ);
     mcp.setNormalMode();
 }
 

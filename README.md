@@ -2,8 +2,8 @@
 
 **Wysokowydajny, wielowątkowy sniffer CAN / CAN FD** z zaawansowanym uczeniem asocjacyjnym, silnikiem skryptowym Lua, akceleracją GPU i serwerem WebSocket.
 
-![Version](https://img.shields.io/badge/version-2.2.0-00ffaa)
-![C++](https://img.shields.io/badge/C++-17-blue)
+![Version](https://img.shields.io/badge/version-2.3.0-00ffaa)
+![C++](https://img.shields.io/badge/C++-20-blue)
 ![Qt](https://img.shields.io/badge/Qt-6.x-green)
 ![License](https://img.shields.io/badge/license-MIT-red)
 

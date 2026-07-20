@@ -35,7 +35,7 @@ bool CanReplayEditorModel::isModified(int row) const {
 
 QString CanReplayEditorModel::payloadHex(const CanFrame &f) const {
     QString s;
-    int len = std::min((int)f.dlc, 64);
+    int len = std::min(static_cast<int>(f.dlc), 64);
     for (int i = 0; i < len; ++i) {
         if (i > 0) s += ' ';
         s += QString("%1").arg(f.data[i], 2, 16, QChar('0')).toUpper();

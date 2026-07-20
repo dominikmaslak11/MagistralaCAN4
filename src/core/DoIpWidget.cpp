@@ -158,9 +158,9 @@ void DoIpWidget::updateDetails(int row) {
     std::ostringstream ss;
     ss << std::hex << std::uppercase << std::setfill('0');
     ss << "=== DoIP Header (ISO 13400-2) ===\n";
-    ss << "Protocol Version     : 0x" << std::setw(2) << (int)msg.header.protocolVersion
+    ss << "Protocol Version     : 0x" << std::setw(2) << static_cast<int>(msg.header.protocolVersion)
        << (msg.header.protocolVersion == DOIP_PROTO_VERSION ? " (2019)" : " (!= 0x02)") << "\n";
-    ss << "Inv. Proto Version   : 0x" << std::setw(2) << (int)msg.header.inverseProtoVersion << "\n";
+    ss << "Inv. Proto Version   : 0x" << std::setw(2) << static_cast<int>(msg.header.inverseProtoVersion) << "\n";
     ss << "Header pattern valid : " << (msg.header.validPattern ? "YES" : "NO") << "\n";
     ss << "Payload Type         : 0x" << std::setw(4) << msg.header.payloadType
        << " (" << DoIpParser::payloadTypeName(msg.header.payloadType) << ")\n";
@@ -180,20 +180,20 @@ void DoIpWidget::updateDetails(int row) {
             ss << "Logical Addr : 0x" << std::hex << std::setw(4) << v.logicalAddr << "\n";
             ss << "EID (MAC)    : ";
             for (int i = 0; i < 6; ++i)
-                ss << std::setw(2) << (int)v.eid[i] << (i < 5 ? ":" : "");
+                ss << std::setw(2) << static_cast<int>(v.eid[i]) << (i < 5 ? ":" : "");
             ss << "\nGID          : ";
             for (int i = 0; i < 6; ++i)
-                ss << std::setw(2) << (int)v.gid[i] << (i < 5 ? ":" : "");
-            ss << "\nFurther Action: 0x" << std::setw(2) << (int)v.furtherAction << "\n";
+                ss << std::setw(2) << static_cast<int>(v.gid[i]) << (i < 5 ? ":" : "");
+            ss << "\nFurther Action: 0x" << std::setw(2) << static_cast<int>(v.furtherAction) << "\n";
             if (v.hasSyncStatus)
-                ss << "Sync Status  : 0x" << std::setw(2) << (int)v.syncStatus << "\n";
+                ss << "Sync Status  : 0x" << std::setw(2) << static_cast<int>(v.syncStatus) << "\n";
             break;
         }
         case DoIpPayloadType::RoutingActivationReq: {
             const auto &r = msg.routingReq;
             ss << "\n=== Routing Activation Request ===\n";
             ss << "Source Addr      : 0x" << std::hex << std::setw(4) << r.sourceAddr << "\n";
-            ss << "Activation Type  : 0x" << std::setw(2) << (int)r.activationType
+            ss << "Activation Type  : 0x" << std::setw(2) << static_cast<int>(r.activationType)
                << (r.activationType == 0 ? " (Default)" : (r.activationType == 1 ? " (WWH-OBD)" : "")) << "\n";
             break;
         }
@@ -202,7 +202,7 @@ void DoIpWidget::updateDetails(int row) {
             ss << "\n=== Routing Activation Response ===\n";
             ss << "Client Logical Addr : 0x" << std::hex << std::setw(4) << r.clientLogicalAddr << "\n";
             ss << "Entity Logical Addr : 0x" << std::setw(4) << r.entityLogicalAddr << "\n";
-            ss << "Response Code       : 0x" << std::setw(2) << (int)r.responseCode
+            ss << "Response Code       : 0x" << std::setw(2) << static_cast<int>(r.responseCode)
                << " (" << DoIpParser::routingResponseCodeName(r.responseCode) << ")\n";
             break;
         }
@@ -213,7 +213,7 @@ void DoIpWidget::updateDetails(int row) {
             ss << "Target Addr : 0x" << std::setw(4) << d.targetAddr << "\n";
             ss << "UDS Payload : " << std::dec << d.udsPayload.size() << " bytes\n";
             for (size_t i = 0; i < d.udsPayload.size(); ++i) {
-                ss << std::hex << std::setw(2) << (int)d.udsPayload[i];
+                ss << std::hex << std::setw(2) << static_cast<int>(d.udsPayload[i]);
                 ss << ((i % 16 == 15) ? "\n" : " ");
             }
             if (!d.udsPayload.empty() && d.udsPayload.size() % 16 != 0) ss << "\n";
@@ -226,14 +226,14 @@ void DoIpWidget::updateDetails(int row) {
                << (msg.type == DoIpPayloadType::DiagnosticMessageAck ? "ACK" : "NACK") << " ===\n";
             ss << "Source Addr : 0x" << std::hex << std::setw(4) << a.sourceAddr << "\n";
             ss << "Target Addr : 0x" << std::setw(4) << a.targetAddr << "\n";
-            ss << "Code        : 0x" << std::setw(2) << (int)a.ackCode
+            ss << "Code        : 0x" << std::setw(2) << static_cast<int>(a.ackCode)
                << " (" << DoIpParser::diagAckCodeName(a.ackCode) << ")\n";
             break;
         }
         default: {
             ss << "\n=== Raw Payload (" << std::dec << msg.rawPayload.size() << " bytes) ===\n";
             for (size_t i = 0; i < msg.rawPayload.size(); ++i) {
-                ss << std::hex << std::setw(2) << (int)msg.rawPayload[i];
+                ss << std::hex << std::setw(2) << static_cast<int>(msg.rawPayload[i]);
                 ss << ((i % 16 == 15) ? "\n" : " ");
             }
             if (!msg.rawPayload.empty() && msg.rawPayload.size() % 16 != 0) ss << "\n";

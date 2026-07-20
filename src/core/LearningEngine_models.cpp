@@ -8,9 +8,11 @@
 #include <sstream>
 // ── Neural network ──────────────────────────────────────────
 
-static double relu(double x) { return x > 0 ? x : 0; }
-static double reluDeriv(double x) { return x > 0 ? 1.0 : 0.0; }
-static double sigmoid(double x) { return 1.0 / (1.0 + std::exp(-x)); }
+namespace {
+double relu(double x) { return x > 0 ? x : 0; }
+double reluDeriv(double x) { return x > 0 ? 1.0 : 0.0; }
+double sigmoid(double x) { return 1.0 / (1.0 + std::exp(-x)); }
+} // namespace
 
 LearningEngine::NnTrainingResult
 LearningEngine::trainNeuralNetwork(
@@ -357,7 +359,9 @@ LearningEngine::autoDiscovery(const std::string &variableKey) const {
 
 // ── Regularized incomplete beta (power series + symmetry) ──
 
-static double regIncompleteBeta(double a, double b, double x) {
+namespace {
+
+double regIncompleteBeta(double a, double b, double x) {
     if (x <= 0.0) return 0.0;
     if (x >= 1.0) return 1.0;
     // Use symmetry: I_x(a,b) = 1 - I_{1-x}(b,a) when x is large
@@ -376,6 +380,8 @@ static double regIncompleteBeta(double a, double b, double x) {
     }
     return front * sum / a;
 }
+
+} // namespace
 
 // ── Statistical helpers ─────────────────────────────────────
 
@@ -444,7 +450,7 @@ void LearningEngine::recalcAdaptiveWindow() {
 
 LearningEngine::GbtModel
 LearningEngine::trainGbt(const std::string &variableKey,
-                         int maxTrees, int maxDepth) const {
+                         int maxTrees, int  /*maxDepth*/) const {
     GbtModel model;
     model.learningRate = 0.1;
     std::shared_lock lock(m_mutex);
@@ -541,7 +547,7 @@ LearningEngine::trainGbt(const std::string &variableKey,
 
         if (bestFeat < 0) break;
 
-        GbtTree tree;
+        GbtTree tree{};
         tree.featureIdx = bestFeat;
         tree.threshold = bestThresh;
         tree.leftValue = bestLeftVal * model.learningRate;

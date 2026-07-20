@@ -6,7 +6,7 @@
 #include <QFormLayout>
 #include <QMessageBox>
 #include <QFont>
-#include <cstdio>
+#include <format>
 
 LinWidget::LinWidget(QWidget *parent) : QWidget(parent) {
     buildUi();
@@ -117,15 +117,11 @@ void LinWidget::appendFrame(const LinFrame &f) {
         m_table->setItem(row, col, item);
     };
 
-    char buf[8];
-    snprintf(buf, sizeof(buf), "0x%02X", f.frameId);
-    cell(0, buf);
-    snprintf(buf, sizeof(buf), "0x%02X", f.pid);
-    cell(1, buf);
+    cell(0, QString::fromStdString(std::format("0x{:02X}", f.frameId)));
+    cell(1, QString::fromStdString(std::format("0x{:02X}", f.pid)));
     cell(2, QString::number(f.dlc));
     cell(3, dataHex(f));
-    snprintf(buf, sizeof(buf), "0x%02X", f.checksum);
-    cell(4, buf);
+    cell(4, QString::fromStdString(std::format("0x{:02X}", f.checksum)));
     cell(5, f.csType == LinFrame::ChecksumType::Enhanced ? "Enhanced" : "Classic");
     cell(6, LinFrame::pidValid(f.pid) ? "OK" : "FAIL");
 
@@ -144,9 +140,7 @@ QString LinWidget::dataHex(const LinFrame &f) const {
     QString s;
     for (int i = 0; i < f.dlc; ++i) {
         if (i) s += ' ';
-        char buf[4];
-        snprintf(buf, sizeof(buf), "%02X", f.data[i]);
-        s += buf;
+        s += std::format("{:02X}", f.data[i]);
     }
     return s;
 }

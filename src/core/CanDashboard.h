@@ -36,7 +36,7 @@ private:
     void onStalenessCheck();
 
     // Layout
-    QVBoxLayout *m_mainLayout;
+    QVBoxLayout *m_mainLayout{};
     QScrollArea *m_scrollArea;
     QWidget      *m_scrollWidget;
     QVBoxLayout *m_groupsLayout;
@@ -54,8 +54,8 @@ private:
 
     // Grupy (sekcje) – nagłówek + kontener
     struct GroupWidgets {
-        QPushButton *header;
-        QFrame      *container;
+        QPushButton *header{};
+        QFrame      *container{};
         bool         collapsed = false;
     };
     QHash<uint32_t, GroupWidgets> m_groups;

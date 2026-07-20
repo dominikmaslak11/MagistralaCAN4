@@ -99,7 +99,7 @@ void MqttBridge::doPublish(const QString &topic, double value,
     QJsonObject obj;
     obj["value"]     = value;
     obj["unit"]      = unit;
-    obj["timestamp"] = (qint64)ts;
+    obj["timestamp"] = static_cast<qint64>(ts);
     QByteArray payload = QJsonDocument(obj).toJson(QJsonDocument::Compact);
 
     m_queue.enqueue({"magistrala/" + topic, payload});
@@ -145,7 +145,7 @@ void MqttBridge::onDisconnected() {
 
 void MqttBridge::onError(QAbstractSocket::SocketError err) {
     QString msg = QString("MQTT socket error %1: %2")
-                  .arg((int)err).arg(m_socket->errorString());
+                  .arg(static_cast<int>(err)).arg(m_socket->errorString());
     Logger::log(msg);
     emit errorOccurred(msg);
     if (m_enabled && m_socket->state() == QAbstractSocket::UnconnectedState)

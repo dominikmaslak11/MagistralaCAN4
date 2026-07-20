@@ -5,7 +5,7 @@
 #include <QHeaderView>
 #include <QGroupBox>
 #include <QFont>
-#include <cstdio>
+#include <format>
 
 CanPeriodicSenderWidget::CanPeriodicSenderWidget(CanSniffer *sniffer, QWidget *parent)
     : QWidget(parent)
@@ -152,17 +152,14 @@ void CanPeriodicSenderWidget::refreshTable() {
         cell(0, e.enabled ? "Y" : "N");
         cell(1, QString::fromStdString(e.label));
 
-        char idBuf[12];
-        snprintf(idBuf, sizeof(idBuf), "0x%X%s", e.frame.id, e.frame.extended ? "x" : "");
-        cell(2, idBuf);
+        cell(2, QString::fromStdString(std::format("0x{:X}{}", e.frame.id, e.frame.extended ? "x" : "")));
         cell(3, QString::number(e.periodMs));
 
         QString dataStr;
         char bb[4];
         for (int b = 0; b < e.frame.dlc && b < 8; ++b) {
             if (b) dataStr += ' ';
-            snprintf(bb, sizeof(bb), "%02X", e.frame.data[b]);
-            dataStr += bb;
+            dataStr += std::format("{:02X}", e.frame.data[b]);
         }
         cell(4, dataStr);
         cell(5, QString::number(e.txCount));

@@ -250,7 +250,7 @@ void LogComparatorWidget::runPositional() {
 
             if (lf->id == rf->id && tDiff < 0.1) {
                 // Porównaj bajt po bajcie
-                int maxDlc = std::max((int)lf->dlc, (int)rf->dlc);
+                int maxDlc = std::max(static_cast<int>(lf->dlc), static_cast<int>(rf->dlc));
                 QVector<bool> lb(maxDlc, false), rb(maxDlc, false);
                 bool anyDiff = (lf->dlc != rf->dlc);
                 for (int b = 0; b < maxDlc; ++b) {
@@ -342,7 +342,7 @@ void LogComparatorWidget::runById() {
                 const auto &lf = m_leftFrames[li];
                 const auto &rf = m_rightFrames[ri];
 
-                int maxDlc = std::max((int)lf.dlc, (int)rf.dlc);
+                int maxDlc = std::max(static_cast<int>(lf.dlc), static_cast<int>(rf.dlc));
                 QVector<bool> lb(maxDlc, false), rb(maxDlc, false);
                 bool anyDiff = (lf.dlc != rf.dlc);
                 for (int b = 0; b < maxDlc; ++b) {

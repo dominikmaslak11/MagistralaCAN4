@@ -75,6 +75,6 @@ private:
     QPushButton  *m_clearBtn;
     QPushButton  *m_exportBtn;
     QPushButton  *m_refreshBtn;
-    QPushButton  *m_removeBtn[kMaxChannels];
-    QLabel       *m_chLabel[kMaxChannels];
+    QPushButton  *m_removeBtn[kMaxChannels]{};
+    QLabel       *m_chLabel[kMaxChannels]{};
 };

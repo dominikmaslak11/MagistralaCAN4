@@ -12,7 +12,7 @@
 J1939TableModel::J1939TableModel(QObject *parent) : QAbstractTableModel(parent) {}
 
 int J1939TableModel::rowCount(const QModelIndex &) const { return m_frames.size(); }
-int J1939TableModel::columnCount(const QModelIndex &) const { return _COUNT; }
+int J1939TableModel::columnCount(const QModelIndex &) const { return Count; }
 
 QVariant J1939TableModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid() || index.row() >= m_frames.size()) return {};

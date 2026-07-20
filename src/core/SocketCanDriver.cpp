@@ -28,14 +28,14 @@ bool SocketCanDriver::open(const QString &device) {
     if (setsockopt(m_socket, SOL_CAN_RAW, CAN_RAW_XL_FRAMES, &enable, sizeof(enable)) < 0)
         qDebug() << "SocketCAN: CAN XL not supported (ignoring)";
 
-    struct ifreq ifr;
+    struct ifreq ifr{};
     std::strncpy(ifr.ifr_name, device.toStdString().c_str(), IFNAMSIZ - 1);
     ifr.ifr_name[IFNAMSIZ - 1] = '\0';
     if (ioctl(m_socket, SIOCGIFINDEX, &ifr) < 0) {
         qWarning() << "SocketCAN: nie znaleziono interfejsu:" << device;
         close(); return false;
     }
-    struct sockaddr_can addr;
+    struct sockaddr_can addr{};
     std::memset(&addr, 0, sizeof(addr));
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifr.ifr_ifindex;
@@ -61,7 +61,7 @@ CanFrame SocketCanDriver::readFrame() {
     if (nbytes < 0) return {};
 
     uint64_t ts = []() -> uint64_t {
-        struct timeval tv; gettimeofday(&tv, nullptr);
+        struct timeval tv{}; gettimeofday(&tv, nullptr);
         return static_cast<uint64_t>(tv.tv_sec) * 1000000ULL + tv.tv_usec;
     }();
 
@@ -87,7 +87,7 @@ CanFrame SocketCanDriver::readFrame() {
         frame.sdt = xlf->sdt;
         frame.af = xlf->af;
         frame.dlc = xlf->len > CANXL_MAX_DLC ? CANXL_MAX_DLC : xlf->len;
-        int xlN = std::min((int)frame.dlc, 64);
+        int xlN = std::min(static_cast<int>(frame.dlc), 64);
         for (int i = 0; i < xlN; ++i) frame.data[i] = xlf->data[i];
         frame.timestamp = ts;
     }
@@ -97,17 +97,17 @@ CanFrame SocketCanDriver::readFrame() {
 void SocketCanDriver::writeFrame(const CanFrame &frame) {
     if (m_socket < 0) return;
     if (frame.xl) {
-        struct canxl_frame xlf;
+        struct canxl_frame xlf{};
         memset(&xlf, 0, sizeof(xlf));
         xlf.prio = frame.id & CANXL_PRIO_MASK;
         xlf.sdt = frame.sdt;
         xlf.af = frame.af;
         xlf.len = frame.dlc > CANXL_MAX_DLC ? CANXL_MAX_DLC : frame.dlc;
-        int xlWrN = std::min((int)xlf.len, 64);
+        int xlWrN = std::min(static_cast<int>(xlf.len), 64);
         for (int i = 0; i < xlWrN; ++i) xlf.data[i] = frame.data[i];
         write(m_socket, &xlf, CANXL_HDR_SIZE + xlf.len);
     } else if (frame.fd) {
-        struct canfd_frame fdf;
+        struct canfd_frame fdf{};
         memset(&fdf, 0, sizeof(fdf));
         fdf.can_id = frame.id;
         if (frame.extended) fdf.can_id |= CAN_EFF_FLAG;
@@ -116,7 +116,7 @@ void SocketCanDriver::writeFrame(const CanFrame &frame) {
         for (int i = 0; i < fdf.len; ++i) fdf.data[i] = frame.data[i];
         write(m_socket, &fdf, CANFD_MTU);
     } else {
-        struct can_frame raw;
+        struct can_frame raw{};
         memset(&raw, 0, sizeof(raw));
         raw.can_id = frame.id;
         if (frame.extended) raw.can_id |= CAN_EFF_FLAG;

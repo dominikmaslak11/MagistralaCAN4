@@ -15,11 +15,11 @@
 class UdsTableModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    enum Col { TIME, CAN_ID, DIR, SID, SVC_NAME, DID, SUBFUNC, STATUS, DATA, _COUNT };
+    enum Col { TIME, CAN_ID, DIR, SID, SVC_NAME, DID, SUBFUNC, STATUS, DATA, Count };
     explicit UdsTableModel(QObject *p = nullptr);
 
     int rowCount(const QModelIndex & = QModelIndex()) const override { return m_frames.size(); }
-    int columnCount(const QModelIndex & = QModelIndex()) const override { return _COUNT; }
+    int columnCount(const QModelIndex & = QModelIndex()) const override { return Count; }
     QVariant data(const QModelIndex &idx, int role) const override;
     QVariant headerData(int s, Qt::Orientation o, int role) const override;
 

@@ -9,37 +9,39 @@
 #include <QApplication>
 #include <algorithm>
 
-static const char *kTabSS =
+namespace {
+
+const char *kTabSS =
     "QTabWidget::pane { border: 1px solid #2a2a3c; background: #0a0e17; }"
     "QTabBar::tab { background: #1a1a2e; color: #c0c0c0; padding: 5px 14px; "
     "  border: 1px solid #2a2a3c; border-bottom: none; font-family: Consolas; }"
     "QTabBar::tab:selected { background: #0a0e17; color: #00ffaa; border-bottom: none; }"
     "QTabBar::tab:hover:!selected { background: #2a2a3e; }";
 
-static const char *kTableSS =
+const char *kTableSS =
     "QTableWidget { background: #0a0e17; color: #c0c0c0; gridline-color: #2a2a3c; "
     "  font-family: Consolas; font-size: 11px; selection-background-color: #1a2a3a; }"
     "QHeaderView::section { background: #1a1a2e; color: #ff66cc; border: 1px solid #2a2a3c; "
     "  padding: 4px; font-weight: bold; font-family: Consolas; }";
 
-static const char *kBtnSS =
+const char *kBtnSS =
     "QPushButton { background: #1a1a2e; color: #00ffaa; border: 1px solid #e94560; "
     "  border-radius: 4px; padding: 4px 10px; font-family: Consolas; }"
     "QPushButton:hover { background: #2a2a3e; }";
 
-static const char *kEditSS =
+const char *kEditSS =
     "QLineEdit { background: #0a0e17; color: #00ffaa; border: 1px solid #e94560; "
     "  border-radius: 3px; padding: 3px 6px; font-family: Consolas; }";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-static int popcount8(uint8_t v) {
+int popcount8(uint8_t v) {
     v = static_cast<uint8_t>(v - ((v >> 1) & 0x55u));
     v = static_cast<uint8_t>((v & 0x33u) + ((v >> 2) & 0x33u));
     return (v + (v >> 4)) & 0x0F;
 }
 
-static QColor byteCellBg(uint8_t varying) {
+QColor byteCellBg(uint8_t varying) {
     int vc = popcount8(varying);
     if (vc == 0)  return QColor(0x0C, 0x28, 0x0C);  // stable       — dark green
     if (vc <= 2)  return QColor(0x1A, 0x22, 0x06);  // mostly stable — olive
@@ -47,7 +49,7 @@ static QColor byteCellBg(uint8_t varying) {
     return            QColor(0x28, 0x06, 0x06);      // mostly varying — dark red
 }
 
-static std::vector<uint8_t> parseHexBytes(const QString &s) {
+std::vector<uint8_t> parseHexBytes(const QString &s) {
     const QString clean = QString(s).replace(" ", "").replace(",", "");
     std::vector<uint8_t> result;
     for (int i = 0; i + 1 < clean.length(); i += 2) {
@@ -59,7 +61,7 @@ static std::vector<uint8_t> parseHexBytes(const QString &s) {
 }
 
 // Highlight matching bytes in a hex string: "AA BB [DE AD] EE FF"
-static QString highlightMatch(const CanFrame &f, int offset, int len) {
+QString highlightMatch(const CanFrame &f, int offset, int len) {
     QStringList parts;
     for (int i = 0; i < f.dlc && i < 8; ++i) {
         QString hex = QString("%1").arg(f.data[i], 2, 16, QChar('0')).toUpper();
@@ -69,6 +71,8 @@ static QString highlightMatch(const CanFrame &f, int offset, int len) {
     }
     return parts.join(" ");
 }
+
+} // namespace
 
 // ── Constructor ───────────────────────────────────────────────────────────────
 

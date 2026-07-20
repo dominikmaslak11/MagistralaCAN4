@@ -31,7 +31,7 @@ private:
     enum DiffStatus  { Identical, Different, LeftOnly, RightOnly, Skipped };
 
     struct IdSummary {
-        uint32_t id;
+        uint32_t id{};
         int leftCount  = 0;
         int rightCount = 0;
         int diffCount  = 0;
@@ -50,24 +50,24 @@ private:
     static QString dataHex(const CanFrame &f, int highlightByte = -1);
 
     // ── UI ──
-    QPushButton  *m_loadLeftBtn;
-    QPushButton  *m_loadRightBtn;
-    QPushButton  *m_compareBtn;
-    QPushButton  *m_exportBtn;
-    QLabel       *m_leftFileLabel;
-    QLabel       *m_rightFileLabel;
-    QLabel       *m_statsLabel;
-    QComboBox    *m_modeCombo;
-    QCheckBox    *m_highlightBytesChk;
+    QPushButton  *m_loadLeftBtn{};
+    QPushButton  *m_loadRightBtn{};
+    QPushButton  *m_compareBtn{};
+    QPushButton  *m_exportBtn{};
+    QLabel       *m_leftFileLabel{};
+    QLabel       *m_rightFileLabel{};
+    QLabel       *m_statsLabel{};
+    QComboBox    *m_modeCombo{};
+    QCheckBox    *m_highlightBytesChk{};
 
-    QTableWidget *m_leftTable;
-    QTableWidget *m_rightTable;
-    QTableWidget *m_idSummaryTable;
+    QTableWidget *m_leftTable{};
+    QTableWidget *m_rightTable{};
+    QTableWidget *m_idSummaryTable{};
 
-    QLineEdit    *m_filterId;
-    QLineEdit    *m_filterTimeFrom;
-    QLineEdit    *m_filterTimeTo;
-    QPushButton  *m_filterApplyBtn;
+    QLineEdit    *m_filterId{};
+    QLineEdit    *m_filterTimeFrom{};
+    QLineEdit    *m_filterTimeTo{};
+    QPushButton  *m_filterApplyBtn{};
 
     // ── Dane ──
     QVector<CanFrame> m_leftFrames;

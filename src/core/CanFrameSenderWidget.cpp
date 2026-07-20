@@ -260,7 +260,7 @@ void CanFrameSenderWidget::addToHistory(const CanFrame &frame) {
     data << std::hex << std::uppercase << std::setfill('0');
     for (int i = 0; i < frame.dlc; ++i) {
         if (i) data << ' ';
-        data << std::setw(2) << (int)frame.data[i];
+        data << std::setw(2) << static_cast<int>(frame.data[i]);
     }
 
     m_historyTable->setItem(0, 0, new QTableWidgetItem(timeBuf));

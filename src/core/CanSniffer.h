@@ -22,7 +22,7 @@ public:
     void setDriver(ICanDriver *driver) { m_driver = driver; }
 
     /// Czy sterownik jest podłączony do magistrali.
-    bool isSocketValid() const;
+    [[nodiscard]] bool isSocketValid() const;
 
     /// Wysyła ramkę CAN przez sterownik.
     void writeFrame(const CanFrame &frame);
@@ -36,7 +36,7 @@ public:
     void submitFrame(const CanFrame &frame);
 
     /// Size of the ring buffer.
-    int bufferSize() const { return m_ringBuffer.size(); }
+    [[nodiscard]] int bufferSize() const { return m_ringBuffer.size(); }
 
 signals:
     void newFrame(const CanFrame &frame);

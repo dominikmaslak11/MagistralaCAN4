@@ -286,10 +286,14 @@ void HttpRestServer::handleRequest(QTcpSocket *sock, const ParsedRequest &req) {
 
 // ── Response helpers ──────────────────────────────────────────────────────────
 
-static const char *kCorsHeaders =
+namespace {
+
+const char *kCorsHeaders =
     "Access-Control-Allow-Origin: *\r\n"
     "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
     "Access-Control-Allow-Headers: Content-Type\r\n";
+
+} // namespace
 
 void HttpRestServer::sendJson(QTcpSocket *sock, int code, const QJsonDocument &doc) {
     QByteArray body = doc.toJson(QJsonDocument::Compact);

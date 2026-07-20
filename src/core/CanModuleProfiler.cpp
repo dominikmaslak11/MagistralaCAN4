@@ -81,15 +81,14 @@ void CanModuleProfiler::startLearning(const QString &name, int durationMs) {
     m_recentFrames.clear();
     m_rrCandidates.clear();
 
-    delete m_learningTimer;
-    m_learningTimer = new QTimer(this);
+    m_learningTimer = std::make_unique<QTimer>();
     m_learningTimer->setSingleShot(true);
-    connect(m_learningTimer, &QTimer::timeout, this, &CanModuleProfiler::onLearningTimeout);
+    connect(m_learningTimer.get(), &QTimer::timeout, this, &CanModuleProfiler::onLearningTimeout);
     m_learningTimer->start(durationMs);
 
-    delete m_progressTimer;
-    m_progressTimer = new QTimer(this);
-    connect(m_progressTimer, &QTimer::timeout, this, [this]() {
+    m_progressTimer = std::make_unique<QTimer>();
+    m_progressTimer->setSingleShot(false);
+    connect(m_progressTimer.get(), &QTimer::timeout, this, [this]() {
         uint64_t nowMs = static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch());
         int elapsed    = static_cast<int>(nowMs - m_learningStartMs);
         int pct        = std::min(100, elapsed * 100 / m_learningDurationMs);
@@ -100,8 +99,8 @@ void CanModuleProfiler::startLearning(const QString &name, int durationMs) {
 
 void CanModuleProfiler::cancelLearning() {
     if (m_state != Learning) return;
-    delete m_learningTimer; m_learningTimer = nullptr;
-    delete m_progressTimer; m_progressTimer = nullptr;
+    m_learningTimer.reset();
+    m_progressTimer.reset();
     m_state = Idle;
     m_learnData.clear();
     m_recentFrames.clear();
@@ -127,16 +126,15 @@ void CanModuleProfiler::startLearningBackground(const ModuleProfile &phase1,
     m_bgLearningStartMs      = static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch());
     m_bgLearnData.clear();
 
-    delete m_bgLearningTimer;
-    m_bgLearningTimer = new QTimer(this);
+    m_bgLearningTimer = std::make_unique<QTimer>();
     m_bgLearningTimer->setSingleShot(true);
-    connect(m_bgLearningTimer, &QTimer::timeout,
+    connect(m_bgLearningTimer.get(), &QTimer::timeout,
             this, &CanModuleProfiler::onBackgroundLearningTimeout);
     m_bgLearningTimer->start(durationMs);
 
-    delete m_bgProgressTimer;
-    m_bgProgressTimer = new QTimer(this);
-    connect(m_bgProgressTimer, &QTimer::timeout, this, [this]() {
+    m_bgProgressTimer = std::make_unique<QTimer>();
+    m_bgProgressTimer->setSingleShot(false);
+    connect(m_bgProgressTimer.get(), &QTimer::timeout, this, [this]() {
         uint64_t nowMs = static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch());
         int elapsed    = static_cast<int>(nowMs - m_bgLearningStartMs);
         int pct        = std::min(100, elapsed * 100 / m_bgLearningDurationMs);
@@ -147,8 +145,8 @@ void CanModuleProfiler::startLearningBackground(const ModuleProfile &phase1,
 
 void CanModuleProfiler::cancelBackgroundLearning() {
     if (m_state != LearningBackground) return;
-    delete m_bgLearningTimer; m_bgLearningTimer = nullptr;
-    delete m_bgProgressTimer; m_bgProgressTimer = nullptr;
+    m_bgLearningTimer.reset();
+    m_bgProgressTimer.reset();
     m_state = Idle;
     m_bgLearnData.clear();
 }
@@ -158,8 +156,8 @@ void CanModuleProfiler::finalizeBackgroundLearning() {
 }
 
 void CanModuleProfiler::onBackgroundLearningTimeout() {
-    delete m_bgLearningTimer; m_bgLearningTimer = nullptr;
-    delete m_bgProgressTimer; m_bgProgressTimer = nullptr;
+    m_bgLearningTimer.reset();
+    m_bgProgressTimer.reset();
     emit backgroundLearningProgress(100);
     finalizeBackgroundProfile();
     m_state = Idle;
@@ -194,8 +192,8 @@ void CanModuleProfiler::finalizeBackgroundProfile() {
 }
 
 void CanModuleProfiler::onLearningTimeout() {
-    delete m_learningTimer; m_learningTimer = nullptr;
-    delete m_progressTimer; m_progressTimer = nullptr;
+    m_learningTimer.reset();
+    m_progressTimer.reset();
     emit learningProgress(100);
     finalizeProfile();
     m_state = Idle;
@@ -261,8 +259,8 @@ void CanModuleProfiler::startDetecting(const ModuleProfile &profile, uint64_t in
     m_state = Detecting;
 
     if (!m_detectionTimer) {
-        m_detectionTimer = new QTimer(this);
-        connect(m_detectionTimer, &QTimer::timeout, this, &CanModuleProfiler::onDetectionTick);
+        m_detectionTimer = std::make_unique<QTimer>();
+        connect(m_detectionTimer.get(), &QTimer::timeout, this, &CanModuleProfiler::onDetectionTick);
     }
     m_detectionTimer->start(kDetectionTickMs);
 }

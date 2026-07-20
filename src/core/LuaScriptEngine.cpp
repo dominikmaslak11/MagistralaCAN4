@@ -188,10 +188,10 @@ int LuaScriptEngine::api_sendFrame(lua_State *L) {
 
     CanFrame frame;
     frame.id = id;
-    frame.dlc = (uint8_t)len;
+    frame.dlc = static_cast<uint8_t>(len);
     for (size_t i = 0; i < len; ++i) {
         lua_rawgeti(L, 2, i + 1);
-        frame.data[i] = (uint8_t)lua_tointeger(L, -1);
+        frame.data[i] = static_cast<uint8_t>(lua_tointeger(L, -1));
         lua_pop(L, 1);
     }
 

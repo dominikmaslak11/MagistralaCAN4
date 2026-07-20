@@ -34,16 +34,16 @@ struct IdProfile {
     };
     std::array<ByteStat, 8> bytes{};
 
-    double avgIntervalUs() const {
+    [[nodiscard]] double avgIntervalUs() const {
         if (frameCount < 2) return 0.0;
         return intervalSum / static_cast<double>(frameCount - 1);
     }
-    double avgIntervalMs() const { return avgIntervalUs() / 1000.0; }
-    double freqHz() const {
+    [[nodiscard]] double avgIntervalMs() const { return avgIntervalUs() / 1000.0; }
+    [[nodiscard]] double freqHz() const {
         double avg = avgIntervalUs();
         return avg > 0.0 ? 1'000'000.0 / avg : 0.0;
     }
-    double byteAvg(int pos) const {
+    [[nodiscard]] double byteAvg(int pos) const {
         return frameCount > 0 ? bytes[pos].sum / static_cast<double>(frameCount) : 0.0;
     }
 };
@@ -57,18 +57,18 @@ public:
     void reset();
 
     /// All profiles, sorted by descending frame count.
-    std::vector<IdProfile> profiles() const;
+    [[nodiscard]] std::vector<IdProfile> profiles() const;
 
     /// Profile for a specific ID (nullptr if not seen).
-    const IdProfile *profileFor(uint32_t id) const;
+    [[nodiscard]] const IdProfile *profileFor(uint32_t id) const;
 
-    std::size_t uniqueIdCount() const { return m_map.size(); }
-    uint64_t    totalFrameCount() const { return m_totalFrames; }
+    [[nodiscard]] std::size_t uniqueIdCount() const { return m_map.size(); }
+    [[nodiscard]] uint64_t totalFrameCount() const { return m_totalFrames; }
 
     /// Export to CSV string.
     /// Columns: id,extended,frames,first_ts_us,last_ts_us,avg_interval_ms,freq_hz,
     ///          b0_min,b0_max,b0_avg,...,b7_min,b7_max,b7_avg
-    std::string toCsv() const;
+    [[nodiscard]] std::string toCsv() const;
 
 private:
     std::unordered_map<uint32_t, IdProfile> m_map;

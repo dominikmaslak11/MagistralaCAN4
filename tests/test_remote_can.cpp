@@ -57,6 +57,11 @@ protected:
     RemoteCanClient client;
 
     void TearDown() override {
+        // Sever Qt signal connections first: tests connect [&]-lambdas capturing local
+        // stack variables to client's signals without ever disconnecting them, so any
+        // signal fired after TestBody() returns (e.g. by client.disconnect() below, or
+        // server.stop()) would otherwise invoke a lambda with dangling captures.
+        client.QObject::disconnect();
         client.disconnect();
         server.stop();
         QCoreApplication::processEvents(QEventLoop::AllEvents, 50);

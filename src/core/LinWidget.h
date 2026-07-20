@@ -35,14 +35,14 @@ private:
     LinParser m_parser;
 
     // Manual input
-    QLineEdit   *m_hexInput;
-    QComboBox   *m_csTypeCombo;
-    QPushButton *m_parseBtn;
-    QPushButton *m_clearBtn;
+    QLineEdit   *m_hexInput{};
+    QComboBox   *m_csTypeCombo{};
+    QPushButton *m_parseBtn{};
+    QPushButton *m_clearBtn{};
 
     // Frame table
-    QTableWidget *m_table;
-    QLabel       *m_statsLabel;
+    QTableWidget *m_table{};
+    QLabel       *m_statsLabel{};
 
     int m_totalFrames  = 0;
     int m_invalidCount = 0;

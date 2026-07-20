@@ -44,16 +44,16 @@ private:
     CanNodeSimulator  m_simulator;
     CanSniffer       *m_sniffer;
     LuaScriptEngine  *m_lua;
-    QTableWidget     *m_nodeTable;
-    QPushButton      *m_addBtn;
-    QPushButton      *m_delBtn;
-    QPushButton      *m_loadBtn;
-    QPushButton      *m_saveBtn;
-    QLabel           *m_statusLabel;
+    QTableWidget     *m_nodeTable{};
+    QPushButton      *m_addBtn{};
+    QPushButton      *m_delBtn{};
+    QPushButton      *m_loadBtn{};
+    QPushButton      *m_saveBtn{};
+    QLabel           *m_statusLabel{};
 
     enum Column {
         COL_ENABLED, COL_NAME, COL_TRIG_ID, COL_TRIG_DATA,
         COL_RESP_ID, COL_RESP_DATA, COL_DELAY, COL_MATCHES,
-        COL_RESPONSES, _COUNT
+        COL_RESPONSES, Count
     };
 };

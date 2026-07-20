@@ -5,20 +5,24 @@
 
 // ── Big-endian helpers ────────────────────────────────────────────────────────
 
-static uint16_t u16be(const uint8_t *p) {
+namespace {
+
+uint16_t u16be(const uint8_t *p) {
     return static_cast<uint16_t>((p[0] << 8) | p[1]);
 }
 
-static uint32_t u32be(const uint8_t *p) {
+uint32_t u32be(const uint8_t *p) {
     return (static_cast<uint32_t>(p[0]) << 24) | (static_cast<uint32_t>(p[1]) << 16)
          | (static_cast<uint32_t>(p[2]) <<  8) |  static_cast<uint32_t>(p[3]);
 }
 
-static std::string hexByte(uint8_t v) {
+std::string hexByte(uint8_t v) {
     std::ostringstream ss;
-    ss << std::hex << std::uppercase << std::setfill('0') << std::setw(2) << (int)v;
+    ss << std::hex << std::uppercase << std::setfill('0') << std::setw(2) << static_cast<int>(v);
     return ss.str();
 }
+
+} // namespace
 
 // ── Public API ────────────────────────────────────────────────────────────────
 

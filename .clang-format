@@ -1,9 +1,9 @@
-# MagistralaCAN4 — clang-format configuration (C++17, Qt6)
+# MagistralaCAN4 — clang-format configuration (C++20, Qt6)
 # Run: clang-format -i src/**/*.cpp src/**/*.h main.cpp
 
 BasedOnStyle: Google
 Language: Cpp
-Standard: c++17
+Standard: c++20
 
 # ── Indentation ──
 IndentWidth: 4

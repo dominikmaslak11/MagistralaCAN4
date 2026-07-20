@@ -7,7 +7,7 @@
 #include <QHeaderView>
 #include <QFont>
 #include <QDateTime>
-#include <cstdio>
+#include <format>
 
 CanAlertWidget::CanAlertWidget(QWidget *parent) : QWidget(parent) {
     buildUi();
@@ -205,12 +205,10 @@ void CanAlertWidget::onAlertTriggered(const CanAlert &alert) {
 
     QString ts = QDateTime::fromMSecsSinceEpoch(
         static_cast<qint64>(alert.timestampUs / 1000)).toString("hh:mm:ss.zzz");
-    char idbuf[12];
-    snprintf(idbuf, sizeof(idbuf), "0x%X", alert.frame.id);
 
     cell(0, ts);
     cell(1, alert.ruleName, QColor(255, 80, 80, 60));
-    cell(2, idbuf);
+    cell(2, QString::fromStdString(std::format("0x{:X}", alert.frame.id)));
     cell(3, alert.description);
 
     m_alertTable->scrollToBottom();

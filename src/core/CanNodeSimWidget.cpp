@@ -38,7 +38,7 @@ void CanNodeSimWidget::setupUi() {
     mainLayout->addLayout(toolbar);
 
     // ── Tabela węzłów ──
-    m_nodeTable = new QTableWidget(0, _COUNT);
+    m_nodeTable = new QTableWidget(0, Count);
     m_nodeTable->setHorizontalHeaderLabels({
         "Aktywny", "Nazwa", "Trigger ID", "Trigger Data",
         "Response ID", "Response Data", "Delay (ms)",
@@ -118,7 +118,7 @@ void CanNodeSimWidget::onCellChanged(int row, int col) {
         node.triggerData.clear();
         auto hexBytes = item->text().trimmed().split(' ', Qt::SkipEmptyParts);
         for (const auto &h : hexBytes) {
-            node.triggerData.append((uint8_t)h.toUInt(&ok, 16));
+            node.triggerData.append(static_cast<uint8_t>(h.toUInt(&ok, 16)));
         }
         break;
     }
@@ -130,7 +130,7 @@ void CanNodeSimWidget::onCellChanged(int row, int col) {
         node.staticResponse.clear();
         auto hexBytes = item->text().trimmed().split(' ', Qt::SkipEmptyParts);
         for (const auto &h : hexBytes)
-            node.staticResponse.append((uint8_t)h.toUInt(&ok, 16));
+            node.staticResponse.append(static_cast<uint8_t>(h.toUInt(&ok, 16)));
         break;
     }
     case COL_DELAY:
@@ -191,7 +191,7 @@ void CanNodeSimWidget::populateRow(int row, const CanNodeDefinition &node) {
     m_nodeTable->setItem(row, COL_RESPONSES, respItem);
 
     // Kolorowanie
-    for (int c = 0; c < _COUNT; ++c) {
+    for (int c = 0; c < Count; ++c) {
         auto *it = m_nodeTable->item(row, c);
         if (it) it->setForeground(QColor("#c0c0c0"));
     }

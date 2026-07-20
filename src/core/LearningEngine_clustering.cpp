@@ -167,16 +167,18 @@ int LearningEngine::kMeansPP(const std::vector<std::vector<float>> &data,
 
 // Simple k-d tree for 5D float data (no external dependencies)
 struct KdNode {
-    int pointIdx;
-    int splitDim;
-    float splitVal;
+    int pointIdx{};
+    int splitDim{};
+    float splitVal{};
     KdNode *left = nullptr;
     KdNode *right = nullptr;
     ~KdNode() { delete left; delete right; }
 };
 
-static KdNode* buildKdTree(const std::vector<std::vector<float>> &data,
-                           std::vector<int> indices, int depth = 0) {
+namespace {
+
+KdNode* buildKdTree(const std::vector<std::vector<float>> &data,
+                     std::vector<int> indices, int depth = 0) {
     if (indices.empty()) return nullptr;
     int dim = static_cast<int>(data[0].size());
     int axis = depth % dim;
@@ -195,9 +197,9 @@ static KdNode* buildKdTree(const std::vector<std::vector<float>> &data,
     return node;
 }
 
-static void kdRangeQuery(KdNode *node, const std::vector<std::vector<float>> &data,
-                         const std::vector<float> &query, float eps2,
-                         std::vector<int> &result) {
+void kdRangeQuery(KdNode *node, const std::vector<std::vector<float>> &data,
+                   const std::vector<float> &query, float eps2,
+                   std::vector<int> &result) {
     if (!node) return;
     int dim = static_cast<int>(data[0].size());
     const auto &pt = data[node->pointIdx];
@@ -224,6 +226,8 @@ static void kdRangeQuery(KdNode *node, const std::vector<std::vector<float>> &da
             kdRangeQuery(node->left, data, query, eps2, result);
     }
 }
+
+} // namespace
 
 int LearningEngine::dbscan(const std::vector<std::vector<float>> &data,
                             float eps, int minPts,
@@ -284,7 +288,9 @@ std::vector<CanFrame> LearningEngine::extractWindow() const {
 
 // ── Cluster windows (compute windows from history) ──────────
 
-static std::vector<std::vector<CanFrame>>
+namespace {
+
+std::vector<std::vector<CanFrame>>
 splitWindows(const std::deque<CanFrame> &history, int64_t winSize) {
     std::vector<std::vector<CanFrame>> windows;
     if (history.empty()) return windows;
@@ -299,6 +305,8 @@ splitWindows(const std::deque<CanFrame> &history, int64_t winSize) {
     }
     return windows;
 }
+
+} // namespace
 
 std::vector<LeClusterStats>
 LearningEngine::clusterWindows(int K) const {
@@ -329,7 +337,7 @@ LearningEngine::clusterWindows(int K) const {
     for (int c = 0; c < K; ++c) {
         std::vector<std::pair<uint32_t, int>> srt;
         for (auto &kv : stats[c].freq)
-            srt.push_back({kv.first, kv.second});
+            srt.emplace_back(kv.first, kv.second);
         std::sort(srt.begin(), srt.end(),
                   [](auto &a, auto &b) { return a.second > b.second; });
         std::vector<uint32_t> top;
@@ -371,7 +379,7 @@ LearningEngine::dbscanClustering(float eps, int minPts) const {
     for (int c = 0; c < K; ++c) {
         std::vector<std::pair<uint32_t, int>> srt;
         for (auto &kv : stats[c].freq)
-            srt.push_back({kv.first, kv.second});
+            srt.emplace_back(kv.first, kv.second);
         std::sort(srt.begin(), srt.end(),
                   [](auto &a, auto &b) { return a.second > b.second; });
         std::vector<uint32_t> top;
@@ -498,7 +506,7 @@ double origTrace = 0.0;
             x += centered[i][d] * result.pc1[d];
             y += centered[i][d] * result.pc2[d];
         }
-        result.projected.push_back({x, y});
+        result.projected.emplace_back(x, y);
     }
 
     // 6. k-means on 2D (K=3)
@@ -667,7 +675,7 @@ LearningEngine::runTsne(int perplexity, int maxIter, double /*theta*/) const {
 
     // Fill result
     result.projected.reserve(N);
-    for (int i = 0; i < N; ++i) result.projected.push_back({Y[i][0], Y[i][1]});
+    for (int i = 0; i < N; ++i) result.projected.emplace_back(Y[i][0], Y[i][1]);
     result.iterationsRun = maxIter;
 
     std::ostringstream ss;
@@ -756,8 +764,10 @@ void LearningEngine::jacobiEigen(const std::vector<std::vector<double>> &mat,
 
 // ── Isolation Forest ─────────────────────────────────────────
 
+namespace {
+
 // Average path length in unsuccessful BST search (Liu et al. 2008)
-static double iforestC(double n) {
+double iforestC(double n) {
     if (n <= 1.0) return 0.0;
     if (n == 2.0) return 1.0;
     // c(n) = 2*(ln(n-1) + 0.5772156649) - 2*(n-1)/n
@@ -765,7 +775,7 @@ static double iforestC(double n) {
 }
 
 // Build one isolation tree recursively into tree.nodes; returns node index
-static int iforestBuildNode(
+int iforestBuildNode(
     LearningEngine::IsoTree &tree,
     const std::vector<std::vector<float>> &data,
     std::vector<int> &indices,
@@ -829,7 +839,7 @@ static int iforestBuildNode(
 }
 
 // Path length for point x in one tree
-static double iforestPathLength(
+double iforestPathLength(
     const LearningEngine::IsoTree &tree,
     const std::vector<float> &x,
     int nodeIdx, int depth)
@@ -842,6 +852,8 @@ static double iforestPathLength(
                ? node.left : node.right;
     return iforestPathLength(tree, x, next, depth + 1);
 }
+
+} // namespace
 
 void LearningEngine::trainIsolationForest(int nTrees, int sampleSize) {
     std::unique_lock lock(m_mutex);

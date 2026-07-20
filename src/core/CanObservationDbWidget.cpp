@@ -7,7 +7,7 @@
 #include <QFileDialog>
 #include <QFont>
 #include <QMessageBox>
-#include <cstdio>
+#include <format>
 
 CanObservationDbWidget::CanObservationDbWidget(QWidget *parent)
     : QWidget(parent)
@@ -153,17 +153,14 @@ void CanObservationDbWidget::queryById() {
 
         cell(0, QString::number(row.sessionId));
         cell(1, QString::number(row.timestampUs));
-        char idbuf[12];
-        snprintf(idbuf, sizeof(idbuf), "0x%X%s", row.canId, row.extended ? "x" : "");
-        cell(2, idbuf);
+        cell(2, QString::fromStdString(std::format("0x{:X}{}", row.canId, row.extended ? "x" : "")));
         cell(3, QString::number(row.dlc));
 
         QString data;
         char bb[4];
         for (int i = 0; i < row.dlc && i < 8; ++i) {
             if (i) data += ' ';
-            snprintf(bb, sizeof(bb), "%02X", row.data[i]);
-            data += bb;
+            data += std::format("{:02X}", row.data[i]);
         }
         cell(4, data);
     }

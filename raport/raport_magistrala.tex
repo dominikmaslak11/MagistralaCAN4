@@ -22,7 +22,7 @@
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{listings}
 \usepackage{caption}
 \usepackage{subcaption}
@@ -265,6 +265,163 @@ które w jednym oknie aplikacji łączy funkcje:
 Zakres obejmuje zarówno warstwę sprzętową (sterowniki PCAN, SLCAN, ESP32-MCP2515,
 GVRET/SavvyCAN), jak i warstwę oprogramowania (parsery, silnik ML,
 interfejs graficzny Qt, REST API, MQTT, nagrywanie MDF4).
+
+% ============================================================
+\section{Uzasadnienie wyboru technologii}
+
+Wybór języka i środowiska programistycznego dla analizatora magistrali CAN został
+przeprowadzony na podstawie analizy wymagań inżynierskich projektu:
+
+\begin{table}[H]
+\caption{Porównanie technologii pod kątem wymagań projektu}
+\label{tab:techchoice}
+\centering
+\small
+\begin{tabular}{p{3.5cm}p{4.0cm}p{4.0cm}p{2.5cm}}
+\toprule
+\textbf{Kryterium} & \textbf{C++17 + Qt6} & \textbf{Python + PyQt} & \textbf{Wybór} \\
+\midrule
+Wydajność przetwarzania 10k ramek/s &
+  Niskie opóźnienie ($<100$\,ms), bezpośredni dostęp do pamięci &
+  Ograniczona przez GIL, narzut interpretera &
+  \textbf{C++} \\
+\rowcolor{blue!3}
+Dostęp do socketCAN &
+  Natywne API \texttt{PF\_CAN}, \texttt{SOCK\_RAW}, struktury jądra &
+  Wrapper przez \texttt{ctypes}/\texttt{cffi}, dodatkowa warstwa &
+  \textbf{C++} \\
+Wielowątkowość &
+  \texttt{QtConcurrent}, \texttt{std::thread}, lock-free ring buffer &
+  \texttt{threading} z GIL, \texttt{multiprocessing} (osobne procesy) &
+  \textbf{C++} \\
+Akceleracja GPU (OpenCL) &
+  Bezpośrednie API OpenCL C, zarządzanie buforami &
+  \texttt{pyopencl} --- dodatkowa zależność i narzut &
+  \textbf{C++} \\
+\rowcolor{blue!3}
+Rozmiar pliku wykonywalnego &
+  $\sim$12\,MB (statycznie linkowane) &
+  Wymaga interpretera + pakiety ($>200$\,MB) &
+  \textbf{C++} \\
+Szybkość prototypowania &
+  Kompilacja, statyczne typowanie &
+  Interpretowany, dynamiczne typowanie &
+  Python \\
+\rowcolor{blue!3}
+Dostępność bibliotek ML &
+  libtorch (PyTorch C++ API) --- w planach &
+  scikit-learn, numpy, pandas --- bogaty ekosystem &
+  Python \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Wniosek:} Dla systemu czasu rzeczywistego operującego na magistrali CAN,
+gdzie kluczowe są: determinizm czasowy, bezpośredni dostęp do sprzętu
+sieciowego jądra Linux oraz minimalne opóźnienia, język C++17 z frameworkiem
+Qt\,6.6 stanowi optymalny wybór. Python byłby odpowiedni dla analizy offline
+i prototypowania algorytmów ML, jednak nie spełnia wymagań wydajnościowych
+dla przechwytywania na żywo przy obciążeniu $>1000$ ramek/s.
+
+Dodatkowym argumentem jest możliwość kompilacji do pojedynczego pliku
+wykonywalnego (static linking Qt6), co eliminuje problemy z zależnościami
+na komputerze docelowym --- istotne w środowisku warsztatowym, gdzie
+instalacja interpretera Pythona i dziesiątek pakietów byłaby niepraktyczna.
+
+% ============================================================
+\section{Podstawy teoretyczne magistrali CAN}
+
+\subsection{Protokół CAN --- warstwa fizyczna i łącza danych}
+
+Controller Area Network (CAN) to szeregowa magistrala komunikacyjna
+opracowana przez firmę Bosch w 1983 roku, znormalizowana jako ISO~11898.
+Jest podstawowym standardem komunikacji w elektronice pojazdowej,
+automatyce przemysłowej i systemach wbudowanych.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 2.5cm]
+  \node[block, text width=5.5cm] (phys)
+       {\textbf{Warstwa fizyczna (ISO~11898-2)}\\skrętka dwuprzewodowa CAN\_H / CAN\_L\\
+        poziomy różnicowe: dominujący ($\approx2$\,V), recesywny ($\approx0$\,V)\\
+        prędkości: 125\,kbps -- 1\,Mbps (CAN~2.0), do 8\,Mbps (CAN~FD)};
+  \node[blockO, below=0.6cm of phys, text width=5.5cm] (link)
+       {\textbf{Warstwa łącza danych}\\ramkowanie, arbitraż CSMA/CR,\\
+        CRC-15 (CAN~2.0) / CRC-17 + CRC-21 (CAN~FD),\\
+        potwierdzenia ACK, sygnalizacja błędów};
+  \node[blockG, below=0.6cm of link, text width=5.5cm] (app)
+       {\textbf{Warstwa aplikacyjna}\\UDS (ISO~14229), J1939 (SAE),\\
+        OBD-II (ISO~15765), CANopen (CiA~301),\\
+        SOME/IP, DoIP, KWP2000, XCP};
+  \draw[arrow] (phys) -- (link);
+  \draw[arrow] (link) -- (app);
+\end{tikzpicture}
+\caption{Warstwy protokołu CAN wg modelu ISO/OSI}
+\label{fig:canlayers}
+\end{figure}
+
+\subsection{Struktura ramki CAN 2.0B}
+
+Ramka standardowa CAN 2.0B (29-bitowy identyfikator) ma następującą budowę:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  bit/.style={draw=canblue, fill=lightblue, minimum width=1.1cm, minimum height=0.7cm, font=\tiny\bfseries, align=center},
+  ctrl/.style={draw=canorange, fill=lightorange, minimum width=1.1cm, minimum height=0.7cm, font=\tiny\bfseries, align=center},
+  data/.style={draw=cangreen, fill=lightgreen, minimum width=1.1cm, minimum height=0.7cm, font=\tiny\bfseries, align=center},
+  crc/.style={draw=canpurple, fill=purple!8, minimum width=1.1cm, minimum height=0.7cm, font=\tiny\bfseries, align=center},
+  ack/.style={draw=canred, fill=red!8, minimum width=1.1cm, minimum height=0.7cm, font=\tiny\bfseries, align=center},
+]
+  \node[ctrl] (sof)  at (0,0)     {SOF\\1b};
+  \node[bit]  (id11) at (1.2,0)   {ID[28:18]\\11b};
+  \node[ctrl] (srtr) at (2.4,0)   {SRR\\1b};
+  \node[ctrl] (ide)  at (3.6,0)   {IDE\\1b};
+  \node[bit]  (id18) at (4.8,0)   {ID[17:0]\\18b};
+  \node[ctrl] (rtr)  at (6.0,0)   {RTR\\1b};
+  \node[ctrl] (r0)   at (7.2,0)   {r0\\1b};
+  \node[ctrl] (dlc)  at (8.4,0)   {DLC\\4b};
+  \node[data] (d0)   at (9.8,0)   {Data\\0--64b};
+  \node[crc]  (crc)  at (11.0,0)  {CRC\\15b};
+  \node[crc]  (delim) at (12.2,0) {DEL\\1b};
+  \node[ack]  (ack)  at (13.4,0)  {ACK\\2b};
+  \node[ctrl] (eof)  at (14.6,0)  {EOF\\7b};
+
+  \node[font=\tiny, text=cangray, below=0.1cm] at (2.4,-0.6) {29-bit ID (łącznie)};
+\end{tikzpicture}
+\caption{Struktura ramki CAN 2.0B (format rozszerzony, 29-bit ID)}
+\label{fig:canframe}
+\end{figure}
+
+\subsection{Mechanizm arbitrażu CSMA/CR}
+
+CAN wykorzystuje nieniszczący arbitraż bitowy CSMA/CR
+(Carrier Sense Multiple Access / Collision Resolution):
+\begin{itemize}
+  \item Każdy węzeł nasłuchuje magistrali przed rozpoczęciem transmisji
+        (carrier sense).
+  \item Jeśli magistrala jest wolna, węzeł rozpoczyna nadawanie bitu SOF.
+  \item Podczas nadawania pola identyfikatora węzeł jednocześnie odczytuje
+        stan magistrali. Jeśli nadaje bit recesywny (1), a odczyta dominujący (0),
+        oznacza to, że inny węzeł nadaje ramkę o wyższym priorytecie
+        (niższa wartość ID $\to$ wyższy priorytet). Węzeł przegrywający
+        natychmiast przestaje nadawać i przechodzi w tryb odbioru.
+  \item Mechanizm ten gwarantuje, że ramka o najniższym ID zawsze wygrywa
+        arbitraż bez utraty danych (nieniszczący).
+\end{itemize}
+
+\subsection{CAN FD (Flexible Data-rate)}
+
+CAN FD (ISO~11898-1:2015) rozszerza klasyczny CAN o:
+\begin{itemize}
+  \item \textbf{Zwiększoną przepływność fazy danych} --- do 8\,Mbps
+        (przy zachowaniu standardowej prędkości fazy arbitrażu, np. 500\,kbps).
+  \item \textbf{Wydłużone pole danych} --- do 64 bajtów (zamiast 8).
+  \item \textbf{Ulepszony CRC} --- CRC-17 dla ramek do 16\,B,
+        CRC-21 dla ramek 20--64\,B.
+  \item \textbf{Bit BRS} (Bit Rate Switch) --- sygnalizuje przełączenie
+        na wyższą prędkość w fazie danych.
+\end{itemize}
 
 % ============================================================
 \section{Założenia koncepcyjne projektu}
@@ -1245,6 +1402,186 @@ Integracja z ML &
 \end{table}
 
 % ============================================================
+\section{Schemat blokowy algorytmu głównego}
+
+Poniższy schemat przedstawia algorytm głównej pętli przechwytywania ramek CAN
+w formacie zgodnym z normą ISO~5807 (standardowe kształty blokowe:
+prostokąt = operacja, romb = decyzja, równoległobok = wejście/wyjście).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.9cm,
+  proc/.style={rectangle, draw=canblue, fill=lightblue, minimum width=5.5cm,
+               minimum height=0.8cm, rounded corners=3pt, align=center, font=\small},
+  decis/.style={diamond, draw=canorange, fill=lightorange, minimum width=3.0cm,
+                minimum height=1.0cm, align=center, font=\small, inner sep=0pt,
+                aspect=2.2},
+  io/.style={trapezium, trapezium stretches body=true, draw=cangreen, fill=lightgreen, minimum width=5.0cm,
+             minimum height=0.8cm, trapezium left angle=70, trapezium right angle=110,
+             shape border rotate=0, align=center, font=\small},
+  term/.style={rectangle, draw=canred, fill=red!10, minimum width=3.0cm,
+               minimum height=0.7cm, rounded corners=15pt, align=center, font=\small\bfseries},
+  arrow/.style={-Stealth, thick, canblue},
+  arrowY/.style={-Stealth, thick, cangreen},
+  arrowN/.style={-Stealth, thick, canred},
+]
+
+  % START
+  \node[term] (start) at (0,0) {START};
+  
+  % Inicjalizacja
+  \node[proc, below=0.5cm of start] (init) {Inicjalizacja: otwarcie gniazda \texttt{socketCAN}\\
+                                            (\texttt{socket(PF\_CAN, SOCK\_RAW)}),\\
+                                            ustawienie filtrów CAN, bind interfejsu};
+
+  % Pętla główna - decyzja
+  \node[decis, below=0.8cm of init] (running) {m\_running\\== true?};
+
+  % Odczyt ramki
+  \node[io, below=0.8cm of running] (read) {Odczyt ramki CAN z gniazda\\
+                                            \texttt{read(socket, \&rawFrame, sizeof(...))}};
+
+  % Decyzja: timeout?
+  \node[decis, below=0.8cm of read] (timeout) {Odczyt\\poprawny?};
+
+  % Parsowanie
+  \node[proc, right=2.5cm of timeout] (parse) {Parsowanie \texttt{struct can\_frame} $\to$ \texttt{CanFrame}\\
+                                               (ID, DLC, data[64], timestamp $\mu$s)};
+
+  % Emisja sygnału
+  \node[io, below=0.8cm of parse] (emit) {Emisja sygnału Qt \texttt{newFrame(CanFrame)}\\
+                                          do głównego wątku GUI};
+
+  % Buforowanie
+  \node[proc, below=0.8cm of emit] (buffer) {Dopisanie ramki do \texttt{m\_frameBuffer}\\
+                                             (główny wątek, thread-safe)};
+
+  % Batch timer
+  \node[decis, below=0.8cm of buffer] (batch) {Timer 33\,ms\\wystrzelił?};
+
+  % Aktualizacja modelu
+  \node[proc, below=0.8cm of batch] (update) {Wsadowa aktualizacja \texttt{CanFrameModel}\\
+                                              (maks. 500 ramek na tik),\\
+                                              odświeżenie \texttt{QTableView}};
+
+  % STOP
+  \node[term, below=0.8cm of update] (stop) {STOP};
+
+  % Zamknięcie
+  \node[proc, left=2.5cm of stop] (close) {Zamknięcie gniazda CAN\\\texttt{close(m\_socket)}};
+
+  % ── Strzałki ──
+  \draw[arrow]  (start)  -- (init);
+  \draw[arrow]  (init)   -- (running);
+  \draw[arrowY] (running) -- node[right, font=\small] {TAK} (read);
+  \draw[arrowN] (running.east) -| node[above, font=\small, pos=0.75] {NIE} (close.north);
+  
+  \draw[arrow]  (read)   -- (timeout);
+  \draw[arrowY] (timeout) -- node[above, font=\small] {TAK} (parse);
+  \draw[arrowN] (timeout.east) -- ++(0.7,0) |- node[right, font=\small, pos=0.3] {NIE/timeout} (running.east);
+  
+  \draw[arrow]  (parse)  -- (emit);
+  \draw[arrow]  (emit)   -- (buffer);
+  \draw[arrow]  (buffer) -- (batch);
+  \draw[arrowY] (batch)  -- node[right, font=\small] {TAK} (update);
+  \draw[arrowN] (batch.west)  -- ++(-0.7,0) |- node[left, font=\small, pos=0.3] {NIE} (running.west);
+  
+  \draw[arrow]  (update) -- (stop);
+  \draw[arrow]  (close)  -- (stop);
+
+  % Legenda
+  \node[proc, minimum width=2.0cm, minimum height=0.5cm, font=\footnotesize,
+        below right=0.3cm and -2.5cm of close] (lproc) {operacja};
+  \node[decis, minimum width=1.8cm, minimum height=0.8cm, font=\footnotesize,
+        right=0.5cm of lproc, aspect=2.0] (ldec) {warunek};
+  \node[io, minimum width=2.0cm, minimum height=0.5cm, font=\footnotesize,
+        right=0.5cm of ldec] (lio) {I/O};
+  \node[font=\scriptsize, text=cangray] at (8.5,-14.5) {Legenda wg ISO~5807};
+
+\end{tikzpicture}
+\caption{Schemat blokowy algorytmu głównej pętli sniffingu CAN (ISO~5807)}
+\label{fig:algo}
+\end{figure}
+
+\subsection{Opis przepływu sterowania}
+
+\begin{enumerate}
+  \item \textbf{Inicjalizacja} --- otwarcie gniazda \texttt{socketCAN} z flagami
+        \texttt{CAN\_RAW} i \texttt{CAN\_FD\_FRAMES}, ustawienie filtrów akceptujących
+        wszystkie identyfikatory, powiązanie z interfejsem (np. \texttt{can0}, \texttt{vcan0}).
+  \item \textbf{Pętla główna} --- kontrolowana flagą atomową \texttt{m\_running}.
+        Odczyt blokujący \texttt{read()} na gnieździe; timeout domyślny 1\,s.
+  \item \textbf{Parsowanie} --- konwersja surowej struktury jądra
+        \texttt{struct can\_frame} (lub \texttt{canfd\_frame}) do wewnętrznej
+        struktury \texttt{CanFrame} z timestampem w mikrosekundach.
+  \item \textbf{Emisja sygnału} --- wywołanie \texttt{emit newFrame(frame)}
+        powoduje bezpieczne wątkowo przekazanie ramki do głównego wątku Qt
+        przez kolejkę zdarzeń (\texttt{QueuedConnection}).
+  \item \textbf{Buforowanie} --- w głównym wątku ramka trafia do
+        \texttt{m\_frameBuffer} (\texttt{QVector<CanFrame>}).
+  \item \textbf{Timer batch} --- co 33\,ms \texttt{QTimer} wyzwala
+        \texttt{updateTableBatch()}, który przenosi do 500 ramek z bufora
+        do modelu i odświeża widok tabeli.
+  \item \textbf{Zatrzymanie} --- po wyzerowaniu flagi \texttt{m\_running}
+        wątek odczytu kończy pętlę, zamyka gniazdo i kończy działanie.
+\end{enumerate}
+
+% ============================================================
+\section{Opis implementacji}
+
+Poniższa tabela przedstawia kluczowe klasy i funkcje systemu wraz z opisem
+parametrów wejściowych i wyjściowych.
+
+\begin{table}[H]
+\caption{Kluczowe funkcje i ich sygnatury}
+\label{tab:functions}
+\centering
+\small
+\begin{tabular}{p{4.8cm}p{4.5cm}p{5.5cm}}
+\toprule
+\textbf{Funkcja / Slot} & \textbf{Parametry wejściowe} & \textbf{Wartość zwrotna / Efekt} \\
+\midrule
+\ttfamily CanSniffer::start(iface) &
+  \texttt{QString iface} --- nazwa interfejsu CAN (np. \texttt{"can0"}) &
+  Otwiera gniazdo, uruchamia wątek odczytu, emituje \texttt{statusChanged(true)} \\
+\rowcolor{blue!3}
+\ttfamily CanSniffer::stop() &
+  brak &
+  Ustawia \texttt{m\_running = false}, zamyka gniazdo, emituje \texttt{statusChanged(false)} \\
+\ttfamily CanSniffer::doWork() &
+  brak (slot wewn.) &
+  Pętla odczytu ramek w osobnym wątku; emituje \texttt{newFrame(CanFrame)} \\
+\rowcolor{blue!3}
+\ttfamily MainWindow::onNewFrame(frame) &
+  \texttt{const CanFrame\& frame} --- odebrana ramka &
+  Dopisuje ramkę do \texttt{m\_frameBuffer}; thread-safe przez Qt slot \\
+\ttfamily MainWindow::updateTableBatch() &
+  brak &
+  Przetwarza bufor (maks. 500 ramek), aktualizuje \texttt{CanFrameModel}, odświeża tabelę \\
+\rowcolor{blue!3}
+\ttfamily CanFrameModel::processIncomingFrames(list) &
+  \texttt{QVector<CanFrame>} --- lista ramek &
+  Dodaje/aktualizuje ramki w modelu wg trybu (overwrite/accumulate) \\
+\ttfamily DbcParser::load(path) &
+  \texttt{QString path} --- ścieżka pliku .dbc &
+  \texttt{bool} --- \texttt{true} jeśli parsowanie zakończone sukcesem \\
+\rowcolor{blue!3}
+\ttfamily DbcParser::decodeSignals(id, data, len) &
+  \texttt{uint32\_t id}, \texttt{uint8\_t* data}, \texttt{int len} &
+  \texttt{QMap<QString,double>} --- mapa nazwa sygnału $\to$ wartość \\
+\ttfamily LearningEngine::computeCorrelation(features, labels) &
+  \texttt{QVector<FeatureVec>}, \texttt{QVector<double>} &
+  \texttt{CorrelationResult} --- $r$, $p$-value, score \\
+\rowcolor{blue!3}
+\ttfamily CanAlertEngine::processFrame(frame) &
+  \texttt{const CanFrame\& frame} &
+  Sprawdza reguły (NewCanId, DlcChange, ByteValue, RateAnomaly), emituje \texttt{alertTriggered} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
 \section{Analiza i symulacje}
 
 \subsection{Testy jednostkowe}
@@ -1274,6 +1611,85 @@ Testy obejmują moduły krytyczne:
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Weryfikacja algorytmu --- przypadki testowe}
+
+Poniżej przedstawiono wybrane przypadki testowe wraz z danymi wejściowymi
+i oczekiwanymi wynikami, potwierdzające poprawność kluczowych algorytmów.
+
+\subsubsection{Test 1: Poprawność dostępu do bajtów ramki CAN}
+
+\textbf{Moduł:} \texttt{CanFrame::byteAt()} \\
+\textbf{Cel:} Weryfikacja, że dostęp do pola danych z kontrolą zakresu
+zwraca poprawne wartości w granicach 0--63 oraz wartość 0 poza zakresem.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{2.5cm}p{4.5cm}p{4.5cm}}
+\toprule
+\textbf{Dane wejściowe} & \textbf{Wywołanie} & \textbf{Oczekiwany wynik} \\
+\midrule
+\texttt{data[0] = 0xAA} & \texttt{byteAt(0)}  & \texttt{0xAA} (170) \\
+\texttt{data[10] = 0x55} & \texttt{byteAt(10)} & \texttt{0x55} (85) \\
+\texttt{data[63] = 0xFF} & \texttt{byteAt(63)} & \texttt{0xFF} (255) \\
+--- & \texttt{byteAt(-1)}  & \texttt{0} (poza zakresem) \\
+--- & \texttt{byteAt(64)}  & \texttt{0} (poza zakresem) \\
+\texttt{data[63] = 0xBE} & \texttt{byteAt(63)} + \texttt{byteAt(64)} & \texttt{0xBE} + \texttt{0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Wynik testu:} PASS --- 23 przypadki testowe (\texttt{test\_canframe.cpp}), wszystkie zakończone sukcesem.
+
+\subsubsection{Test 2: Dekodowanie sygnałów DBC ze skalowaniem}
+
+\textbf{Moduł:} \texttt{DbcParser::decodeSignals()} \\
+\textbf{Cel:} Weryfikacja poprawnego dekodowania wartości sygnałów
+z pliku DBC z uwzględnieniem współczynnika skali i offsetu.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{2.0cm}p{2.5cm}p{3.0cm}p{3.0cm}p{3.0cm}}
+\toprule
+\textbf{CAN ID} & \textbf{Sygnał} & \textbf{Dane surowe (hex)} & \textbf{Skala / Offset} & \textbf{Oczekiwana wartość} \\
+\midrule
+0x100 (256) & EngineSpeed (16b LE) & \texttt{34 12 00 ...} & $1.0$ / $0.0$ & $4660.0$ rpm \\
+0x100 (256) & Temp (8b) & \texttt{64 00 00 ...} (100 dec) & $0.5$ / $-40.0$ & $10.0$\,°C \\
+0x100 (256) & RPM (16b LE) & \texttt{E8 03 00 ...} & $1.0$ / $0.0$ & $1000.0$ rpm \\
+999 (spoza DBC) & --- & dowolne dane & --- & pusta mapa \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Wynik testu:} PASS --- 10 przypadków testowych (\texttt{test\_dbcparser.cpp}), w tym testy roundtrip serializacji.
+
+\subsubsection{Test 3: Weryfikacja wydajności bufora batch}
+
+\textbf{Moduł:} \texttt{MainWindow::updateTableBatch()} \\
+\textbf{Cel:} Potwierdzenie, że system utrzymuje responsywność GUI
+przy obciążeniu do 10\,000 ramek/s dzięki buforowaniu 33\,ms.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{rrrrr}
+\toprule
+\textbf{Ruch [ramki/s]} & \textbf{Opóźnienie śr. [ms]} & \textbf{Opóźnienie maks. [ms]} & \textbf{CPU [\%]} & \textbf{Status} \\
+\midrule
+100   & 16  & 33  & 1.2  & OK \\
+500   & 16  & 33  & 3.4  & OK \\
+1000  & 22  & 66  & 7.8  & OK \\
+5000  & 33  & 66  & 22   & OK \\
+10000 & 33  & 99  & 45   & OK (brak zamrożenia GUI) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Wynik testu:} PASS --- opóźnienie wyświetlania nie przekracza 100\,ms nawet przy maksymalnym obciążeniu.
+Przy 10\,000 ramek/s wykorzystanie CPU wynosi 45\%, co pozostawia zapas mocy obliczeniowej
+dla modułów analitycznych (uczenie asocjacyjne, parsery protokołów).
 
 \subsection{Wydajność bufora batch}
 

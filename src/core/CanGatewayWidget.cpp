@@ -8,9 +8,9 @@
 CanGatewayWidget::CanGatewayWidget(QWidget *parent) : QWidget(parent) {
     buildUi();
 
-    m_statsTimer = new QTimer(this);
+    m_statsTimer = std::make_unique<QTimer>();
     m_statsTimer->setInterval(500);
-    connect(m_statsTimer, &QTimer::timeout, this, &CanGatewayWidget::onTick);
+    connect(m_statsTimer.get(), &QTimer::timeout, this, &CanGatewayWidget::onTick);
     m_statsTimer->start();
 
     connect(&m_gateway, &CanGateway::statsUpdated, this,

@@ -15,16 +15,16 @@
 QJsonObject CanNodeDefinition::toJson() const {
     QJsonObject obj;
     obj["name"]             = name;
-    obj["triggerId"]        = (qint64)triggerId;
-    obj["triggerIdMask"]    = (qint64)triggerIdMask;
+    obj["triggerId"]        = static_cast<qint64>(triggerId);
+    obj["triggerIdMask"]    = static_cast<qint64>(triggerIdMask);
     QJsonArray tdata, tmask;
-    for (auto b : triggerData)     tdata.append((int)b);
-    for (auto b : triggerDataMask) tmask.append((int)b);
+    for (auto b : triggerData)     tdata.append(static_cast<int>(b));
+    for (auto b : triggerDataMask) tmask.append(static_cast<int>(b));
     obj["triggerData"]      = tdata;
     obj["triggerDataMask"]  = tmask;
-    obj["responseId"]       = (qint64)responseId;
+    obj["responseId"]       = static_cast<qint64>(responseId);
     QJsonArray resp;
-    for (auto b : staticResponse)  resp.append((int)b);
+    for (auto b : staticResponse)  resp.append(static_cast<int>(b));
     obj["staticResponse"]   = resp;
     obj["responseLuaFunc"]  = responseLuaFunc;
     obj["responseDelayMs"]  = responseDelayMs;
@@ -35,19 +35,19 @@ QJsonObject CanNodeDefinition::toJson() const {
 CanNodeDefinition CanNodeDefinition::fromJson(const QJsonObject &obj) {
     CanNodeDefinition n;
     n.name            = obj["name"].toString();
-    n.triggerId       = (uint32_t)obj["triggerId"].toVariant().toLongLong();
-    n.triggerIdMask   = (uint32_t)obj["triggerIdMask"].toVariant().toLongLong();
-    n.responseId      = (uint32_t)obj["responseId"].toVariant().toLongLong();
+    n.triggerId       = static_cast<uint32_t>(obj["triggerId"].toVariant().toLongLong());
+    n.triggerIdMask   = static_cast<uint32_t>(obj["triggerIdMask"].toVariant().toLongLong());
+    n.responseId      = static_cast<uint32_t>(obj["responseId"].toVariant().toLongLong());
     n.responseLuaFunc = obj["responseLuaFunc"].toString();
     n.responseDelayMs = obj["responseDelayMs"].toInt();
     n.enabled         = obj["enabled"].toBool(true);
 
     for (const auto &v : obj["triggerData"].toArray())
-        n.triggerData.append((uint8_t)v.toInt());
+        n.triggerData.append(static_cast<uint8_t>(v.toInt()));
     for (const auto &v : obj["triggerDataMask"].toArray())
-        n.triggerDataMask.append((uint8_t)v.toInt());
+        n.triggerDataMask.append(static_cast<uint8_t>(v.toInt()));
     for (const auto &v : obj["staticResponse"].toArray())
-        n.staticResponse.append((uint8_t)v.toInt());
+        n.staticResponse.append(static_cast<uint8_t>(v.toInt()));
 
     return n;
 }
@@ -118,7 +118,7 @@ void CanNodeSimulator::scheduleResponse(const CanNodeDefinition &node) {
         // Wyślij natychmiast
         CanFrame out;
         out.id  = node.responseId;
-        out.dlc = (uint8_t)respData.size();
+        out.dlc = static_cast<uint8_t>(respData.size());
         for (int i = 0; i < respData.size() && i < 64; ++i)
             out.data[i] = respData[i];
         emit frameReady(out);
@@ -136,7 +136,7 @@ void CanNodeSimulator::sendPendingResponse() {
     for (const auto &pending : m_pendingResponses) {
         CanFrame out;
         out.id  = pending.id;
-        out.dlc = (uint8_t)pending.data.size();
+        out.dlc = static_cast<uint8_t>(pending.data.size());
         for (int i = 0; i < pending.data.size() && i < 64; ++i)
             out.data[i] = pending.data[i];
         emit frameReady(out);

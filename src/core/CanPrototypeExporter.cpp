@@ -259,7 +259,7 @@ QString CanPrototypeExporter::generatePython(const QVector<FrameExportInfo> &fra
         } else {
             // Raw byte array fallback
             s << "        self.data = [";
-            for (int b = 0; b < std::min(f.dlc, (int)f.sampleData.size()); ++b) {
+            for (int b = 0; b < std::min(f.dlc, static_cast<int>(f.sampleData.size())); ++b) {
                 if (b) s << ", ";
                 s << QString("0x%1").arg(f.sampleData[b], 2, 16, QChar('0')).toUpper();
             }
@@ -455,7 +455,7 @@ QString CanPrototypeExporter::generateLua(const QVector<FrameExportInfo> &frames
             s << "    _ctr_byte" << b << " = 0,  -- rolling counter → byte " << b << "\n";
         // Sample data
         s << "    sample = {";
-        for (int b = 0; b < f.dlc && b < (int)f.sampleData.size(); ++b) {
+        for (int b = 0; b < f.dlc && b < static_cast<int>(f.sampleData.size()); ++b) {
             if (b) s << ", ";
             s << QString("0x%1").arg(f.sampleData[b], 2, 16, QChar('0')).toUpper();
         }
@@ -676,7 +676,7 @@ QString CanPrototypeExporter::generateArduino(const QVector<FrameExportInfo> &fr
             s << arduinoEncodeSignal(sig).replace("txData", "txBuf_" + vn);
         if (f.sigList.isEmpty() && !f.sampleData.isEmpty()) {
             s << "    // No DBC loaded — using last captured payload\n";
-            for (int b = 0; b < f.dlc && b < (int)f.sampleData.size(); ++b)
+            for (int b = 0; b < f.dlc && b < static_cast<int>(f.sampleData.size()); ++b)
                 s << "    txBuf_" << vn << "[" << b << "] = "
                   << QString("0x%1").arg(f.sampleData[b], 2, 16, QChar('0')).toUpper() << ";\n";
         }
@@ -715,7 +715,7 @@ QString CanPrototypeExporter::generateArduino(const QVector<FrameExportInfo> &fr
         if (f.periodMs <= 0.0) continue;
         QString vn      = cppVarName(f);
         QString periVar = "PERIOD_" + vn.toUpper();
-        s << "    // Transmit " << hexId(f.id) << " every " << (int)std::round(f.periodMs) << " ms\n"
+        s << "    // Transmit " << hexId(f.id) << " every " << static_cast<int>(std::round(f.periodMs)) << " ms\n"
           << "    if (now - lastTx_" << vn << " >= " << periVar << ") {\n"
           << "        encode_" << vn << "();\n"
           << "        CAN.sendMsgBuf(ID_" << vn.toUpper() << ", "

@@ -30,17 +30,17 @@ private:
     CanPeriodicSender *m_sender;
 
     // Frame editor
-    QLineEdit *m_idEdit;
-    QLineEdit *m_byteEdits[8];
-    QSpinBox  *m_dlcSpin;
-    QSpinBox  *m_periodSpin;
-    QCheckBox *m_extCheck;
-    QLineEdit *m_labelEdit;
+    QLineEdit *m_idEdit{};
+    QLineEdit *m_byteEdits[8]{};
+    QSpinBox  *m_dlcSpin{};
+    QSpinBox  *m_periodSpin{};
+    QCheckBox *m_extCheck{};
+    QLineEdit *m_labelEdit{};
 
-    QPushButton  *m_addBtn;
-    QPushButton  *m_removeBtn;
-    QPushButton  *m_runBtn;
+    QPushButton  *m_addBtn{};
+    QPushButton  *m_removeBtn{};
+    QPushButton  *m_runBtn{};
 
-    QTableWidget *m_table;
-    QLabel       *m_statusLabel;
+    QTableWidget *m_table{};
+    QLabel       *m_statusLabel{};
 };

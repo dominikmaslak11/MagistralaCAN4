@@ -219,8 +219,8 @@ LearningEngine::buildWindowFeatures(const std::vector<CanFrame> &window) const {
 // ── Candidate ranking ──────────────────────────────────────
 
 std::vector<LeCandidate>
-LearningEngine::computeCandidates(const std::string *dbcDescription,
-                                  const std::string *j1939Name) const {
+LearningEngine::computeCandidates(const std::string * /*dbcDescription*/,
+                                  const std::string * /*j1939Name*/) const {
     std::shared_lock lock(m_mutex);
     std::vector<LeCandidate> cands;
     if (m_events.empty()) return cands;

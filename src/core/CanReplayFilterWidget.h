@@ -35,21 +35,21 @@ private:
     CanSniffer     *m_sniffer;
 
     // Rule editor
-    QLineEdit      *m_srcIdEdit;
-    QLineEdit      *m_dstIdEdit;
-    QCheckBox      *m_remapCheck;
-    QCheckBox      *m_dropCheck;
+    QLineEdit      *m_srcIdEdit{};
+    QLineEdit      *m_dstIdEdit{};
+    QCheckBox      *m_remapCheck{};
+    QCheckBox      *m_dropCheck{};
 
     // Byte transform editors (per-byte scale/offset)
-    QDoubleSpinBox *m_scaleSpins[8];
-    QDoubleSpinBox *m_offsetSpins[8];
-    QCheckBox      *m_byteActiveChecks[8];
+    QDoubleSpinBox *m_scaleSpins[8]{};
+    QDoubleSpinBox *m_offsetSpins[8]{};
+    QCheckBox      *m_byteActiveChecks[8]{};
 
-    QPushButton    *m_addBtn;
-    QPushButton    *m_removeBtn;
-    QPushButton    *m_applyBtn;
-    QPushButton    *m_clearBtn;
+    QPushButton    *m_addBtn{};
+    QPushButton    *m_removeBtn{};
+    QPushButton    *m_applyBtn{};
+    QPushButton    *m_clearBtn{};
 
-    QTableWidget   *m_rulesTable;
-    QLabel         *m_statusLabel;
+    QTableWidget   *m_rulesTable{};
+    QLabel         *m_statusLabel{};
 };

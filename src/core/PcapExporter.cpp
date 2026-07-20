@@ -13,8 +13,10 @@ static constexpr uint32_t PCAP_LINKTYPE_CAN = 227; // LINKTYPE_CAN_SOCKETCAN
 // struct can_frame { uint32_t can_id; uint8_t len; uint8_t pad[3]; uint8_t data[8]; }
 // Total = 16 bytes
 
-static void writeU32LE(QDataStream &ds, uint32_t v) { ds.writeRawData(reinterpret_cast<const char*>(&v), 4); }
-static void writeU16LE(QDataStream &ds, uint16_t v) { ds.writeRawData(reinterpret_cast<const char*>(&v), 2); }
+namespace {
+void writeU32LE(QDataStream &ds, uint32_t v) { ds.writeRawData(reinterpret_cast<const char*>(&v), 4); }
+void writeU16LE(QDataStream &ds, uint16_t v) { ds.writeRawData(reinterpret_cast<const char*>(&v), 2); }
+} // namespace
 
 bool PcapExporter::exportFrames(const QString &path,
                                 const std::vector<CanFrame> &frames,

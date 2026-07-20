@@ -24,11 +24,11 @@ private:
     void appendFrame(const Kwp2000Frame &f, const QString &raw);
     QString payloadHex(const std::vector<uint8_t> &v) const;
 
-    QLineEdit    *m_hexInput;
-    QPushButton  *m_parseBtn;
-    QPushButton  *m_clearBtn;
-    QTableWidget *m_table;
-    QLabel       *m_statsLabel;
+    QLineEdit    *m_hexInput{};
+    QPushButton  *m_parseBtn{};
+    QPushButton  *m_clearBtn{};
+    QTableWidget *m_table{};
+    QLabel       *m_statsLabel{};
 
     int m_total = 0, m_errors = 0;
 };

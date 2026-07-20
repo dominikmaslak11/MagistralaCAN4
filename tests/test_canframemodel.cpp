@@ -30,7 +30,7 @@ TEST(CanFrameModel, initialRowCountIsZero) {
 
 TEST(CanFrameModel, columnCountMatchesEnum) {
     CanFrameModel model;
-    EXPECT_EQ(model.columnCount(), CanFrameModel::_COUNT);
+    EXPECT_EQ(model.columnCount(), CanFrameModel::Count);
     EXPECT_GE(model.columnCount(), 8);
 }
 

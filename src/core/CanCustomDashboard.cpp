@@ -16,10 +16,14 @@
 #include <QTimer>
 #include <algorithm>
 
-static const char *kStyleSheet = R"(
+namespace {
+
+const char *kStyleSheet = R"(
     QScrollArea { background: #0a0e17; border: none; }
     QWidget#gridWidget { background: #0a0e17; }
 )";
+
+} // namespace
 
 CanCustomDashboard::CanCustomDashboard(QWidget *parent) : QWidget(parent) {
     auto *outerLayout = new QVBoxLayout(this);

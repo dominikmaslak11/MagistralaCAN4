@@ -8,18 +8,22 @@
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-static double median(std::vector<double> v) {
+namespace {
+
+double median(std::vector<double> v) {
     if (v.empty()) return 0.0;
-    std::nth_element(v.begin(), v.begin() + v.size() / 2, v.end());
+    std::nth_element(v.begin(), v.begin() + static_cast<std::ptrdiff_t>(v.size() / 2), v.end());
     return v[v.size() / 2];
 }
 
-static double stddev(const std::vector<double> &v, double mean) {
+double stddev(const std::vector<double> &v, double mean) {
     if (v.size() < 2) return 0.0;
     double sum = 0.0;
     for (double x : v) sum += (x - mean) * (x - mean);
-    return std::sqrt(sum / (v.size() - 1));
+    return std::sqrt(sum / static_cast<double>(v.size() - 1));
 }
+
+} // namespace
 
 // ── Public static methods ─────────────────────────────────────────────────────
 

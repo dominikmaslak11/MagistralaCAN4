@@ -6,6 +6,7 @@
 #include <QFormLayout>
 #include <QMessageBox>
 #include <QFont>
+#include <format>
 
 Kwp2000Widget::Kwp2000Widget(QWidget *parent) : QWidget(parent) {
     buildUi();
@@ -99,18 +100,14 @@ void Kwp2000Widget::appendFrame(const Kwp2000Frame &f, const QString &raw) {
     cell(0, dir, dirColor);
 
     // SID
-    char sidBuf[8];
-    snprintf(sidBuf, sizeof(sidBuf), "0x%02X", f.sid);
-    cell(1, sidBuf, dirColor);
+    cell(1, QString::fromStdString(std::format("0x{:02X}", f.sid)), dirColor);
 
     // Service name
     cell(2, QString::fromStdString(Kwp2000Parser::serviceName(f.sid)), dirColor);
 
     // NRC / data
     if (f.isNegative) {
-        char nrcBuf[8];
-        snprintf(nrcBuf, sizeof(nrcBuf), "0x%02X", f.nrc);
-        cell(3, nrcBuf, dirColor);
+        cell(3, QString::fromStdString(std::format("0x{:02X}", f.nrc)), dirColor);
         cell(4, QString::fromStdString(Kwp2000Parser::nrcDescription(f.nrc)), dirColor);
     } else {
         cell(3, payloadHex(f.payload), dirColor);
@@ -129,8 +126,7 @@ QString Kwp2000Widget::payloadHex(const std::vector<uint8_t> &v) const {
     char buf[4];
     for (size_t i = 0; i < v.size(); ++i) {
         if (i) s += ' ';
-        snprintf(buf, sizeof(buf), "%02X", v[i]);
-        s += buf;
+        s += std::format("{:02X}", v[i]);
     }
     return s;
 }

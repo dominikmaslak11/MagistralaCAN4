@@ -1014,7 +1014,7 @@ void AssociativeLearner::runTsne() {
 
         int N = static_cast<int>(result.projected.size());
         for (int i = 0; i < N; ++i) {
-            int cluster = (i < (int)result.clusterAssignments.size())
+            int cluster = (i < static_cast<int>(result.clusterAssignments.size()))
                           ? std::clamp(result.clusterAssignments[i], 0, 2)
                           : 0;
             m_tsneSeries[cluster]->append(result.projected[i].first,
@@ -1490,7 +1490,7 @@ void AssociativeLearner::updateGbtDisplay() {
             if (!seenIds.count(kv.first)) {
                 seenIds.insert(kv.first);
                 for (int b = 0; b < 64; ++b)
-                    featureList.push_back({kv.first, b});
+                    featureList.emplace_back(kv.first, b);
             }
 
     if (featureList.empty()) return;

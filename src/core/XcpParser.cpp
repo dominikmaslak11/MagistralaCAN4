@@ -1,5 +1,5 @@
 #include "XcpParser.h"
-#include <cstdio>
+#include <format>
 
 XcpFrame XcpParser::parse(const std::vector<uint8_t> &bytes) {
     return parse(bytes.data(), static_cast<int>(bytes.size()));
@@ -66,9 +66,7 @@ std::string XcpParser::commandName(uint8_t pid) {
         case XcpCmd::ProgramClear:     return "PROGRAM_CLEAR";
         case XcpCmd::Program:          return "PROGRAM";
         default: {
-            char buf[20];
-            snprintf(buf, sizeof(buf), "CMD_0x%02X", pid);
-            return buf;
+            return std::format("CMD_0x{:02X}", pid);
         }
     }
 }
@@ -94,9 +92,7 @@ std::string XcpParser::errorDescription(uint8_t errCode) {
         case XcpErr::Generic:        return "Generic error";
         case XcpErr::Verify:         return "The slave internal program verify routine detects an error";
         default: {
-            char buf[32];
-            snprintf(buf, sizeof(buf), "Unknown error (0x%02X)", errCode);
-            return buf;
+            return std::format("Unknown error (0x{:02X})", errCode);
         }
     }
 }

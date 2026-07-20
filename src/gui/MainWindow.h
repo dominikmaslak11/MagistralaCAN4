@@ -29,6 +29,7 @@
 #include "core/Mdf4Writer.h"
 #include "core/PluginLoader.h"
 #include "core/HttpRestServer.h"
+#include "core/McpServer.h"
 #include "core/CanStatsPanel.h"
 #include "core/CanFilterProxy.h"
 #include "core/CanPlayer.h"
@@ -70,6 +71,7 @@
 #include "core/Logger.h"
 #include "gui/HeatmapBar.h"
 #include "gui/LazyTabWidget.h"
+#include <memory>
 #include <QSystemTrayIcon>
 #include <QShortcut>
 
@@ -110,6 +112,7 @@ private slots:
     void toggleRecording();
     void toggleMdf4Recording();
     void toggleRestApi();
+    void toggleMcpServer();
     void toggleMqtt();
     void toggleTheme();
     void onTableContextMenu(const QPoint &pos);
@@ -187,6 +190,7 @@ private:
     CanRecorder          m_recorder;
     Mdf4Writer           m_mdf4Writer;
     HttpRestServer       m_restServer;
+    McpServer            m_mcpServer;
     MqttBridge           m_mqttBridge;
     PluginLoader         m_pluginLoader;
     QTableView *m_tableView;
@@ -236,10 +240,10 @@ private:
     QStringList m_mruLuaFiles;
 
     // Auto-odświeżanie interfejsów
-    QTimer *m_interfaceRefreshTimer = nullptr;
+    std::unique_ptr<QTimer> m_interfaceRefreshTimer;
 
     // Diagnostyka CAN
-    QTimer *m_noDataTimer = nullptr;
+    std::unique_ptr<QTimer> m_noDataTimer;
     int m_totalFrames = 0;
     void checkNoData();
 

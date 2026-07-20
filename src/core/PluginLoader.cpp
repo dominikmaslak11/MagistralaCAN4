@@ -6,12 +6,14 @@
 #include <csignal>
 #include <csetjmp>
 
-// Stan dla setjmp — thread-local, więc bezpieczne przy wielu wątkach
-static thread_local jmp_buf g_pluginJumpBuf;
-static thread_local ProtocolPlugin *g_pluginInCall = nullptr;
-static thread_local QSet<ProtocolPlugin *> *g_crashedSet = nullptr;
+namespace {
 
-static void pluginCrashHandler(int) {
+// Stan dla setjmp — thread-local, więc bezpieczne przy wielu wątkach
+thread_local jmp_buf g_pluginJumpBuf;
+thread_local ProtocolPlugin *g_pluginInCall = nullptr;
+thread_local QSet<ProtocolPlugin *> *g_crashedSet = nullptr;
+
+void pluginCrashHandler(int) {
     if (g_pluginInCall && g_crashedSet) {
         qWarning() << "PluginLoader: plugin" << g_pluginInCall->name()
                    << "wykonał niedozwoloną operację (SIGSEGV) — odizolowany";
@@ -19,6 +21,8 @@ static void pluginCrashHandler(int) {
     }
     longjmp(g_pluginJumpBuf, 1);
 }
+
+} // namespace
 
 PluginLoader::PluginLoader(QObject *parent) : QObject(parent) {}
 

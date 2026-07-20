@@ -17,7 +17,7 @@
 class J1939TableModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    enum Column { TIMESTAMP, PRIO, PGN, PGN_NAME, SA, DA, DLC, DATA, _COUNT };
+    enum Column { TIMESTAMP, PRIO, PGN, PGN_NAME, SA, DA, DLC, DATA, Count };
 
     explicit J1939TableModel(QObject *parent = nullptr);
 
@@ -60,18 +60,18 @@ private:
     void setupUi();
 
     J1939Parser m_parser;
-    J1939TableModel *m_model;
-    QTableView *m_tableView;
+    J1939TableModel *m_model{};
+    QTableView *m_tableView{};
 
     // Filtry
-    QComboBox *m_pgnFilter;
-    QLineEdit *m_saFilter;
-    QCheckBox *m_filterEnabled;
-    QPushButton *m_clearBtn;
-    QLabel *m_statusLabel;
+    QComboBox *m_pgnFilter{};
+    QLineEdit *m_saFilter{};
+    QCheckBox *m_filterEnabled{};
+    QPushButton *m_clearBtn{};
+    QLabel *m_statusLabel{};
 
     // Panel szczegółów
-    QLabel *m_detailLabel;
+    QLabel *m_detailLabel{};
 
     // Stan filtrów
     uint32_t m_filterPgn = 0;

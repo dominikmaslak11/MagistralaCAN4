@@ -7,9 +7,11 @@
 #include <sstream>
 // ── #42-45 Serialization & persistence ────────────────────
 
+namespace {
+
 // Simple JSON builder (no external library needed for basic types)
-static void jsonObj(std::ostringstream &os,
-                    const std::vector<std::pair<std::string,std::string>> &fields) {
+void jsonObj(std::ostringstream &os,
+             const std::vector<std::pair<std::string,std::string>> &fields) {
     os << "{";
     for (size_t i = 0; i < fields.size(); ++i) {
         if (i > 0) os << ",";
@@ -18,7 +20,7 @@ static void jsonObj(std::ostringstream &os,
     os << "}";
 }
 
-static std::string jsonString(const std::string &s) {
+std::string jsonString(const std::string &s) {
     std::string out = "\"";
     for (char c : s) {
         if (c == '"' || c == '\\') out += '\\';
@@ -27,6 +29,8 @@ static std::string jsonString(const std::string &s) {
     out += '"';
     return out;
 }
+
+} // namespace
 
 std::string LearningEngine::serializeSession() const {
     std::shared_lock lock(m_mutex);
@@ -57,7 +61,7 @@ std::string LearningEngine::serializeSession() const {
                 os << "\"" << bkv.first << "\":[";
                 for (size_t i = 0; i < bkv.second.size(); ++i) {
                     if (i > 0) os << ",";
-                    os << (int)bkv.second[i];
+                    os << static_cast<int>(bkv.second[i]);
                 }
                 os << "]";
             }
@@ -175,11 +179,15 @@ double LearningEngine::correlationPearsonWeighted(
 
 // ── #28 Welford's online algorithm ──────────────────────────
 
-static uint64_t welfordKey(const std::string &var, uint32_t id, int byteIdx) {
+namespace {
+
+uint64_t welfordKey(const std::string &var, uint32_t id, int byteIdx) {
     std::hash<std::string> hs;
     return (static_cast<uint64_t>(hs(var)) << 40) |
            (static_cast<uint64_t>(id) << 8) | static_cast<uint64_t>(byteIdx);
 }
+
+} // namespace
 
 void LearningEngine::updateWelford(const std::string &variableKey,
                                    uint32_t id, int byteIdx,

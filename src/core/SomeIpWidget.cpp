@@ -95,13 +95,17 @@ void SomeIpWidget::clearMessages() {
 
 // ── Private helpers ────────────────────────────────────────────────────────────
 
-static QString previewHex(const std::vector<uint8_t> &v, size_t maxBytes = 12) {
+namespace {
+
+QString previewHex(const std::vector<uint8_t> &v, size_t maxBytes = 12) {
     QString s;
     for (size_t i = 0; i < v.size() && i < maxBytes; ++i)
         s += QString("%1 ").arg(v[i], 2, 16, QChar('0')).toUpper();
     if (v.size() > maxBytes) s += "...";
     return s.trimmed();
 }
+
+} // namespace
 
 void SomeIpWidget::addMessage(const SomeIpMessage &msg) {
     m_messages.push_back(msg);
@@ -156,11 +160,11 @@ void SomeIpWidget::updateDetails(int row) {
     ss << "Length           : " << std::dec << msg.header.length << " (payload+" << SOMEIP_MIN_LENGTH_FIELD << ")\n";
     ss << "Client ID        : 0x" << std::hex << std::setw(4) << msg.header.clientId  << "\n";
     ss << "Session ID       : 0x" << std::setw(4) << msg.header.sessionId << "\n";
-    ss << "Protocol Version : " << std::dec << (int)msg.header.protocolVersion  << "\n";
-    ss << "Interface Version: " << (int)msg.header.interfaceVersion << "\n";
-    ss << "Message Type     : 0x" << std::hex << std::setw(2) << (int)msg.header.messageType
+    ss << "Protocol Version : " << std::dec << static_cast<int>(msg.header.protocolVersion)  << "\n";
+    ss << "Interface Version: " << static_cast<int>(msg.header.interfaceVersion) << "\n";
+    ss << "Message Type     : 0x" << std::hex << std::setw(2) << static_cast<int>(msg.header.messageType)
        << " (" << SomeIpParser::messageTypeName(msg.header.messageType) << ")\n";
-    ss << "Return Code      : 0x" << std::setw(2) << (int)msg.header.returnCode
+    ss << "Return Code      : 0x" << std::setw(2) << static_cast<int>(msg.header.returnCode)
        << " (" << SomeIpParser::returnCodeName(msg.header.returnCode) << ")\n";
 
     if (!msg.valid) {
@@ -176,7 +180,7 @@ void SomeIpWidget::updateDetails(int row) {
             ss << "\nEntry[" << i << "]: " << SomeIpParser::sdEntryTypeName(e.type) << "\n";
             ss << "  Service ID  : 0x" << std::hex << std::setw(4) << e.serviceId  << "\n";
             ss << "  Instance ID : 0x" << std::setw(4) << e.instanceId << "\n";
-            ss << "  Major Ver   : " << std::dec << (int)e.majorVersion << "\n";
+            ss << "  Major Ver   : " << std::dec << static_cast<int>(e.majorVersion) << "\n";
             ss << "  TTL         : " << e.ttl << " s"
                << (e.ttl == 0 ? " (stop/unsubscribe)" : "") << "\n";
             ss << "  Minor/EG ID : 0x" << std::hex << std::setw(8) << e.minorVersion << "\n";
@@ -184,7 +188,7 @@ void SomeIpWidget::updateDetails(int row) {
     } else {
         ss << "\n=== Payload (" << std::dec << msg.payload.size() << " bytes) ===\n";
         for (size_t i = 0; i < msg.payload.size(); ++i) {
-            ss << std::hex << std::setw(2) << (int)msg.payload[i];
+            ss << std::hex << std::setw(2) << static_cast<int>(msg.payload[i]);
             ss << ((i % 16 == 15) ? "\n" : " ");
         }
         if (!msg.payload.empty() && msg.payload.size() % 16 != 0) ss << "\n";

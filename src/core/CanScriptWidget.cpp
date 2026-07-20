@@ -17,7 +17,9 @@
 #include <QScrollBar>
 #include <QMessageBox>
 
-static const char *DEFAULT_SCRIPT = R"(-- Skrypt Lua — MagistralaCAN4
+namespace {
+
+const char *kDefaultScript = R"(-- Skrypt Lua — MagistralaCAN4
 -- API dostępne:
 --   sendFrame(id, {b0, b1, ...})  — wyślij ramkę CAN
 --   log(msg)                       — wypisz do panelu logów
@@ -43,6 +45,8 @@ function onAlert(rule, id, desc, data, timestamp)
     log(string.format("ALERT: %s ID=0x%03X %s", rule, id, desc))
 end
 )";
+
+} // namespace
 
 CanScriptWidget::CanScriptWidget(LuaScriptEngine *engine, QWidget *parent)
     : QWidget(parent), m_engine(engine)
@@ -83,7 +87,7 @@ void CanScriptWidget::setupUi() {
 
     // Edytor
     m_editor = new QPlainTextEdit;
-    m_editor->setPlainText(DEFAULT_SCRIPT);
+    m_editor->setPlainText(kDefaultScript);
     QFont mono("Consolas");
     if (!mono.exactMatch()) mono.setFamily("Courier New");
     mono.setPointSize(10);

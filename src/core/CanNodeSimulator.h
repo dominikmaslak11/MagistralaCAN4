@@ -81,7 +81,7 @@ private:
     void scheduleResponse(const CanNodeDefinition &node);
 
     struct PendingResponse {
-        uint32_t id;
+        uint32_t id{};
         QVector<uint8_t> data;
     };
 

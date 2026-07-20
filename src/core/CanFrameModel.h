@@ -11,7 +11,7 @@ class CanFrameModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     enum Column {
-        ID, EXT, RTR, DLC, DATA, TIMESTAMP, FD, DELTA, SIGNAL, _COUNT
+        ID, EXT, RTR, DLC, DATA, TIMESTAMP, FD, DELTA, SIGNAL, Count
     };
 
     /// Niestandardowa rola: bitmask zmienionych bajtów (64-bit, bit i = bajt i się zmienił)

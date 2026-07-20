@@ -19,8 +19,8 @@ public:
     enum class FilterMode { PassAll, Whitelist, Blacklist };
 
     struct IdRule {
-        uint32_t srcId;
-        uint32_t dstId;       // remapped ID on the sink side (0 = same as srcId)
+        uint32_t srcId{};
+        uint32_t dstId{};       // remapped ID on the sink side (0 = same as srcId)
         bool     drop = false; // if true, frame is blocked even in PassAll mode
     };
 

@@ -23,7 +23,7 @@ int CanFrameModel::rowCount(const QModelIndex &parent) const {
 
 int CanFrameModel::columnCount(const QModelIndex &parent) const {
     if (parent.isValid()) return 0;
-    return Column::_COUNT;
+    return Column::Count;
 }
 
 QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
@@ -118,7 +118,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
         QString fullHex;
         for (int i = 0; i < frame.dlc && i < 64; ++i)
             fullHex += QString("%1 ").arg(frame.data[i], 2, 16, QChar('0')).toUpper();
-        if (frame.dlc > 256) fullHex += "...";
+        if (frame.dlc > 64) fullHex += "..."; // payload storage caps at 64 bytes (data{} array size)
         return QString("CAN XL %1 bajtów:\n%2").arg(frame.dlc).arg(fullHex.trimmed());
     } else if (role == Qt::ToolTipRole && index.column() == Column::SIGNAL) {
         QString tip;
@@ -324,7 +324,7 @@ void CanFrameModel::processIncomingFrames(const QVector<CanFrame> &newFrames) {
         }
         ranges.append({start, end});
         for (const auto &r : ranges) {
-            emit dataChanged(index(r.first, 0), index(r.second, Column::_COUNT - 1));
+            emit dataChanged(index(r.first, 0), index(r.second, Column::Count - 1));
         }
     }
 }

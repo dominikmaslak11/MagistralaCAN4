@@ -30,14 +30,14 @@ private:
 
     CanObservationDb m_db;
 
-    QLineEdit    *m_pathEdit;
-    QPushButton  *m_openBtn;
-    QPushButton  *m_closeBtn;
-    QPushButton  *m_newSessionBtn;
-    QPushButton  *m_resetBtn;
-    QLineEdit    *m_filterIdEdit;
-    QSpinBox     *m_limitSpin;
-    QPushButton  *m_queryBtn;
-    QTableWidget *m_resultTable;
-    QLabel       *m_statsLabel;
+    QLineEdit    *m_pathEdit{};
+    QPushButton  *m_openBtn{};
+    QPushButton  *m_closeBtn{};
+    QPushButton  *m_newSessionBtn{};
+    QPushButton  *m_resetBtn{};
+    QLineEdit    *m_filterIdEdit{};
+    QSpinBox     *m_limitSpin{};
+    QPushButton  *m_queryBtn{};
+    QTableWidget *m_resultTable{};
+    QLabel       *m_statsLabel{};
 };

@@ -8,6 +8,7 @@
 #include <QRadioButton>
 #include <QLineEdit>
 #include <QTimer>
+#include <memory>
 
 class ICanDriver;
 
@@ -68,5 +69,5 @@ private:
     QLabel *m_blkLabel  = nullptr;
     QLabel *m_totLabel  = nullptr;
 
-    QTimer *m_statsTimer = nullptr;
+    std::unique_ptr<QTimer> m_statsTimer;
 };

@@ -42,10 +42,10 @@ void CanExporter::setupUi() {
     destLayout->setRowWrapPolicy(QFormLayout::WrapAllRows);
 
     m_formatCombo = new QComboBox;
-    m_formatCombo->addItem("CSV (.csv)",               (int)Format::CSV);
-    m_formatCombo->addItem("candump log (.log)",        (int)Format::Candump);
-    m_formatCombo->addItem("PCAP / Wireshark (.pcap)",  (int)Format::Pcap);
-    m_formatCombo->addItem("MCAN binarny (.mcan)",      (int)Format::Mcan);
+    m_formatCombo->addItem("CSV (.csv)",               static_cast<int>(Format::CSV));
+    m_formatCombo->addItem("candump log (.log)",        static_cast<int>(Format::Candump));
+    m_formatCombo->addItem("PCAP / Wireshark (.pcap)",  static_cast<int>(Format::Pcap));
+    m_formatCombo->addItem("MCAN binarny (.mcan)",      static_cast<int>(Format::Mcan));
     destLayout->addRow("Format:", m_formatCombo);
 
     auto *pathRow = new QHBoxLayout;
@@ -289,7 +289,7 @@ bool CanExporter::exportCsv(const QString &path, const QVector<CanFrame> &frames
     for (int i = 0; i < frames.size(); ++i) {
         const auto &f = frames[i];
         QString data;
-        int maxB = std::min((int)f.dlc, 64);
+        int maxB = std::min(static_cast<int>(f.dlc), 64);
         for (int b = 0; b < maxB; ++b)
             data += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
         out << i << ","
@@ -319,12 +319,12 @@ bool CanExporter::exportCandump(const QString &path, const QVector<CanFrame> &fr
             .arg(idStr);
         if (isFd) {
             line += "##0";
-            int maxB = std::min((int)f.dlc, 64);
+            int maxB = std::min(static_cast<int>(f.dlc), 64);
             for (int b = 0; b < maxB; ++b)
                 line += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
         } else {
             line += QString("#%1").arg(f.dlc);
-            int maxB = std::min((int)f.dlc, 8);
+            int maxB = std::min(static_cast<int>(f.dlc), 8);
             for (int b = 0; b < maxB; ++b)
                 line += QString("%1").arg(f.data[b], 2, 16, QChar('0')).toUpper();
         }
@@ -360,7 +360,7 @@ bool CanExporter::exportMcan(const QString &path, const QVector<CanFrame> &frame
         } else {
             stream << (quint8)f.dlc;
         }
-        int dataLen = std::min((int)f.dlc, 64);
+        int dataLen = std::min(static_cast<int>(f.dlc), 64);
         stream.writeRawData(reinterpret_cast<const char *>(f.data.data()), dataLen);
     }
     return true;

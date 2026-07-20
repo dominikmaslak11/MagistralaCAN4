@@ -199,8 +199,8 @@ void DbcAutoWidget::showMessageDetail(const AutoMessage &msg) {
         const auto &bs = msg.byteStats[b];
         ss << std::dec << std::setw(4) << b << " | "
            << std::left << std::setw(10) << DbcAutoGenerator::roleName(bs.role) << " | "
-           << std::right << std::hex << std::setw(4) << (int)bs.minVal << " | "
-           << std::setw(4) << (int)bs.maxVal << " | "
+           << std::right << std::hex << std::setw(4) << static_cast<int>(bs.minVal) << " | "
+           << std::setw(4) << static_cast<int>(bs.maxVal) << " | "
            << std::dec << std::setw(4) << bs.uniqueValues.size() << " | "
            << std::fixed << std::setprecision(2) << bs.entropy << "\n";
     }

@@ -39,25 +39,25 @@ private:
     CanAlertEngine m_engine;
 
     // Rule editor
-    QLineEdit       *m_nameEdit;
-    QComboBox       *m_typeCombo;
-    QComboBox       *m_actionCombo;
-    QLineEdit       *m_idEdit;
-    QSpinBox        *m_byteIdxSpin;
-    QComboBox       *m_opCombo;
-    QSpinBox        *m_thresholdSpin;
-    QDoubleSpinBox  *m_rateDevSpin;
-    QDoubleSpinBox  *m_isoThresholdSpin;
-    QPushButton     *m_addBtn;
-    QPushButton     *m_removeBtn;
+    QLineEdit       *m_nameEdit{};
+    QComboBox       *m_typeCombo{};
+    QComboBox       *m_actionCombo{};
+    QLineEdit       *m_idEdit{};
+    QSpinBox        *m_byteIdxSpin{};
+    QComboBox       *m_opCombo{};
+    QSpinBox        *m_thresholdSpin{};
+    QDoubleSpinBox  *m_rateDevSpin{};
+    QDoubleSpinBox  *m_isoThresholdSpin{};
+    QPushButton     *m_addBtn{};
+    QPushButton     *m_removeBtn{};
 
     // Rule list
-    QTableWidget    *m_ruleTable;
+    QTableWidget    *m_ruleTable{};
 
     // Alert log
-    QTableWidget    *m_alertTable;
+    QTableWidget    *m_alertTable{};
 
-    QLabel          *m_statsLabel;
+    QLabel          *m_statsLabel{};
 
     std::function<double()> m_scorer;
 };

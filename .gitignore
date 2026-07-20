@@ -5,6 +5,8 @@ build_*/
 *.pro.user
 *.autosave
 *.7z
+compile_commands.json
+.cache/
 
 # Dev artifacts & local config
 .claude/

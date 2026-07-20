@@ -13,7 +13,7 @@ struct Candidate {
 class CandidateModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    enum Column { ID, DESCRIPTION, SCORE, OCCURRENCES, _COUNT };
+    enum Column { ID, DESCRIPTION, SCORE, OCCURRENCES, Count };
 
     explicit CandidateModel(QObject *parent = nullptr);
 

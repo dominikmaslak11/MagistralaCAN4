@@ -172,7 +172,7 @@ void CanByteHeatmapWidget::rebuildCache() {
     int bIdx     = std::min(m_bucketCombo->currentIndex(), 3);
     m_bucketCount = kBuckets[bIdx];
 
-    if (m_idIndex >= 0 && m_idIndex < (int)m_model.trackedIds().size()) {
+    if (m_idIndex >= 0 && m_idIndex < static_cast<int>(m_model.trackedIds().size())) {
         m_selectedId = m_model.trackedIds()[m_idIndex];
         m_cache      = m_model.heatmapData(m_selectedId, m_windowUs, m_bucketCount);
     } else {

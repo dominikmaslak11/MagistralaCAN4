@@ -6,7 +6,9 @@
 #include <sstream>
 #include <iomanip>
 
-static std::vector<uint8_t> parseHexBytes(const QString &s) {
+namespace {
+
+std::vector<uint8_t> parseHexBytes(const QString &s) {
     std::vector<uint8_t> out;
     for (const auto &tok : s.split(' ', Qt::SkipEmptyParts)) {
         bool ok;
@@ -16,12 +18,12 @@ static std::vector<uint8_t> parseHexBytes(const QString &s) {
     return out;
 }
 
-static QString bytesToHex(const std::vector<uint8_t> &v) {
+QString bytesToHex(const std::vector<uint8_t> &v) {
     std::ostringstream ss;
     ss << std::hex << std::uppercase << std::setfill('0');
     for (size_t i = 0; i < v.size(); ++i) {
         if (i) ss << ' ';
-        ss << std::setw(2) << (int)v[i];
+        ss << std::setw(2) << static_cast<int>(v[i]);
     }
     return QString::fromStdString(ss.str());
 }
@@ -30,7 +32,7 @@ static QString bytesToHex(const std::vector<uint8_t> &v) {
 
 struct Template { QString name; std::vector<UdsStep> steps; };
 
-static std::vector<Template> builtinTemplates() {
+std::vector<Template> builtinTemplates() {
     std::vector<Template> t;
 
     // ECU identification scan
@@ -62,6 +64,8 @@ static std::vector<Template> builtinTemplates() {
 
     return t;
 }
+
+} // namespace
 
 // ── Widget ────────────────────────────────────────────────────────────────────
 

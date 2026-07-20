@@ -5,6 +5,7 @@
 #include <QFormLayout>
 #include <QMessageBox>
 #include <QFont>
+#include <format>
 
 XcpWidget::XcpWidget(QWidget *parent) : QWidget(parent) {
     buildUi();
@@ -82,7 +83,7 @@ void XcpWidget::clear() {
     m_statsLabel->setText("Packets: 0");
 }
 
-void XcpWidget::appendFrame(const XcpFrame &f, const QString &raw) {
+void XcpWidget::appendFrame(const XcpFrame &f, const QString & /*raw*/) {
     ++m_total;
     if (f.isNegative) ++m_negCount;
 
@@ -109,17 +110,13 @@ void XcpWidget::appendFrame(const XcpFrame &f, const QString &raw) {
         case XcpFrame::Direction::Service:  typeStr = "SRV";    break;
     }
 
-    char pidBuf[8];
-    snprintf(pidBuf, sizeof(pidBuf), "0x%02X", f.pid);
-
     cell(0, typeStr);
-    cell(1, pidBuf);
+    cell(2, QString::fromStdString(std::format("0x{:02X}", f.pid)));
+    cell(1, QString::fromStdString(XcpParser::commandName(f.pid)));
     cell(2, QString::fromStdString(XcpParser::commandName(f.pid)));
 
     if (f.isNegative) {
-        char nBuf[8];
-        snprintf(nBuf, sizeof(nBuf), "0x%02X", f.errorCode);
-        cell(3, nBuf);
+        cell(3, QString::fromStdString(std::format("0x{:02X}", f.errorCode)));
         cell(4, QString::fromStdString(XcpParser::errorDescription(f.errorCode)));
     } else {
         cell(3, "-");
@@ -137,8 +134,7 @@ QString XcpWidget::payloadHex(const std::vector<uint8_t> &v) const {
     char buf[4];
     for (size_t i = 0; i < v.size(); ++i) {
         if (i) s += ' ';
-        snprintf(buf, sizeof(buf), "%02X", v[i]);
-        s += buf;
+        s += std::format("{:02X}", v[i]);
     }
     return s;
 }

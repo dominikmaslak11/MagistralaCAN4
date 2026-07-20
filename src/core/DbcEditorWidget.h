@@ -61,20 +61,20 @@ private:
     QString validateAll() const;
 
     // --- UI ---
-    QListWidget   *m_messageList;
-    QTableWidget  *m_signalTable;
-    QLineEdit     *m_msgNameEdit;
-    QLineEdit     *m_msgIdEdit;
-    QSpinBox      *m_msgDlcSpin;
-    QPushButton   *m_addMsgBtn;
-    QPushButton   *m_delMsgBtn;
-    QPushButton   *m_addSigBtn;
-    QPushButton   *m_delSigBtn;
-    QPushButton   *m_applyBtn;
-    QPushButton   *m_saveBtn;
-    QPushButton   *m_loadBtn;
-    QLabel        *m_validationLabel;
-    QTextEdit     *m_previewText;
+    QListWidget   *m_messageList{};
+    QTableWidget  *m_signalTable{};
+    QLineEdit     *m_msgNameEdit{};
+    QLineEdit     *m_msgIdEdit{};
+    QSpinBox      *m_msgDlcSpin{};
+    QPushButton   *m_addMsgBtn{};
+    QPushButton   *m_delMsgBtn{};
+    QPushButton   *m_addSigBtn{};
+    QPushButton   *m_delSigBtn{};
+    QPushButton   *m_applyBtn{};
+    QPushButton   *m_saveBtn{};
+    QPushButton   *m_loadBtn{};
+    QLabel        *m_validationLabel{};
+    QTextEdit     *m_previewText{};
 
     // --- Dane ---
     DbcParser           m_parser;

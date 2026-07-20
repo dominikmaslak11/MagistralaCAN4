@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
-#include <cstdio>
+#include <format>
 
 void CanIdStats::feed(const CanFrame &frame) {
     ++m_totalFrames;
@@ -66,9 +66,7 @@ std::string CanIdStats::toCsv() const {
 
     auto sorted = profiles();
     for (auto &p : sorted) {
-        char idBuf[12];
-        snprintf(idBuf, sizeof(idBuf), "0x%X", p.id);
-        ss << idBuf << ","
+        ss << std::format("0x{:X}", p.id) << ","
            << (p.extended ? 1 : 0) << ","
            << p.fdFrameCount << ","
            << p.brsCount << ","

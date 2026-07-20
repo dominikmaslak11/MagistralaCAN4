@@ -6,11 +6,15 @@
 #include <QFont>
 #include <chrono>
 
-static uint64_t nowUs() {
+namespace {
+
+uint64_t nowUs() {
     using namespace std::chrono;
     return static_cast<uint64_t>(
         duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count());
 }
+
+} // namespace
 
 CanSignalMonitorWidget::CanSignalMonitorWidget(QWidget *parent) : QWidget(parent) {
     buildUi();

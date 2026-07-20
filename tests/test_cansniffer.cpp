@@ -130,6 +130,10 @@ TEST(CanSniffer, Start_DriverOpenFails_EmitsError) {
 
     QSignalSpy errSpy(&sniffer, &CanSniffer::errorOccurred);
     sniffer.start("vcan0");
+    // errorOccurred is emitted via Qt::QueuedConnection from the worker thread
+    // (doWork() has no event loop of its own), so it needs a spin of this
+    // thread's event loop before the spy sees it.
+    errSpy.wait(500);
     EXPECT_GE(errSpy.count(), 1);
 }
 

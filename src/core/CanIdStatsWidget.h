@@ -27,11 +27,11 @@ private:
     void refreshTable();
 
     CanIdStats   m_stats;
-    QTableWidget *m_table;
-    QLabel       *m_infoLabel;
-    QLineEdit    *m_filterEdit;
-    QPushButton  *m_exportBtn;
-    QPushButton  *m_resetBtn;
+    QTableWidget *m_table{};
+    QLabel       *m_infoLabel{};
+    QLineEdit    *m_filterEdit{};
+    QPushButton  *m_exportBtn{};
+    QPushButton  *m_resetBtn{};
     QTimer       *m_timer;
 
     static constexpr int kTickMs = 1000;

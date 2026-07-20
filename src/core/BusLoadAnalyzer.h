@@ -20,16 +20,16 @@ public:
     void reset();
 
     // [0.0, 1.0] — fraction of bandwidth consumed in the current window
-    double currentLoad() const;
+    [[nodiscard]] double currentLoad() const;
 
     // Peak load ever seen (since last reset)
-    double peakLoad() const { return m_peakLoad; }
+    [[nodiscard]] double peakLoad() const { return m_peakLoad; }
 
     // Frames per second in the current window
-    double framesPerSec() const;
+    [[nodiscard]] double framesPerSec() const;
 
     // Total unique CAN IDs seen since last reset
-    size_t uniqueIdCount() const { return m_seenIds.size(); }
+    [[nodiscard]] size_t uniqueIdCount() const { return m_seenIds.size(); }
 
     // Per-ID load breakdown — sorted by load descending
     struct IdLoad {
@@ -39,11 +39,11 @@ public:
         double   loadFraction;   // [0.0, 1.0]
         double   fps;
     };
-    std::vector<IdLoad> topLoaders(size_t n = 10) const;
+    [[nodiscard]] std::vector<IdLoad> topLoaders(size_t n = 10) const;
 
     // Bits required for a single CAN frame (nominal, no bit-stuffing overhead)
     // extended = 29-bit arbitration field; fd = CAN FD (variable DLC up to 64)
-    static uint32_t frameBits(bool extended, uint8_t dlc, bool fd = false);
+    [[nodiscard]] static uint32_t frameBits(bool extended, uint8_t dlc, bool fd = false);
 
 private:
     void pruneOld(uint64_t nowUs);

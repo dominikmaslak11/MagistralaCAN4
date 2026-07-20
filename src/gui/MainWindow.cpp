@@ -170,6 +170,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         Logger::log(QString("Błąd CAN: %1").arg(msg));
         m_sniffer.stop();
         m_sniffing = false;
+        m_mcpServer.sniffingActive = false;
         m_btnStartStop->setText("▶ Start");
         m_batchTimer.stop();
         m_statusLabel->setText("Rozłączony");
@@ -191,6 +192,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_canStatsPanel, &CanStatsPanel::statsUpdated, this, [this](double fps, int uniqueIds) {
         m_restServer.fps = fps;
         m_restServer.uniqueIds = uniqueIds;
+        m_mcpServer.fps = fps;
+        m_mcpServer.uniqueIds = uniqueIds;
     });
 
     setupToolBar();
@@ -215,6 +218,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_player, &CanPlayer::playbackFinished, this, [this]() {
         if (m_playPauseBtn) m_playPauseBtn->setText("▶ Odtwórz");
     });
+
+    // Serwer MCP — pozwala asystentom AI (Claude Code, Codex CLI, CodeWhale) sterować sesją na żywo
+    m_mcpServer.setModel(m_model);
+    m_mcpServer.setAlertEngine(m_alertWidget->engine());
+    m_mcpServer.setDbcParser(&m_dbcParser);
+    m_mcpServer.setLuaEngine(m_luaEngine);
+    m_mcpServer.setNodeSimulator(m_canSimWidget->simulator());
+    m_mcpServer.setPlayer(m_player);
+    connect(&m_mcpServer, &McpServer::startRequested, this, [this]() { if (!m_sniffing) toggleSniffing(); });
+    connect(&m_mcpServer, &McpServer::stopRequested,  this, [this]() { if (m_sniffing)  toggleSniffing(); });
+    connect(&m_mcpServer, &McpServer::sendFrameRequested,
+            this, [this](const CanFrame &f) { m_sniffer.writeFrame(f); });
 
     refreshInterfaces();
     if (m_interfaceCombo->count() > 0)
@@ -331,9 +346,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     loadSettings();
 
     // Auto-odświeżanie listy interfejsów CAN (co 5s, tylko gdy nie sniffujemy)
-    m_interfaceRefreshTimer = new QTimer(this);
+    m_interfaceRefreshTimer = std::make_unique<QTimer>();
     m_interfaceRefreshTimer->setInterval(5000);
-    connect(m_interfaceRefreshTimer, &QTimer::timeout, this, [this]() {
+    connect(m_interfaceRefreshTimer.get(), &QTimer::timeout, this, [this]() {
         if (!m_sniffing) refreshInterfaces();
     });
     m_interfaceRefreshTimer->start();
@@ -415,6 +430,7 @@ void MainWindow::toggleSniffing() {
             return;
         }
         m_sniffing = true;
+        m_mcpServer.sniffingActive = true;
         m_candumpIface = iface;
         Logger::log(QString("Rozpoczęto sniffing na interfejsie %1 (%2, %3)")
                     .arg(iface, active->backendName(), baudStr));
@@ -431,13 +447,13 @@ void MainWindow::toggleSniffing() {
 
         // No-data timeout: warn if no frames after 5 seconds
         if (!m_noDataTimer) {
-            m_noDataTimer = new QTimer(this);
+            m_noDataTimer = std::make_unique<QTimer>();
             m_noDataTimer->setSingleShot(true);
-            connect(m_noDataTimer, &QTimer::timeout, this, &MainWindow::checkNoData);
+            connect(m_noDataTimer.get(), &QTimer::timeout, this, &MainWindow::checkNoData);
         }
         m_noDataTimer->start(5000);
     } else {
-        m_sniffer.stop(); m_sniffing = false;
+        m_sniffer.stop(); m_sniffing = false; m_mcpServer.sniffingActive = false;
         stopCandumpRecording();
         m_btnStartStop->setText("▶ Start"); m_interfaceCombo->setEnabled(true);
         m_baudCombo->setEnabled(true);
@@ -787,6 +803,7 @@ void MainWindow::setupToolBar() {
     QAction *recAction = toolbar->addAction("⏺ Nagraj"); connect(recAction, &QAction::triggered, this, &MainWindow::toggleRecording);
     QAction *mdf4Action = toolbar->addAction("📦 Nagraj MDF4"); connect(mdf4Action, &QAction::triggered, this, &MainWindow::toggleMdf4Recording);
     QAction *restAction = toolbar->addAction("🌐 REST API"); connect(restAction, &QAction::triggered, this, &MainWindow::toggleRestApi);
+    QAction *mcpAction = toolbar->addAction("🤖 MCP Server"); connect(mcpAction, &QAction::triggered, this, &MainWindow::toggleMcpServer);
     QAction *mqttAction = toolbar->addAction("📡 MQTT"); connect(mqttAction, &QAction::triggered, this, &MainWindow::toggleMqtt);
     QAction *themeAction = toolbar->addAction("☀️ Jasny motyw"); connect(themeAction, &QAction::triggered, this, &MainWindow::toggleTheme);
 
@@ -1173,6 +1190,15 @@ void MainWindow::toggleRestApi() {
         m_restServer.stop();
     } else {
         m_restServer.start(8080);
+    }
+}
+
+void MainWindow::toggleMcpServer() {
+    if (m_mcpServer.isRunning()) {
+        m_mcpServer.stop();
+    } else {
+        if (!m_mcpServer.start(8790))
+            QMessageBox::warning(this, "Serwer MCP", "Nie udało się uruchomić serwera MCP na porcie 8790.");
     }
 }
 

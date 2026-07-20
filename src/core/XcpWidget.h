@@ -25,12 +25,12 @@ private:
     void appendFrame(const XcpFrame &f, const QString &raw);
     QString payloadHex(const std::vector<uint8_t> &v) const;
 
-    QLineEdit    *m_hexInput;
-    QComboBox    *m_dirCombo;
-    QPushButton  *m_parseBtn;
-    QPushButton  *m_clearBtn;
-    QTableWidget *m_table;
-    QLabel       *m_statsLabel;
+    QLineEdit    *m_hexInput{};
+    QComboBox    *m_dirCombo{};
+    QPushButton  *m_parseBtn{};
+    QPushButton  *m_clearBtn{};
+    QTableWidget *m_table{};
+    QLabel       *m_statsLabel{};
 
     int m_total = 0, m_negCount = 0;
 };

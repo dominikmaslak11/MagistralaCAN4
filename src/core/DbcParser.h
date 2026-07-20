@@ -18,9 +18,9 @@ struct DbcSignal {
 };
 
 struct DbcMessage {
-    uint32_t id;
+    uint32_t id{};
     QString name;
-    int dlc;
+    int dlc{};
     QVector<DbcSignal> sigList;
 };
 

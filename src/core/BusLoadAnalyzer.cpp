@@ -106,7 +106,7 @@ std::vector<BusLoadAnalyzer::IdLoad> BusLoadAnalyzer::topLoaders(size_t n) const
     double windowBaudBits = m_windowSec * static_cast<double>(m_baudRate);
 
     for (const auto &[id, bits] : m_idBits) {
-        IdLoad il;
+        IdLoad il{};
         il.id            = id;
         il.bitsInWindow  = bits;
         il.framesInWindow= m_idFrames.count(id) ? m_idFrames.at(id) : 0;

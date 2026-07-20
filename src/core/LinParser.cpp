@@ -1,6 +1,7 @@
 #include "LinParser.h"
 #include <numeric>
 #include <algorithm>
+#include <format>
 
 // ── LinFrame static methods ───────────────────────────────────────────────────
 
@@ -113,8 +114,7 @@ std::string LinParser::frameName(uint8_t frameId) {
         case 0x3E: return "Reserved (SAE)";
         case 0x3F: return "Reserved (SAE)";
         default:   return "ID_0x" + [frameId]() {
-                       char buf[4]; snprintf(buf, sizeof(buf), "%02X", frameId & 0x3F);
-                       return std::string(buf);
+                       return std::format("{:02X}", frameId & 0x3F);
                    }();
     }
 }

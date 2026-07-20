@@ -9,7 +9,9 @@
 #include <QTextStream>
 #include <QDateTime>
 
-static const char *kSS = R"(
+namespace {
+
+const char *kSS = R"(
 QGroupBox {
     color: #ff66cc; border: 1px solid #2a2a3c; border-radius: 4px;
     margin-top: 8px; padding: 6px; font-family: Consolas; font-weight: bold;
@@ -36,6 +38,8 @@ QHeaderView::section {
     padding: 4px; font-weight: bold; font-family: Consolas;
 }
 )";
+
+} // namespace
 
 CanTriggerWidget::CanTriggerWidget(QWidget *parent) : QWidget(parent) {
     setStyleSheet(kSS);

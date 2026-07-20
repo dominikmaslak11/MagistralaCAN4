@@ -6,7 +6,7 @@
 #include <QGroupBox>
 #include <QScrollArea>
 #include <QFont>
-#include <cstdio>
+#include <format>
 
 CanReplayFilterWidget::CanReplayFilterWidget(CanSniffer *sniffer, QWidget *parent)
     : QWidget(parent), m_sniffer(sniffer)
@@ -157,16 +157,12 @@ void CanReplayFilterWidget::refreshRuleTable() {
         int row = m_rulesTable->rowCount();
         m_rulesTable->insertRow(row);
 
-        char idBuf[12];
-        snprintf(idBuf, sizeof(idBuf), "0x%X", r.srcId);
-        m_rulesTable->setItem(row, 0, new QTableWidgetItem(idBuf));
+        m_rulesTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(std::format("0x{:X}", r.srcId))));
 
         QString action;
         if (r.drop) action = "DROP";
         else if (r.remapId) {
-            char dstBuf[12];
-            snprintf(dstBuf, sizeof(dstBuf), "0x%X", r.dstId);
-            action = QString("REMAP → %1").arg(dstBuf);
+            action = QString::fromStdString(std::format("REMAP → 0x{:X}", r.dstId));
         } else {
             action = "TRANSFORM";
         }

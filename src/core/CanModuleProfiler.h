@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QJsonObject>
 #include <QString>
+#include <memory>
 #include <QVector>
 #include <cstdint>
 #include <cmath>
@@ -111,8 +112,8 @@ private:
     std::unordered_map<uint32_t, WelfordState> m_bgLearnData;
     uint64_t m_bgLearningStartMs   = 0;
     int      m_bgLearningDurationMs = 8000;
-    QTimer  *m_bgLearningTimer  = nullptr;
-    QTimer  *m_bgProgressTimer  = nullptr;
+    std::unique_ptr<QTimer> m_bgLearningTimer;
+    std::unique_ptr<QTimer> m_bgProgressTimer;
     void finalizeBackgroundProfile();
 
     struct RecentEntry { uint32_t id; uint64_t tsUs; };
@@ -126,8 +127,8 @@ private:
     };
     std::unordered_map<uint64_t, RRCandidate> m_rrCandidates;
 
-    QTimer *m_learningTimer  = nullptr;
-    QTimer *m_progressTimer  = nullptr;
+    std::unique_ptr<QTimer> m_learningTimer;
+    std::unique_ptr<QTimer> m_progressTimer;
 
     void finalizeProfile();
 
@@ -137,7 +138,7 @@ private:
     ModuleProfile                           m_detectProfile;
     std::unordered_map<uint32_t, uint64_t>  m_lastSeenUs;
     std::unordered_set<uint32_t>            m_currentlyMissing;
-    QTimer *m_detectionTimer = nullptr;
+    std::unique_ptr<QTimer> m_detectionTimer;
 
     static constexpr int     kDetectionTickMs       = 250;
     static constexpr int64_t kReqRespWindowUs        = 150'000;

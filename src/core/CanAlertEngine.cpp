@@ -119,7 +119,7 @@ bool CanAlertEngine::evaluateByteValue(const CanAlertRule &r, const CanFrame &f)
     return false;
 }
 
-bool CanAlertEngine::evaluateRateAnomaly(const CanAlertRule &r, const CanFrame &f, uint64_t tsUs) {
+bool CanAlertEngine::evaluateRateAnomaly(const CanAlertRule &r, const CanFrame &f, uint64_t  /*tsUs*/) {
     auto &rs = m_rateState[f.id];
 
     // Update baseline while in learning phase

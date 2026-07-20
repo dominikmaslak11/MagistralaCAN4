@@ -7,7 +7,9 @@
 #include <QTextStream>
 #include <algorithm>
 
-static const char *kSS =
+namespace {
+
+const char *kSS =
     "QTableWidget { background:#0a0e17; color:#c0c0c0; gridline-color:#2a2a3c; "
     "  font-family:Consolas; font-size:11px; selection-background-color:#1a2a3a; }"
     "QHeaderView::section { background:#1a1a2e; color:#ff66cc; border:1px solid #2a2a3c; "
@@ -20,7 +22,7 @@ static const char *kSS =
     "QLabel { color:#c0c0c0; font-family:Consolas; }";
 
 // Build a mini ASCII histogram bar (10 buckets → 10-char string)
-static QString histBar(const SignalStats &s) {
+QString histBar(const SignalStats &s) {
     if (!s.valid()) return QString(10, '-');
     static const char *blocks = " ▁▂▃▄▅▆▇█";
     uint64_t maxBucket = 1;
@@ -33,6 +35,8 @@ static QString histBar(const SignalStats &s) {
     }
     return bar;
 }
+
+} // namespace
 
 CanSignalStatisticsWidget::CanSignalStatisticsWidget(QWidget *parent) : QWidget(parent) {
     setStyleSheet(kSS);

@@ -91,7 +91,7 @@ CanPrototypeExporterWidget::CanPrototypeExporterWidget(QWidget *parent)
 void CanPrototypeExporterWidget::onFrame(const CanFrame &frame, uint64_t /*tsUs*/) {
     auto &hist = m_history[frame.id];
     hist.push_back(frame);
-    if ((int)hist.size() > kMaxHistory)
+    if (static_cast<int>(hist.size()) > kMaxHistory)
         hist.pop_front();
 
     // Update stats label
@@ -104,7 +104,7 @@ void CanPrototypeExporterWidget::onFrame(const CanFrame &frame, uint64_t /*tsUs*
 
 QVector<int> CanPrototypeExporterWidget::detectCounterBytes(uint32_t id) const {
     auto it = m_history.find(id);
-    if (it == m_history.end() || (int)it->second.size() < 4) return {};
+    if (it == m_history.end() || static_cast<int>(it->second.size()) < 4) return {};
 
     const auto &hist = it->second;
     int dlc = hist.front().dlc;

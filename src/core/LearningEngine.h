@@ -18,8 +18,8 @@ struct LeEventRecord {
 };
 
 struct LeValueObservation {
-    double value;
-    uint64_t timestamp;  // #26: microseconds, for ring buffer age + temporal decay
+    double value{};
+    uint64_t timestamp{};  // #26: microseconds, for ring buffer age + temporal decay
     std::unordered_map<uint32_t, std::vector<uint8_t>> idAverageBytes;
 };
 
@@ -60,10 +60,10 @@ struct LeClusterStats {
 };
 
 struct LePredictionModel {
-    uint32_t id;
-    int byte;
-    double a;
-    double b;
+    uint32_t id{};
+    int byte{};
+    double a{};
+    double b{};
     double lowerBound = 0;   // #32: 95% confidence lower bound
     double upperBound = 0;   // #32: 95% confidence upper bound
 };
@@ -253,8 +253,8 @@ public:
     struct PcaResult {
         std::vector<double> pc1;
         std::vector<double> pc2;
-        double eig1, eig2;
-        double varianceExplained;
+        double eig1{}, eig2{};
+        double varianceExplained{};
         std::vector<std::pair<double,double>> projected;
         std::vector<int> clusterAssignments;
     };
@@ -326,9 +326,9 @@ public:
     struct FftResult {
         std::vector<double> frequencies;
         std::vector<double> magnitudes;
-        double fsHz;
+        double fsHz{};
         std::vector<LeFftPeak> peaks;
-        int sampleCount;
+        int sampleCount{};
     };
     FftResult runFftAnalysis(uint32_t targetId, int byteIdx) const;
 
@@ -358,9 +358,9 @@ public:
     struct NnTrainingResult {
         bool trained = false;
         std::string status;
-        int inputDim;
-        int hidden1, hidden2;
-        int sampleCount;
+        int inputDim{};
+        int hidden1{}, hidden2{};
+        int sampleCount{};
     };
     NnTrainingResult trainNeuralNetwork(
         const std::vector<LeCorrelationEntry> &correlations,

@@ -9,7 +9,9 @@
 #include <QLabel>
 #include <algorithm>
 
-static const char *kSS =
+namespace {
+
+const char *kSS =
     "QTabWidget::pane { border:1px solid #2a2a3c; background:#0a0e17; }"
     "QTabBar::tab { background:#1a1a2e; color:#c0c0c0; padding:5px 12px; "
     "  font-family:Consolas; font-size:11px; border:1px solid #2a2a3c; }"
@@ -29,10 +31,12 @@ static const char *kSS =
     "QGroupBox::title { subcontrol-origin:margin; left:8px; }"
     "QLabel { color:#c0c0c0; font-family:Consolas; }";
 
-static const char *kErrorNames[] = {
+const char *kErrorNames[] = {
     "Tx Timeout", "Lost Arbitration", "Controller", "Protocol",
     "Transceiver", "ACK", "BUS-OFF", "Bus Error", "Restarted", "Unknown"
 };
+
+} // namespace
 
 QString CanBusHealthWidget::errorClassName(CanBusErrorAnalyzer::ErrorClass cls) {
     auto idx = static_cast<int>(cls);

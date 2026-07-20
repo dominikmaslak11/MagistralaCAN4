@@ -313,7 +313,7 @@ void LearningEngine::buildNormalModel() {
     }
 }
 
-double LearningEngine::checkAnomaly(double threshold) const {
+double LearningEngine::checkAnomaly(double  /*threshold*/) const {
     std::shared_lock lock(m_mutex);
     if (m_frameHistory.empty() || m_normalMean.empty()) return 0.0;
     uint64_t now = m_frameHistory.back().timestamp;

@@ -117,11 +117,11 @@ private:
     QLineEdit   *m_valueInput;
     QPushButton *m_addObsBtn;
 
-    QTableWidget *m_correlationTable;
+    QTableWidget *m_correlationTable{};
     QCheckBox    *m_significanceFilter;
     QComboBox    *m_ngramCombo;
-    QTableWidget *m_sequenceTable;
-    QTableWidget *m_crossByteTable;
+    QTableWidget *m_sequenceTable{};
+    QTableWidget *m_crossByteTable{};
     QPushButton  *m_clusterBtn;
     QPushButton  *m_dbscanBtn;
     QLineEdit    *m_dbscanEps;
@@ -131,14 +131,14 @@ private:
     QChartView   *m_pcaChartView;
     QChart       *m_pcaChart;
     QScatterSeries *m_pcaSeries;
-    QTableWidget *m_clusterTable;
+    QTableWidget *m_clusterTable{};
     QPushButton  *m_trainPredictionBtn;
-    QTableWidget *m_predictionTable;
+    QTableWidget *m_predictionTable{};
     QTimer       *m_predictionTimer;
 
     QPushButton  *m_anomalyToggleBtn;
     QLineEdit    *m_anomalyThreshold;
-    QTableWidget *m_anomalyTable;
+    QTableWidget *m_anomalyTable{};
     QTimer       *m_anomalyTimer;
     QTimer       *m_autoEventTimer;
     QCheckBox   *m_autoEventCheck;
@@ -214,7 +214,7 @@ private:
     QLineEdit     *m_tsneIterEdit;
     QChartView    *m_tsneChartView;
     QChart        *m_tsneChart;
-    QScatterSeries *m_tsneSeries[3];   // 3 cluster colors
+    QScatterSeries *m_tsneSeries[3]{};   // 3 cluster colors
 
     // ── Zaawansowana analiza ────────────────────────────
     QPushButton  *m_grangerBtn;
@@ -239,7 +239,7 @@ private:
     QLineEdit    *m_iforestTreesEdit;
     QLineEdit    *m_iforestThreshEdit;
     QLabel       *m_iforestStatusLabel;
-    QTableWidget *m_iforestTable;
+    QTableWidget *m_iforestTable{};
     void runIforestTrain();
     void runIforestScore();
 

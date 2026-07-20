@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QFont>
+#include <format>
 
 CanIdStatsWidget::CanIdStatsWidget(QWidget *parent) : QWidget(parent) {
     buildUi();
@@ -94,9 +95,7 @@ void CanIdStatsWidget::refreshTable() {
     m_table->setRowCount(0);
 
     for (auto &p : profiles) {
-        char idBuf[12];
-        snprintf(idBuf, sizeof(idBuf), "0x%X", p.id);
-        QString idStr = QString(idBuf).toLower();
+        QString idStr = QString::fromStdString(std::format("0x{:x}", p.id));
         if (!filt.isEmpty() && !idStr.contains(filt)) continue;
 
         int row = m_table->rowCount();
@@ -108,7 +107,7 @@ void CanIdStatsWidget::refreshTable() {
             m_table->setItem(row, col, item);
         };
 
-        cell(0, idBuf);
+        cell(0, QString::fromStdString(std::format("0x{:X}", p.id)));
         cell(1, p.extended ? "Y" : "N");
         cell(2, p.fdFrameCount > 0 ? QString::number(p.fdFrameCount) : "-");
         cell(3, p.brsCount     > 0 ? QString::number(p.brsCount)     : "-");

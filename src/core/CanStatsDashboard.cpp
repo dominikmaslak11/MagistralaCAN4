@@ -44,7 +44,7 @@ void CanStatsDashboard::processFrame(const CanFrame &frame) {
     uint8_t dlc = std::min(frame.dlc, (uint8_t)64);
     ++m_dlcHist[dlc];
 
-    m_tsRing.push(frame.timestamp ? frame.timestamp : (uint64_t)QDateTime::currentMSecsSinceEpoch() * 1000);
+    m_tsRing.push(frame.timestamp ? frame.timestamp : static_cast<uint64_t>(QDateTime::currentMSecsSinceEpoch()) * 1000);
 }
 
 void CanStatsDashboard::reset() {
@@ -69,7 +69,7 @@ void CanStatsDashboard::onTick() {
     // Just show fps for now; load % from fps * (avg bits per frame) / baudrate
     // We don't know baudrate here, so show fps as the main metric
     double avgBits = (m_totalFrames > 0)
-        ? (double)m_totalBytes * 8.0 / m_totalFrames + 47.0
+        ? static_cast<double>(m_totalBytes) * 8.0 / m_totalFrames + 47.0
         : 55.0;
     double loadPct = std::min(fps * avgBits / 1250.0, 100.0);  // assumes 125kbps
 
@@ -245,7 +245,7 @@ void CanStatsDashboard::updateCounterLabels() {
     m_lblIds  ->setText(QString("Unikalne ID: %1").arg(m_idMap.size()));
     m_lblBytes->setText(QString("Bajty: %1").arg(m_totalBytes));
     double fps = m_tsRing.countIn(1'000'000);
-    m_lblFps  ->setText(QString("FPS: %1").arg((int)fps));
+    m_lblFps  ->setText(QString("FPS: %1").arg(static_cast<int>(fps)));
 }
 
 void CanStatsDashboard::refreshTopTables() {
@@ -259,11 +259,11 @@ void CanStatsDashboard::refreshTopTables() {
         byBytes .append({it.key(), it.value().bytes});
     }
     auto cmp = [](const Entry &a, const Entry &b){ return a.val > b.val; };
-    std::partial_sort(byFrames.begin(), byFrames.begin() + std::min(10, (int)byFrames.size()), byFrames.end(), cmp);
-    std::partial_sort(byBytes .begin(), byBytes .begin() + std::min(10, (int)byBytes .size()), byBytes .end(), cmp);
+    std::partial_sort(byFrames.begin(), byFrames.begin() + std::min(10, static_cast<int>(byFrames.size())), byFrames.end(), cmp);
+    std::partial_sort(byBytes .begin(), byBytes .begin() + std::min(10, static_cast<int>(byBytes.size())), byBytes .end(), cmp);
 
     auto fillTable = [](QTableWidget *t, const QVector<Entry> &vec) {
-        int n = std::min(10, (int)vec.size());
+        int n = std::min(10, static_cast<int>(vec.size()));
         for (int i = 0; i < 10; ++i) {
             if (i < n) {
                 t->setItem(i, 0, new QTableWidgetItem(
@@ -287,9 +287,9 @@ void CanStatsDashboard::refreshDlcChart() {
 
     m_dlcSet->remove(0, m_dlcSet->count());
     for (int i = 0; i <= 8; ++i)
-        *m_dlcSet << (double)m_dlcHist[i];
+        *m_dlcSet << static_cast<double>(m_dlcHist[i]);
 
-    m_dlcAxisY->setRange(0, (double)maxVal * 1.1 + 1);
+    m_dlcAxisY->setRange(0, static_cast<double>(maxVal) * 1.1 + 1);
 }
 
 void CanStatsDashboard::refreshLoadChart(double /*fps*/, double loadPct) {

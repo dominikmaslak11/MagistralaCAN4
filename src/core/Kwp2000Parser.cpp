@@ -1,5 +1,6 @@
 #include "Kwp2000Parser.h"
 #include <numeric>
+#include <format>
 
 Kwp2000Frame Kwp2000Parser::parse(const std::vector<uint8_t> &bytes) {
     return parse(bytes.data(), static_cast<int>(bytes.size()));
@@ -59,9 +60,7 @@ std::string Kwp2000Parser::serviceName(uint8_t sid) {
         case Kwp2000Sid::SecurityAccess:        return "SecurityAccess";
         case Kwp2000Sid::NegativeResponse:      return "NegativeResponse";
         default: {
-            char buf[16];
-            snprintf(buf, sizeof(buf), "Unknown(0x%02X)", sid);
-            return buf;
+            return std::format("Unknown(0x{:02X})", sid);
         }
     }
 }
@@ -83,9 +82,7 @@ std::string Kwp2000Parser::nrcDescription(uint8_t nrc) {
         case Kwp2000Nrc::ResponsePending:              return "Response pending";
         case Kwp2000Nrc::ServiceNotSupportedInSession: return "Service not supported in active session";
         default: {
-            char buf[32];
-            snprintf(buf, sizeof(buf), "Unknown NRC (0x%02X)", nrc);
-            return buf;
+            return std::format("Unknown NRC (0x{:02X})", nrc);
         }
     }
 }

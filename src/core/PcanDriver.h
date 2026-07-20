@@ -22,7 +22,7 @@ public:
 
     /// Ustawia prędkość CAN (domyślnie 500K).
     /// Akceptuje etykiety: "1M", "800K", "500K", "250K", "125K", "100K", "50K", "20K", "10K".
-    void setBaudRate(const QString &baudStr);
+    void setBaudRate(const QString &baudStr) override;
 
 private:
     struct Impl;

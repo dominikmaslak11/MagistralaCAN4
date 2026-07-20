@@ -22,5 +22,5 @@ private:
     void setupUi();
 
     CanSignalMapperModel *m_model;
-    QTableView           *m_table;
+    QTableView           *m_table{};
 };

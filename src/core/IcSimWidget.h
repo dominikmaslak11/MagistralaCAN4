@@ -62,7 +62,7 @@ private:
 
     CanSniffer    *m_sniffer;
     IcSimState     m_state;
-    IcSimDashPanel *m_dash;
+    IcSimDashPanel *m_dash{};
 
     // Speed controls
     QSlider     *m_speedSlider   = nullptr;
