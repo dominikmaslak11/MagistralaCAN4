@@ -28,9 +28,9 @@ bool SlCanDriver::open(const QString &device) {
 
     // Backward-compat: wyciągnij UART baud z etykiety (np. "COM3 [v1.0 @ 500000bps]")
     qint32 uartBaud = m_uartBaudRate;
-    int atPos = device.indexOf('@');
+    int atPos = static_cast<int>(device.indexOf('@'));
     if (atPos >= 0) {
-        int bpsPos = device.indexOf("bps", atPos);
+        int bpsPos = static_cast<int>(device.indexOf("bps", atPos));
         if (bpsPos > atPos) {
             QString baudStr = device.mid(atPos + 1, bpsPos - atPos - 1).trimmed();
             qint32 parsed = baudStr.toInt();
@@ -104,8 +104,8 @@ CanFrame SlCanDriver::readFrame() {
         m_rxBuffer.append(m_port->readAll());
 
     // Szukaj kompletnej linii (zakończonej \r lub \n)
-    int cr = m_rxBuffer.indexOf('\r');
-    int lf = m_rxBuffer.indexOf('\n');
+    int cr = static_cast<int>(m_rxBuffer.indexOf('\r'));
+    int lf = static_cast<int>(m_rxBuffer.indexOf('\n'));
     int end = -1;
     if (cr >= 0 && lf >= 0) end = std::min(cr, lf);
     else if (cr >= 0) end = cr;
@@ -222,7 +222,7 @@ QStringList SlCanDriver::detectDevices(int timeoutMs) {
             QElapsedTimer timer;
             timer.start();
             while (timer.elapsed() < timeoutMs) {
-                if (probe.waitForReadyRead(timeoutMs - timer.elapsed())) {
+                if (probe.waitForReadyRead(static_cast<int>(timeoutMs - timer.elapsed()))) {
                     response.append(probe.readAll());
                     if (response.contains('\r') || response.contains('\n')) break;
                 } else break;
@@ -338,7 +338,7 @@ QString SlCanDriver::sendCommand(const QString &cmd, int waitMs) {
     QElapsedTimer timer;
     timer.start();
     while (timer.elapsed() < waitMs) {
-        int remaining = waitMs - timer.elapsed();
+        int remaining = static_cast<int>(waitMs - timer.elapsed());
         if (remaining <= 0) break;
         if (m_port->waitForReadyRead(remaining)) {
             resp.append(m_port->readAll());

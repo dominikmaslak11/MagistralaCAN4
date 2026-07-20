@@ -70,7 +70,7 @@ void CanStatsPanel::onNewFrame(uint32_t canId, uint64_t timestamp) {
     auto &st = m_idStats[canId];
     if (st.lastTs > 0 && timestamp > st.lastTs) {
         double dt = double(timestamp - st.lastTs) / 1'000'000.0;
-        st.avgInterval = st.count > 1 ? (st.avgInterval * (st.count - 1) + dt) / st.count : dt;
+        st.avgInterval = st.count > 1 ? (st.avgInterval * static_cast<double>(st.count - 1) + dt) / static_cast<double>(st.count) : dt;
     }
     st.count++;
     st.lastTs = timestamp;
@@ -105,9 +105,9 @@ void CanStatsPanel::togglePause() {
 
 void CanStatsPanel::updateStats() {
     uint64_t delta = m_totalFrameCount - m_lastStatsFrameCount;
-    double fps = delta / 0.5;
-    int uniqueIds = m_uniqueIds.size();
-    double busLoad = (delta * 8 * 8.0) / (500'000 * 0.5) * 100.0;
+    double fps = static_cast<double>(delta) / 0.5;
+    int uniqueIds = static_cast<int>(m_uniqueIds.size());
+    double busLoad = (static_cast<double>(delta) * 8 * 8.0) / (500'000 * 0.5) * 100.0;
     if (busLoad > 100) busLoad = 100;
 
     // Per-ID top 3
@@ -134,8 +134,8 @@ void CanStatsPanel::updateStats() {
     if (m_fpsWindow.size() >= BURST_WINDOW) {
         double sum = 0, sq = 0;
         for (double f : m_fpsWindow) { sum += f; sq += f * f; }
-        m_fpsMean = sum / m_fpsWindow.size();
-        m_fpsStd = std::sqrt(sq / m_fpsWindow.size() - m_fpsMean * m_fpsMean);
+        m_fpsMean = sum / static_cast<double>(m_fpsWindow.size());
+        m_fpsStd = std::sqrt(sq / static_cast<double>(m_fpsWindow.size()) - m_fpsMean * m_fpsMean);
         if (m_fpsStd < 0.1) m_fpsStd = 0.1;
         burst = (fps > m_fpsMean + BURST_SIGMA * m_fpsStd);
     }

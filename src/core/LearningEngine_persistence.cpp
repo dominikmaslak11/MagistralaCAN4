@@ -196,9 +196,9 @@ void LearningEngine::updateWelford(const std::string &variableKey,
     auto &a = m_welford[key];
     a.n++;
     double dx = valX - a.meanX;
-    a.meanX += dx / a.n;
+    a.meanX += dx / static_cast<double>(a.n);
     double dy = valY - a.meanY;
-    a.meanY += dy / a.n;
+    a.meanY += dy / static_cast<double>(a.n);
     a.M2x += dx * (valX - a.meanX);
     a.M2y += dy * (valY - a.meanY);
     a.Cxy += dx * (valY - a.meanY);
@@ -227,9 +227,9 @@ LearningEngine::computeCorrelationsOnline(const std::string &variableKey) const 
         if (aiBytes.count(fkey))    continue;
         if (noiseBytes.count(fkey)) continue;
 
-        double varX = a.M2x / (a.n - 1);
-        double varY = a.M2y / (a.n - 1);
-        double cov  = a.Cxy / (a.n - 1);
+        double varX = a.M2x / static_cast<double>(a.n - 1);
+        double varY = a.M2y / static_cast<double>(a.n - 1);
+        double cov  = a.Cxy / static_cast<double>(a.n - 1);
         double denom = std::sqrt(varX * varY);
         double corr = denom > 0 ? cov / denom : 0.0;
         double pv = pearsonPValue(corr, static_cast<int>(a.n));

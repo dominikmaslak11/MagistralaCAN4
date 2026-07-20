@@ -117,7 +117,7 @@ void LuaScriptEngine::onNewFrame(const CanFrame &frame) {
         lua_pushinteger(m_lua, frame.data[i]);
         lua_rawseti(m_lua, -2, i + 1);
     }
-    lua_pushinteger(m_lua, frame.timestamp);
+    lua_pushinteger(m_lua, static_cast<lua_Integer>(frame.timestamp));
 
     if (lua_pcall(m_lua, 3, 0, 0) != LUA_OK) {
         const char *err = lua_tostring(m_lua, -1);
@@ -190,7 +190,7 @@ int LuaScriptEngine::api_sendFrame(lua_State *L) {
     frame.id = id;
     frame.dlc = static_cast<uint8_t>(len);
     for (size_t i = 0; i < len; ++i) {
-        lua_rawgeti(L, 2, i + 1);
+        lua_rawgeti(L, 2, static_cast<lua_Integer>(i + 1));
         frame.data[i] = static_cast<uint8_t>(lua_tointeger(L, -1));
         lua_pop(L, 1);
     }
@@ -215,7 +215,7 @@ int LuaScriptEngine::api_getTick(lua_State *L) {
         return 1;
     }
     uint64_t now = QDateTime::currentMSecsSinceEpoch();
-    lua_pushinteger(L, now - engine->m_startTick);
+    lua_pushinteger(L, static_cast<lua_Integer>(now - engine->m_startTick));
     return 1;
 }
 #endif

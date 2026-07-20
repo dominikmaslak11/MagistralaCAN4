@@ -225,7 +225,7 @@ QByteArray MqttBridge::buildConnect() const {
 
     QByteArray packet;
     packet.append(static_cast<char>(0x10)); // CONNECT
-    packet.append(remainingLength(varHdr.size() + payload.size()));
+    packet.append(remainingLength(static_cast<int>(varHdr.size() + payload.size())));
     packet.append(varHdr);
     packet.append(payload);
     return packet;
@@ -238,7 +238,7 @@ QByteArray MqttBridge::buildPublish(const QString &topic,
 
     QByteArray packet;
     packet.append(static_cast<char>(0x30)); // PUBLISH, QoS 0, no retain
-    packet.append(remainingLength(topicBytes.size() + payload.size()));
+    packet.append(remainingLength(static_cast<int>(topicBytes.size() + payload.size())));
     packet.append(topicBytes);
     packet.append(payload);
     return packet;

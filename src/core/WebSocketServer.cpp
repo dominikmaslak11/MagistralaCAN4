@@ -232,7 +232,7 @@ void WebSocketServer::onNewConnection() {
             // W trybie plaintext – akceptuj od razu
             m_authenticatedClients.append(client);
             qDebug() << "WS: klient podłączony – razem:" << m_authenticatedClients.size();
-            emit clientCountChanged(m_authenticatedClients.size());
+            emit clientCountChanged(static_cast<int>(m_authenticatedClients.size()));
         }
     }
 }
@@ -247,7 +247,7 @@ void WebSocketServer::onClientDisconnected() {
     }
     client->deleteLater();
     qDebug() << "WS: klient rozłączony – razem:" << m_authenticatedClients.size();
-    emit clientCountChanged(m_authenticatedClients.size());
+    emit clientCountChanged(static_cast<int>(m_authenticatedClients.size()));
 }
 
 void WebSocketServer::onTextMessageReceived(const QString &message) {
@@ -264,7 +264,7 @@ void WebSocketServer::onTextMessageReceived(const QString &message) {
                 delete m_pendingAuthClients.take(client);
                 m_authenticatedClients.append(client);
                 qDebug() << "WSS: klient autoryzowany – razem:" << m_authenticatedClients.size();
-                emit clientCountChanged(m_authenticatedClients.size());
+                emit clientCountChanged(static_cast<int>(m_authenticatedClients.size()));
                 // Wyślij potwierdzenie
                 client->sendTextMessage("{\"type\":\"auth_ok\"}");
                 return;

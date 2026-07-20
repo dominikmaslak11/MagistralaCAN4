@@ -328,7 +328,7 @@ std::vector<CanObservationDb::IdFrequency> CanObservationDb::computeIdFrequencie
         uint64_t minTs = static_cast<uint64_t>(q.value(2).toLongLong());
         uint64_t maxTs = static_cast<uint64_t>(q.value(3).toLongLong());
         f.avgIntervalUs = (f.frameCount > 1 && maxTs > minTs)
-                          ? static_cast<double>(maxTs - minTs) / (f.frameCount - 1)
+                          ? static_cast<double>(maxTs - minTs) / static_cast<double>(f.frameCount - 1)
                           : 0.0;
         result.push_back(f);
     }

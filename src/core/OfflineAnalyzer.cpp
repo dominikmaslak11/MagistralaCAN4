@@ -141,7 +141,7 @@ void OfflineAnalyzer::loadFile() {
     }
     file.close();
 
-    m_progressBar->setMaximum(m_frames.size());
+    m_progressBar->setMaximum(static_cast<int>(m_frames.size()));
     m_statusLabel->setText(QString("Wczytano %1 ramek.").arg(m_frames.size()));
     m_playPauseBtn->setEnabled(true);
     m_stopBtn->setEnabled(true);
@@ -151,7 +151,7 @@ void OfflineAnalyzer::loadFile() {
     m_bsState = BsState::Idle;
 
     if (m_frames.size() > 1) {
-        int64_t diff = m_frames[1].timestamp - m_frames[0].timestamp;
+        int64_t diff = static_cast<int64_t>(m_frames[1].timestamp - m_frames[0].timestamp);
         m_statusLabel->setText(QString("Wczytano %1 ramek. Następny odstęp: %2 µs")
                                .arg(m_frames.size())
                                .arg(diff));
@@ -277,14 +277,14 @@ void OfflineAnalyzer::nextFrame() {
     }
     m_currentIndex++;
 
-    m_progressBar->setValue(m_currentIndex >= m_frames.size() ? m_frames.size() : m_currentIndex);
+    m_progressBar->setValue(m_currentIndex >= m_frames.size() ? static_cast<int>(m_frames.size()) : m_currentIndex);
 
     QString status = QString("Ramka %1 / %2").arg(m_currentIndex).arg(m_frames.size());
     if (m_bsState == BsState::PlayingHalf) {
         status += QString(" | BS: [%1–%2]").arg(m_bsLeft).arg(m_bsRight);
     }
     if (m_currentIndex < m_frames.size()) {
-        int64_t diff = m_frames[m_currentIndex].timestamp - m_frames[m_currentIndex-1].timestamp;
+        int64_t diff = static_cast<int64_t>(m_frames[m_currentIndex].timestamp - m_frames[m_currentIndex-1].timestamp);
         status += QString(" | Odstęp: %1 µs").arg(diff);
     } else {
         status += " | Koniec";
@@ -298,7 +298,7 @@ void OfflineAnalyzer::nextFrame() {
             int64_t diff = static_cast<int64_t>(nextTs - currentTs);
             if (diff < 0) diff = 0;
             double speedFactor = m_speedSlider->value() / 100.0;
-            int intervalMs = static_cast<int>(diff / 1000.0 / speedFactor);
+            int intervalMs = static_cast<int>(static_cast<double>(diff) / 1000.0 / speedFactor);
             if (intervalMs < 1) intervalMs = 1;
             m_timer.start(intervalMs);
         } else {

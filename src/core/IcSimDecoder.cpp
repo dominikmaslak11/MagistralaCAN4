@@ -6,7 +6,7 @@ bool IcSimDecoder::decode(const CanFrame &frame, IcSimState &state,
 {
     if (frame.id == speedId && frame.dlc >= 5) {
         int raw = (static_cast<int>(frame.data[3]) << 8) | frame.data[4];
-        state.speedKph = raw / 100.0f;
+        state.speedKph = static_cast<float>(raw) / 100.0f;
         state.speedMph = state.speedKph * 0.6213751f;
         return true;
     }

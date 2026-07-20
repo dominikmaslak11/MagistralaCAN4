@@ -171,7 +171,7 @@ void CanExporter::onBrowse() {
 void CanExporter::onFilterChanged() {
     QVector<CanFrame> frames = filteredFrames();
     int total    = m_model ? m_model->rowCount() : 0;
-    int filtered = frames.size();
+    int filtered = static_cast<int>(frames.size());
     m_statsLabel->setText(
         QString("Ramki do eksportu: %1 / %2 wszystkich").arg(filtered).arg(total));
 }
@@ -311,7 +311,7 @@ bool CanExporter::exportCandump(const QString &path, const QVector<CanFrame> &fr
     QTextStream out(&file);
     for (const auto &f : frames) {
         bool isFd = f.fd || f.xl;
-        double tsSec = f.timestamp / 1'000'000.0;
+        double tsSec = static_cast<double>(f.timestamp) / 1'000'000.0;
         QString idStr = QString("%1").arg(f.id, f.extended ? 8 : 3, 16, QChar('0')).toUpper();
         QString line = QString("(%1) %2 %3")
             .arg(tsSec, 0, 'f', 6)

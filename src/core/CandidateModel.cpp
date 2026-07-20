@@ -5,7 +5,7 @@ CandidateModel::CandidateModel(QObject *parent) : QAbstractTableModel(parent) {}
 
 int CandidateModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) return 0;
-    return m_candidates.size();
+    return static_cast<int>(m_candidates.size());
 }
 
 int CandidateModel::columnCount(const QModelIndex &parent) const {

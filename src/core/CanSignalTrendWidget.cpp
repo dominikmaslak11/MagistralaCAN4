@@ -140,7 +140,7 @@ void CanSignalTrendWidget::rebuildSignalList() {
         for (const auto &name : m_signalNames)
             m_sigCombo[i]->addItem(name);
         // Restore previous selection if still valid
-        int idx = m_signalNames.indexOf(cur);
+        int idx = static_cast<int>(m_signalNames.indexOf(cur));
         m_sigCombo[i]->setCurrentIndex(idx >= 0 ? idx + 1 : 0);
         m_sigCombo[i]->blockSignals(false);
     }
@@ -181,7 +181,7 @@ void CanSignalTrendWidget::onSignalComboChanged(int comboIdx, int sigIdx) {
 void CanSignalTrendWidget::processFrame(const CanFrame &frame) {
     if (m_paused || !m_dbc) return;
 
-    double nowS = frame.timestamp / 1'000'000.0;
+    double nowS = static_cast<double>(frame.timestamp) / 1'000'000.0;
     if (m_startTimeS < 0) m_startTimeS = nowS;
     double relS = nowS - m_startTimeS;
 

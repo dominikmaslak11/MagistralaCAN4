@@ -307,7 +307,7 @@ void CanTriggerWidget::populateCaptureTable() {
         };
 
         m_captureTable->setItem(i, 0, mkItem(QString::number(i)));
-        m_captureTable->setItem(i, 1, mkItem(QString::number(f.timestamp / 1'000'000.0, 'f', 6)));
+        m_captureTable->setItem(i, 1, mkItem(QString::number(static_cast<double>(f.timestamp) / 1'000'000.0, 'f', 6)));
         m_captureTable->setItem(i, 2, mkItem(typeText));
         m_captureTable->setItem(i, 3, mkItem(QString("0x%1").arg(f.id, 3, 16, QChar('0')).toUpper()));
         m_captureTable->setItem(i, 4, mkItem(QString::number(f.dlc)));
@@ -343,7 +343,7 @@ void CanTriggerWidget::exportCapture() {
             data += QString("%1").arg(fr.data[b], 2, 16, QChar('0')).toUpper();
 
         out << QString("(%1) vcan0 %2#%3  ; %4\n")
-               .arg(fr.timestamp / 1'000'000.0, 0, 'f', 6)
+               .arg(static_cast<double>(fr.timestamp) / 1'000'000.0, 0, 'f', 6)
                .arg(fr.id, 3, 16, QChar('0')).toUpper()
                .arg(data)
                .arg(type);

@@ -388,9 +388,9 @@ void CanCustomDashboard::rebuildGrid() {
     }
 
     // Fill empty columns in last row so gauges don't stretch
-    const int lastRowCount = m_layout.gauges.size() % cols;
+    const int lastRowCount = static_cast<int>(m_layout.gauges.size()) % cols;
     if (lastRowCount != 0) {
-        const int lastRow = (m_layout.gauges.size() - 1) / cols;
+        const int lastRow = (static_cast<int>(m_layout.gauges.size()) - 1) / cols;
         for (int c = lastRowCount; c < cols; ++c) {
             auto *spacer = new QWidget(m_gridWidget);
             spacer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);

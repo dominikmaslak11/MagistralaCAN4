@@ -11,7 +11,7 @@
 
 J1939TableModel::J1939TableModel(QObject *parent) : QAbstractTableModel(parent) {}
 
-int J1939TableModel::rowCount(const QModelIndex &) const { return m_frames.size(); }
+int J1939TableModel::rowCount(const QModelIndex &) const { return static_cast<int>(m_frames.size()); }
 int J1939TableModel::columnCount(const QModelIndex &) const { return Count; }
 
 QVariant J1939TableModel::data(const QModelIndex &index, int role) const {
@@ -20,7 +20,7 @@ QVariant J1939TableModel::data(const QModelIndex &index, int role) const {
 
     if (role == Qt::DisplayRole) {
         switch (index.column()) {
-        case TIMESTAMP: return QString::number(f.timestamp / 1000.0, 'f', 3);
+        case TIMESTAMP: return QString::number(static_cast<double>(f.timestamp) / 1000.0, 'f', 3);
         case PRIO:      return f.priority;
         case PGN:       return f.pgnHex();
         case PGN_NAME:  return m_parser ? m_parser->pgnName(f.pgn) : QString();
@@ -70,7 +70,7 @@ QVariant J1939TableModel::headerData(int section, Qt::Orientation o, int role) c
 }
 
 void J1939TableModel::addFrame(const J1939Frame &frame) {
-    beginInsertRows(QModelIndex(), m_frames.size(), m_frames.size());
+    beginInsertRows(QModelIndex(), static_cast<int>(m_frames.size()), static_cast<int>(m_frames.size()));
     m_frames.append(frame);
     if (m_frames.size() > MAX_ROWS) { m_frames.pop_front(); }
     endInsertRows();

@@ -69,7 +69,7 @@ void CanStatsDashboard::onTick() {
     // Just show fps for now; load % from fps * (avg bits per frame) / baudrate
     // We don't know baudrate here, so show fps as the main metric
     double avgBits = (m_totalFrames > 0)
-        ? static_cast<double>(m_totalBytes) * 8.0 / m_totalFrames + 47.0
+        ? static_cast<double>(m_totalBytes) * 8.0 / static_cast<double>(m_totalFrames) + 47.0
         : 55.0;
     double loadPct = std::min(fps * avgBits / 1250.0, 100.0);  // assumes 125kbps
 

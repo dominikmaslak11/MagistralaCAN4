@@ -15,7 +15,7 @@ ObdFrame ObdFrame::fromPayload(uint32_t canId, uint64_t ts, const QByteArray &pa
     //   data[1] = mode byte (or mode+0x40 for responses)
     //   data[2..] = remaining payload
     // This keeps all downstream parsers compatible without modification.
-    int payLen = qMin(payload.size(), 63); // 63 so total <= 64 with header byte
+    int payLen = qMin(static_cast<int>(payload.size()), 63); // 63 so total <= 64 with header byte
     o.len = static_cast<uint8_t>(payLen);
     o.dlc = static_cast<uint8_t>(payLen + 1);
     o.data[0] = o.len;

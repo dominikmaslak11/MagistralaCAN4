@@ -31,7 +31,7 @@ public:
 
     /// Czy serwer nasłuchuje?
     [[nodiscard]] bool isRunning() const { return m_running; }
-    [[nodiscard]] int  clientCount() const { return m_authenticatedClients.size(); }
+    [[nodiscard]] int  clientCount() const { return static_cast<int>(m_authenticatedClients.size()); }
     [[nodiscard]] bool isSecure() const   { return m_secureMode; }
 
     /// Token serwera (generowany automatycznie).

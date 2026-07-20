@@ -269,7 +269,7 @@ void RemoteCanWidget::onSendFrame() {
 
     QString dataStr = m_sendDataEdit->text().simplified().remove(' ');
     if (dataStr.length() % 2 != 0 && !dataStr.isEmpty()) dataStr.prepend('0');
-    int byteCount = qMin(dataStr.length() / 2, m_sendFd->isChecked() ? 64 : 8);
+    int byteCount = qMin(static_cast<int>(dataStr.length() / 2), m_sendFd->isChecked() ? 64 : 8);
     for (int i = 0; i < byteCount; ++i)
         frame.data[i] = static_cast<uint8_t>(dataStr.mid(i * 2, 2).toUInt(nullptr, 16));
     frame.dlc = static_cast<uint8_t>(byteCount);

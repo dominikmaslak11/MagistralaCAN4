@@ -78,7 +78,7 @@ bool CanNodeSimulator::matchTrigger(const CanNodeDefinition &node, const CanFram
 
     // Dopasowanie danych (jeśli zdefiniowane)
     if (!node.triggerData.isEmpty()) {
-        int len = node.triggerData.size();
+        int len = static_cast<int>(node.triggerData.size());
         if (frame.dlc < len) return false;
 
         for (int i = 0; i < len; ++i) {

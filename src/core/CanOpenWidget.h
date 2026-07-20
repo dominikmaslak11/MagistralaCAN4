@@ -18,7 +18,7 @@ class CanOpenTableModel : public QAbstractTableModel {
 public:
     enum Col { TIME, CAN_ID, NODE, TYPE, TYPE_NAME, DETAIL, DATA, Count };
     explicit CanOpenTableModel(QObject *p = nullptr);
-    int rowCount(const QModelIndex & = QModelIndex()) const override { return m_frames.size(); }
+    int rowCount(const QModelIndex & = QModelIndex()) const override { return static_cast<int>(m_frames.size()); }
     int columnCount(const QModelIndex & = QModelIndex()) const override { return Count; }
     QVariant data(const QModelIndex &idx, int role) const override;
     QVariant headerData(int s, Qt::Orientation o, int role) const override;

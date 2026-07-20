@@ -68,7 +68,7 @@ double extractSignal(const uint8_t *data, int dlc,
 CanSignalMapperModel::CanSignalMapperModel(QObject *parent)
     : QAbstractTableModel(parent) {}
 
-int CanSignalMapperModel::rowCount   (const QModelIndex &) const { return m_signals.size(); }
+int CanSignalMapperModel::rowCount   (const QModelIndex &) const { return static_cast<int>(m_signals.size()); }
 int CanSignalMapperModel::columnCount(const QModelIndex &) const { return ColCount; }
 
 QVariant CanSignalMapperModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -144,7 +144,7 @@ bool CanSignalMapperModel::setData(const QModelIndex &index, const QVariant &val
 }
 
 void CanSignalMapperModel::addSignal(const MapperSignal &sig) {
-    beginInsertRows({}, m_signals.size(), m_signals.size());
+    beginInsertRows({}, static_cast<int>(m_signals.size()), static_cast<int>(m_signals.size()));
     m_signals.append(sig);
     endInsertRows();
 }

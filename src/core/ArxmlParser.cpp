@@ -10,7 +10,7 @@
 namespace {
 
 QString shortRef(const QString &ref) {
-    int idx = ref.lastIndexOf('/');
+    int idx = static_cast<int>(ref.lastIndexOf('/'));
     return (idx >= 0) ? ref.mid(idx + 1) : ref;
 }
 

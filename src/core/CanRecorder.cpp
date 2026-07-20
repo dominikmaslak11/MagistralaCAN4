@@ -127,7 +127,7 @@ void CanRecorder::compressAndReplace(const QString &path) {
     if (raw.size() < 512) return; // za małe na sensowną kompresję
 
     size_t bound = ZSTD_compressBound(raw.size());
-    QByteArray compressed(bound, '\0');
+    QByteArray compressed(static_cast<qsizetype>(bound), '\0');
     size_t cSize = ZSTD_compress(compressed.data(), bound, raw.constData(), raw.size(), 1);
 
     if (ZSTD_isError(cSize)) {
@@ -135,8 +135,8 @@ void CanRecorder::compressAndReplace(const QString &path) {
         return;
     }
 
-    compressed.resize(cSize);
-    float ratio = raw.size() > 0 ? static_cast<float>(cSize) / raw.size() * 100.0f : 100.0f;
+    compressed.resize(static_cast<qsizetype>(cSize));
+    float ratio = raw.size() > 0 ? static_cast<float>(cSize) / static_cast<float>(raw.size()) * 100.0f : 100.0f;
 
     QString zstPath = path + ".zst";
     QFile outFile(zstPath);

@@ -156,13 +156,13 @@ QVector<CanFrame> LogComparatorWidget::parseCandumpContent(const QString &conten
         QString line = rawLine.trimmed();
         if (line.isEmpty() || line.startsWith('#') || line.startsWith("//")) continue;
 
-        int p1 = line.indexOf('(');
-        int p2 = line.indexOf(')');
+        int p1 = static_cast<int>(line.indexOf('('));
+        int p2 = static_cast<int>(line.indexOf(')'));
         if (p1 < 0 || p2 < 0) continue;
 
         double tsSec = line.mid(p1 + 1, p2 - p1 - 1).toDouble();
 
-        int hashPos = line.indexOf('#', p2);
+        int hashPos = static_cast<int>(line.indexOf('#', p2));
         if (hashPos < 0) continue;
 
         // Format: (ts) INTERFACE ID#data — ID is the token immediately before '#'
@@ -227,8 +227,8 @@ void LogComparatorWidget::runCompare() {
 }
 
 void LogComparatorWidget::runPositional() {
-    int lSize = m_leftFrames.size();
-    int rSize = m_rightFrames.size();
+    int lSize = static_cast<int>(m_leftFrames.size());
+    int rSize = static_cast<int>(m_rightFrames.size());
 
     m_leftStatus.resize(lSize,  Skipped);
     m_rightStatus.resize(rSize, Skipped);
@@ -327,8 +327,8 @@ void LogComparatorWidget::runById() {
 
         IdSummary sum;
         sum.id         = id;
-        sum.leftCount  = lIdxs.size();
-        sum.rightCount = rIdxs.size();
+        sum.leftCount  = static_cast<int>(lIdxs.size());
+        sum.rightCount = static_cast<int>(rIdxs.size());
 
         if (lIdxs.isEmpty()) {
             for (int ri : rIdxs) { m_rightStatus[ri] = RightOnly; m_rightOnly++; }
@@ -336,7 +336,7 @@ void LogComparatorWidget::runById() {
             for (int li : lIdxs) { m_leftStatus[li] = LeftOnly; m_leftOnly++; }
         } else {
             // Paruj ramki tego samego ID pozycyjnie
-            int pairs = std::min(lIdxs.size(), rIdxs.size());
+            int pairs = std::min(static_cast<int>(lIdxs.size()), static_cast<int>(rIdxs.size()));
             for (int p = 0; p < pairs; ++p) {
                 int li = lIdxs[p], ri = rIdxs[p];
                 const auto &lf = m_leftFrames[li];
@@ -397,7 +397,7 @@ void LogComparatorWidget::fillTable(QTableWidget *tbl,
 
         tbl->setItem(row, 0, new QTableWidgetItem(QString::number(i + 1)));
         tbl->setItem(row, 1, new QTableWidgetItem(
-            QString::number(f.timestamp / 1'000'000.0, 'f', 6)));
+            QString::number(static_cast<double>(f.timestamp) / 1'000'000.0, 'f', 6)));
         tbl->setItem(row, 2, new QTableWidgetItem(
             QString("0x%1").arg(f.id, 3, 16, QChar('0')).toUpper()));
         tbl->setItem(row, 3, new QTableWidgetItem(QString::number(f.dlc)));
@@ -583,7 +583,7 @@ void LogComparatorWidget::exportReport() {
     out << "<h2>Różnice ramkowe</h2><table>"
         << "<tr><th>#L</th><th>#R</th><th>Status</th><th>ID</th><th>Dane (lewy)</th><th>Dane (prawy)</th></tr>\n";
 
-    int maxRows = std::max(m_leftFrames.size(), m_rightFrames.size());
+    int maxRows = std::max(static_cast<int>(m_leftFrames.size()), static_cast<int>(m_rightFrames.size()));
     int li = 0, ri = 0;
 
     for (int i = 0; i < maxRows; ++i) {

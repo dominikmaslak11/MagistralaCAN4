@@ -118,7 +118,7 @@ void LearningEngine::addObservation(const std::string &variableKey, double value
         for (int i = 0; i < 64; ++i) {
             float sum = 0;
             for (const auto &f : frames)
-                if (i < f.dlc) sum += f.data[i];
+                if (i < f.dlc) sum += static_cast<float>(f.data[i]);
             avg[i] = static_cast<uint8_t>(sum / n);
         }
         obs.idAverageBytes[kv.first] = std::move(avg);
@@ -171,21 +171,21 @@ LearningEngine::buildFeatureVectors(const std::vector<CanFrame> &window) const {
 
         std::vector<int64_t> deltas;
         for (size_t i = 1; i < frames.size(); ++i)
-            deltas.push_back(frames[i].timestamp - frames[i - 1].timestamp);
+            deltas.push_back(static_cast<int64_t>(frames[i].timestamp - frames[i - 1].timestamp));
         if (deltas.empty()) {
             feats[1] = 0; feats[2] = 0;
         } else {
             double sum = std::accumulate(deltas.begin(), deltas.end(), 0.0);
-            feats[1] = static_cast<float>(sum / deltas.size()) / 1000.0f;
+            feats[1] = static_cast<float>(sum / static_cast<double>(deltas.size())) / 1000.0f;
             double sq = 0;
             for (int64_t d : deltas)
-                sq += (d - feats[1]) * (d - feats[1]);
-            feats[2] = static_cast<float>(std::sqrt(sq / deltas.size())) / 1000.0f;
+                sq += (static_cast<float>(d) - feats[1]) * (static_cast<float>(d) - feats[1]);
+            feats[2] = static_cast<float>(std::sqrt(sq / static_cast<double>(deltas.size()))) / 1000.0f;
         }
         for (int b = 0; b < 64; ++b) {
             float avg = 0;
             for (const auto &f : frames)
-                if (b < f.dlc) avg += f.data[b];
+                if (b < f.dlc) avg += static_cast<float>(f.data[b]);
             avg /= static_cast<float>(frames.size());
             feats[3 + b] = avg / 255.0f;
         }
@@ -207,11 +207,11 @@ LearningEngine::buildWindowFeatures(const std::vector<CanFrame> &window) const {
     for (const auto &f : window) freq[f.id]++;
     double entropy = 0.0;
     for (auto &kv : freq) {
-        double p = static_cast<double>(kv.second) / window.size();
+        double p = static_cast<double>(kv.second) / static_cast<double>(window.size());
         entropy -= p * std::log2(p + 1e-9);
     }
     feat[2] = static_cast<float>(entropy);
-    int64_t dur = window.back().timestamp - window.front().timestamp;
+    int64_t dur = static_cast<int64_t>(window.back().timestamp - window.front().timestamp);
     feat[3] = static_cast<float>(dur) / 1000.0f;
     return feat;
 }
@@ -270,7 +270,7 @@ LearningEngine::computeCandidates(const std::string * /*dbcDescription*/,
         desc << "ID 0x" << std::hex << std::uppercase << id;
         // DBC/J1939 enrichment would be done by the caller (AssociativeLearner)
         cands.push_back({id, desc.str(),
-                         pairs > 0 ? sim / pairs : 0.0f,
+                         pairs > 0 ? sim / static_cast<float>(pairs) : 0.0f,
                          static_cast<int>(vecs.size())});
     }
 
@@ -299,7 +299,7 @@ LearningEngine::computeCandidates(const std::string * /*dbcDescription*/,
             }
             if (bgPairs > 0) {
                 double bgAvg = bgSim / bgPairs;
-                cand.score = cand.score * (1.0 - bgAvg * 0.5);
+                cand.score = static_cast<float>(cand.score * (1.0 - bgAvg * 0.5));
             }
         }
     }

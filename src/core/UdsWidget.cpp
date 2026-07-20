@@ -16,7 +16,7 @@ QVariant UdsTableModel::data(const QModelIndex &idx, int role) const {
 
     if (role == Qt::DisplayRole) {
         switch (idx.column()) {
-        case TIME:    return QString::number(f.timestamp / 1'000'000.0, 'f', 3);
+        case TIME:    return QString::number(static_cast<double>(f.timestamp) / 1'000'000.0, 'f', 3);
         case CAN_ID:  return QString("0x%1").arg(f.canId, 3, 16, QChar('0')).toUpper();
         case DIR:
             switch (f.type) {
@@ -82,7 +82,7 @@ QVariant UdsTableModel::headerData(int s, Qt::Orientation o, int role) const {
 }
 
 void UdsTableModel::addFrame(const UdsFrame &f) {
-    beginInsertRows(QModelIndex(), m_frames.size(), m_frames.size());
+    beginInsertRows(QModelIndex(), static_cast<int>(m_frames.size()), static_cast<int>(m_frames.size()));
     m_frames.append(f);
     if (m_frames.size() > MAX) m_frames.pop_front();
     endInsertRows();

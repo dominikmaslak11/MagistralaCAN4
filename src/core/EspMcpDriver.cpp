@@ -61,8 +61,8 @@ CanFrame EspMcpDriver::readFrame() {
     if (m_port->waitForReadyRead(1))
         m_rxBuffer.append(m_port->readAll());
 
-    int cr = m_rxBuffer.indexOf('\r');
-    int lf = m_rxBuffer.indexOf('\n');
+    int cr = static_cast<int>(m_rxBuffer.indexOf('\r'));
+    int lf = static_cast<int>(m_rxBuffer.indexOf('\n'));
     int end = -1;
     if (cr >= 0 && lf >= 0) end = std::min(cr, lf);
     else if (cr >= 0) end = cr;

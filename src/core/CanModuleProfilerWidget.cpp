@@ -243,7 +243,7 @@ void CanModuleProfilerWidget::onBackgroundLearningFinished(const ModuleProfile &
 
     m_profiles.append(profile);
     updateProfileList();
-    m_profileList->setCurrentRow(m_profiles.size() - 1);
+    m_profileList->setCurrentRow(static_cast<int>(m_profiles.size()) - 1);
 
     m_statusLabel->setText(
         QString("Status: profil różnicowy gotowy — '%1' (%2 ID modułu)")
@@ -257,10 +257,10 @@ void CanModuleProfilerWidget::onLearningFinished(const ModuleProfile &profile) {
 
     m_profiles.append(profile);
     updateProfileList();
-    m_profileList->setCurrentRow(m_profiles.size() - 1);
+    m_profileList->setCurrentRow(static_cast<int>(m_profiles.size()) - 1);
 
-    int nIds = profile.periodicIds.size();
-    int nRr  = profile.reqResPairs.size();
+    int nIds = static_cast<int>(profile.periodicIds.size());
+    int nRr  = static_cast<int>(profile.reqResPairs.size());
     m_statusLabel->setText(
         QString("Status: uczenie gotowe — '%1' (%2 ID cyklicznych, %3 par req/resp)")
             .arg(profile.name).arg(nIds).arg(nRr));

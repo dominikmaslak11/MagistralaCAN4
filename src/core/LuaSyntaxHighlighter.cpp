@@ -70,9 +70,9 @@ void LuaSyntaxHighlighter::highlightBlock(const QString &text) {
 
     int start = 0;
     if (previousBlockState() == 1) {
-        int end = text.indexOf("]]");
+        int end = static_cast<int>(text.indexOf("]]"));
         if (end == -1) {
-            setFormat(0, text.length(), m_blockCommentFormat);
+            setFormat(0, static_cast<int>(text.length()), m_blockCommentFormat);
             setCurrentBlockState(1);
             return;
         }
@@ -82,11 +82,11 @@ void LuaSyntaxHighlighter::highlightBlock(const QString &text) {
 
     // Szukaj nowych bloków --[[
     while (true) {
-        int pos = text.indexOf("--[[", start);
+        int pos = static_cast<int>(text.indexOf("--[[", start));
         if (pos == -1) break;
-        int end = text.indexOf("]]", pos + 4);
+        int end = static_cast<int>(text.indexOf("]]", pos + 4));
         if (end == -1) {
-            setFormat(pos, text.length() - pos, m_blockCommentFormat);
+            setFormat(pos, static_cast<int>(text.length()) - pos, m_blockCommentFormat);
             setCurrentBlockState(1);
             return;
         }
@@ -99,7 +99,7 @@ void LuaSyntaxHighlighter::highlightBlock(const QString &text) {
         QRegularExpressionMatchIterator it = rule.pattern.globalMatch(text);
         while (it.hasNext()) {
             QRegularExpressionMatch m = it.next();
-            setFormat(m.capturedStart(), m.capturedLength(), rule.format);
+            setFormat(static_cast<int>(m.capturedStart()), static_cast<int>(m.capturedLength()), rule.format);
         }
     }
 }

@@ -89,8 +89,8 @@ CanFilterExpr::Parser::parseField(const QString &tok) {
     if (tok == "can.ts")  return std::make_unique<FieldNode>(FieldNode::TS);
 
     if (tok.startsWith("can.data[")) {
-        int bracket = tok.indexOf('[');
-        int end     = tok.indexOf(']');
+        int bracket = static_cast<int>(tok.indexOf('['));
+        int end     = static_cast<int>(tok.indexOf(']'));
         if (bracket < 0 || end < 0)
             throw std::invalid_argument("Invalid data field: " + tok.toStdString());
         int idx = tok.mid(bracket + 1, end - bracket - 1).toInt();

@@ -45,7 +45,7 @@ void CanIdStatsWidget::buildUi() {
         return h;
     }();
 
-    m_table = new QTableWidget(0, hdr.size(), this);
+    m_table = new QTableWidget(0, static_cast<int>(hdr.size()), this);
     m_table->setHorizontalHeaderLabels(hdr);
     m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);

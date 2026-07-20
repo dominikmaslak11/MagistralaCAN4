@@ -241,7 +241,7 @@ void CanBusHealthWidget::appendErrorEvent(const CanBusErrorAnalyzer::ErrorEvent 
     const int row = m_eventTable->rowCount();
     m_eventTable->insertRow(row);
 
-    const double ms = ev.timestampUs / 1000.0;
+    const double ms = static_cast<double>(ev.timestampUs) / 1000.0;
     const QString clsName = errorClassName(ev.cls);
     const bool isCritical = (ev.cls == CanBusErrorAnalyzer::ErrorClass::BusOff);
     const QColor bg = isCritical ? QColor("#2e0000") : QColor("#0a0e17");
@@ -270,12 +270,12 @@ void CanBusHealthWidget::appendErrorEvent(const CanBusErrorAnalyzer::ErrorEvent 
 void CanBusHealthWidget::updateCounterTable() {
     if (m_rules.isEmpty()) return;
 
-    m_rulesTable->setRowCount(m_rules.size());
+    m_rulesTable->setRowCount(static_cast<int>(m_rules.size()));
     for (int i = 0; i < m_rules.size(); ++i) {
         const auto &cfg = m_rules[i];
         const auto stats = m_counterValidator.statsFor(cfg.canId);
         const double pct = (stats.totalFrames > 0)
-            ? (static_cast<double>(stats.mismatchCount) / stats.totalFrames * 100.0)
+            ? (static_cast<double>(stats.mismatchCount) / static_cast<double>(stats.totalFrames) * 100.0)
             : 0.0;
 
         const QColor bg = (pct > 5.0) ? QColor("#2e1000")
@@ -333,7 +333,7 @@ void CanBusHealthWidget::addCounterRule() {
 
     m_rules.append(cfg);
     m_counterValidator.addConfig(cfg);
-    m_rulesTable->setRowCount(m_rules.size());
+    m_rulesTable->setRowCount(static_cast<int>(m_rules.size()));
     updateCounterTable();
     m_ctIdEdit->clear();
 }

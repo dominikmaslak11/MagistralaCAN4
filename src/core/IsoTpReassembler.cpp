@@ -60,7 +60,7 @@ bool IsoTpReassembler::feed(const CanFrame &frame, Result &out) {
         }
         it->nextSeq++;
 
-        int remaining = static_cast<int>(it->totalLen) - it->buf.size();
+        int remaining = static_cast<int>(it->totalLen) - static_cast<int>(it->buf.size());
         int take      = qMin(remaining, static_cast<int>(frame.dlc) - 1);
         if (take > 0)
             it->buf.append(reinterpret_cast<const char *>(frame.data.data() + 1), take);

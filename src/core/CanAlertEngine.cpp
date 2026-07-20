@@ -131,7 +131,7 @@ bool CanAlertEngine::evaluateRateAnomaly(const CanAlertRule &r, const CanFrame &
             double sum = 0.0;
             for (size_t i = 1; i < rs.timestamps.size(); ++i)
                 sum += static_cast<double>(rs.timestamps[i] - rs.timestamps[i-1]);
-            double avgIntervalUs = sum / (rs.timestamps.size() - 1);
+            double avgIntervalUs = sum / static_cast<double>(rs.timestamps.size() - 1);
             if (avgIntervalUs > 0.0)
                 rs.baselineHz = 1e6 / avgIntervalUs;
         }

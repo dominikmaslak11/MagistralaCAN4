@@ -88,7 +88,7 @@ HttpRestServer::ParsedRequest HttpRestServer::parseRawRequest(const QByteArray &
 
     // Split path from query string
     QString fullPath = parts[1];
-    int qmark = fullPath.indexOf('?');
+    int qmark = static_cast<int>(fullPath.indexOf('?'));
     if (qmark >= 0) {
         pr.path  = fullPath.left(qmark);
         pr.query = fullPath.mid(qmark + 1);
@@ -96,7 +96,7 @@ HttpRestServer::ParsedRequest HttpRestServer::parseRawRequest(const QByteArray &
         pr.path = fullPath;
     }
 
-    int bodyStart = raw.indexOf("\r\n\r\n");
+    int bodyStart = static_cast<int>(raw.indexOf("\r\n\r\n"));
     if (bodyStart >= 0)
         pr.body = raw.mid(bodyStart + 4);
 

@@ -44,7 +44,7 @@ void CanTpLayer::sendMessage(uint32_t canId,
     ff.data[0] = static_cast<uint8_t>(0x10 | ((total >> 8) & 0x0F));
     ff.data[1] = static_cast<uint8_t>(total & 0xFF);
     size_t ffBytes = std::min<size_t>(6, payload.size());
-    std::copy(payload.begin(), payload.begin() + ffBytes, ff.data.begin() + 2);
+    std::copy(payload.begin(), payload.begin() + static_cast<std::ptrdiff_t>(ffBytes), ff.data.begin() + 2);
     out(ff);
 
     // Consecutive Frames
@@ -56,8 +56,8 @@ void CanTpLayer::sendMessage(uint32_t canId,
         size_t chunk = std::min<size_t>(7, total - offset);
         cf.dlc = static_cast<uint8_t>(1 + chunk);
         cf.data[0] = static_cast<uint8_t>(0x20 | (sn & 0x0F));
-        std::copy(payload.begin() + offset,
-                  payload.begin() + offset + chunk,
+        std::copy(payload.begin() + static_cast<std::ptrdiff_t>(offset),
+                  payload.begin() + static_cast<std::ptrdiff_t>(offset + chunk),
                   cf.data.begin() + 1);
         out(cf);
         offset += chunk;

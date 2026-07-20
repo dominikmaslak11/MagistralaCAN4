@@ -15,7 +15,7 @@ QVariant CanOpenTableModel::data(const QModelIndex &idx, int role) const {
 
     if (role == Qt::DisplayRole) {
         switch (idx.column()) {
-        case TIME:      return QString::number(f.timestamp / 1'000'000.0, 'f', 3);
+        case TIME:      return QString::number(static_cast<double>(f.timestamp) / 1'000'000.0, 'f', 3);
         case CAN_ID:    return QString("0x%1").arg(f.canId, 3, 16, QChar('0')).toUpper();
         case NODE:      return f.nodeId ? QString::number(f.nodeId) : "ALL";
         case TYPE:      return QString("0x%1").arg(f.funcCode, 1, 16).toUpper();
@@ -83,7 +83,7 @@ QVariant CanOpenTableModel::headerData(int s, Qt::Orientation o, int role) const
 
 void CanOpenTableModel::addFrame(const CanOpenFrame &f) {
     if (m_filterNode >= 0 && f.nodeId != static_cast<uint8_t>(m_filterNode)) return;
-    beginInsertRows({}, m_frames.size(), m_frames.size());
+    beginInsertRows({}, static_cast<int>(m_frames.size()), static_cast<int>(m_frames.size()));
     m_frames.append(f);
     if (m_frames.size() > MAX) m_frames.removeFirst();
     endInsertRows();
@@ -201,7 +201,7 @@ void CanOpenWidget::refreshNodeTable() {
         m_nodeTable->setItem(row, 0, new QTableWidgetItem(QString::number(s.nodeId)));
         m_nodeTable->setItem(row, 1, new QTableWidgetItem(m_parser.heartbeatState(s.state)));
         m_nodeTable->setItem(row, 2, new QTableWidgetItem(
-            QString::number(s.lastSeenUs / 1'000'000.0, 'f', 3)));
+            QString::number(static_cast<double>(s.lastSeenUs) / 1'000'000.0, 'f', 3)));
         m_nodeTable->setItem(row, 3, new QTableWidgetItem(QString::number(s.hbCount)));
         m_nodeTable->setItem(row, 4, new QTableWidgetItem(s.timedOut ? "TAK" : "nie"));
 

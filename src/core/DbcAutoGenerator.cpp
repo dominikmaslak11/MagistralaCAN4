@@ -61,7 +61,7 @@ bool DbcAutoGenerator::isChecksumByte(int byteIdx, const std::vector<CanFrame> &
             if (b != byteIdx) xorVal ^= f.data[b];
         if (xorVal == f.data[byteIdx]) ++matches;
     }
-    return (static_cast<double>(matches) / frames.size()) >= 0.85;
+    return (static_cast<double>(matches) / static_cast<double>(frames.size())) >= 0.85;
 }
 
 double DbcAutoGenerator::estimatePeriodMs(const std::vector<CanFrame> &frames) {

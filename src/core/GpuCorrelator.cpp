@@ -112,10 +112,10 @@ QVector<QVector<float>> GpuCorrelator::computeCorrelationMatrix(const QVector<QV
 }
 
 QVector<QVector<float>> GpuCorrelator::computeOnCpu(const QVector<QVector<float>> &features) {
-    int N = features.size();
+    int N = static_cast<int>(features.size());
     QVector<QVector<float>> result(N, QVector<float>(N, 0.0f));
     if (N == 0) return result;
-    int vecLen = features[0].size();
+    int vecLen = static_cast<int>(features[0].size());
 
     QVector<int> rows(N);
     std::iota(rows.begin(), rows.end(), 0);
@@ -137,9 +137,9 @@ QVector<QVector<float>> GpuCorrelator::computeOnCpu(const QVector<QVector<float>
 
 #ifdef HAS_OPENCL
 QVector<QVector<float>> GpuCorrelator::computeOnGpu(const QVector<QVector<float>> &features) {
-    int N = features.size();
+    int N = static_cast<int>(features.size());
     if (N == 0) return {};
-    int vecLen = features[0].size();
+    int vecLen = static_cast<int>(features[0].size());
 
     QVector<float> flatFeatures(N * vecLen);
     for (int i = 0; i < N; ++i)

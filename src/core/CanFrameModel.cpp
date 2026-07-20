@@ -145,7 +145,7 @@ QVariant CanFrameModel::data(const QModelIndex &index, int role) const {
             QColor("#0d1117"), QColor("#111a1a"), QColor("#1a111a"),
             QColor("#1a1a11"), QColor("#111a11"), QColor("#1a1111")
         };
-        int colorIdx = (frame.id / 0x100) % 6;
+        int colorIdx = static_cast<int>((frame.id / 0x100) % 6);
         return idColors[colorIdx];
     } else if (role == Qt::UserRole) {
         // Wartości numeryczne do sortowania

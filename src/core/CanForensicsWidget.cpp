@@ -282,7 +282,7 @@ void CanForensicsWidget::refreshBitProfiler() {
     if (profiles.isEmpty()) return;
 
     m_bitTable->setSortingEnabled(false);
-    m_bitTable->setRowCount(profiles.size());
+    m_bitTable->setRowCount(static_cast<int>(profiles.size()));
 
     for (int row = 0; row < profiles.size(); ++row) {
         const auto &p = profiles[row];
@@ -353,7 +353,7 @@ void CanForensicsWidget::refreshIntervalTable() {
     if (statsList.isEmpty()) return;
 
     m_intervalTable->setSortingEnabled(false);
-    m_intervalTable->setRowCount(statsList.size());
+    m_intervalTable->setRowCount(static_cast<int>(statsList.size()));
 
     int periodicCount = 0;
 
@@ -375,11 +375,11 @@ void CanForensicsWidget::refreshIntervalTable() {
 
         setCell(0, QString("0x%1").arg(s.id, 3, 16, QChar('0')).toUpper());
         setCell(1, QString::number(s.frameCount));
-        setCell(2, QString::number(s.meanUs   / 1000.0, 'f', 3));
-        setCell(3, QString::number(s.stdDevUs / 1000.0, 'f', 3));
+        setCell(2, QString::number(static_cast<double>(s.meanUs)   / 1000.0, 'f', 3));
+        setCell(3, QString::number(static_cast<double>(s.stdDevUs) / 1000.0, 'f', 3));
         setCell(4, s.minUs == std::numeric_limits<uint64_t>::max()
-                    ? "—" : QString::number(s.minUs / 1000.0, 'f', 3));
-        setCell(5, QString::number(s.maxUs / 1000.0, 'f', 3));
+                    ? "—" : QString::number(static_cast<double>(s.minUs) / 1000.0, 'f', 3));
+        setCell(5, QString::number(static_cast<double>(s.maxUs) / 1000.0, 'f', 3));
         setCell(6, QString::number(s.gapCount));
         setCell(7, periodic ? "Cykliczny" : "Sporadyczny");
         auto *typeIt = m_intervalTable->item(row, 7);
@@ -445,7 +445,7 @@ void CanForensicsWidget::runPayloadSearch() {
         };
 
         m_searchTable->setItem(row, 0, mkItem(QString::number(m.frameIndex)));
-        m_searchTable->setItem(row, 1, mkItem(QString::number(f.timestamp / 1'000'000.0, 'f', 6)));
+        m_searchTable->setItem(row, 1, mkItem(QString::number(static_cast<double>(f.timestamp) / 1'000'000.0, 'f', 6)));
         m_searchTable->setItem(row, 2, mkItem(QString("0x%1").arg(m.canId, 3, 16, QChar('0')).toUpper()));
         m_searchTable->setItem(row, 3, mkItem(QString::number(m.byteOffset)));
         m_searchTable->setItem(row, 4, mkItem(highlightMatch(f, m.byteOffset, static_cast<int>(pattern.size()))));

@@ -189,7 +189,7 @@ void DbcEditorWidget::rebuildSignalTable() {
     const auto &msg = m_messages[m_currentMsgIdx];
 
     m_signalTable->blockSignals(true);
-    m_signalTable->setRowCount(msg.sigList.size());
+    m_signalTable->setRowCount(static_cast<int>(msg.sigList.size()));
     for (int i = 0; i < msg.sigList.size(); ++i) {
         const auto &s = msg.sigList[i];
 
@@ -296,7 +296,7 @@ void DbcEditorWidget::addMessage() {
     msg.dlc = 8;
     m_messages.append(msg);
     rebuildMessageList();
-    m_messageList->setCurrentRow(m_messages.size() - 1);
+    m_messageList->setCurrentRow(static_cast<int>(m_messages.size()) - 1);
     refreshPreview();
 }
 

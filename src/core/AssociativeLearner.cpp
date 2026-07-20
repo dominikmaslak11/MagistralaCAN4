@@ -77,7 +77,7 @@ AssociativeLearner::AssociativeLearner(QWidget *parent) : QWidget(parent) {
     mainLayout->addLayout(valLayout);
 
     auto makeTable = [&](QTableWidget *&tbl, const QStringList &headers) {
-        tbl = new QTableWidget(0, headers.size());
+        tbl = new QTableWidget(0, static_cast<int>(headers.size()));
         tbl->setHorizontalHeaderLabels(headers);
         tbl->verticalHeader()->hide(); tbl->horizontalHeader()->setStretchLastSection(true);
         tbl->setShowGrid(false); tbl->setAlternatingRowColors(false);
@@ -1249,13 +1249,14 @@ void AssociativeLearner::runFftAnalysis() {
     m_fftPeakTable->setRowCount(static_cast<int>(result.peaks.size()));
     for (size_t i = 0; i < result.peaks.size(); ++i) {
         const auto &p = result.peaks[i];
-        m_fftPeakTable->setItem(i, 0, new QTableWidgetItem(
+        const int row = static_cast<int>(i);
+        m_fftPeakTable->setItem(row, 0, new QTableWidgetItem(
             QString::number(p.frequency, 'f', 2)));
-        m_fftPeakTable->setItem(i, 1, new QTableWidgetItem(
+        m_fftPeakTable->setItem(row, 1, new QTableWidgetItem(
             p.periodMs > 0 ? QString::number(p.periodMs, 'f', 1) : "∞"));
-        m_fftPeakTable->setItem(i, 2, new QTableWidgetItem(
+        m_fftPeakTable->setItem(row, 2, new QTableWidgetItem(
             QString::number(p.magnitude, 'f', 2)));
-        m_fftPeakTable->setItem(i, 3, new QTableWidgetItem(
+        m_fftPeakTable->setItem(row, 3, new QTableWidgetItem(
             QString::fromStdString(p.description)));
     }
 

@@ -151,7 +151,7 @@ int LearningEngine::kMeansPP(const std::vector<std::vector<float>> &data,
         bool changed = false;
         for (int k = 0; k < K; ++k) {
             if (counts[k] > 0)
-                for (int d = 0; d < dim; ++d) newCtr[k][d] /= counts[k];
+                for (int d = 0; d < dim; ++d) newCtr[k][d] /= static_cast<float>(counts[k]);
             double diff = 0.0;
             for (int d = 0; d < dim; ++d)
                 diff += (centroids[k][d] - newCtr[k][d]) * (centroids[k][d] - newCtr[k][d]);
@@ -294,8 +294,8 @@ std::vector<std::vector<CanFrame>>
 splitWindows(const std::deque<CanFrame> &history, int64_t winSize) {
     std::vector<std::vector<CanFrame>> windows;
     if (history.empty()) return windows;
-    int64_t start = history.front().timestamp;
-    int64_t end = history.back().timestamp;
+    int64_t start = static_cast<int64_t>(history.front().timestamp);
+    int64_t end = static_cast<int64_t>(history.back().timestamp);
     for (int64_t t = start; t < end; t += winSize / 2) {
         std::vector<CanFrame> win;
         for (const auto &f : history)
@@ -328,7 +328,7 @@ LearningEngine::clusterWindows(int K) const {
     for (size_t i = 0; i < assignments.size(); ++i) {
         int c = assignments[i];
         stats[c].cnt++;
-        stats[c].avg += windows[i].size();
+        stats[c].avg += static_cast<double>(windows[i].size());
         for (auto &f : windows[i]) stats[c].freq[f.id]++;
     }
     for (int c = 0; c < K; ++c)
@@ -370,7 +370,7 @@ LearningEngine::dbscanClustering(float eps, int minPts) const {
         int c = assignments[i];
         if (c < 0) { noiseCnt++; continue; }
         stats[c].cnt++;
-        stats[c].avg += windows[i].size();
+        stats[c].avg += static_cast<double>(windows[i].size());
         for (auto &f : windows[i]) stats[c].freq[f.id]++;
     }
     for (int c = 0; c < static_cast<int>(stats.size()); ++c)
@@ -458,7 +458,7 @@ LearningEngine::PcaResult LearningEngine::runPcaClustering() const {
     for (const auto &f : features)
         for (int d = 0; d < dim; ++d)
             mean[d] += f[d];
-    for (int d = 0; d < dim; ++d) mean[d] /= N;
+    for (int d = 0; d < dim; ++d) mean[d] /= static_cast<float>(N);
 
     // 2. Center
     std::vector<std::vector<float>> centered(N, std::vector<float>(dim));

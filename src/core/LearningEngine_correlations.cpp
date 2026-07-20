@@ -94,7 +94,7 @@ LearningEngine::computeSequences(int ngramLength) const {
 
     for (const auto &kv : seqCount) {
         result.push_back({kv.first, kv.second,
-                          static_cast<float>(kv.second) / m_events.size()});
+                          static_cast<float>(kv.second) / static_cast<float>(m_events.size())});
     }
     std::sort(result.begin(), result.end(),
               [](const LeSequenceEntry &a, const LeSequenceEntry &b) {
@@ -266,7 +266,7 @@ LearningEngine::predictRealtime(const std::string &variableKey) const {
 
     for (const auto &kv : itVar->second) {
         uint32_t id = kv.first / 100;
-        int byteIdx = kv.first % 100;
+        int byteIdx = static_cast<int>(kv.first % 100);
         double a = kv.second.first;
         double b = kv.second.second;
 
@@ -288,8 +288,8 @@ LearningEngine::predictRealtime(const std::string &variableKey) const {
 void LearningEngine::buildNormalModel() {
     std::unique_lock lock(m_mutex);
     int64_t winSize = 1000000;
-    int64_t start = m_frameHistory.front().timestamp;
-    int64_t end = m_frameHistory.back().timestamp;
+    int64_t start = static_cast<int64_t>(m_frameHistory.front().timestamp);
+    int64_t end = static_cast<int64_t>(m_frameHistory.back().timestamp);
     std::vector<std::vector<float>> feats;
     for (int64_t t = start; t < end - winSize; t += 500000) {
         std::vector<CanFrame> win;
@@ -306,9 +306,9 @@ void LearningEngine::buildNormalModel() {
     for (int d = 0; d < dim; ++d) {
         double sum = 0, sq = 0;
         for (auto &f : feats) { sum += f[d]; sq += f[d] * f[d]; }
-        m_normalMean[d] = static_cast<float>(sum / feats.size());
+        m_normalMean[d] = static_cast<float>(sum / static_cast<double>(feats.size()));
         m_normalStd[d] = static_cast<float>(
-            std::sqrt(sq / feats.size() - m_normalMean[d] * m_normalMean[d]));
+            std::sqrt(sq / static_cast<double>(feats.size()) - m_normalMean[d] * m_normalMean[d]));
         if (m_normalStd[d] < 1e-6f) m_normalStd[d] = 1.0f;
     }
 }

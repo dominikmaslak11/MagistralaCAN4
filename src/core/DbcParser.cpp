@@ -136,12 +136,12 @@ QHash<QString, double> DbcParser::decodeSignals(uint32_t id, const uint8_t* data
                 // ujemna
                 uint64_t signExtend = (~0ULL) << bitsExtracted;
                 int64_t sraw = static_cast<int64_t>(raw | signExtend);
-                value = sraw * sig.scale + sig.offset;
+                value = static_cast<double>(sraw) * sig.scale + sig.offset;
             } else {
-                value = static_cast<int64_t>(raw) * sig.scale + sig.offset;
+                value = static_cast<double>(static_cast<int64_t>(raw)) * sig.scale + sig.offset;
             }
         } else {
-            value = raw * sig.scale + sig.offset;
+            value = static_cast<double>(raw) * sig.scale + sig.offset;
         }
 
         result[sig.name] = value;

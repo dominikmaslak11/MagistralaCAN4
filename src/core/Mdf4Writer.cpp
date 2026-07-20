@@ -89,7 +89,7 @@ void Mdf4Writer::ioWorker() {
                     writeChannelBlock(frame.id);
                 }
 
-                double relTime = (frame.timestamp - m_startTime) / 1'000'000.0;
+                double relTime = static_cast<double>(frame.timestamp - m_startTime) / 1'000'000.0;
                 ch.buffer.append(reinterpret_cast<const char *>(&relTime), 8);
 
                 double val = frame.dlc > 0 ? static_cast<double>(frame.data[0]) : 0.0;
@@ -165,9 +165,9 @@ void Mdf4Writer::flushDataBlock(uint32_t canId) {
 
     if (ch.channelBlockPos > 0 && ch.dataBlockPos == 0) {
         uint64_t savedPos = filePos();
-        m_file.seek(ch.channelBlockPos + 32);
+        m_file.seek(static_cast<qint64>(ch.channelBlockPos + 32));
         m_file.write(reinterpret_cast<const char *>(&dtPos), 8);
-        m_file.seek(savedPos);
+        m_file.seek(static_cast<qint64>(savedPos));
     }
     ch.dataBlockPos = dtPos;
     ch.buffer.clear();

@@ -101,7 +101,7 @@ LearningEngine::trainNeuralNetwork(
     const double beta1 = 0.9, beta2 = 0.999, eps_adam = 1e-8;
 
     // Split: 80% train, 20% validation
-    int trainN = static_cast<int>(X.size() * 0.8);
+    int trainN = static_cast<int>(static_cast<double>(X.size()) * 0.8);
     if (trainN < 10) trainN = static_cast<int>(X.size());
 
     // Initialize Adam state
@@ -259,7 +259,7 @@ LearningEngine::trainNeuralNetwork(
                 double err = out - Y[s];
                 valLoss += err * err;
             }
-            valLoss /= (X.size() - trainN);
+            valLoss /= static_cast<double>(X.size() - static_cast<size_t>(trainN));
 
             if (valLoss < bestValLoss) {
                 bestValLoss = valLoss;
@@ -432,7 +432,7 @@ void LearningEngine::recalcAdaptiveWindowLocked() {
     if (win.size() < 2) return;
     std::vector<int64_t> deltas;
     for (size_t i = 1; i < win.size(); ++i)
-        deltas.push_back(win[i].timestamp - win[i - 1].timestamp);
+        deltas.push_back(static_cast<int64_t>(win[i].timestamp - win[i - 1].timestamp));
     double mean = std::accumulate(deltas.begin(), deltas.end(), 0.0) /
                   static_cast<double>(deltas.size());
     m_adaptiveBefore = std::max<int64_t>(100000,

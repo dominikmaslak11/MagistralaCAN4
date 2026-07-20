@@ -101,7 +101,7 @@ int CanPlayer::loadFile(const QString &path) {
         m_loaded = true;
         qDebug() << "CanPlayer: wczytano" << m_frames.size() << "ramek z" << path;
     }
-    return m_frames.size();
+    return static_cast<int>(m_frames.size());
 }
 
 void CanPlayer::play() {
@@ -114,7 +114,7 @@ void CanPlayer::play() {
     }
 
     m_playing = true;
-    emit positionChanged(m_currentIndex, m_frames.size());
+    emit positionChanged(m_currentIndex, static_cast<int>(m_frames.size()));
     emitNextFrame();
 }
 
@@ -129,7 +129,7 @@ void CanPlayer::stop() {
     m_currentIndex = 0;
     if (m_loaded) {
         m_baseTimestamp = m_frames[0].timestamp;
-        emit positionChanged(0, m_frames.size());
+        emit positionChanged(0, static_cast<int>(m_frames.size()));
     }
 }
 
@@ -140,7 +140,7 @@ void CanPlayer::setSpeed(float multiplier) {
 void CanPlayer::seekTo(int idx) {
     if (!m_loaded) return;
     m_currentIndex = std::max(0, std::min(idx, static_cast<int>(m_frames.size()) - 1));
-    emit positionChanged(m_currentIndex, m_frames.size());
+    emit positionChanged(m_currentIndex, static_cast<int>(m_frames.size()));
 }
 
 void CanPlayer::setOverride(int idx, const CanFrame &modified) {
@@ -200,7 +200,7 @@ void CanPlayer::emitNextFrame() {
     }
 
     ++m_currentIndex;
-    emit positionChanged(m_currentIndex, m_frames.size());
+    emit positionChanged(m_currentIndex, static_cast<int>(m_frames.size()));
 
     if (m_currentIndex >= m_frames.size()) {
         m_playing = false;
@@ -213,7 +213,7 @@ void CanPlayer::emitNextFrame() {
                    - static_cast<qint64>(m_frames[m_currentIndex - 1].timestamp);
 
     if (m_speed > 0.0f) {
-        delta = static_cast<qint64>(delta / m_speed);
+        delta = static_cast<qint64>(static_cast<double>(delta) / m_speed);
     } else {
         // m_speed == 0 → max (odtwarzaj tak szybko jak się da)
         delta = 0;
