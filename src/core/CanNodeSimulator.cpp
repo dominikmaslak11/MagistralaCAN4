@@ -92,18 +92,11 @@ bool CanNodeSimulator::matchTrigger(const CanNodeDefinition &node, const CanFram
 }
 
 void CanNodeSimulator::scheduleResponse(const CanNodeDefinition &node) {
-    QVector<uint8_t> respData;
-
-    // Odpowiedź przez Lua?
-    if (!node.responseLuaFunc.isEmpty() && m_lua) {
-        // Wywołaj funkcję Lua: responseLuaFunc(triggerId, triggerData, timestamp)
-        // Funkcja powinna zwrócić tabelę bajtów lub nil
-        // To jest uproszczone – w praktyce Lua wołamy z poziomu LuaScriptEngine
-        // Na razie fallback do statycznej odpowiedzi
-        respData = node.staticResponse;
-    } else {
-        respData = node.staticResponse;
-    }
+    // TODO: odpowiedź dynamiczna przez Lua (node.responseLuaFunc) — obecnie
+    // niezaimplementowana, zawsze używamy statycznej odpowiedzi. Docelowo
+    // responseLuaFunc(triggerId, triggerData, timestamp) wołane z poziomu
+    // LuaScriptEngine powinno zwracać tabelę bajtów lub nil.
+    QVector<uint8_t> respData = node.staticResponse;
 
     if (respData.isEmpty()) return;
 

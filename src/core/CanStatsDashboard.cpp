@@ -211,7 +211,7 @@ void CanStatsDashboard::setupUi() {
 
     auto makeTable = [](const QString &title) -> QTableWidget * {
         auto *t = new QTableWidget(10, 2);
-        t->setHorizontalHeaderLabels({title == "frames" ? "CAN ID" : "CAN ID",
+        t->setHorizontalHeaderLabels({"CAN ID",
                                       title == "frames" ? "Ramki" : "Bajty"});
         t->horizontalHeader()->setStretchLastSection(true);
         t->verticalHeader()->hide();
