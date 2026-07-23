@@ -21,7 +21,7 @@ void LatencyProfiler::addSample(const LatencySample &sample) {
 
 std::vector<LatencySample> LatencyProfiler::samplesForModel(const QString &model) const {
     auto it = m_samples.find(model);
-    if (it != m_samples.end()) return it->second;
+    if (it != m_samples.end()) return it.value();
     return {};
 }
 
@@ -35,13 +35,13 @@ QStringList LatencyProfiler::modelNames() const {
 bool LatencyProfiler::isModelComplete(const QString &model) const {
     auto it = m_samples.find(model);
     if (it == m_samples.end()) return false;
-    return static_cast<int>(it->second.size()) >= m_trialsPerModel;
+    return static_cast<int>(it.value().size()) >= m_trialsPerModel;
 }
 
 int LatencyProfiler::sampleCount(const QString &model) const {
     auto it = m_samples.find(model);
     if (it == m_samples.end()) return 0;
-    return static_cast<int>(it->second.size());
+    return static_cast<int>(it.value().size());
 }
 
 void LatencyProfiler::reset() {
@@ -55,9 +55,9 @@ LatencyStats LatencyProfiler::computeStats(const QString &model) const {
     stats.modelName = model;
 
     auto it = m_samples.find(model);
-    if (it == m_samples.end() || it->second.empty()) return stats;
+    if (it == m_samples.end() || it.value().empty()) return stats;
 
-    const auto &samples = it->second;
+    const auto &samples = it.value();
     stats.sampleCount = static_cast<int>(samples.size());
 
     std::vector<double> detMs, txUpMs, llmMs, compMs, otaMs, totalMs;
