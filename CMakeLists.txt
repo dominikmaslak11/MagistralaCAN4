@@ -170,6 +170,10 @@ set(SOURCES
     src/core/CanStatsDashboard.cpp
     src/core/CanSignalMapperModel.cpp
     src/core/CanSignalMapperWidget.cpp
+    src/core/ColdStartDetector.cpp
+    src/core/ExperimentRunner.cpp
+    src/core/LatencyProfiler.cpp
+    src/core/LlmQueryClient.cpp
     src/gui/MainWindow.cpp
     resources.qrc
 )
@@ -226,6 +230,10 @@ set(HEADERS
     src/core/UdsFrame.h
     src/core/UdsParser.h
     src/core/UdsWidget.h
+    src/core/ColdStartDetector.h
+    src/core/ExperimentRunner.h
+    src/core/LatencyProfiler.h
+    src/core/LlmQueryClient.h
     src/gui/MainWindow.h
     src/gui/HeatmapBar.h
 )
