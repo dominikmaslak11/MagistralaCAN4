@@ -1,0 +1,5 @@
+Model,Samples,mean_t_det_us_ms,sigma_t_det_us_ms,mean_t_tx_up_us_ms,sigma_t_tx_up_us_ms,mean_t_llm_us_ms,sigma_t_llm_us_ms,mean_t_comp_us_ms,sigma_t_comp_us_ms,mean_t_ota_us_ms,sigma_t_ota_us_ms,mean_t_total_us_ms,sigma_t_total_us_ms
+Claude-Sonnet-4,30,0.352,0.079,5.45,1.213,546.608,189.315,2.074,0.333,83.138,14.016,637.622,189.775
+DeepSeek-V3,30,0.36,0.083,5.528,0.897,2537.603,544.134,2.102,0.361,89.008,15.716,2634.601,546.244
+Gemini-2.5-Flash,30,0.33,0.093,5.06,0.952,3265.933,710.773,2.145,0.442,86.474,15.147,3359.943,712.586
+GPT-4o,30,0.337,0.066,5.162,1.008,1487.309,206.087,2.11,0.43,85.46,13.249,1580.379,204.788

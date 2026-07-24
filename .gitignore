@@ -11,6 +11,7 @@ compile_commands.json
 # Dev artifacts & local config
 .claude/
 .deepseek/
+API_Keys.txt
 gdb.txt
 gdb_commands.txt
 github_log.txt

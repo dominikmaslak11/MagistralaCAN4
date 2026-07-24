@@ -1,0 +1,1337 @@
+[ExperimentRunner] Starting experiment: 4 models, 30 trials each
+[ExperimentRunner] Starting model: "claude-sonnet-5" ( 1 / 4 )
+[  0.0%] Model 1/4: claude-sonnet-5 — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "claude-sonnet-5"
+[  0.0%] Model 1/4: claude-sonnet-5 — trial 1/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=466 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 704 bytes
+[LlmQueryClient] Response received, t_llm = 6406 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6406 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 6406 ms tComp= 0 ms tOta= 107 ms tTotal= 6517 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "claude-sonnet-5"
+[  0.8%] Model 1/4: claude-sonnet-5 — trial 2/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=283 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 752 bytes
+[LlmQueryClient] Response received, t_llm = 7237 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7237 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 7237 ms tComp= 0 ms tOta= 83 ms tTotal= 7325 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "claude-sonnet-5"
+[  1.7%] Model 1/4: claude-sonnet-5 — trial 3/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=444 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 824 bytes
+[LlmQueryClient] Response received, t_llm = 8269 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8269 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8269 ms tComp= 0 ms tOta= 122 ms tTotal= 8397 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "claude-sonnet-5"
+[  2.5%] Model 1/4: claude-sonnet-5 — trial 4/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=435 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 874 bytes
+[LlmQueryClient] Response received, t_llm = 5187 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5187 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 7 ms tLlm= 5187 ms tComp= 0 ms tOta= 76 ms tTotal= 5270 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "claude-sonnet-5"
+[  3.3%] Model 1/4: claude-sonnet-5 — trial 5/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=423 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 922 bytes
+[LlmQueryClient] Response received, t_llm = 5434 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5434 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 5434 ms tComp= 0 ms tOta= 84 ms tTotal= 5522 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "claude-sonnet-5"
+[  4.2%] Model 1/4: claude-sonnet-5 — trial 6/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=426 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 994 bytes
+[LlmQueryClient] Response received, t_llm = 3581 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3581 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 3581 ms tComp= 0 ms tOta= 72 ms tTotal= 3659 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "claude-sonnet-5"
+[  5.0%] Model 1/4: claude-sonnet-5 — trial 7/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=318 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1056 bytes
+[LlmQueryClient] Response received, t_llm = 6227 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6227 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 6227 ms tComp= 0 ms tOta= 85 ms tTotal= 6318 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "claude-sonnet-5"
+[  5.8%] Model 1/4: claude-sonnet-5 — trial 8/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=348 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1110 bytes
+[LlmQueryClient] Response received, t_llm = 8899 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8899 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8899 ms tComp= 0 ms tOta= 60 ms tTotal= 8964 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "claude-sonnet-5"
+[  6.7%] Model 1/4: claude-sonnet-5 — trial 9/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=337 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1168 bytes
+[LlmQueryClient] Response received, t_llm = 5516 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5516 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 5516 ms tComp= 0 ms tOta= 61 ms tTotal= 5583 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "claude-sonnet-5"
+[  7.5%] Model 1/4: claude-sonnet-5 — trial 10/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=409 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1218 bytes
+[LlmQueryClient] Response received, t_llm = 3754 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3754 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 3754 ms tComp= 0 ms tOta= 79 ms tTotal= 3839 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "claude-sonnet-5"
+[  8.3%] Model 1/4: claude-sonnet-5 — trial 11/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=368 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1284 bytes
+[LlmQueryClient] Response received, t_llm = 5942 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5942 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 5942 ms tComp= 0 ms tOta= 86 ms tTotal= 6035 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "claude-sonnet-5"
+[  9.2%] Model 1/4: claude-sonnet-5 — trial 12/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=363 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1340 bytes
+[LlmQueryClient] Response received, t_llm = 3490 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3490 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 12 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 3490 ms tComp= 0 ms tOta= 68 ms tTotal= 3564 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "claude-sonnet-5"
+[ 10.0%] Model 1/4: claude-sonnet-5 — trial 13/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=435 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1406 bytes
+[LlmQueryClient] Response received, t_llm = 3167 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3167 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 3167 ms tComp= 0 ms tOta= 65 ms tTotal= 3237 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "claude-sonnet-5"
+[ 10.8%] Model 1/4: claude-sonnet-5 — trial 14/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=212 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1468 bytes
+[LlmQueryClient] Response received, t_llm = 5777 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5777 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 5777 ms tComp= 0 ms tOta= 75 ms tTotal= 5859 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "claude-sonnet-5"
+[ 11.7%] Model 1/4: claude-sonnet-5 — trial 15/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=330 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1522 bytes
+[LlmQueryClient] Response received, t_llm = 4844 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4844 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 15 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 4844 ms tComp= 0 ms tOta= 72 ms tTotal= 4923 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "claude-sonnet-5"
+[ 12.5%] Model 1/4: claude-sonnet-5 — trial 16/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=506 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1572 bytes
+[LlmQueryClient] Response received, t_llm = 3691 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3691 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 3691 ms tComp= 0 ms tOta= 76 ms tTotal= 3773 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "claude-sonnet-5"
+[ 13.3%] Model 1/4: claude-sonnet-5 — trial 17/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=178 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1634 bytes
+[LlmQueryClient] Response received, t_llm = 4652 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4652 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 4652 ms tComp= 0 ms tOta= 87 ms tTotal= 4746 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "claude-sonnet-5"
+[ 14.2%] Model 1/4: claude-sonnet-5 — trial 18/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=350 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1696 bytes
+[LlmQueryClient] Response received, t_llm = 3940 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3940 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 3940 ms tComp= 0 ms tOta= 90 ms tTotal= 4034 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "claude-sonnet-5"
+[ 15.0%] Model 1/4: claude-sonnet-5 — trial 19/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=414 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1752 bytes
+[LlmQueryClient] Response received, t_llm = 4208 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4208 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 4208 ms tComp= 0 ms tOta= 103 ms tTotal= 4316 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "claude-sonnet-5"
+[ 15.8%] Model 1/4: claude-sonnet-5 — trial 20/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=421 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1806 bytes
+[LlmQueryClient] Response received, t_llm = 3697 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3697 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 7 ms tLlm= 3697 ms tComp= 0 ms tOta= 93 ms tTotal= 3798 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "claude-sonnet-5"
+[ 16.7%] Model 1/4: claude-sonnet-5 — trial 21/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=355 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1837 bytes
+[LlmQueryClient] Response received, t_llm = 3845 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3845 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 3845 ms tComp= 0 ms tOta= 51 ms tTotal= 3900 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "claude-sonnet-5"
+[ 17.5%] Model 1/4: claude-sonnet-5 — trial 22/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=370 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1827 bytes
+[LlmQueryClient] Response received, t_llm = 3775 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3775 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 22 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 3775 ms tComp= 0 ms tOta= 62 ms tTotal= 3844 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "claude-sonnet-5"
+[ 18.3%] Model 1/4: claude-sonnet-5 — trial 23/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=448 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1833 bytes
+[LlmQueryClient] Response received, t_llm = 3378 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3378 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 23 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 3378 ms tComp= 0 ms tOta= 104 ms tTotal= 3487 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "claude-sonnet-5"
+[ 19.2%] Model 1/4: claude-sonnet-5 — trial 24/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=354 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1831 bytes
+[LlmQueryClient] Response received, t_llm = 3534 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3534 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 24 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 3534 ms tComp= 0 ms tOta= 106 ms tTotal= 3645 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "claude-sonnet-5"
+[ 20.0%] Model 1/4: claude-sonnet-5 — trial 25/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=325 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1827 bytes
+[LlmQueryClient] Response received, t_llm = 6237 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6237 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 25 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 6237 ms tComp= 0 ms tOta= 93 ms tTotal= 6336 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "claude-sonnet-5"
+[ 20.8%] Model 1/4: claude-sonnet-5 — trial 26/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x158 reason=manual_inject tDet=414 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1829 bytes
+[LlmQueryClient] Response received, t_llm = 2763 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 2763 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 26 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 2763 ms tComp= 0 ms tOta= 90 ms tTotal= 2857 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "claude-sonnet-5"
+[ 21.7%] Model 1/4: claude-sonnet-5 — trial 27/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=326 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1831 bytes
+[LlmQueryClient] Response received, t_llm = 3266 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3266 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 27 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 3266 ms tComp= 0 ms tOta= 76 ms tTotal= 3349 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "claude-sonnet-5"
+[ 22.5%] Model 1/4: claude-sonnet-5 — trial 28/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=386 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1829 bytes
+[LlmQueryClient] Response received, t_llm = 3525 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3525 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 28 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 3525 ms tComp= 0 ms tOta= 98 ms tTotal= 3629 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "claude-sonnet-5"
+[ 23.3%] Model 1/4: claude-sonnet-5 — trial 29/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x158 reason=manual_inject tDet=414 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1837 bytes
+[LlmQueryClient] Response received, t_llm = 3891 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3891 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 29 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 3891 ms tComp= 0 ms tOta= 101 ms tTotal= 3996 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "claude-sonnet-5"
+[ 24.2%] Model 1/4: claude-sonnet-5 — trial 30/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x158 reason=manual_inject tDet=343 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1830 bytes
+[LlmQueryClient] Response received, t_llm = 2414 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 2414 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[LatencyProfiler] Model "claude-sonnet-5" complete: 30 / 30 samples
+[ExperimentRunner] Trial 30 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 2414 ms tComp= 0 ms tOta= 89 ms tTotal= 2508 ms
+=== claude-sonnet-5 zakonczony: t_llm=4684.9ms +/- 1609.7ms (N=30) ===
+[ExperimentRunner] Starting model: "gpt-5.6-sol" ( 2 / 4 )
+[ 25.0%] Model 2/4: gpt-5.6-sol — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "gpt-5.6-sol"
+[ 25.0%] Model 2/4: gpt-5.6-sol — trial 1/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=217 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 989 bytes
+[LlmQueryClient] Response received, t_llm = 9343 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 9343 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 9343 ms tComp= 0 ms tOta= 94 ms tTotal= 9442 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "gpt-5.6-sol"
+[ 25.8%] Model 2/4: gpt-5.6-sol — trial 2/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=300 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1041 bytes
+[LlmQueryClient] Response received, t_llm = 5001 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5001 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 5001 ms tComp= 0 ms tOta= 83 ms tTotal= 5090 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "gpt-5.6-sol"
+[ 26.7%] Model 2/4: gpt-5.6-sol — trial 3/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=414 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1105 bytes
+[LlmQueryClient] Response received, t_llm = 6843 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6843 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 2 ms tLlm= 6843 ms tComp= 0 ms tOta= 79 ms tTotal= 6925 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "gpt-5.6-sol"
+[ 27.5%] Model 2/4: gpt-5.6-sol — trial 4/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=325 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1149 bytes
+[LlmQueryClient] Response received, t_llm = 5618 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5618 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 5618 ms tComp= 0 ms tOta= 83 ms tTotal= 5706 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "gpt-5.6-sol"
+[ 28.3%] Model 2/4: gpt-5.6-sol — trial 5/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=452 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1217 bytes
+[LlmQueryClient] Response received, t_llm = 6204 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6204 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 6204 ms tComp= 0 ms tOta= 95 ms tTotal= 6304 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "gpt-5.6-sol"
+[ 29.2%] Model 2/4: gpt-5.6-sol — trial 6/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=390 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1277 bytes
+[LlmQueryClient] Response received, t_llm = 7768 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7768 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 7768 ms tComp= 0 ms tOta= 79 ms tTotal= 7853 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "gpt-5.6-sol"
+[ 30.0%] Model 2/4: gpt-5.6-sol — trial 7/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=359 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1333 bytes
+[LlmQueryClient] Response received, t_llm = 5361 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5361 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 5361 ms tComp= 0 ms tOta= 79 ms tTotal= 5446 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "gpt-5.6-sol"
+[ 30.8%] Model 2/4: gpt-5.6-sol — trial 8/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=384 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1379 bytes
+[LlmQueryClient] Response received, t_llm = 7250 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7250 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 7250 ms tComp= 0 ms tOta= 84 ms tTotal= 7339 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "gpt-5.6-sol"
+[ 31.7%] Model 2/4: gpt-5.6-sol — trial 9/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=394 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1439 bytes
+[LlmQueryClient] Response received, t_llm = 5152 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5152 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 5152 ms tComp= 0 ms tOta= 74 ms tTotal= 5231 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "gpt-5.6-sol"
+[ 32.5%] Model 2/4: gpt-5.6-sol — trial 10/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=332 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1507 bytes
+[LlmQueryClient] Response received, t_llm = 5383 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5383 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 7 ms tLlm= 5383 ms tComp= 0 ms tOta= 87 ms tTotal= 5478 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "gpt-5.6-sol"
+[ 33.3%] Model 2/4: gpt-5.6-sol — trial 11/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=480 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1569 bytes
+[LlmQueryClient] Response received, t_llm = 7161 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7161 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 7161 ms tComp= 0 ms tOta= 115 ms tTotal= 7281 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "gpt-5.6-sol"
+[ 34.2%] Model 2/4: gpt-5.6-sol — trial 12/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x158 reason=manual_inject tDet=291 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1631 bytes
+[LlmQueryClient] Response received, t_llm = 8684 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8684 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 12 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8684 ms tComp= 0 ms tOta= 92 ms tTotal= 8782 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "gpt-5.6-sol"
+[ 35.0%] Model 2/4: gpt-5.6-sol — trial 13/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=358 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1693 bytes
+[LlmQueryClient] Response received, t_llm = 8324 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8324 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 8324 ms tComp= 0 ms tOta= 89 ms tTotal= 8419 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "gpt-5.6-sol"
+[ 35.8%] Model 2/4: gpt-5.6-sol — trial 14/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=329 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1735 bytes
+[LlmQueryClient] Response received, t_llm = 6872 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6872 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 6872 ms tComp= 0 ms tOta= 85 ms tTotal= 6961 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "gpt-5.6-sol"
+[ 36.7%] Model 2/4: gpt-5.6-sol — trial 15/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=323 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1787 bytes
+[LlmQueryClient] Network error: "Error transferring https://api.openai.com/v1/chat/completions - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 233 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://api.openai.com/v1/chat/completions - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "gpt-5.6-sol"
+[ 37.5%] Model 2/4: gpt-5.6-sol — trial 16/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=348 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1859 bytes
+[LlmQueryClient] Response received, t_llm = 17848 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17848 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 17848 ms tComp= 0 ms tOta= 88 ms tTotal= 17940 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "gpt-5.6-sol"
+[ 38.3%] Model 2/4: gpt-5.6-sol — trial 17/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=346 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1905 bytes
+[LlmQueryClient] Response received, t_llm = 5909 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5909 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 5909 ms tComp= 0 ms tOta= 82 ms tTotal= 5996 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "gpt-5.6-sol"
+[ 39.2%] Model 2/4: gpt-5.6-sol — trial 18/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x158 reason=manual_inject tDet=292 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1967 bytes
+[LlmQueryClient] Response received, t_llm = 11035 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 11035 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 11035 ms tComp= 0 ms tOta= 102 ms tTotal= 11142 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "gpt-5.6-sol"
+[ 40.0%] Model 2/4: gpt-5.6-sol — trial 19/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=299 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2025 bytes
+[LlmQueryClient] Response received, t_llm = 13619 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 13619 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 13619 ms tComp= 0 ms tOta= 81 ms tTotal= 13704 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "gpt-5.6-sol"
+[ 40.8%] Model 2/4: gpt-5.6-sol — trial 20/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=448 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2075 bytes
+[LlmQueryClient] Response received, t_llm = 5762 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5762 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 5762 ms tComp= 0 ms tOta= 92 ms tTotal= 5857 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "gpt-5.6-sol"
+[ 41.7%] Model 2/4: gpt-5.6-sol — trial 21/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=309 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2102 bytes
+[LlmQueryClient] Response received, t_llm = 5487 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5487 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 5487 ms tComp= 0 ms tOta= 50 ms tTotal= 5544 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "gpt-5.6-sol"
+[ 42.5%] Model 2/4: gpt-5.6-sol — trial 22/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=369 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2100 bytes
+[LlmQueryClient] Response received, t_llm = 5007 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5007 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 22 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 5007 ms tComp= 0 ms tOta= 81 ms tTotal= 5094 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "gpt-5.6-sol"
+[ 43.3%] Model 2/4: gpt-5.6-sol — trial 23/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=305 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2108 bytes
+[LlmQueryClient] Network error: "Error transferring https://api.openai.com/v1/chat/completions - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 912 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://api.openai.com/v1/chat/completions - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "gpt-5.6-sol"
+[ 44.2%] Model 2/4: gpt-5.6-sol — trial 24/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=474 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2098 bytes
+[LlmQueryClient] Response received, t_llm = 7296 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7296 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 24 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 7296 ms tComp= 0 ms tOta= 76 ms tTotal= 7378 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "gpt-5.6-sol"
+[ 45.0%] Model 2/4: gpt-5.6-sol — trial 25/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=313 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2102 bytes
+[LlmQueryClient] Response received, t_llm = 5904 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5904 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 25 completed: tDet= 0 ms tTxUp= 7 ms tLlm= 5904 ms tComp= 0 ms tOta= 100 ms tTotal= 6011 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "gpt-5.6-sol"
+[ 45.8%] Model 2/4: gpt-5.6-sol — trial 26/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=304 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2102 bytes
+[LlmQueryClient] Response received, t_llm = 5944 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5944 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 26 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 5944 ms tComp= 0 ms tOta= 64 ms tTotal= 6014 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "gpt-5.6-sol"
+[ 46.7%] Model 2/4: gpt-5.6-sol — trial 27/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=309 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2108 bytes
+[LlmQueryClient] Response received, t_llm = 7337 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7337 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 27 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 7337 ms tComp= 0 ms tOta= 70 ms tTotal= 7412 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "gpt-5.6-sol"
+[ 47.5%] Model 2/4: gpt-5.6-sol — trial 28/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=298 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2100 bytes
+[LlmQueryClient] Response received, t_llm = 9732 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 9732 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 28 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 9732 ms tComp= 0 ms tOta= 81 ms tTotal= 9817 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "gpt-5.6-sol"
+[ 48.3%] Model 2/4: gpt-5.6-sol — trial 29/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=448 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2100 bytes
+[LlmQueryClient] Response received, t_llm = 8202 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8202 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 29 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 8202 ms tComp= 0 ms tOta= 85 ms tTotal= 8292 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "gpt-5.6-sol"
+[ 49.2%] Model 2/4: gpt-5.6-sol — trial 30/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=426 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2101 bytes
+[LlmQueryClient] Response received, t_llm = 7134 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7134 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[LatencyProfiler] Model "gpt-5.6-sol" complete: 30 / 30 samples
+[ExperimentRunner] Trial 30 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 7134 ms tComp= 0 ms tOta= 71 ms tTotal= 7209 ms
+=== gpt-5.6-sol zakonczony: t_llm=7077.5ms +/- 3253.3ms (N=30) ===
+[ExperimentRunner] Starting model: "deepseek-v4-pro" ( 3 / 4 )
+[ 50.0%] Model 3/4: deepseek-v4-pro — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "deepseek-v4-pro"
+[ 50.0%] Model 3/4: deepseek-v4-pro — trial 1/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=279 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1004 bytes
+[LlmQueryClient] Response received, t_llm = 17305 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17305 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 17305 ms tComp= 0 ms tOta= 71 ms tTotal= 17381 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "deepseek-v4-pro"
+[ 50.8%] Model 3/4: deepseek-v4-pro — trial 2/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x158 reason=manual_inject tDet=290 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1050 bytes
+[LlmQueryClient] Response received, t_llm = 18727 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18727 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 18727 ms tComp= 0 ms tOta= 90 ms tTotal= 18822 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "deepseek-v4-pro"
+[ 51.7%] Model 3/4: deepseek-v4-pro — trial 3/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=179 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1108 bytes
+[LlmQueryClient] Response received, t_llm = 17090 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17090 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 17090 ms tComp= 0 ms tOta= 55 ms tTotal= 17151 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "deepseek-v4-pro"
+[ 52.5%] Model 3/4: deepseek-v4-pro — trial 4/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=403 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1164 bytes
+[LlmQueryClient] Response received, t_llm = 17826 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17826 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 17826 ms tComp= 0 ms tOta= 81 ms tTotal= 17911 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "deepseek-v4-pro"
+[ 53.3%] Model 3/4: deepseek-v4-pro — trial 5/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=400 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1232 bytes
+[LlmQueryClient] Response received, t_llm = 17586 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17586 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 17586 ms tComp= 0 ms tOta= 97 ms tTotal= 17687 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "deepseek-v4-pro"
+[ 54.2%] Model 3/4: deepseek-v4-pro — trial 6/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x158 reason=manual_inject tDet=407 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1286 bytes
+[LlmQueryClient] Response received, t_llm = 14633 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 14633 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 14633 ms tComp= 0 ms tOta= 81 ms tTotal= 14720 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "deepseek-v4-pro"
+[ 55.0%] Model 3/4: deepseek-v4-pro — trial 7/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=346 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1340 bytes
+[LlmQueryClient] Response received, t_llm = 16895 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16895 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 16895 ms tComp= 0 ms tOta= 90 ms tTotal= 16992 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "deepseek-v4-pro"
+[ 55.8%] Model 3/4: deepseek-v4-pro — trial 8/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=177 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1396 bytes
+[LlmQueryClient] Response received, t_llm = 16480 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16480 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 16480 ms tComp= 0 ms tOta= 57 ms tTotal= 16543 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "deepseek-v4-pro"
+[ 56.7%] Model 3/4: deepseek-v4-pro — trial 9/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=290 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1448 bytes
+[LlmQueryClient] Response received, t_llm = 18521 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18521 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 18521 ms tComp= 0 ms tOta= 99 ms tTotal= 18627 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "deepseek-v4-pro"
+[ 57.5%] Model 3/4: deepseek-v4-pro — trial 10/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=148 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1498 bytes
+[LlmQueryClient] Response received, t_llm = 16466 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16466 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 16466 ms tComp= 0 ms tOta= 86 ms tTotal= 16558 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "deepseek-v4-pro"
+[ 58.3%] Model 3/4: deepseek-v4-pro — trial 11/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=389 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1570 bytes
+[LlmQueryClient] Response received, t_llm = 17090 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17090 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 17090 ms tComp= 0 ms tOta= 116 ms tTotal= 17212 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "deepseek-v4-pro"
+[ 59.2%] Model 3/4: deepseek-v4-pro — trial 12/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=398 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1616 bytes
+[LlmQueryClient] Response received, t_llm = 16683 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16683 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 12 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 16683 ms tComp= 0 ms tOta= 94 ms tTotal= 16781 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "deepseek-v4-pro"
+[ 60.0%] Model 3/4: deepseek-v4-pro — trial 13/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=367 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1666 bytes
+[LlmQueryClient] Response received, t_llm = 17908 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17908 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 17908 ms tComp= 0 ms tOta= 87 ms tTotal= 18001 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "deepseek-v4-pro"
+[ 60.8%] Model 3/4: deepseek-v4-pro — trial 14/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=522 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1726 bytes
+[LlmQueryClient] Response received, t_llm = 16266 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16266 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 16266 ms tComp= 0 ms tOta= 92 ms tTotal= 16362 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "deepseek-v4-pro"
+[ 61.7%] Model 3/4: deepseek-v4-pro — trial 15/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=378 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1794 bytes
+[LlmQueryClient] Response received, t_llm = 14766 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 14766 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 15 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 14766 ms tComp= 0 ms tOta= 104 ms tTotal= 14874 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "deepseek-v4-pro"
+[ 62.5%] Model 3/4: deepseek-v4-pro — trial 16/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=369 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1836 bytes
+[LlmQueryClient] Response received, t_llm = 16542 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16542 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 16542 ms tComp= 0 ms tOta= 90 ms tTotal= 16637 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "deepseek-v4-pro"
+[ 63.3%] Model 3/4: deepseek-v4-pro — trial 17/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=347 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1892 bytes
+[LlmQueryClient] Response received, t_llm = 17494 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17494 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 17494 ms tComp= 0 ms tOta= 81 ms tTotal= 17581 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "deepseek-v4-pro"
+[ 64.2%] Model 3/4: deepseek-v4-pro — trial 18/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=490 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1954 bytes
+[LlmQueryClient] Response received, t_llm = 15661 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15661 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 15661 ms tComp= 0 ms tOta= 83 ms tTotal= 15748 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "deepseek-v4-pro"
+[ 65.0%] Model 3/4: deepseek-v4-pro — trial 19/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=399 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2020 bytes
+[LlmQueryClient] Response received, t_llm = 16059 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16059 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 16059 ms tComp= 0 ms tOta= 57 ms tTotal= 16123 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "deepseek-v4-pro"
+[ 65.8%] Model 3/4: deepseek-v4-pro — trial 20/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=366 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2062 bytes
+[LlmQueryClient] Response received, t_llm = 16879 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16879 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 16879 ms tComp= 0 ms tOta= 76 ms tTotal= 16962 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "deepseek-v4-pro"
+[ 66.7%] Model 3/4: deepseek-v4-pro — trial 21/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=284 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2087 bytes
+[LlmQueryClient] Response received, t_llm = 15784 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15784 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 15784 ms tComp= 0 ms tOta= 63 ms tTotal= 15852 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "deepseek-v4-pro"
+[ 67.5%] Model 3/4: deepseek-v4-pro — trial 22/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=307 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2097 bytes
+[LlmQueryClient] Response received, t_llm = 15229 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15229 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 22 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 15229 ms tComp= 0 ms tOta= 103 ms tTotal= 15338 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "deepseek-v4-pro"
+[ 68.3%] Model 3/4: deepseek-v4-pro — trial 23/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x3e8 reason=manual_inject tDet=443 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2089 bytes
+[LlmQueryClient] Response received, t_llm = 16350 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16350 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 23 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 16350 ms tComp= 0 ms tOta= 86 ms tTotal= 16443 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "deepseek-v4-pro"
+[ 69.2%] Model 3/4: deepseek-v4-pro — trial 24/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=478 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2091 bytes
+[LlmQueryClient] Response received, t_llm = 18120 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18120 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 24 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 18120 ms tComp= 0 ms tOta= 85 ms tTotal= 18210 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "deepseek-v4-pro"
+[ 70.0%] Model 3/4: deepseek-v4-pro — trial 25/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=432 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2095 bytes
+[LlmQueryClient] Response received, t_llm = 15239 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15239 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 25 completed: tDet= 0 ms tTxUp= 7 ms tLlm= 15239 ms tComp= 0 ms tOta= 98 ms tTotal= 15344 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "deepseek-v4-pro"
+[ 70.8%] Model 3/4: deepseek-v4-pro — trial 26/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=245 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2095 bytes
+[LlmQueryClient] Response received, t_llm = 15850 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15850 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 26 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 15850 ms tComp= 0 ms tOta= 88 ms tTotal= 15944 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "deepseek-v4-pro"
+[ 71.7%] Model 3/4: deepseek-v4-pro — trial 27/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=354 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2093 bytes
+[LlmQueryClient] Response received, t_llm = 17914 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17914 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 27 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 17914 ms tComp= 0 ms tOta= 95 ms tTotal= 18014 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "deepseek-v4-pro"
+[ 72.5%] Model 3/4: deepseek-v4-pro — trial 28/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=336 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2091 bytes
+[LlmQueryClient] Response received, t_llm = 15459 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15459 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 28 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 15459 ms tComp= 0 ms tOta= 89 ms tTotal= 15553 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "deepseek-v4-pro"
+[ 73.3%] Model 3/4: deepseek-v4-pro — trial 29/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=438 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2089 bytes
+[LlmQueryClient] Response received, t_llm = 18539 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18539 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 29 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 18539 ms tComp= 0 ms tOta= 96 ms tTotal= 18641 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "deepseek-v4-pro"
+[ 74.2%] Model 3/4: deepseek-v4-pro — trial 30/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=330 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2088 bytes
+[LlmQueryClient] Response received, t_llm = 17081 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17081 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[LatencyProfiler] Model "deepseek-v4-pro" complete: 30 / 30 samples
+[ExperimentRunner] Trial 30 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 17081 ms tComp= 0 ms tOta= 91 ms tTotal= 17177 ms
+=== deepseek-v4-pro zakonczony: t_llm=16748.1ms +/- 1123.4ms (N=30) ===
+[ExperimentRunner] Starting model: "gemini-3.6-flash" ( 4 / 4 )
+[ 75.0%] Model 4/4: gemini-3.6-flash — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "gemini-3.6-flash"
+[ 75.0%] Model 4/4: gemini-3.6-flash — trial 1/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=377 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 701 bytes
+[LlmQueryClient] Response received, t_llm = 11753 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 11753 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 11753 ms tComp= 0 ms tOta= 92 ms tTotal= 11851 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "gemini-3.6-flash"
+[ 75.8%] Model 4/4: gemini-3.6-flash — trial 2/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=383 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 757 bytes
+[LlmQueryClient] Response received, t_llm = 6860 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6860 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 6860 ms tComp= 0 ms tOta= 49 ms tTotal= 6914 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "gemini-3.6-flash"
+[ 76.7%] Model 4/4: gemini-3.6-flash — trial 3/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=502 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 823 bytes
+[LlmQueryClient] Response received, t_llm = 6474 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6474 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 6474 ms tComp= 0 ms tOta= 78 ms tTotal= 6556 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "gemini-3.6-flash"
+[ 77.5%] Model 4/4: gemini-3.6-flash — trial 4/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=287 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 879 bytes
+[LlmQueryClient] Response received, t_llm = 8045 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8045 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8045 ms tComp= 0 ms tOta= 64 ms tTotal= 8115 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "gemini-3.6-flash"
+[ 78.3%] Model 4/4: gemini-3.6-flash — trial 5/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=381 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 941 bytes
+[LlmQueryClient] Response received, t_llm = 11968 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 11968 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 11968 ms tComp= 0 ms tOta= 101 ms tTotal= 12074 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "gemini-3.6-flash"
+[ 79.2%] Model 4/4: gemini-3.6-flash — trial 6/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=277 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 993 bytes
+[LlmQueryClient] Response received, t_llm = 15862 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15862 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 15862 ms tComp= 0 ms tOta= 81 ms tTotal= 15949 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "gemini-3.6-flash"
+[ 80.0%] Model 4/4: gemini-3.6-flash — trial 7/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=218 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1053 bytes
+[LlmQueryClient] Response received, t_llm = 11146 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 11146 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 2 ms tLlm= 11146 ms tComp= 0 ms tOta= 71 ms tTotal= 11220 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "gemini-3.6-flash"
+[ 80.8%] Model 4/4: gemini-3.6-flash — trial 8/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=228 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1119 bytes
+[LlmQueryClient] Response received, t_llm = 11168 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 11168 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 11168 ms tComp= 0 ms tOta= 89 ms tTotal= 11262 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "gemini-3.6-flash"
+[ 81.7%] Model 4/4: gemini-3.6-flash — trial 9/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=312 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1169 bytes
+[LlmQueryClient] Response received, t_llm = 8909 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8909 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8909 ms tComp= 0 ms tOta= 106 ms tTotal= 9020 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "gemini-3.6-flash"
+[ 82.5%] Model 4/4: gemini-3.6-flash — trial 10/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=374 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1233 bytes
+[LlmQueryClient] Response received, t_llm = 13578 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 13578 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 13578 ms tComp= 0 ms tOta= 100 ms tTotal= 13683 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "gemini-3.6-flash"
+[ 83.3%] Model 4/4: gemini-3.6-flash — trial 11/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=250 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1289 bytes
+[LlmQueryClient] Response received, t_llm = 10733 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 10733 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 10733 ms tComp= 0 ms tOta= 53 ms tTotal= 10791 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "gemini-3.6-flash"
+[ 84.2%] Model 4/4: gemini-3.6-flash — trial 12/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=315 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1351 bytes
+[LlmQueryClient] Response received, t_llm = 6388 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6388 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 12 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 6388 ms tComp= 0 ms tOta= 107 ms tTotal= 6499 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "gemini-3.6-flash"
+[ 85.0%] Model 4/4: gemini-3.6-flash — trial 13/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=274 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1395 bytes
+[LlmQueryClient] Response received, t_llm = 7653 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7653 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 7653 ms tComp= 0 ms tOta= 94 ms tTotal= 7750 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "gemini-3.6-flash"
+[ 85.8%] Model 4/4: gemini-3.6-flash — trial 14/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=291 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1451 bytes
+[LlmQueryClient] Response received, t_llm = 15742 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15742 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 15742 ms tComp= 0 ms tOta= 88 ms tTotal= 15836 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "gemini-3.6-flash"
+[ 86.7%] Model 4/4: gemini-3.6-flash — trial 15/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=manual_inject tDet=311 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1509 bytes
+[LlmQueryClient] Response received, t_llm = 11964 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 11964 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 15 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 11964 ms tComp= 0 ms tOta= 88 ms tTotal= 12058 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "gemini-3.6-flash"
+[ 87.5%] Model 4/4: gemini-3.6-flash — trial 16/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=manual_inject tDet=321 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1569 bytes
+[LlmQueryClient] Response received, t_llm = 8077 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8077 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8077 ms tComp= 0 ms tOta= 89 ms tTotal= 8171 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "gemini-3.6-flash"
+[ 88.3%] Model 4/4: gemini-3.6-flash — trial 17/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=297 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1623 bytes
+[LlmQueryClient] Response received, t_llm = 7676 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7676 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 7676 ms tComp= 0 ms tOta= 101 ms tTotal= 7784 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "gemini-3.6-flash"
+[ 89.2%] Model 4/4: gemini-3.6-flash — trial 18/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=230 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1671 bytes
+[LlmQueryClient] Response received, t_llm = 13214 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 13214 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 13214 ms tComp= 0 ms tOta= 96 ms tTotal= 13315 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "gemini-3.6-flash"
+[ 90.0%] Model 4/4: gemini-3.6-flash — trial 19/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=275 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1735 bytes
+[LlmQueryClient] Response received, t_llm = 10794 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 10794 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 10794 ms tComp= 0 ms tOta= 64 ms tTotal= 10864 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "gemini-3.6-flash"
+[ 90.8%] Model 4/4: gemini-3.6-flash — trial 20/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=manual_inject tDet=304 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1797 bytes
+[LlmQueryClient] Response received, t_llm = 7013 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7013 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 7013 ms tComp= 0 ms tOta= 84 ms tTotal= 7102 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "gemini-3.6-flash"
+[ 91.7%] Model 4/4: gemini-3.6-flash — trial 21/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=358 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1820 bytes
+[LlmQueryClient] Response received, t_llm = 6994 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6994 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 6 ms tLlm= 6994 ms tComp= 0 ms tOta= 80 ms tTotal= 7081 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "gemini-3.6-flash"
+[ 92.5%] Model 4/4: gemini-3.6-flash — trial 22/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=367 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1820 bytes
+[LlmQueryClient] Response received, t_llm = 15834 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15834 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 22 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 15834 ms tComp= 0 ms tOta= 58 ms tTotal= 15898 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "gemini-3.6-flash"
+[ 93.3%] Model 4/4: gemini-3.6-flash — trial 23/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=509 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1814 bytes
+[LlmQueryClient] Response received, t_llm = 9876 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 9876 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 23 completed: tDet= 0 ms tTxUp= 3 ms tLlm= 9876 ms tComp= 0 ms tOta= 113 ms tTotal= 9993 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "gemini-3.6-flash"
+[ 94.2%] Model 4/4: gemini-3.6-flash — trial 24/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=328 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1818 bytes
+[LlmQueryClient] Response received, t_llm = 8039 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8039 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 24 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 8039 ms tComp= 0 ms tOta= 94 ms tTotal= 8137 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "gemini-3.6-flash"
+[ 95.0%] Model 4/4: gemini-3.6-flash — trial 25/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=307 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1816 bytes
+[LlmQueryClient] Response received, t_llm = 7708 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7708 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 25 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 7708 ms tComp= 0 ms tOta= 90 ms tTotal= 7804 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "gemini-3.6-flash"
+[ 95.8%] Model 4/4: gemini-3.6-flash — trial 26/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x100 reason=manual_inject tDet=313 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1814 bytes
+[LlmQueryClient] Response received, t_llm = 8239 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8239 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 26 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 8239 ms tComp= 0 ms tOta= 65 ms tTotal= 8309 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "gemini-3.6-flash"
+[ 96.7%] Model 4/4: gemini-3.6-flash — trial 27/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=manual_inject tDet=376 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1824 bytes
+[LlmQueryClient] Response received, t_llm = 8889 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8889 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 27 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8889 ms tComp= 0 ms tOta= 69 ms tTotal= 8964 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "gemini-3.6-flash"
+[ 97.5%] Model 4/4: gemini-3.6-flash — trial 28/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x6b0 reason=manual_inject tDet=459 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1816 bytes
+[LlmQueryClient] Response received, t_llm = 8698 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8698 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 28 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 8698 ms tComp= 0 ms tOta= 98 ms tTotal= 8801 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "gemini-3.6-flash"
+[ 98.3%] Model 4/4: gemini-3.6-flash — trial 29/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x300 reason=manual_inject tDet=315 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1816 bytes
+[LlmQueryClient] Response received, t_llm = 10342 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 10342 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 29 completed: tDet= 0 ms tTxUp= 5 ms tLlm= 10342 ms tComp= 0 ms tOta= 73 ms tTotal= 10421 ms
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "gemini-3.6-flash"
+[ 99.2%] Model 4/4: gemini-3.6-flash — trial 30/30 (waiting for cold start...)
+[ExperimentRunner] Cold start detected: "ID=0x7df reason=manual_inject tDet=339 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1819 bytes
+[LlmQueryClient] Response received, t_llm = 5759 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5759 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[LatencyProfiler] Model "gemini-3.6-flash" complete: 30 / 30 samples
+[ExperimentRunner] Trial 30 completed: tDet= 0 ms tTxUp= 4 ms tLlm= 5759 ms tComp= 0 ms tOta= 71 ms tTotal= 5835 ms
+=== gemini-3.6-flash zakonczony: t_llm=9846.5ms +/- 2904.3ms (N=30) ===
+[ExperimentRunner] State: Done
+[ExperimentRunner] Experiment finished. Report: "Eksperyment_1.1_CAN-Edge-AI_20260724_190357/raw/latency_report_full.json"
+[100.0%] Experiment complete — report saved to Eksperyment_1.1_CAN-Edge-AI_20260724_190357/raw/latency_report_full.json
+Eksperyment zakonczony, raport: Eksperyment_1.1_CAN-Edge-AI_20260724_190357/raw/latency_report_full.json

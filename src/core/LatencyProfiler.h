@@ -26,6 +26,11 @@ struct LatencySample {
     uint64_t trialIndex  = 0;    // numer próby (0..N-1)
     bool     success     = true;
     QString  errorMsg;
+
+    // Treść wejścia/wyjścia (do plików "input_data" — reprezentatywne przykłady
+    // zapytań i odpowiedzi, nie tylko surowe czasy).
+    QString  frameDataHex;      // payload ramki wyzwalającej (hex)
+    QString  llmResponseText;   // surowa odpowiedź/reguła zwrócona przez LLM
 };
 
 /**

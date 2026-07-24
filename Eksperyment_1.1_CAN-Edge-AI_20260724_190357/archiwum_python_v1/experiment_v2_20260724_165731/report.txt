@@ -1,0 +1,17 @@
+=================================================================
+EKSPERYMENT 1.1 v2 — NAJNOWSZE MODELE LLM
+=================================================================
+Data: 2026-07-24 16:58:14
+Zapytania API na model: 5 | Próbek: 30
+
+Model                        t_llm [ms]     T_total [ms]
+------------------------------------------------------
+Claude-Sonnet-4           547 ± 189        638 ± 190
+GPT-4o                   1487 ± 206       1580 ± 205
+DeepSeek-V3              2538 ± 544       2635 ± 546
+Gemini-2.5-Flash         3266 ± 711       3360 ± 713
+
+WNIOSKI:
+  Najszybszy: Claude-Sonnet-4 (547 ms)
+  Najwolniejszy: Gemini-2.5-Flash (3266 ms)
+  t_llm dominuje T_total (>90% dla wszystkich modeli)

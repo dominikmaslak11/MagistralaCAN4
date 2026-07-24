@@ -14,9 +14,10 @@
  * @brief Backend LLM wspierany przez MagistralaCAN4.
  */
 enum class LlmBackend {
-    OpenAI,      // GPT-4o, GPT-4-turbo
-    Anthropic,   // Claude 3.5 Sonnet, Claude 3 Opus
-    DeepSeek     // DeepSeek-V3, DeepSeek-R1
+    OpenAI,      // GPT-5.6 (Sol/Terra/Luna)
+    Anthropic,   // Claude Sonnet 5 / Opus 4.8
+    DeepSeek,    // DeepSeek-V4 (Pro/Flash)
+    Gemini       // Gemini 3.6 Flash
 };
 
 /**
@@ -105,10 +106,12 @@ private:
     [[nodiscard]] QJsonObject buildOpenAiBody(const LlmQuery &query) const;
     [[nodiscard]] QJsonObject buildAnthropicBody(const LlmQuery &query) const;
     [[nodiscard]] QJsonObject buildDeepSeekBody(const LlmQuery &query) const;
+    [[nodiscard]] QJsonObject buildGeminiBody(const LlmQuery &query) const;
 
     [[nodiscard]] QString extractTextFromOpenAi(const QJsonObject &json) const;
     [[nodiscard]] QString extractTextFromAnthropic(const QJsonObject &json) const;
     [[nodiscard]] QString extractTextFromDeepSeek(const QJsonObject &json) const;
+    [[nodiscard]] QString extractTextFromGemini(const QJsonObject &json) const;
 
     [[nodiscard]] static QString formatFrameList(const std::vector<CanFrame> &frames,
                                                   int maxFrames = 20);

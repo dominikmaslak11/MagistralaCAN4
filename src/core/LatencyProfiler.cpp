@@ -136,6 +136,10 @@ QJsonArray LatencyProfiler::toJsonArray() const {
             obj["success"]     = s.success;
             if (!s.errorMsg.isEmpty())
                 obj["error"] = s.errorMsg;
+            if (!s.frameDataHex.isEmpty())
+                obj["frameDataHex"] = s.frameDataHex;
+            if (!s.llmResponseText.isEmpty())
+                obj["llmResponseText"] = s.llmResponseText;
             arr.append(obj);
         }
     }

@@ -1,0 +1,4 @@
+Model,Samples,mean_tDet_ms,sigma_tDet_ms,mean_tTxUp_ms,sigma_tTxUp_ms,mean_tLlm_ms,sigma_tLlm_ms,mean_tComp_ms,sigma_tComp_ms,mean_tOta_ms,sigma_tOta_ms,mean_tTotal_ms,sigma_tTotal_ms
+DeepSeek-V3,30,0.359,0.09,4.945,1.041,3217.999,416.327,2.103,0.373,85.858,13.66,3311.263,419.18
+Claude-3.5-Sonnet,30,0.348,0.089,5.361,1.107,1286.166,355.673,2.273,0.358,84.627,17.142,1378.774,358.897
+GPT-4o,30,0.353,0.08,5.232,1.304,1366.275,488.424,2.115,0.395,83.022,14.575,1456.997,484.523

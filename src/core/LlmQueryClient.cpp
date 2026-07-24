@@ -3,6 +3,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QUrlQuery>
 #include <QDebug>
 #include <sys/time.h>
 
@@ -26,15 +27,19 @@ void LlmQueryClient::setConfig(const LlmConfig &config) {
         switch (m_config.backend) {
         case LlmBackend::OpenAI:
             m_config.endpoint = QStringLiteral("https://api.openai.com/v1/chat/completions");
-            if (m_config.model.isEmpty()) m_config.model = QStringLiteral("gpt-4o");
+            if (m_config.model.isEmpty()) m_config.model = QStringLiteral("gpt-5.6-sol");
             break;
         case LlmBackend::Anthropic:
             m_config.endpoint = QStringLiteral("https://api.anthropic.com/v1/messages");
-            if (m_config.model.isEmpty()) m_config.model = QStringLiteral("claude-3-5-sonnet-20241022");
+            if (m_config.model.isEmpty()) m_config.model = QStringLiteral("claude-sonnet-5");
             break;
         case LlmBackend::DeepSeek:
             m_config.endpoint = QStringLiteral("https://api.deepseek.com/v1/chat/completions");
-            if (m_config.model.isEmpty()) m_config.model = QStringLiteral("deepseek-chat");
+            if (m_config.model.isEmpty()) m_config.model = QStringLiteral("deepseek-v4-pro");
+            break;
+        case LlmBackend::Gemini:
+            m_config.endpoint = QStringLiteral("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent");
+            if (m_config.model.isEmpty()) m_config.model = QStringLiteral("gemini-3.6-flash");
             break;
         }
     }
@@ -66,9 +71,18 @@ void LlmQueryClient::query(const LlmQuery &query) {
     case LlmBackend::OpenAI:    body = buildOpenAiBody(query);    break;
     case LlmBackend::Anthropic: body = buildAnthropicBody(query); break;
     case LlmBackend::DeepSeek:  body = buildDeepSeekBody(query);  break;
+    case LlmBackend::Gemini:    body = buildGeminiBody(query);    break;
     }
 
-    QNetworkRequest req(QUrl(m_config.endpoint));
+    // Gemini przekazuje klucz API jako query param w URL, nie w nagłówku
+    QUrl url(m_config.endpoint);
+    if (m_config.backend == LlmBackend::Gemini) {
+        QUrlQuery q(url);
+        q.addQueryItem("key", m_config.apiKey);
+        url.setQuery(q);
+    }
+
+    QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     req.setTransferTimeout(m_config.timeoutMs);
 
@@ -82,6 +96,8 @@ void LlmQueryClient::query(const LlmQuery &query) {
         req.setRawHeader("x-api-key", m_config.apiKey.toUtf8());
         req.setRawHeader("anthropic-version", "2023-06-01");
         break;
+    case LlmBackend::Gemini:
+        break; // klucz już w URL
     }
 
     QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
@@ -135,6 +151,7 @@ void LlmQueryClient::onReplyFinished() {
             case LlmBackend::OpenAI:    resp.ruleText = extractTextFromOpenAi(json);    break;
             case LlmBackend::Anthropic: resp.ruleText = extractTextFromAnthropic(json); break;
             case LlmBackend::DeepSeek:  resp.ruleText = extractTextFromDeepSeek(json);  break;
+            case LlmBackend::Gemini:    resp.ruleText = extractTextFromGemini(json);    break;
             }
             resp.success = !resp.ruleText.isEmpty();
             if (!resp.success)
@@ -193,8 +210,15 @@ QJsonObject LlmQueryClient::buildOpenAiBody(const LlmQuery &query) const {
     QJsonObject body;
     body["model"] = m_config.model;
     body["messages"] = messages;
-    body["max_tokens"] = m_config.maxTokens;
-    body["temperature"] = m_config.temperature;
+    if (m_config.backend == LlmBackend::OpenAI) {
+        // Modele reasoning najnowszej generacji OpenAI (np. GPT-5.6) używają
+        // "max_completion_tokens" zamiast "max_tokens" i akceptują wyłącznie
+        // domyślną temperature=1 (custom wartość → HTTP 400 unsupported_value).
+        body["max_completion_tokens"] = m_config.maxTokens;
+    } else {
+        body["max_tokens"] = m_config.maxTokens;
+        body["temperature"] = m_config.temperature;
+    }
     return body;
 }
 
@@ -224,13 +248,49 @@ QJsonObject LlmQueryClient::buildAnthropicBody(const LlmQuery &query) const {
     body["messages"] = messages;
     if (!query.systemPrompt.isEmpty())
         body["system"] = query.systemPrompt;
-    body["temperature"] = m_config.temperature;
+    // Nowsze modele Claude (np. Sonnet 5) odrzucają "temperature" jako deprecated
+    // (HTTP 400) — celowo pomijamy ten parametr dla Anthropic.
     return body;
 }
 
 QJsonObject LlmQueryClient::buildDeepSeekBody(const LlmQuery &query) const {
     // DeepSeek używa formatu kompatybilnego z OpenAI
     return buildOpenAiBody(query);
+}
+
+QJsonObject LlmQueryClient::buildGeminiBody(const LlmQuery &query) const {
+    QString userContent = query.userPrompt;
+    if (userContent.isEmpty()) {
+        userContent = QStringLiteral(
+            "Analyze the following CAN frame and suggest an interpretation:\n\n"
+            "CAN ID: 0x%1 (DLC: %2)\n"
+            "Data bytes: %3\n\n"
+            "Recent frames for this ID:\n%4")
+            .arg(query.canId, 3, 16, QChar('0'))
+            .arg(query.triggerFrame.dlc)
+            .arg(formatFrameList({query.triggerFrame}, 1))
+            .arg(formatFrameList(query.recentFrames));
+    }
+
+    QString fullText = query.systemPrompt.isEmpty()
+        ? userContent
+        : query.systemPrompt + "\n\n" + userContent;
+
+    QJsonObject part;
+    part["text"] = fullText;
+    QJsonArray parts{part};
+    QJsonObject content;
+    content["parts"] = parts;
+    QJsonArray contents{content};
+
+    QJsonObject genConfig;
+    genConfig["temperature"] = m_config.temperature;
+    genConfig["maxOutputTokens"] = m_config.maxTokens;
+
+    QJsonObject body;
+    body["contents"] = contents;
+    body["generationConfig"] = genConfig;
+    return body;
 }
 
 // ── Extract text from responses ────────────────────────────────────────────────
@@ -255,8 +315,24 @@ QString LlmQueryClient::extractTextFromAnthropic(const QJsonObject &json) const 
 }
 
 QString LlmQueryClient::extractTextFromDeepSeek(const QJsonObject &json) const {
-    // DeepSeek używa formatu kompatybilnego z OpenAI
-    return extractTextFromOpenAi(json);
+    // DeepSeek używa formatu kompatybilnego z OpenAI, ale modele "-pro" (reasoning)
+    // domyślnie zwracają pustą "content" i właściwą odpowiedź w "reasoning_content".
+    QString text = extractTextFromOpenAi(json);
+    if (!text.isEmpty()) return text;
+
+    const QJsonArray choices = json["choices"].toArray();
+    if (choices.isEmpty()) return {};
+    return choices[0].toObject()["message"].toObject()["reasoning_content"].toString().trimmed();
+}
+
+QString LlmQueryClient::extractTextFromGemini(const QJsonObject &json) const {
+    const QJsonArray candidates = json["candidates"].toArray();
+    if (candidates.isEmpty()) return {};
+    const QJsonArray parts = candidates[0].toObject()["content"].toObject()["parts"].toArray();
+    QString text;
+    for (const auto &p : parts)
+        text += p.toObject()["text"].toString();
+    return text.trimmed();
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────

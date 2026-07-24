@@ -1,0 +1,59 @@
+Model,Trial,CAN_ID,Frame_Data_Hex,LLM_Response,t_llm_ms,success
+deepseek-v4-pro,0,0x300,7d3a3b19,"We are given one CAN frame with ID 0x300, DLC 4, data bytes [7d, 3a, 3b, 19]. Only one frame provided, so no time series to see changes. We need to interpret.
+
+Data: 0x7D, 0x3A, 0x3B, 0x19.
+
+Hexadecimal values: 7D = 125 decimal, 3A = 58, 3B = 59, 19 = 25.
+
+Since only one frame, we can't determine patterns. But we can guess typical automotive signals: possibly two 16-bit signals or four 8-bit ones. Often, ID 0x300 range might be related to vehicle dynamics (like wheel speeds, steering angle, brak",17503.0,True
+deepseek-v4-pro,1,0x158,efb7c1,"We are asked to analyze the CAN frame with ID 0x158, DLC 3, data [ef b7 c1]. We also see a recent frame for ID 0x300, but that's different ID; it might be unrelated context. For ID 0x158, only one frame shown, so we have no history. Need to interpret the 3 bytes.
+
+ID 0x158 (decimal 344) - typical automotive CAN IDs? Possibly body or powertrain, but without context, hard to know. DLC=3 suggests compact message. 3 bytes: ef b7 c1. Let's look at them as hex: 0xEF, 0xB7, 0xC1. In binary:
+0xEF = 1110",17704.0,True
+deepseek-v4-pro,2,0x100,59d98155,"We are asked to analyze a CAN frame with ID 0x100, DLC=4, data=[59 d9 81 55]. The recent frames show other IDs as well, but we only need to analyze 0x100. We need to provide an interpretation, decoding rule, and confidence.
+
+First, let's look at the data: 0x59, 0xD9, 0x81, 0x55 in hex. In decimal: 89, 217, 129, 85. We don't have a sequence of frames for the same ID, just one frame. The user gives recent frames for other IDs but not multiple for 0x100. So we lack time-series data to infer pattern",18008.0,True
+gemini-3.6-flash,0,0x3e8,8157fb,"```json
+{
+  ""interpretation"": ""Byte 0 (0x81): Status flags/validity bit mask (bit 7 active). Byte 1 (0x57): Primary sensor reading/value (87 decimal). Byte 2 (0xFB): Secondary sensor reading, fine offset, or checksum byte."",",7360.0,True
+gemini-3.6-flash,1,0x158,36c3ac1ee995f2,"```json
+{
+  ""interpretation"": ""Byte 0: Status/mode bits or message counter. Bytes 1-2: Primary 16-bit sensor payload (e.",12784.0,True
+gemini-3.6-flash,2,0x158,8bf683,"` style rule: `byteIdx`: 0, `bitMask`: ""0xFF"", `scale`: 1.0, `offset`: 0.0 or `scale`: 0",6573.0,True
+gpt-5.6-sol,0,0x400,8a7bd15cc429,"{
+  ""interpretation"": ""Insufficient variation for reliable identification. Bytes 0-1 may form a little-endian 16-bit signal (0x7B8A); bytes 2-3 a second 16-bit signal (0x5CD1); byte 4 may contain status/flags; byte 5 likely contains a rolling counter in its low nibble (value 9) and checksum/flags in its high nibble."",
+  ""rule"": {
+    ""byteIdx"": 5,
+    ""bitMask"": ""0x0F"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.18
+}",7667.0,True
+gpt-5.6-sol,1,0x158,306c2abc,"{
+  ""interpretation"": ""Tentative: bytes 0-1 form a big-endian engine-speed value (0x306C × 0.25 ≈ 3099 RPM); byte 2 is likely a rolling counter/status field; byte 3 is likely a checksum/CRC. Additional changing frames are required to verify."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFFFF"",
+    ""scale"": 0.25,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.28
+}",9304.0,True
+gpt-5.6-sol,2,0x280,5f0703033b8778,"{""interpretation"":""Tentative: bytes 0-1 form a little-endian engine-speed value (0x075F = 1887 RPM). Bytes 2-3 are likely status/counter fields; both currently 0x03. Byte 4 may be temperature encoded as raw-40, giving 19°C. Byte 5 is an unknown analog value (0x87), possibly load/throttle. Byte 6 is likely a checksum or rolling counter. More same-ID samples are required to verify."",""rule"":{""byteIdx"":0,""bitMask"":""0xFFFF"",""scale"":1.0,""offset"":0.0},""confidence"":0.28}",8485.0,True
+claude-sonnet-5,0,0x6b0,53966238e57143f3,"```json
+{
+  ""interpretation"": ""Only one sample received, so no bit-level variation can be observed to confirm signal boundaries. Byte pattern (53 96 62 38 e5 71 43 f3) shows high entropy across all bytes, consistent with either an encrypted/authenticated payload, a rolling counter combined with a CRC/checksum, or a multiplexed signal block. Byte0 (0x53) and Byte7 (0xf3) are candidate counter/checksum positions given typical CAN framing conventions, but this cannot be verified without multiple fr",8863.0,True
+claude-sonnet-5,1,0x6b0,d4fc26,"{
+  ""interpretation"": ""Frame has variable DLC (8 vs 3) under same ID, suggesting multiplexed messages. For the 3-byte frame [d4 fc 26]: byte0 (0xd4) and byte1 (0xfc) likely form a 16-bit sensor/counter value (little-endian ~0xfcd4=64724 or big-endian ~0xd4fc=54524), byte2 (0x26=38) could be a checksum, counter, or status flag byte."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFFFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.3
+}",6698.0,True
+claude-sonnet-5,2,0x7df,fab1f916130f,"```json
+{
+  ""interpretation"": ""ID 0x7DF is normally reserved for OBD-II diagnostic requests (functional addressing), where byte0=data length, byte1=service/mode, byte2=PID, remaining bytes=padding (0x00). This frame's payload (FA B1 F9 16 13 0F) does not match that pattern (no 0x02/0x03 length prefix, no recognizable mode like 0x01/0x22, no 0x00 padding), suggesting either non-standard/proprietary use of the 0x7DF ID, corrupted/encoded data, or a spoofed/test frame rather than a genuine OBD-II r",9533.0,True

@@ -1,0 +1,257 @@
+{
+    "generatedAt": "2026-07-24T17:26:37Z",
+    "metadata": {
+        "experiment": "1.1 — Cold Start Latency Breakdown",
+        "hardwareSimulated": true,
+        "modelsTestedInOrder": [
+            "claude-sonnet-5",
+            "gpt-5.6-sol",
+            "deepseek-v4-pro",
+            "gemini-3.6-flash"
+        ],
+        "simulationNote": "Brak fizycznego ESP32/magistrali CAN w tym środowisku: t_det, t_tx_up i t_ota są symulowane rozkładem normalnym (wartości literaturowe dla ESP32 + WiFi). t_llm jest realnym pomiarem czasu odpowiedzi API (Qt QNetworkAccessManager, zegar systemowy), t_comp jest realnym pomiarem czasu parsowania odpowiedzi JSON."
+    },
+    "samples": [
+        {
+            "canId": "0x300",
+            "frameDataHex": "7d3a3b19",
+            "llmResponseText": "We are given one CAN frame with ID 0x300, DLC 4, data bytes [7d, 3a, 3b, 19]. Only one frame provided, so no time series to see changes. We need to interpret.\n\nData: 0x7D, 0x3A, 0x3B, 0x19.\n\nHexadecimal values: 7D = 125 decimal, 3A = 58, 3B = 59, 19 = 25.\n\nSince only one frame, we can't determine patterns. But we can guess typical automotive signals: possibly two 16-bit signals or four 8-bit ones. Often, ID 0x300 range might be related to vehicle dynamics (like wheel speeds, steering angle, brake pressure, etc.). But no context.\n\nThe bytes: 7D, 3A, 3B, 19. Could be little-endian 16-bit values: bytes 0-1: 0x3A7D? That would be 14973 dec. bytes 2-3: 0x193B? = 6459 dec. Or big-endian: bytes 0-1: 0x7D3A = 32058; bytes 2-3: 0x3B19 = 15129.\n\nCould be a counter/checksum: last byte 0x19 = 25. Might be a sequence number? But with only one frame we can't see increment.\n\nCould be temperatures: 125, 58, 59, 25 degrees? Possible but not likely. More likely some are sensor values. With confidence low.\n\nWe need to output JSON with interpretation, rule (byteIdx, bitMask, scale, offset), and confidence.\n\nGiven the limited info, I'll make a reasonable guess: Perhaps bytes 0-1 are a speed sensor (like wheel speed) with scale 0.1 km/h, offset 0, little-endian. 0x3A7D = 14973 -> 1497.3 km/h, too high. Maybe scale 0.01: 149.73 km/h, plausible for a wheel speed. Alternatively, engine RPM: 14973 with scale 0.25 would be 3743 RPM, plausible. Could be other combos.\n\nByte 2 could be something like brake pressure or throttle position: 0x3B = 59 -> 59% if scale 1. Or byte 3: 0x19 = 25, could be temperature + offset like -40 for ECT? 25-40 = -15? Not sure.\n\nWithout more frames, confidence is low. I'll pick a plausible interpretation: two 16-bit signals. First signal: bytes 0-1, little-endian, likely a rotational speed (e.g., RPM, wheel speed) with scale 0.25 RPM? Or scale 0.1 km/h? I'll choose RPM with scale 0.25, offset 0. That gives (0x3A7D)*0.25 = 3743.25 RPM, plausible. Second signal: bytes 2-3, little-endian, maybe vehicle speed: 0x193B = 6459, scale 0.01 km/h => 64.59 km/h, plausible. Or throttle: 0x3B alone as byte and byte 3 as something else. But rule expects single byte index? The rule in output seems to have one byteIdx, bitMask (maybe for bit extraction). The user might expect a rule for a specific signal extraction. They said \"suggested decoding rule (byte index, bit mask, scale, offset)\". So I should pick one signal to decode. I can provide a rule for interpreting the entire frame or a specific signal. I'll choose bytes 0-1 as RPM signal.\n\nInterpretation: \"Byte 0-1: RPM (little-endian, scale 0.25, offset 0), Byte 2: Throttle position (0-100% scale 1), Byte 3: Counter\"\n\nBut the output format expects: interpretation string, then rule object with byteIdx, bitMask (like hex string for mask), scale, offset. I can provide a rule for one of the signals. Since I can only output one rule, I'll pick bytes 0-1 for RPM. But maybe I can include multiple interpretations in the string? The instruction says \"Analyze CAN frames and suggest byte-level interpretations. Respond with a JSON object containing: {\"interpretation\": string describing each byte's likely meaning, \"rule\": { ... }, \"confidence\": float }\". So I'll describe all bytes in interpretation, and provide a decoding rule for the most confident signal.\n\nGiven only one frame, confidence is low. I'll go with 0.3 confidence.\n\nI'll output something like:\n\n{\n  \"interpret",
+            "model": "deepseek-v4-pro",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 433,
+            "tLlmUs": 17503000,
+            "tOtaUs": 94935,
+            "tTxUpUs": 6593,
+            "trialIndex": 0
+        },
+        {
+            "canId": "0x158",
+            "frameDataHex": "efb7c1",
+            "llmResponseText": "We are asked to analyze the CAN frame with ID 0x158, DLC 3, data [ef b7 c1]. We also see a recent frame for ID 0x300, but that's different ID; it might be unrelated context. For ID 0x158, only one frame shown, so we have no history. Need to interpret the 3 bytes.\n\nID 0x158 (decimal 344) - typical automotive CAN IDs? Possibly body or powertrain, but without context, hard to know. DLC=3 suggests compact message. 3 bytes: ef b7 c1. Let's look at them as hex: 0xEF, 0xB7, 0xC1. In binary:\n0xEF = 11101111\n0xB7 = 10110111\n0xC1 = 11000001\n\nCould be a combination of signals. Common 3-byte messages: might be something like steering angle (often 2 bytes signed), or maybe RPM (but typically 2 bytes), or throttle position, temperature, etc. Since there's only one frame, we can't see changing patterns.\n\nGiven the assistant's task, we need to propose a likely interpretation with a rule and confidence. Since we lack context, we'll make a generic guess based on typical automotive signals. For example, many 3-byte messages encode a 12-bit or 16-bit value in the first two bytes, and the third byte might be a counter or checksum. Let's examine: 0xEFB7 as a 16-bit little-endian? The data is [ef b7 c1]. If it's little-endian, first two bytes could be a 16-bit value: 0xB7EF? Or big-endian: 0xEFB7? Usually, automotive CAN uses little-endian for multi-byte signals, but not always. Let's consider common patterns: \n- Byte 0: 0xEF = 239\n- Byte 1: 0xB7 = 183\n- Byte 2: 0xC1 = 193\n\nIf we combine byte0 and byte1 as a 16-bit big-endian: 0xEFB7 = 61367. Little-endian: 0xB7EF = 47087. Either could be some sensor value. 61367 might be too large for typical 0-5V range if no scaling. 47087 also large. Could be with offset and scaling. Or maybe they are separate: byte0: some status flags (0xEF = 11101111, many flags set). Byte1: maybe 0xB7 = 10110111, also flags. Byte2: 0xC1 = 11000001, might be counter (bits 4-7 maybe 0xC? and lower 0x1? or rolling counter). The fact that third byte is 0xC1 might be a 4-bit counter (0x1) and something else. In many vehicles, 0x158 might be a chassis message. Since we have only one sample, confidence will be low.\n\nWe could propose something like: \n- Byte 0: signal A (maybe raw value)\n- Byte 1: signal B (maybe raw value) or these two bytes form a 12-bit value (bits 0-11 of first two bytes) and a 4-bit value. Let's see: if we take 12 bits from byte0 and byte1: big-endian: first byte 0xEF (1110 1111) second 0xB7 (1011 0111). 12 bits could be 0xEFB (3835) or if little-endian: 0x7EF (2031) or 0xB7E... Not obvious.\n\nGiven no other frames, I'll make a reasonable guess: This is likely a message containing a 16-bit sensor value (maybe temperature or pressure) and a rolling counter. Many messages have counter in lower nibble of last byte. Byte2 = 0xC1, lower nibble 0x1, upper nibble 0xC. Could be a 4-bit counter (0x1) and 4-bit something else (0xC maybe status). But with only one frame, we don't see the counter incrementing.\n\nAlternatively, the whole 3 bytes might be a 24-bit value, but that's less common in automotive (e.g., odometer maybe, but usually bigger DLC).\n\nI'll propose: the first two bytes (0 and 1) form a 16-bit unsigned integer (little-endian, as common) representing some physical quantity like engine speed or vehicle speed, with a scale factor and offset to be determined. The third byte is likely a rolling counter and/or status flags. Specifically, bits 4-7 of byte2 could be a counter, bits",
+            "model": "deepseek-v4-pro",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 450,
+            "tLlmUs": 17704000,
+            "tOtaUs": 80285,
+            "tTxUpUs": 6847,
+            "trialIndex": 1
+        },
+        {
+            "canId": "0x100",
+            "frameDataHex": "59d98155",
+            "llmResponseText": "We are asked to analyze a CAN frame with ID 0x100, DLC=4, data=[59 d9 81 55]. The recent frames show other IDs as well, but we only need to analyze 0x100. We need to provide an interpretation, decoding rule, and confidence.\n\nFirst, let's look at the data: 0x59, 0xD9, 0x81, 0x55 in hex. In decimal: 89, 217, 129, 85. We don't have a sequence of frames for the same ID, just one frame. The user gives recent frames for other IDs but not multiple for 0x100. So we lack time-series data to infer patterns like incrementing counters or dynamic values. We'll have to make educated guesses based on common CAN signal patterns.\n\nCommon signals in a 4-byte frame: could be a combination of analog values, such as two 2-byte signals (big-endian or little-endian), or four 1-byte signals. Or one 4-byte signal. Since we have only one sample, we can't determine scaling or offsets. We need to suggest a plausible interpretation.\n\nThe CAN ID 0x100 is often used for things like engine RPM, wheel speed, etc. But without context, it's guesswork. The data: 59 d9 81 55. If we interpret as big-endian 16-bit: first two bytes 0x59D9 = 23001, next two 0x8155 = 33109. Little-endian: bytes reversed within each pair? Typically little-endian 16-bit would be: [d9 59] = 0xD959 = 55641, and [55 81] = 0x5581 = 21889. Or if it's one 32-bit value: big-endian 0x59D98155 = 1507680597 (way too big for typical automotive), little-endian 0x5581D959 = 1434810713. Not likely.\n\nCould be four separate bytes: 0x59 (89), 0xD9 (217), 0x81 (129), 0x55 (85). They might represent percentages, temperatures, counters. For instance, 0x59 could be 89°C temperature? 0xD9=217 could be something like position? 0x81 might be a state or counter? 0x55 is 85, maybe another temperature? All speculative.\n\nGiven the limited information, I'll propose an interpretation where byte 0 is a counter or status, byte 1 and 2 might be a 16-bit value (RPM or speed), and byte 3 is a checksum or another value. But without more frames, confidence is low.\n\nA common pattern: first byte is often a rolling counter or checksum. 0x59 is not obviously a counter (it's not small and incrementing). Second byte 0xD9 is high. Third 0x81, fourth 0x55. Maybe it's two 16-bit values little-endian: bytes 1,0: 0xD959 = 55641, and bytes 3,2: 0x5581 = 21889. 55641 could be RPM? That's high (typical redline 6000-8000, but scaled maybe RPM * 8? 55641/8=6955, plausible). 21889 could be vehicle speed? 21889/100=218.89 km/h, too fast. Maybe 218.89/... hmm.\n\nAlternatively, big-endian 16-bit: 0x59D9 = 23001, and 0x8155 = 33109. 23001 RPM? No. 23001/4=5750 RPM, possible. 33109/... not typical.\n\nOr byte 0 might be a pedal position (0-100% -> 89%), byte 1 maybe engine temp (217°C unlikely), byte 2 maybe state, byte 3 something else.\n\nGiven the ID 0x100, many vehicles use it for powertrain. I'll lean towards a 16-bit RPM signal at bytes 0-1 (big-endian) with scaling factor 1 RPM per LSB or maybe 0.25 RPM/bit. Then bytes 2-3 could be throttle position or something. But 23001 RPM is impossible, so scaling required. If scale=0.25, then 23001/4=5750.25 RPM. Plausible. Throttle: 33109 with scale 0.1%? 3310.9%, no. Or bytes 2-3 as a 16-bit signed value? Not sure.\n\nMaybe it's a message with a counter and data. Looking at the other frames:",
+            "model": "deepseek-v4-pro",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 356,
+            "tLlmUs": 18008000,
+            "tOtaUs": 60382,
+            "tTxUpUs": 4669,
+            "trialIndex": 2
+        },
+        {
+            "canId": "0x3e8",
+            "frameDataHex": "8157fb",
+            "llmResponseText": "```json\n{\n  \"interpretation\": \"Byte 0 (0x81): Status flags/validity bit mask (bit 7 active). Byte 1 (0x57): Primary sensor reading/value (87 decimal). Byte 2 (0xFB): Secondary sensor reading, fine offset, or checksum byte.\",",
+            "model": "gemini-3.6-flash",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 200,
+            "tLlmUs": 7360000,
+            "tOtaUs": 73348,
+            "tTxUpUs": 3308,
+            "trialIndex": 0
+        },
+        {
+            "canId": "0x158",
+            "frameDataHex": "36c3ac1ee995f2",
+            "llmResponseText": "```json\n{\n  \"interpretation\": \"Byte 0: Status/mode bits or message counter. Bytes 1-2: Primary 16-bit sensor payload (e.",
+            "model": "gemini-3.6-flash",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 236,
+            "tLlmUs": 12784000,
+            "tOtaUs": 71141,
+            "tTxUpUs": 4010,
+            "trialIndex": 1
+        },
+        {
+            "canId": "0x158",
+            "frameDataHex": "8bf683",
+            "llmResponseText": "` style rule: `byteIdx`: 0, `bitMask`: \"0xFF\", `scale`: 1.0, `offset`: 0.0 or `scale`: 0",
+            "model": "gemini-3.6-flash",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 420,
+            "tLlmUs": 6573000,
+            "tOtaUs": 73713,
+            "tTxUpUs": 5534,
+            "trialIndex": 2
+        },
+        {
+            "canId": "0x400",
+            "frameDataHex": "8a7bd15cc429",
+            "llmResponseText": "{\n  \"interpretation\": \"Insufficient variation for reliable identification. Bytes 0-1 may form a little-endian 16-bit signal (0x7B8A); bytes 2-3 a second 16-bit signal (0x5CD1); byte 4 may contain status/flags; byte 5 likely contains a rolling counter in its low nibble (value 9) and checksum/flags in its high nibble.\",\n  \"rule\": {\n    \"byteIdx\": 5,\n    \"bitMask\": \"0x0F\",\n    \"scale\": 1.0,\n    \"offset\": 0.0\n  },\n  \"confidence\": 0.18\n}",
+            "model": "gpt-5.6-sol",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 401,
+            "tLlmUs": 7667000,
+            "tOtaUs": 81647,
+            "tTxUpUs": 4162,
+            "trialIndex": 0
+        },
+        {
+            "canId": "0x158",
+            "frameDataHex": "306c2abc",
+            "llmResponseText": "{\n  \"interpretation\": \"Tentative: bytes 0-1 form a big-endian engine-speed value (0x306C × 0.25 ≈ 3099 RPM); byte 2 is likely a rolling counter/status field; byte 3 is likely a checksum/CRC. Additional changing frames are required to verify.\",\n  \"rule\": {\n    \"byteIdx\": 0,\n    \"bitMask\": \"0xFFFF\",\n    \"scale\": 0.25,\n    \"offset\": 0.0\n  },\n  \"confidence\": 0.28\n}",
+            "model": "gpt-5.6-sol",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 215,
+            "tLlmUs": 9304000,
+            "tOtaUs": 93827,
+            "tTxUpUs": 7069,
+            "trialIndex": 1
+        },
+        {
+            "canId": "0x280",
+            "frameDataHex": "5f0703033b8778",
+            "llmResponseText": "{\"interpretation\":\"Tentative: bytes 0-1 form a little-endian engine-speed value (0x075F = 1887 RPM). Bytes 2-3 are likely status/counter fields; both currently 0x03. Byte 4 may be temperature encoded as raw-40, giving 19°C. Byte 5 is an unknown analog value (0x87), possibly load/throttle. Byte 6 is likely a checksum or rolling counter. More same-ID samples are required to verify.\",\"rule\":{\"byteIdx\":0,\"bitMask\":\"0xFFFF\",\"scale\":1.0,\"offset\":0.0},\"confidence\":0.28}",
+            "model": "gpt-5.6-sol",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 266,
+            "tLlmUs": 8485000,
+            "tOtaUs": 97210,
+            "tTxUpUs": 4555,
+            "trialIndex": 2
+        },
+        {
+            "canId": "0x6b0",
+            "frameDataHex": "53966238e57143f3",
+            "llmResponseText": "```json\n{\n  \"interpretation\": \"Only one sample received, so no bit-level variation can be observed to confirm signal boundaries. Byte pattern (53 96 62 38 e5 71 43 f3) shows high entropy across all bytes, consistent with either an encrypted/authenticated payload, a rolling counter combined with a CRC/checksum, or a multiplexed signal block. Byte0 (0x53) and Byte7 (0xf3) are candidate counter/checksum positions given typical CAN framing conventions, but this cannot be verified without multiple frames to check for incrementing or checksum-consistency patterns.\",\n  \"rule\": {\n    \"byteIdx\": 0,\n    \"bitMask\": \"0xFF\",\n    \"scale\": 1.0,\n    \"offset\": 0.0\n  },\n  \"confidence\": 0.15\n}\n```",
+            "model": "claude-sonnet-5",
+            "success": true,
+            "tCompUs": 1,
+            "tDetUs": 558,
+            "tLlmUs": 8863000,
+            "tOtaUs": 120701,
+            "tTxUpUs": 6724,
+            "trialIndex": 0
+        },
+        {
+            "canId": "0x6b0",
+            "frameDataHex": "d4fc26",
+            "llmResponseText": "{\n  \"interpretation\": \"Frame has variable DLC (8 vs 3) under same ID, suggesting multiplexed messages. For the 3-byte frame [d4 fc 26]: byte0 (0xd4) and byte1 (0xfc) likely form a 16-bit sensor/counter value (little-endian ~0xfcd4=64724 or big-endian ~0xd4fc=54524), byte2 (0x26=38) could be a checksum, counter, or status flag byte.\",\n  \"rule\": {\n    \"byteIdx\": 0,\n    \"bitMask\": \"0xFFFF\",\n    \"scale\": 1.0,\n    \"offset\": 0.0\n  },\n  \"confidence\": 0.3\n}",
+            "model": "claude-sonnet-5",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 348,
+            "tLlmUs": 6698000,
+            "tOtaUs": 83648,
+            "tTxUpUs": 7271,
+            "trialIndex": 1
+        },
+        {
+            "canId": "0x7df",
+            "frameDataHex": "fab1f916130f",
+            "llmResponseText": "```json\n{\n  \"interpretation\": \"ID 0x7DF is normally reserved for OBD-II diagnostic requests (functional addressing), where byte0=data length, byte1=service/mode, byte2=PID, remaining bytes=padding (0x00). This frame's payload (FA B1 F9 16 13 0F) does not match that pattern (no 0x02/0x03 length prefix, no recognizable mode like 0x01/0x22, no 0x00 padding), suggesting either non-standard/proprietary use of the 0x7DF ID, corrupted/encoded data, or a spoofed/test frame rather than a genuine OBD-II request. Without further context, byte-level meaning is speculative: byte0 (0xFA) could be a length/status flag, byte1 (0xB1) a possible mode/command byte, bytes 2-5 could be a multi-byte value or counter/timestamp fragment.\",\n  \"rule\": {\n    \"byteIdx\": 0,\n    \"bitMask\": \"0xFF\",\n    \"scale\": 1.0,\n    \"offset\": 0.0\n  },\n  \"confidence\": 0.15\n}\n```",
+            "model": "claude-sonnet-5",
+            "success": true,
+            "tCompUs": 0,
+            "tDetUs": 321,
+            "tLlmUs": 9533000,
+            "tOtaUs": 100454,
+            "tTxUpUs": 4653,
+            "trialIndex": 2
+        }
+    ],
+    "stats": {
+        "statistics": [
+            {
+                "meanTotalMs": 17823.31666666667,
+                "means": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.413,
+                    "tLlmMs": 17738.333333333332,
+                    "tOtaMs": 78.534,
+                    "tTxUpMs": 6.036333333333334
+                },
+                "model": "deepseek-v4-pro",
+                "sampleCount": 3,
+                "sigmaTotalMs": 235.82987624627515,
+                "sigmas": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.05008991914547279,
+                    "tLlmMs": 254.24463285059397,
+                    "tOtaMs": 17.342922273942186,
+                    "tTxUpMs": 1.1909363263136004
+                }
+            },
+            {
+                "meanTotalMs": 8982.97,
+                "means": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.2853333333333333,
+                    "tLlmMs": 8905.666666666666,
+                    "tOtaMs": 72.734,
+                    "tTxUpMs": 4.284
+                },
+                "model": "gemini-3.6-flash",
+                "sampleCount": 3,
+                "sigmaTotalMs": 3379.895658943778,
+                "sigmas": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.11800564958226929,
+                    "tLlmMs": 3381.707310417821,
+                    "tOtaMs": 1.3915972836995567,
+                    "tTxUpMs": 1.1380140596671027
+                }
+            },
+            {
+                "meanTotalMs": 8581.784,
+                "means": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.294,
+                    "tLlmMs": 8485.333333333334,
+                    "tOtaMs": 90.89466666666665,
+                    "tTxUpMs": 5.262
+                },
+                "model": "gpt-5.6-sol",
+                "sampleCount": 3,
+                "sigmaTotalMs": 825.9629995992551,
+                "sigmas": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.09610931276416454,
+                    "tLlmMs": 818.5000509061275,
+                    "tOtaMs": 8.185394085401951,
+                    "tTxUpMs": 1.5771965635265632
+                }
+            },
+            {
+                "meanTotalMs": 8472.892999999998,
+                "means": {
+                    "tCompMs": 0.0003333333333333333,
+                    "tDetMs": 0.40900000000000003,
+                    "tLlmMs": 8364.666666666666,
+                    "tOtaMs": 101.601,
+                    "tTxUpMs": 6.216
+                },
+                "model": "claude-sonnet-5",
+                "sampleCount": 3,
+                "sigmaTotalMs": 1493.5673115701882,
+                "sigmas": {
+                    "tCompMs": 0.0005773502691896258,
+                    "tDetMs": 0.12974205177967554,
+                    "tLlmMs": 1481.7416553952087,
+                    "tOtaMs": 18.55311049393066,
+                    "tTxUpMs": 1.380952207717559
+                }
+            }
+        ]
+    },
+    "trialsPerModel": 3
+}

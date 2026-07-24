@@ -6,10 +6,12 @@
 #include <QObject>
 #include <QTimer>
 #include <QString>
+#include <QHash>
 #include <QElapsedTimer>
 #include <vector>
 #include <deque>
 #include <cstdint>
+#include <random>
 
 /**
  * @brief Automat badawczy Eksperymentu 1.1: Profilowanie czasu fazy adaptacji.
@@ -43,6 +45,10 @@ public:
     /// Dodaje pojedynczy model LLM do testowania.
     void addModel(const QString &modelName);
 
+    /// Ustawia klucz API dla danego modelu (wymagane przed start() — startNextModel()
+    /// buduje świeży LlmConfig dla każdego modelu i musi znać jego klucz).
+    void setApiKey(const QString &modelName, const QString &apiKey);
+
     /// Rozpoczyna eksperyment (testuje wszystkie modele po kolei).
     void start();
 
@@ -58,8 +64,12 @@ public:
     [[nodiscard]] int currentTrial() const { return m_currentTrial; }
 
     /// Ręczne wyzwolenie Cold Start (zamiast z magistrali CAN).
-    /// Przydatne do testów bez fizycznego sprzętu.
+    /// Przydatne do testów bez fizycznego sprzętu — w tym trybie t_det/t_tx_up/t_ota
+    /// są symulowane (patrz hardwareSimulated()), t_llm i t_comp pozostają realnymi pomiarami.
     void injectManualColdStart(uint32_t canId, const CanFrame &frame);
+
+    /// Czy bieżący eksperyment działa bez fizycznego ESP32 (symulacja t_det/t_tx_up/t_ota).
+    [[nodiscard]] bool hardwareSimulated() const { return m_hardwareSimulated; }
 
 signals:
     /// Postęp ogólny (0.0-1.0) i tekst statusu.
@@ -102,6 +112,13 @@ private:
 
     [[nodiscard]] static uint64_t nowUs();
 
+    /// Konwertuje payload ramki na string hex (do plików "input_data").
+    [[nodiscard]] static QString frameDataHex(const CanFrame &frame);
+
+    /// Losuje wartość z rozkładu normalnego (obciętego od dołu do minUs), w mikrosekundach.
+    /// Używane WYŁĄCZNIE gdy brak fizycznego ESP32 — patrz m_hardwareSimulated.
+    [[nodiscard]] uint64_t sampleSimulatedUs(double meanUs, double sigmaUs, double minUs);
+
     // Komponenty
     ColdStartDetector *m_detector = nullptr;
     LlmQueryClient    *m_llmClient = nullptr;
@@ -109,6 +126,7 @@ private:
 
     // Konfiguracja
     QStringList m_modelList;
+    QHash<QString, QString> m_apiKeys; // key = nazwa modelu (jak w m_modelList)
     int         m_trialsPerModel = 30;
     QString     m_reportPath;  // domyślnie: "latency_report_<timestamp>.json"
 
@@ -134,4 +152,8 @@ private:
     static constexpr int kMaxHistory = 50;
 
     QElapsedTimer m_trialTimer;  // timer dla t_comp, t_ota
+
+    // Symulacja sprzętowa (brak fizycznego ESP32/magistrali CAN) — patrz hardwareSimulated()
+    bool             m_hardwareSimulated = false;
+    std::mt19937     m_rng{std::random_device{}()};
 };

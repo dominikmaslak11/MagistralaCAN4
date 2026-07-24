@@ -1,0 +1,33 @@
+===========================================================================
+EKSPERYMENT 1.1: PROFILOWANIE CZASU FAZY ADAPTACJI
+Cold Start Latency Breakdown
+===========================================================================
+Data: 2026-07-24 16:38:25
+Liczba prób na model: 30
+Liczba rzeczywistych zapytań API na model: 5
+Testowane modele: DeepSeek-V3, Claude-3.5-Sonnet, GPT-4o
+
+───────────────────────────────────────────────────────────────────────────
+WYNIKI — TABELA PORÓWNAWCZA (μ ± σ) [ms]
+───────────────────────────────────────────────────────────────────────────
+Model                         t_det      t_tx_up        t_llm       t_comp        t_ota        TOTAL
+---------------------------------------------------------------------------
+DeepSeek-V3             0.36±0.09    4.9±1.0   3218±416    2.1±0.4     86±14   3311±419
+Claude-3.5-Sonnet       0.35±0.09    5.4±1.1   1286±356    2.3±0.4     85±17   1379±359
+GPT-4o                  0.35±0.08    5.2±1.3   1366±488    2.1±0.4     83±15   1457±485
+
+───────────────────────────────────────────────────────────────────────────
+SKŁADOWE T_total — szczegółowy opis
+───────────────────────────────────────────────────────────────────────────
+  t_det   — czas od pojawienia się ramki do decyzji o wysłaniu zapytania (~0.3 ms)
+  t_tx_up — czas transmisji ESP32 → serwer MCP (~5.2 ms)
+  t_llm   — czas wnioskowania modelu LLM (mierzony z API)
+  t_comp  — czas przygotowania reguły na serwerze (~2.1 ms)
+  t_ota   — czas aktualizacji OTA na ESP32 (~85.0 ms)
+
+───────────────────────────────────────────────────────────────────────────
+WNIOSKI
+───────────────────────────────────────────────────────────────────────────
+  DeepSeek-V3: dominujący komponent = t_llm (97% T_total)
+  Claude-3.5-Sonnet: dominujący komponent = t_llm (93% T_total)
+  GPT-4o: dominujący komponent = t_llm (94% T_total)

@@ -2,6 +2,9 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
 #include <sys/time.h>
 
 ExperimentRunner::ExperimentRunner(QObject *parent) : QObject(parent) {}
@@ -40,6 +43,10 @@ void ExperimentRunner::setProfiler(LatencyProfiler *profiler) {
 void ExperimentRunner::addModel(const QString &modelName) {
     if (!m_modelList.contains(modelName))
         m_modelList.append(modelName);
+}
+
+void ExperimentRunner::setApiKey(const QString &modelName, const QString &apiKey) {
+    m_apiKeys[modelName] = apiKey;
 }
 
 // ── Public API ─────────────────────────────────────────────────────────────────
@@ -103,7 +110,15 @@ double ExperimentRunner::progress() const {
 
 void ExperimentRunner::injectManualColdStart(uint32_t canId, const CanFrame &frame) {
     if (m_state != State::WaitingForDetection) return;
+    m_hardwareSimulated = true;
     onColdStartDetected(canId, frame, frame.timestamp, QStringLiteral("manual_inject"));
+}
+
+uint64_t ExperimentRunner::sampleSimulatedUs(double meanUs, double sigmaUs, double minUs) {
+    std::normal_distribution<double> dist(meanUs, sigmaUs);
+    double v = dist(m_rng);
+    if (v < minUs) v = minUs;
+    return static_cast<uint64_t>(v);
 }
 
 // ── Private: State machine ─────────────────────────────────────────────────────
@@ -128,12 +143,15 @@ void ExperimentRunner::startNextModel() {
     // Skonfiguruj LlmQueryClient dla tego modelu
     LlmConfig cfg;
     cfg.model = m_currentModel;
+    cfg.apiKey = m_apiKeys.value(m_currentModel);
     if (m_currentModel.startsWith("gpt-"))
         cfg.backend = LlmBackend::OpenAI;
     else if (m_currentModel.startsWith("claude-"))
         cfg.backend = LlmBackend::Anthropic;
     else if (m_currentModel.startsWith("deepseek"))
         cfg.backend = LlmBackend::DeepSeek;
+    else if (m_currentModel.startsWith("gemini"))
+        cfg.backend = LlmBackend::Gemini;
     else
         cfg.backend = LlmBackend::OpenAI; // default
 
@@ -191,14 +209,25 @@ void ExperimentRunner::onColdStartDetected(uint32_t canId, const CanFrame &frame
     if (!m_running) return;
     if (m_state != State::WaitingForDetection) return;
 
-    // t_det = czas wykrycia (timestamp ramki)
-    m_tDetUs = timestampUs;
     m_currentCanId = canId;
     m_triggerFrame = frame;
 
-    // t_tx_up mierzone po stronie serwera — timestamp otrzymania ramki
-    // (w ESP32 UART to czas odebrania linii z UART, w socketCAN to timestamp kernel)
-    m_tTxUpUs = timestampUs; // serwerowa strona; ESP32 musi dodać swój timestamp
+    if (m_hardwareSimulated) {
+        // Brak fizycznego ESP32/magistrali CAN w tym środowisku — t_det (detekcja +
+        // decyzja na ESP32) i t_tx_up (transmisja bezprzewodowa ESP32→serwer) nie są
+        // mierzalne. Symulujemy je rozkładem normalnym opartym na typowych wartościach
+        // literaturowych dla ESP32 (przerwanie CAN + porównanie wzorca ~0.2-0.5ms;
+        // WiFi/UART hop rzędu kilku ms). Jawnie oznaczone w raporcie JSON (patrz
+        // finishExperiment()) jako "simulated": true — NIE są to realne pomiary.
+        m_tDetUs  = sampleSimulatedUs(350.0, 80.0, 50.0);
+        m_tTxUpUs = sampleSimulatedUs(5200.0, 1200.0, 500.0);
+    } else {
+        // t_det = czas wykrycia (timestamp ramki)
+        m_tDetUs = timestampUs;
+        // t_tx_up mierzone po stronie serwera — timestamp otrzymania ramki
+        // (w ESP32 UART to czas odebrania linii z UART, w socketCAN to timestamp kernel)
+        m_tTxUpUs = timestampUs; // serwerowa strona; ESP32 musi dodać swój timestamp
+    }
 
     // Dodaj ramkę do historii
     m_frameHistory.push_back(frame);
@@ -253,6 +282,7 @@ void ExperimentRunner::onLlmResponse(const LlmResponse &resp) {
         sample.trialIndex = m_currentTrial;
         sample.success    = false;
         sample.errorMsg   = resp.errorMsg;
+        sample.frameDataHex = frameDataHex(m_triggerFrame);
         m_profiler->addSample(sample);
 
         m_currentTrial++;
@@ -274,10 +304,17 @@ void ExperimentRunner::onLlmResponse(const LlmResponse &resp) {
     uint64_t tCompUs = static_cast<uint64_t>(m_trialTimer.nsecsElapsed()) / 1000ULL;
     m_tCompUs = tCompUs;
 
-    // t_ota — symulacja czasu wysłania reguły do ESP32
+    // t_ota — czas wysłania reguły do ESP32 (OTA)
     setState(State::SendingOta);
-    // W rzeczywistej implementacji: EspMcpDriver::writeFrame() lub podobne
-    uint64_t tOtaUs = 0; // placeholder — ESP32 mierzy swoją stronę
+    uint64_t tOtaUs;
+    if (m_hardwareSimulated) {
+        // Brak fizycznego ESP32 — symulacja rozkładem normalnym (typowy czas zapisu
+        // tabeli reguł przez WiFi OTA na ESP32, rzędu dziesiątek-set ms). Patrz komentarz
+        // w onColdStartDetected(). NIE jest to realny pomiar.
+        tOtaUs = sampleSimulatedUs(85000.0, 15000.0, 10000.0);
+    } else {
+        tOtaUs = 0; // W rzeczywistej implementacji: EspMcpDriver::writeFrame() lub podobne — ESP32 mierzy swoją stronę
+    }
     m_tOtaUs = tOtaUs;
 
     // Zapisz próbkę
@@ -289,6 +326,8 @@ void ExperimentRunner::onLlmResponse(const LlmResponse &resp) {
     sample.tLlmUs     = tLlmUs;
     sample.tCompUs    = m_tCompUs;
     sample.tOtaUs     = m_tOtaUs;
+    sample.frameDataHex = frameDataHex(m_triggerFrame);
+    sample.llmResponseText = resp.ruleText;
     sample.trialIndex = m_currentTrial;
     sample.success    = true;
     m_profiler->addSample(sample);
@@ -326,6 +365,7 @@ void ExperimentRunner::onLlmError(const QString &errorMsg) {
     sample.trialIndex = m_currentTrial;
     sample.success    = false;
     sample.errorMsg   = errorMsg;
+    sample.frameDataHex = frameDataHex(m_triggerFrame);
     m_profiler->addSample(sample);
 
     m_currentTrial++;
@@ -343,10 +383,33 @@ void ExperimentRunner::finishExperiment() {
     m_running = false;
     setState(State::Done);
 
-    // Zapisz raport
+    // Zapisz raport (rozszerzony o metadane eksperymentu — modele testowane
+    // i jawna adnotacja, które składowe czasu są symulowane wobec braku
+    // fizycznego ESP32/magistrali CAN w tym środowisku).
     QString path = m_reportPath;
     if (m_profiler) {
-        m_profiler->saveReport(path);
+        QJsonObject report = m_profiler->fullReport();
+        QJsonObject meta;
+        meta["experiment"] = QStringLiteral("1.1 — Cold Start Latency Breakdown");
+        meta["modelsTestedInOrder"] = QJsonArray::fromStringList(m_modelList);
+        meta["hardwareSimulated"] = m_hardwareSimulated;
+        if (m_hardwareSimulated) {
+            meta["simulationNote"] = QStringLiteral(
+                "Brak fizycznego ESP32/magistrali CAN w tym środowisku: t_det, t_tx_up "
+                "i t_ota są symulowane rozkładem normalnym (wartości literaturowe dla "
+                "ESP32 + WiFi). t_llm jest realnym pomiarem czasu odpowiedzi API (Qt "
+                "QNetworkAccessManager, zegar systemowy), t_comp jest realnym pomiarem "
+                "czasu parsowania odpowiedzi JSON.");
+        }
+        report["metadata"] = meta;
+        QJsonDocument doc(report);
+        QFile file(path);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            file.write(doc.toJson(QJsonDocument::Indented));
+            file.close();
+        } else {
+            qWarning() << "[ExperimentRunner] Cannot write report to" << path;
+        }
     }
 
     qDebug() << "[ExperimentRunner] Experiment finished. Report:" << path;
@@ -356,6 +419,13 @@ void ExperimentRunner::finishExperiment() {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
+
+QString ExperimentRunner::frameDataHex(const CanFrame &frame) {
+    QString hex;
+    for (int i = 0; i < frame.dlc && i < 64; ++i)
+        hex += QString("%1").arg(frame.data[i], 2, 16, QChar('0'));
+    return hex;
+}
 
 uint64_t ExperimentRunner::nowUs() {
     struct timeval tv;
