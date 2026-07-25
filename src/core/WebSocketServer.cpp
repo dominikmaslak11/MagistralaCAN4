@@ -11,6 +11,7 @@
 #include <QRandomGenerator>
 #include <QDebug>
 #include <algorithm>
+#include <sys/time.h>
 
 WebSocketServer::WebSocketServer(QObject *parent) : QObject(parent) {
     setupDirs();
@@ -283,7 +284,9 @@ void WebSocketServer::onTextMessageReceived(const QString &message) {
         QJsonDocument doc2 = QJsonDocument::fromJson(message.toUtf8());
         if (doc2.isObject()) {
             QJsonObject obj2 = doc2.object();
-            if (obj2["type"].toString() == "send_frame") {
+            const QString msgType = obj2["type"].toString();
+
+            if (msgType == "send_frame") {
                 CanFrame frame = parseIncomingFrame(obj2);
                 emit frameReceivedFromClient(frame);
                 // Potwierdź odbiór nadawcy
@@ -295,6 +298,24 @@ void WebSocketServer::onTextMessageReceived(const QString &message) {
                     QJsonDocument(ack).toJson(QJsonDocument::Compact)));
                 qDebug() << "WS: ramka odebrana od klienta — ID:"
                          << Qt::hex << frame.id;
+                return;
+            }
+
+            // Kalibracja przesunięcia zegara ESP32 względem serwera (styl NTP,
+            // pojedyncza próbka + korekta RTT/2) — Eksperyment 1.1, t_tx_up.
+            if (msgType == "time_sync") {
+                QJsonObject resp;
+                resp[QStringLiteral("type")]       = QStringLiteral("time_sync_ack");
+                resp[QStringLiteral("espTime")]     = obj2["espTime"];
+                resp[QStringLiteral("serverTime")]  = static_cast<qint64>(nowUsStatic());
+                client->sendTextMessage(QString::fromUtf8(
+                    QJsonDocument(resp).toJson(QJsonDocument::Compact)));
+                return;
+            }
+
+            // Potwierdzenie zastosowania reguły OTA — Eksperyment 1.1, t_ota.
+            if (msgType == "rule_ack") {
+                emit ruleAckReceived(static_cast<uint32_t>(obj2["canId"].toInt()));
                 return;
             }
         }
@@ -338,6 +359,31 @@ CanFrame WebSocketServer::parseIncomingFrame(const QJsonObject &obj) {
         frame.data[i] = static_cast<uint8_t>(hex.mid(i * 2, 2).toUInt(nullptr, 16));
 
     return frame;
+}
+
+uint64_t WebSocketServer::nowUsStatic() {
+    struct timeval tv {};
+    gettimeofday(&tv, nullptr);
+    return static_cast<uint64_t>(tv.tv_sec) * 1000000ULL + tv.tv_usec;
+}
+
+void WebSocketServer::sendRuleUpdate(const QJsonObject &rule) {
+    if (!m_running) return;
+    m_authenticatedClients.erase(
+        std::remove_if(m_authenticatedClients.begin(), m_authenticatedClients.end(),
+                       [](QWebSocket *ws) {
+                           return !ws || ws->state() != QAbstractSocket::ConnectedState;
+                       }),
+        m_authenticatedClients.end()
+    );
+    if (m_authenticatedClients.isEmpty()) return;
+
+    QJsonObject root = rule;
+    root[QStringLiteral("type")] = QStringLiteral("apply_rule");
+    const QString json = QString::fromUtf8(
+        QJsonDocument(root).toJson(QJsonDocument::Compact));
+    for (QWebSocket *client : m_authenticatedClients)
+        client->sendTextMessage(json);
 }
 
 void WebSocketServer::broadcastFrameBatch(const QVector<CanFrame> &frames) {

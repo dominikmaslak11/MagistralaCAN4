@@ -6,6 +6,7 @@
 #include <QList>
 #include <QTimer>
 #include <QDir>
+#include <QJsonObject>
 #include "CanFrame.h"
 
 /**
@@ -60,12 +61,19 @@ public slots:
     /// Rozsyła partię ramek CAN jako tablicę JSON (batch — jedno wywołanie zamiast N).
     void broadcastFrameBatch(const QVector<CanFrame> &frames);
 
+    /// Rozsyła regułę dekodowania (po odpowiedzi LLM) do wszystkich klientów —
+    /// używane przez ExperimentRunner (Eksperyment 1.1) do pomiaru t_ota.
+    /// `rule` powinno zawierać co najmniej "canId"; metoda dodaje "type":"apply_rule".
+    void sendRuleUpdate(const QJsonObject &rule);
+
 signals:
     void statusChanged(bool running);
     void clientCountChanged(int count);
     void errorOccurred(const QString &msg);
     /// Emitted when an authenticated client sends a CAN frame to the server.
     void frameReceivedFromClient(const CanFrame &frame);
+    /// Emitted when a client confirms it applied a decoding rule (Eksperyment 1.1, t_ota).
+    void ruleAckReceived(uint32_t canId);
 
 private slots:
     void onNewConnection();
@@ -77,6 +85,7 @@ private:
     void setupDirs();
     QString loadOrGenerateToken();
     static CanFrame parseIncomingFrame(const QJsonObject &obj);
+    static uint64_t nowUsStatic();
 
     QWebSocketServer *m_server = nullptr;
     QList<QWebSocket *> m_authenticatedClients;

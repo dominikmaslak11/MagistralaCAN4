@@ -49,6 +49,28 @@ void ExperimentRunner::setApiKey(const QString &modelName, const QString &apiKey
     m_apiKeys[modelName] = apiKey;
 }
 
+void ExperimentRunner::useRealHardware(WebSocketServer *server, int otaTimeoutMs) {
+    if (m_wsServer) {
+        disconnect(m_wsServer, nullptr, this, nullptr);
+    }
+    m_wsServer = server;
+    m_realHardwareMode = (server != nullptr);
+    m_otaTimeoutMs = otaTimeoutMs;
+
+    if (m_wsServer) {
+        connect(m_wsServer, &WebSocketServer::frameReceivedFromClient,
+                this, &ExperimentRunner::onRealFrameReceived);
+        connect(m_wsServer, &WebSocketServer::ruleAckReceived,
+                this, &ExperimentRunner::onRuleAckReceived);
+    }
+
+    if (!m_otaTimeoutTimer) {
+        m_otaTimeoutTimer = new QTimer(this);
+        m_otaTimeoutTimer->setSingleShot(true);
+        connect(m_otaTimeoutTimer, &QTimer::timeout, this, &ExperimentRunner::onOtaAckTimeout);
+    }
+}
+
 // ── Public API ─────────────────────────────────────────────────────────────────
 
 void ExperimentRunner::start() {
@@ -190,6 +212,8 @@ void ExperimentRunner::startNextTrial() {
     m_tLlmEndUs = 0;
     m_tCompUs = 0;
     m_tOtaUs = 0;
+    m_tLlmUs = 0;
+    m_pendingLlmResponseText.clear();
 
     setState(State::WaitingForDetection);
 
@@ -204,6 +228,16 @@ void ExperimentRunner::startNextTrial() {
 
 // ── Slots ──────────────────────────────────────────────────────────────────────
 
+void ExperimentRunner::onRealFrameReceived(const CanFrame &frame) {
+    if (!m_running) return;
+    if (m_state != State::WaitingForDetection) return;
+
+    // Znacznik czasu przyjęcia ramki przez serwer (zegar serwera) — użyty w
+    // onColdStartDetected() do wyliczenia realnego t_tx_up/t_det.
+    m_pendingFrameArrivalUs = nowUs();
+    m_detector->evaluate(frame); // synchronicznie: może wyemitować coldStartDetected
+}
+
 void ExperimentRunner::onColdStartDetected(uint32_t canId, const CanFrame &frame,
                                             uint64_t timestampUs, const QString &reason) {
     if (!m_running) return;
@@ -212,7 +246,18 @@ void ExperimentRunner::onColdStartDetected(uint32_t canId, const CanFrame &frame
     m_currentCanId = canId;
     m_triggerFrame = frame;
 
-    if (m_hardwareSimulated) {
+    if (m_realHardwareMode) {
+        // Prawdziwy ESP32 (esp_experiment_1_1.ino): frame.timestamp jest już
+        // skorygowany o przesunięcie zegara ESP32 względem serwera (kalibracja
+        // "time_sync" wykonana w firmware), więc jest porównywalny z zegarem
+        // serwera (nowUs()). t_tx_up = transmisja bezprzewodowa ESP32→serwer,
+        // t_det = czas oceny ColdStartDetector (od przyjęcia ramki do decyzji).
+        uint64_t decisionUs = nowUs();
+        m_tTxUpUs = (m_pendingFrameArrivalUs > frame.timestamp)
+                        ? (m_pendingFrameArrivalUs - frame.timestamp) : 0;
+        m_tDetUs  = (decisionUs > m_pendingFrameArrivalUs)
+                        ? (decisionUs - m_pendingFrameArrivalUs) : 0;
+    } else if (m_hardwareSimulated) {
         // Brak fizycznego ESP32/magistrali CAN w tym środowisku — t_det (detekcja +
         // decyzja na ESP32) i t_tx_up (transmisja bezprzewodowa ESP32→serwer) nie są
         // mierzalne. Symulujemy je rozkładem normalnym opartym na typowych wartościach
@@ -294,56 +339,94 @@ void ExperimentRunner::onLlmResponse(const LlmResponse &resp) {
     qDebug() << "[ExperimentRunner] LLM response received, tLlm ="
              << resp.tLlmMs() << "ms";
 
-    // t_comp — symulacja czasu kompilacji reguły
+    m_tLlmUs = tLlmUs;
+    m_pendingLlmResponseText = resp.ruleText;
+
+    // t_comp — czas kompilacji/przygotowania reguły
     setState(State::Compiling);
     m_trialTimer.start();
 
     // W rzeczywistej implementacji ESP32: tutaj kompilacja/serializacja reguły
     // Dla magistraliCAN4 to głównie parsowanie JSON z odpowiedzi LLM
     // (pomijalnie małe, ale mierzymy dla kompletności)
-    uint64_t tCompUs = static_cast<uint64_t>(m_trialTimer.nsecsElapsed()) / 1000ULL;
-    m_tCompUs = tCompUs;
+    m_tCompUs = static_cast<uint64_t>(m_trialTimer.nsecsElapsed()) / 1000ULL;
 
     // t_ota — czas wysłania reguły do ESP32 (OTA)
     setState(State::SendingOta);
-    uint64_t tOtaUs;
+
+    if (m_realHardwareMode) {
+        // Realny round-trip: wyślij regułę do ESP32 przez WebSocket i czekaj na
+        // rule_ack (z timeoutem) — dokończenie próbki w onRuleAckReceived()
+        // lub onOtaAckTimeout().
+        QJsonObject rule;
+        rule[QStringLiteral("canId")] = static_cast<int>(m_currentCanId);
+        rule[QStringLiteral("ruleText")] = resp.ruleText;
+        m_otaSendTimeUs = nowUs();
+        m_wsServer->sendRuleUpdate(rule);
+        m_otaTimeoutTimer->start(m_otaTimeoutMs);
+        return;
+    }
+
     if (m_hardwareSimulated) {
         // Brak fizycznego ESP32 — symulacja rozkładem normalnym (typowy czas zapisu
         // tabeli reguł przez WiFi OTA na ESP32, rzędu dziesiątek-set ms). Patrz komentarz
         // w onColdStartDetected(). NIE jest to realny pomiar.
-        tOtaUs = sampleSimulatedUs(85000.0, 15000.0, 10000.0);
+        m_tOtaUs = sampleSimulatedUs(85000.0, 15000.0, 10000.0);
     } else {
-        tOtaUs = 0; // W rzeczywistej implementacji: EspMcpDriver::writeFrame() lub podobne — ESP32 mierzy swoją stronę
+        m_tOtaUs = 0;
     }
-    m_tOtaUs = tOtaUs;
+    finalizeSample(true);
+}
 
-    // Zapisz próbkę
+void ExperimentRunner::onRuleAckReceived(uint32_t canId) {
+    if (!m_running || m_state != State::SendingOta) return;
+    if (canId != m_currentCanId) return; // spóźniony/nieprzypisany ack — ignoruj
+
+    m_otaTimeoutTimer->stop();
+    uint64_t t = nowUs();
+    m_tOtaUs = (t > m_otaSendTimeUs) ? (t - m_otaSendTimeUs) : 0;
+    finalizeSample(true);
+}
+
+void ExperimentRunner::onOtaAckTimeout() {
+    if (!m_running || m_state != State::SendingOta) return;
+
+    qWarning() << "[ExperimentRunner] Brak potwierdzenia OTA (rule_ack) od ESP32 w"
+               << m_otaTimeoutMs << "ms — CAN ID:"
+               << QString("0x%1").arg(m_currentCanId, 3, 16, QChar('0'));
+    m_tOtaUs = static_cast<uint64_t>(m_otaTimeoutMs) * 1000ULL;
+    finalizeSample(false, QStringLiteral("OTA ack timeout"));
+}
+
+void ExperimentRunner::finalizeSample(bool success, const QString &errorMsg) {
     LatencySample sample;
-    sample.modelName  = m_currentModel;
-    sample.canId      = m_currentCanId;
-    sample.tDetUs     = m_tDetUs;
-    sample.tTxUpUs    = m_tTxUpUs;
-    sample.tLlmUs     = tLlmUs;
-    sample.tCompUs    = m_tCompUs;
-    sample.tOtaUs     = m_tOtaUs;
-    sample.frameDataHex = frameDataHex(m_triggerFrame);
-    sample.llmResponseText = resp.ruleText;
-    sample.trialIndex = m_currentTrial;
-    sample.success    = true;
+    sample.modelName       = m_currentModel;
+    sample.canId           = m_currentCanId;
+    sample.tDetUs          = m_tDetUs;
+    sample.tTxUpUs         = m_tTxUpUs;
+    sample.tLlmUs          = m_tLlmUs;
+    sample.tCompUs         = m_tCompUs;
+    sample.tOtaUs          = m_tOtaUs;
+    sample.frameDataHex    = frameDataHex(m_triggerFrame);
+    sample.llmResponseText = m_pendingLlmResponseText;
+    sample.trialIndex      = m_currentTrial;
+    sample.success         = success;
+    sample.errorMsg        = errorMsg;
     m_profiler->addSample(sample);
 
-    uint64_t tTotalMs = (m_tDetUs + m_tTxUpUs + tLlmUs + m_tCompUs + m_tOtaUs) / 1000ULL;
+    uint64_t tTotalMs = (m_tDetUs + m_tTxUpUs + m_tLlmUs + m_tCompUs + m_tOtaUs) / 1000ULL;
 
     qDebug() << "[ExperimentRunner] Trial" << (m_currentTrial + 1)
              << "completed:" << "tDet=" << m_tDetUs/1000 << "ms"
              << "tTxUp=" << m_tTxUpUs/1000 << "ms"
-             << "tLlm=" << tLlmUs/1000 << "ms"
+             << "tLlm=" << m_tLlmUs/1000 << "ms"
              << "tComp=" << m_tCompUs/1000 << "ms"
              << "tOta=" << m_tOtaUs/1000 << "ms"
-             << "tTotal=" << tTotalMs << "ms";
+             << "tTotal=" << tTotalMs << "ms"
+             << "success=" << success;
 
     m_currentTrial++;
-    emit trialCompleted(m_currentTrial, m_currentModel, tTotalMs);
+    emit trialCompleted(m_currentTrial, m_currentModel, success ? tTotalMs : 0);
 
     // Przejdź do następnej próbki z małym opóźnieniem
     QTimer::singleShot(100, this, &ExperimentRunner::advanceTrial);
@@ -393,7 +476,15 @@ void ExperimentRunner::finishExperiment() {
         meta["experiment"] = QStringLiteral("1.1 — Cold Start Latency Breakdown");
         meta["modelsTestedInOrder"] = QJsonArray::fromStringList(m_modelList);
         meta["hardwareSimulated"] = m_hardwareSimulated;
-        if (m_hardwareSimulated) {
+        meta["realHardwareMode"] = m_realHardwareMode;
+        if (m_realHardwareMode) {
+            meta["hardwareNote"] = QStringLiteral(
+                "Pomiar na realnym ESP32 (esp_experiment_1_1.ino) przez WebSocket. "
+                "t_llm, t_comp — realne (zegar serwera). t_tx_up, t_det — realne, "
+                "oparte o timestamp ESP32 skorygowany kalibracją time_sync (NTP-style, "
+                "dokładność rzędu WiFi jitter). t_ota — realny round-trip do rule_ack "
+                "od ESP32 (z timeoutem).");
+        } else if (m_hardwareSimulated) {
             meta["simulationNote"] = QStringLiteral(
                 "Brak fizycznego ESP32/magistrali CAN w tym środowisku: t_det, t_tx_up "
                 "i t_ota są symulowane rozkładem normalnym (wartości literaturowe dla "

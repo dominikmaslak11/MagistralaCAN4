@@ -16,6 +16,7 @@
 #include "core/LlmQueryClient.h"
 #include "core/LatencyProfiler.h"
 #include "core/ExperimentRunner.h"
+#include "core/WebSocketServer.h"
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Eksperyment 1.1 — tryb headless (bez GUI, bez fizycznego ESP32)
@@ -139,6 +140,97 @@ static int runHeadlessExperiment(int argc, char *argv[], const QString &apiKeysP
     return app.exec();
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Eksperyment 1.1 — tryb headless z PRAWDZIWYM ESP32 (esp_experiment_1_1.ino)
+// Uruchamiany flagą --run-experiment-hw <plik_kluczy_api> <katalog_wyjsciowy> [N] [port]
+// Uruchamia WebSocketServer i czeka, aż ESP32 się połączy i zacznie przysyłać
+// ramki CAN — t_llm/t_comp realne jak wyżej, a t_tx_up/t_det/t_ota TAKŻE realne
+// (patrz ExperimentRunner::useRealHardware / esp_experiment_1_1.ino).
+// ═══════════════════════════════════════════════════════════════════════════
+
+static int runHeadlessExperimentHw(int argc, char *argv[], const QString &apiKeysPath,
+                                    const QString &outDir, int trialsPerModel, quint16 port)
+{
+    QCoreApplication app(argc, argv);
+    qRegisterMetaType<CanFrame>("CanFrame");
+
+    const QMap<QString, QString> keys = parseApiKeysFile(apiKeysPath);
+    if (keys.isEmpty()) {
+        qCritical() << "[Experiment 1.1 HW] Nie udalo sie wczytac kluczy API z" << apiKeysPath;
+        return 1;
+    }
+    QDir().mkpath(outDir);
+
+    auto *wsServer = new WebSocketServer(&app);
+    auto *detector = new ColdStartDetector(&app);
+    auto *llmClient = new LlmQueryClient(&app);
+    auto *profiler = new LatencyProfiler(&app);
+    auto *runner = new ExperimentRunner(&app);
+
+    runner->setDetector(detector);
+    runner->setLlmClient(llmClient);
+    runner->setProfiler(profiler);
+    runner->setTrialsPerModel(trialsPerModel);
+    runner->setReportPath(outDir + "/latency_report_hw.json");
+    runner->useRealHardware(wsServer);
+
+    const QString claudeModel   = QStringLiteral("claude-sonnet-5");
+    const QString openaiModel   = QStringLiteral("gpt-5.6-sol");
+    const QString deepseekModel = QStringLiteral("deepseek-v4-pro");
+    const QString geminiModel   = QStringLiteral("gemini-3.6-flash");
+
+    runner->addModel(claudeModel);
+    runner->setApiKey(claudeModel, keys.value(QStringLiteral("CLAUDE API Key")));
+    runner->addModel(openaiModel);
+    runner->setApiKey(openaiModel, keys.value(QStringLiteral("CODEX API Key")));
+    runner->addModel(deepseekModel);
+    runner->setApiKey(deepseekModel, keys.value(QStringLiteral("DeepSeek API Key")));
+    runner->addModel(geminiModel);
+    runner->setApiKey(geminiModel, keys.value(QStringLiteral("Gemini API Key")));
+
+    QObject::connect(wsServer, &WebSocketServer::errorOccurred, [](const QString &msg) {
+        qCritical().noquote() << "[WebSocketServer]" << msg;
+    });
+    QObject::connect(wsServer, &WebSocketServer::clientCountChanged, [](int count) {
+        qInfo().noquote() << QString("[WebSocketServer] Polaczonych klientow (ESP32): %1").arg(count);
+    });
+
+    QObject::connect(runner, &ExperimentRunner::progressChanged,
+        [](double frac, const QString &status) {
+            qInfo().noquote() << QString("[%1%] %2").arg(frac * 100.0, 5, 'f', 1).arg(status);
+        });
+    QObject::connect(runner, &ExperimentRunner::modelCompleted,
+        [](const QString &model, const LatencyStats &stats) {
+            qInfo().noquote() << QString("=== %1 zakonczony: t_llm=%2ms t_tx_up=%3ms t_ota=%4ms (N=%5) ===")
+                .arg(model).arg(stats.meanLlmMs, 0, 'f', 1).arg(stats.meanTxUpMs, 0, 'f', 2)
+                .arg(stats.meanOtaMs, 0, 'f', 1).arg(stats.sampleCount);
+        });
+    QObject::connect(runner, &ExperimentRunner::experimentFinished,
+        [&app](const QString &path) {
+            qInfo().noquote() << "Eksperyment (HW) zakonczony, raport:" << path;
+            app.quit();
+        });
+    QObject::connect(runner, &ExperimentRunner::experimentError,
+        [&app](const QString &msg) {
+            qCritical().noquote() << "Blad eksperymentu:" << msg;
+            app.exit(1);
+        });
+
+    wsServer->start(port);
+    if (!wsServer->isRunning()) {
+        qCritical() << "[Experiment 1.1 HW] Nie udalo sie uruchomic WebSocketServer na porcie" << port;
+        return 1;
+    }
+
+    qInfo().noquote() << QString(
+        "WebSocketServer nasluchuje na ws://0.0.0.0:%1 — skonfiguruj w esp_experiment_1_1.ino "
+        "WS_SERVER_IP na adres IP tego komputera w sieci lokalnej i WS_SERVER_PORT=%1. "
+        "Eksperyment czeka na pierwsza ramke CAN od ESP32...").arg(port);
+
+    runner->start();
+    return app.exec();
+}
+
 static QFile g_logFile;
 static QTextStream g_logStream;
 
@@ -176,6 +268,19 @@ int main(int argc, char *argv[])
             int trials = 30;
             if (i + 3 < argc) trials = QString(argv[i + 3]).toInt();
             return runHeadlessExperiment(argc, argv, apiKeysPath, outDir, trials);
+        }
+        if (QString(argv[i]) == QStringLiteral("--run-experiment-hw")) {
+            if (i + 2 >= argc) {
+                qCritical() << "Uzycie: --run-experiment-hw <plik_kluczy_api> <katalog_wyjsciowy> [N_prob_na_model=30] [port=9000]";
+                return 1;
+            }
+            const QString apiKeysPath = argv[i + 1];
+            const QString outDir = argv[i + 2];
+            int trials = 30;
+            quint16 port = 9000;
+            if (i + 3 < argc) trials = QString(argv[i + 3]).toInt();
+            if (i + 4 < argc) port = static_cast<quint16>(QString(argv[i + 4]).toUInt());
+            return runHeadlessExperimentHw(argc, argv, apiKeysPath, outDir, trials, port);
         }
     }
 

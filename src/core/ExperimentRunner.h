@@ -3,6 +3,7 @@
 #include "ColdStartDetector.h"
 #include "LlmQueryClient.h"
 #include "LatencyProfiler.h"
+#include "WebSocketServer.h"
 #include <QObject>
 #include <QTimer>
 #include <QString>
@@ -71,6 +72,13 @@ public:
     /// Czy bieżący eksperyment działa bez fizycznego ESP32 (symulacja t_det/t_tx_up/t_ota).
     [[nodiscard]] bool hardwareSimulated() const { return m_hardwareSimulated; }
 
+    /// Włącza tryb prawdziwego sprzętu: ramki CAN przychodzą z realnego ESP32
+    /// (esp_experiment_1_1.ino) przez WebSocket (server->frameReceivedFromClient),
+    /// t_tx_up/t_det mierzone realnie (zegar serwera + korekta przesunięcia zegara
+    /// ESP32 wykonana w firmware), t_ota mierzone jako realny czas od wysłania
+    /// reguły (sendRuleUpdate) do otrzymania rule_ack od ESP32 (z timeoutem).
+    void useRealHardware(WebSocketServer *server, int otaTimeoutMs = 5000);
+
 signals:
     /// Postęp ogólny (0.0-1.0) i tekst statusu.
     void progressChanged(double fraction, const QString &statusText);
@@ -95,6 +103,13 @@ private slots:
     void onLlmError(const QString &errorMsg);
     void advanceTrial();
 
+    /// Ramka odebrana z realnego ESP32 (WebSocketServer::frameReceivedFromClient).
+    void onRealFrameReceived(const CanFrame &frame);
+    /// ESP32 potwierdził zastosowanie reguły OTA (realny pomiar t_ota).
+    void onRuleAckReceived(uint32_t canId);
+    /// Brak potwierdzenia OTA od ESP32 w zadanym czasie — próba liczy się jako failed.
+    void onOtaAckTimeout();
+
 private:
     enum class State {
         Idle,
@@ -118,6 +133,9 @@ private:
     /// Losuje wartość z rozkładu normalnego (obciętego od dołu do minUs), w mikrosekundach.
     /// Używane WYŁĄCZNIE gdy brak fizycznego ESP32 — patrz m_hardwareSimulated.
     [[nodiscard]] uint64_t sampleSimulatedUs(double meanUs, double sigmaUs, double minUs);
+
+    /// Zapisuje próbkę (sukces, m_tOtaUs już ustawione) i przechodzi do kolejnej próby.
+    void finalizeSample(bool success, const QString &errorMsg = {});
 
     // Komponenty
     ColdStartDetector *m_detector = nullptr;
@@ -144,6 +162,8 @@ private:
     uint64_t    m_tLlmEndUs   = 0;
     uint64_t    m_tCompUs    = 0;
     uint64_t    m_tOtaUs     = 0;
+    uint64_t    m_tLlmUs     = 0;
+    QString     m_pendingLlmResponseText;
     uint32_t    m_currentCanId = 0;
     CanFrame    m_triggerFrame;
 
@@ -156,4 +176,12 @@ private:
     // Symulacja sprzętowa (brak fizycznego ESP32/magistrali CAN) — patrz hardwareSimulated()
     bool             m_hardwareSimulated = false;
     std::mt19937     m_rng{std::random_device{}()};
+
+    // Tryb realnego sprzętu (ESP32 przez WebSocketServer) — patrz useRealHardware()
+    WebSocketServer *m_wsServer = nullptr;
+    bool             m_realHardwareMode = false;
+    uint64_t         m_pendingFrameArrivalUs = 0;
+    uint64_t         m_otaSendTimeUs = 0;
+    QTimer          *m_otaTimeoutTimer = nullptr;
+    int              m_otaTimeoutMs = 5000;
 };
