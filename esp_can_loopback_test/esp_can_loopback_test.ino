@@ -26,7 +26,7 @@
 #include <mcp2515.h>
 
 #define CAN_CS        5
-#define CAN_OSC_MHZ   8    // kwarc na module MCP2515 (8 lub 16)
+#define CAN_OSC_MHZ   16   // kwarc na module MCP2515 (8 lub 16)
 #define HEARTBEAT_ID  0x7AA
 #define HEARTBEAT_MS  2000
 

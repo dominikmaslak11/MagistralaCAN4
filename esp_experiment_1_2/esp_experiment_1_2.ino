@@ -35,7 +35,7 @@
 // ──────────────────────────────────────────────────────────────
 #define CAN_CS         5
 #define CAN_SPEED_BPS  250000UL
-#define CAN_OSC_MHZ    8                 // kwarc na module MCP2515 (8 lub 16)
+#define CAN_OSC_MHZ    16                // kwarc na module MCP2515 (8 lub 16)
 
 #define MCP_INT_PIN    4                 // MCP2515 INT -> ESP32 GPIO4
 #define REACTION_PIN   13                // ESP32 GPIO13 -> kanal 1 analizatora

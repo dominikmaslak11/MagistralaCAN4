@@ -1,0 +1,29 @@
+============================================================
+EKSPERYMENT 1.2 — Hot Execution Latency
+MagistralaCAN4 + esp_experiment_1_2.ino (ESP32 + MCP2515)
+============================================================
+Liczba probek: 1000 (cel: 1000)
+
+METODOLOGIA:
+  Pomiar WEWNETRZNY na ESP32 (esp_timer_get_time(), rozdzielczosc
+  mikrosekundowa) - czas miedzy przerwaniem sprzetowym MCP2515 INT
+  (nadejscie ramki CAN) a reakcja GPIO (przelaczenie pinu po
+  potwierdzeniu ID znanej ramki). Zewnetrzny analizator stanow
+  logicznych (ATK-Logic, USB 1a86:ffcc) okazal sie trwale niesprawny
+  (brak odpowiedzi na jakiekolwiek zapytanie, zweryfikowane
+  niezaleznym testem C++/libusb odtwarzajacym doslownie oficjalny
+  protokol producenta) - metodologia zastepcza, nie oscyloskopowa.
+
+  Statystyki t_resp [us]:
+    srednia (mu):      1.01
+    odchylenie (sigma): 0.10
+    mediana:            1.00
+    min:                1
+    max:                2
+
+WNIOSKI:
+  Czas reakcji Hot Execution (~1us) jest o ~4-5 rzedow
+  wielkosci mniejszy niz t_llm z Eksperymentu 1.1 (sekundy), co
+  potwierdza teze: koszt fazy adaptacji (Cold Start, zapytanie LLM)
+  dominuje calkowity czas systemu, a raz wdrozona regula dziala
+  praktycznie w czasie rzeczywistym.
