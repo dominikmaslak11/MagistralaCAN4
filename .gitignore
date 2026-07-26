@@ -27,3 +27,12 @@ esp_mcp/.tools/arduino-data/
 esp_mcp/.tools/arduino-cli/
 esp_mcp/.tools/*.zip
 esp_mcp/.tools/*.yaml
+
+# Dane WiFi/serwera ESP32 — nigdy nie commitowac (patrz secrets.h.example)
+esp_experiment_1_1/secrets.h
+
+# Oprogramowanie producenta (binarka, setki MB) i katalogi budowania — nie do repo
+DL16 Digital Logic Analyzer(1).zip
+DL16 Digital Logic Analyzer/
+build-mcp-linux/
+__pycache__/

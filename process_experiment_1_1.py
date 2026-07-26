@@ -308,7 +308,16 @@ def build_text_report(stats_rows, out_dir, trials_per_model, metadata, model_det
             lines.append("  co potwierdza teze, ze czas wnioskowania LLM jest")
             lines.append("  glownym waskim gardlem fazy Cold Start.")
 
-    if metadata.get("hardwareSimulated"):
+    if metadata.get("realHardwareMode"):
+        lines += ["", "METODOLOGIA:",
+                  "  Pomiar na realnym sprzecie: ESP32+MCP2515 (esp_experiment_1_1.ino)",
+                  "  polaczony przez WiFi/WebSocket z MagistralaCAN4, ruch CAN generowany",
+                  "  na fizycznej magistrali (PCAN-USB). WSZYSTKIE skladowe sa realnymi",
+                  "  pomiarami: t_llm/t_comp (zegar serwera), t_det (czas decyzji",
+                  "  ColdStartDetector), t_tx_up (transmisja bezprzewodowa, korekta zegara",
+                  "  ESP32 metoda time_sync/NTP-style), t_ota (realny round-trip",
+                  "  apply_rule -> rule_ack)."]
+    elif metadata.get("hardwareSimulated"):
         lines += ["", "METODOLOGIA / OGRANICZENIA:",
                   "  Brak fizycznego ESP32 i magistrali CAN w srodowisku pomiarowym.",
                   "  t_llm i t_comp sa realnymi pomiarami (zegar systemowy, rzeczywiste",

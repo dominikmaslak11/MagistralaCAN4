@@ -1,0 +1,470 @@
+Model,Trial,CAN_ID,Frame_Data_Hex,LLM_Response,t_llm_ms,success
+deepseek-v4-pro,0,0x521,841dc8eb22e02252,"We are given a single CAN frame with ID 0x521 and data: 84 1d c8 eb 22 e0 22 52. No other context is provided. We need to suggest interpretations based on common CAN data patterns. With only one frame, it's hard to deduce signals, but we can guess based on typical automotive signals. The ID is 0x521, which could be from a body or powertrain module. The data bytes: 84, 1d, c8, eb, 22, e0, 22, 52. We might look for patterns: maybe a counter in byte 0? 0x84 is 132 decimal, not a simple increment. M",19457.0,True
+deepseek-v4-pro,1,0x54b,841dc8eb22e02252,"{
+  ""interpretation"": ""Byte 0-1 (little-endian, 0x1d84=7556) likely engine RPM with typical scaling 0.25 -> 1889 RPM. Byte 2 (0xc8",18141.0,True
+deepseek-v4-pro,2,0x571,841dc8eb22e02252,"We are given three CAN frames all with the same data but different IDs: 0x521, 0x54b, 0x571. The data is: 84 1d c8 eb 22 e0 22 52. The timestamps show they are close in time. Since the data is identical across different IDs, it might be a broadcast from the same sensor or module to multiple receivers, or perhaps these IDs are related (maybe different functions but sharing data). Alternatively, it could be a test setup. The request asks specifically for ID=0x571 frame. Without more context, we ne",18849.0,True
+deepseek-v4-pro,3,0x599,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x599, DLC 8, data: 841dc8eb22e02252. The user also provides recent frames for other IDs (0x521, 0x54b, 0x571) with identical data, all same timestamp-like ts values close together. This suggests that these different CAN IDs might be sending the same data, possibly a broadcast or multiple IDs with identical payload. However, the focus is on 0x599.
+
+We need to interpret bytes. The data is hex: 84 1d c8 eb 22 e0 22 52. We need to guess meaning. Since the",18612.0,True
+deepseek-v4-pro,4,0x5bf,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x5bf, DLC 8, data 841dc8eb22e02252. The recent frames show different IDs (0x521, 0x54b, 0x571, 0x599) but all with the same data payload ""841dc8eb22e02252"". This is peculiar: multiple IDs carrying the exact same data bytes, all at close timestamps. This might indicate that these IDs are part of a multi-frame message or perhaps a burst of identical messages on different IDs (like a functional addressing scheme). But the task is to interpret the data fo",17729.0,True
+deepseek-v4-pro,5,0x5e5,841dc8eb22e02252,"We are asked to analyze a CAN frame. The frame is CAN ID 0x5e5, DLC=8, data = 841dc8eb22e02252 (hex). The timestamp is given. Additionally, we see a list of ""Recent frames for this ID"" but note that the list shows different IDs (0x521, 0x54b, 0x571, 0x599, 0x5bf, 0x5e5) all with the exact same data: 841dc8eb22e02252. That's interesting: same data across different IDs. Possibly these IDs are sequential, maybe from a multi-frame message or a series of messages from the same ECU that happen to have",18230.0,True
+deepseek-v4-pro,6,0x60b,841dc8eb22e02252,"We are asked to analyze a CAN frame: ID 0x60b, DLC 8, data = [84 1d c8 eb 22 e0 22 52] (hex). We also see a list of recent frames for this ID, but interestingly the list shows frames with different IDs (0x521, 0x54b, 0x571, 0x599, 0x5bf, 0x5e5, then 0x60b) but all with the exact same data bytes! This is highly unusual for CAN traffic. Normally, different CAN IDs would carry different data. The fact that many IDs share identical data suggests that maybe these are not regular CAN messages but some",17104.0,True
+deepseek-v4-pro,7,0x630,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x630, DLC=8, data bytes: [84 1d c8 eb 22 e0 22 52] in hex? Wait, the string ""841dc8eb22e02252"" is hex representation of the 8 bytes: 0x84, 0x1d, 0xc8, 0xeb, 0x22, 0xe0, 0x22, 0x52. The recent frames show the same data pattern across different IDs, which is odd: all IDs from 0x521 to 0x630 show exactly the same data ""841dc8eb22e02252"" but with different timestamps. This might be a recording of a bus where different IDs are being sent but coincidentally",18641.0,True
+deepseek-v4-pro,8,0x658,841dc8eb22e02252,"We are given a CAN frame with ID 0x658, DLC 8, data: 84 1d c8 eb 22 e0 22 52. Additionally, we see that the identical data pattern appears across multiple IDs in sequence, suggesting these are likely periodic messages from different ECUs or a repeating frame, but the data is identical across IDs. However, the request is specifically to analyze the frame with ID 0x658.
+
+We need to interpret the meaning of each byte, suggest a decoding rule, and provide a confidence level.
+
+Observation: The data b",19657.0,True
+deepseek-v4-pro,9,0x682,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x682, DLC 8, data bytes: 84 1d c8 eb 22 e0 22 52 (hex). The payload is repeated across many different IDs in the recent frames: all show the same 8-byte data. That suggests the data might be a broadcast message or sensor data that is sent to multiple IDs, or perhaps it's a diagnostic response or something like that. But the IDs are different: 0x521, 0x54b, 0x571, 0x599, 0x5bf, 0x5e5, 0x60b, 0x630, 0x658, 0x682. They are all different. Yet the payload ",18020.0,True
+deepseek-v4-pro,10,0x6aa,841dc8eb22e02252,"We are asked to analyze the CAN frame with ID 0x6aa, DLC 8, data: [84 1d c8 eb 22 e0 22 52] (hex). We have recent frames for other IDs, but they all have the exact same data! This is suspicious: ""Recent frames for this ID:"" lists many different CAN IDs (0x521, 0x54b, 0x571, ... up to 0x6aa) but all have identical data: [841dc8eb22e02252]. This suggests that the data is not specific to any single ID, but rather that these frames are all broadcasting the same data, possibly from different ECUs? Or",17981.0,True
+deepseek-v4-pro,11,0x6cf,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x6cf, DLC 8, data: 84 1d c8 eb 22 e0 22 52. The recent frames show the exact same data bytes across multiple IDs (0x521, 0x54b, ... 0x6cf). This is suspicious: the same data payload appears across many different CAN IDs. This might be a replay or a shared message, but in typical CAN networks, different IDs correspond to different messages. However, the timestamps show these frames are closely spaced in time (~17ms between sequential IDs). The data is ",18585.0,True
+deepseek-v4-pro,12,0x6f8,841dc8eb22e02252,"We are given a CAN frame with ID 0x6f8 and data bytes: 84 1d c8 eb 22 e0 22 52. Also we have recent frames for various IDs, all with the exact same data: 841dc8eb22e02252. This is interesting: the same 8-byte payload appears across many different IDs, all with sequential timestamps. This might indicate that the data is a broadcast message being transmitted on multiple IDs, or perhaps it's a diagnostic message or a synchronization pattern. The repeated identical data across different IDs suggests",18048.0,True
+deepseek-v4-pro,13,0x71e,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x71e and data bytes [84 1d c8 eb 22 e0 22 52]. We also have recent frames for this ID and many other IDs that have exactly the same data bytes! Notice that all the frames from ID 0x521 to 0x71e share the exact same eight bytes: 84 1d c8 eb 22 e0 22 52. This is unusual but indicates that the same data is being broadcast on multiple IDs sequentially, perhaps as a multi-frame message where each ID represents a different part of a large message, or it cou",17674.0,True
+deepseek-v4-pro,14,0x744,841dc8eb22e02252,"We are given a CAN frame with ID 0x744, data: 84 1d c8 eb 22 e0 22 52. Also listed are many other frames with different IDs but identical data. The identical data across many IDs suggests this might be a broadcast message, perhaps a periodic sensor reading where the same data is sent on multiple IDs, or it could be that these frames are from a replay or simulation. The data bytes are identical in all frames, so the interpretation must be based on the single data pattern.
+
+Let's analyze the data ",17855.0,True
+deepseek-v4-pro,15,0x76b,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x76b, data 841dc8eb22e02252 (hex). The same data appears across multiple different CAN IDs in the recent frames list, which is unusual; perhaps it's a repeating message from different IDs but same data? That might suggest a multicast or perhaps a mistake in the listing (maybe all those frames are the same data but different IDs, which is odd). But the specific ID we need to interpret is 0x76b. The data is 8 bytes: 0x84, 0x1d, 0xc8, 0xeb, 0x22, 0xe0, 0",18132.0,True
+deepseek-v4-pro,16,0x790,841dc8eb22e02252,"We are asked to analyze a CAN frame and suggest byte-level interpretations. The target frame is ID=0x790, DLC=8, data bytes: [84 1d c8 eb 22 e0 22 52] (given as hex string ""841dc8eb22e02252""). We also see many other frames from different IDs but all with the exact same data payload. This suggests that these different IDs might be sending the same data, perhaps a multicast or multiple ECUs broadcasting identical information. The fact that the data is identical across different IDs over time impli",17778.0,True
+deepseek-v4-pro,17,0x7b6,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x7b6 and data bytes [84, 1d, c8, eb, 22, e0, 22, 52]. The recent frames for this ID list shows many IDs with identical data: all 8 bytes are the same across many different CAN IDs, but the target frame is 0x7b6. The recent frames are listed with IDs from 0x521 up to 0x790, each with the exact same data bytes and varying timestamps. This suggests that the data may be a broadcast message sent across multiple IDs, perhaps a synchronization or heartbeat m",18435.0,True
+deepseek-v4-pro,18,0x7de,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x7de, data: 841dc8eb22e02252 (hex). The provided recent frames for this ID show one frame, but interestingly, there are many other IDs with the exact same data, suggesting possible multi-frame message or just coincidence. But the task is to analyze the frame for ID 0x7de. Since only one frame is given, we cannot observe changes over time, making interpretation difficult. We need to infer possible meanings based on typical automotive CAN data. Common s",20914.0,True
+deepseek-v4-pro,19,0x00b,841dc8eb22e02252,"We are given a CAN frame with ID 0x00b and data: 84 1d c8 eb 22 e0 22 52. Also provided are recent frames for this ID, but they actually show different IDs (0x521, 0x54b, etc.) all with the same data payload: 84 1d c8 eb 22 e0 22 52. The list includes frames from ID 0x521 up to 0x00b, all with identical data. This is odd: many different IDs transmitting exactly the same data? Possibly a mistake in the prompt; maybe they meant ""Recent frames for this data pattern across IDs""? Or perhaps they all ",19434.0,True
+deepseek-v4-pro,20,0x032,841dc8eb22e02252,"We are asked to analyze the CAN frame with ID 0x032 (DLC: 8) and data=[84 1d c8 eb 22 e0 22 52]. The recent frames listed show different IDs but all have exactly the same data bytes: 841dc8eb22e02252. That's suspicious. The frames are from various IDs (0x521, 0x54b, etc., down to 0x00b). They all have the same data. This pattern suggests that the data may not be specific to ID 0x032, but rather some common message type or perhaps a broadcast that is being echoed on many IDs. It might be a multip",17095.0,True
+deepseek-v4-pro,21,0x056,841dc8eb22e02252,"We have a target frame: CAN ID 0x056, data: 84 1d c8 eb 22 e0 22 52. The recent frames list shows many different IDs, all with the exact same data: 841dc8eb22e02252. This is odd. It suggests that the data payload is identical across many different CAN IDs. The timestamps show they are close together, about 0.02-0.03 seconds apart. Possibly this is a broadcast from a single source to multiple CAN IDs? Or maybe the logging is capturing all frames with that data pattern. But the request is to analy",17524.0,True
+deepseek-v4-pro,22,0x07b,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID=0x07b and data: 841dc8eb22e02252. The user provided ""recent frames for this ID"", but note: the list shows many different IDs (0x521, 0x54b, etc.) all with the exact same data. Also the first listed says ""Recent frames for this ID:"" but then lists IDs like 0x521, 0x54b... That is inconsistent. They might have meant: recent frames on the bus? Or they might have accidentally included frames from other IDs that happen to have the same data. The last one in",16413.0,True
+deepseek-v4-pro,23,0x0a0,841dc8eb22e02252,"We are given a CAN frame with ID 0x0a0, DLC 8, data: 84 1d c8 eb 22 e0 22 52. The ""recent frames"" shown are for different IDs (0x521, 0x54b, etc.) but all have the exact same data bytes. That suggests these IDs might be responses from different modules with the same payload, or a broadcast message with varying IDs? Actually, the list shows frames with different IDs but identical data. That is unusual. Possibly they are all from the same source but with different IDs due to some pattern? Or it's ",17619.0,True
+deepseek-v4-pro,24,0x0c7,841dc8eb22e02252,"We are given a CAN frame with ID 0x0c7 and data bytes: 84 1d c8 eb 22 e0 22 52. Also shown are recent frames for this ID (but the recent frames listed have different CAN IDs! They show ID=0x521, 0x54b, etc., but with the same data pattern. That seems odd: the user says ""Recent frames for this ID:"" but then lists many different IDs. Possibly a copy-paste error? They might be other IDs that have the same data pattern, or maybe it's showing a sequence across multiple IDs. But the request is specifi",17003.0,True
+deepseek-v4-pro,25,0x0ea,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x0ea, DLC 8, data: 84 1d c8 eb 22 e0 22 52 (hex). The provided ""recent frames for this ID"" actually show a list with different IDs (0x521, 0x54b, etc.) but all have the same data payload: [841dc8eb22e02252]. That's suspicious: they are different IDs but identical data. Possibly a mistake? The user says ""Recent frames for this ID:"" but lists many different IDs, all with same data and timestamps. The frame we are to analyze is ID=0x0ea. The list below m",16374.0,True
+deepseek-v4-pro,26,0x10e,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x10e, DLC 8, data bytes: [84 1d c8 eb 22 e0 22 52]. However, the ""Recent frames for this ID"" shows data for different IDs (0x521, 0x54b, etc.) all with the same data payload [84 1d c8 eb 22 e0 22 52]. This suggests that the data payload is identical across many CAN IDs, which is unusual. Possibly the provided context is showing frames with the same data payload but different IDs, maybe to highlight that the data payload is repeated. However, the instr",17306.0,True
+deepseek-v4-pro,27,0x133,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x133 and data: 84 1d c8 eb 22 e0 22 52. But the ""recent frames"" show the same data pattern across many different IDs, which is suspicious. It seems the user provided a single frame for ID 0x133, but the ""recent frames"" listed are for other IDs but all have identical data: 841dc8eb22e02252. This might be a trick: the data is constant across many IDs, so it might be a test pattern or a fixed message. Given that, the interpretation is challenging. Howeve",17620.0,True
+deepseek-v4-pro,28,0x159,841dc8eb22e02252,"{
+  ""interpretation"": ""Insufficient data (only one constant sample) to determine signal meanings. Data likely represents a static message. Byte 0 (0x84): possible status flag; Bytes 1-2 (0x1dc8): unknown 16-bit value (e.g., constant parameter); Bytes 3-4 (0xeb22): unknown; Bytes 5-6 (0xe022): unknown; Byte 7 (0x52): may be checksum or padding."",
+  ""rule"": {
+    ""byte",17563.0,True
+deepseek-v4-pro,29,0x180,841dc8eb22e02252,"We are asked to analyze a CAN frame with ID 0x180, DLC=8, data=[841dc8eb22e02252]. Actually the data is given as ""841dc8eb22e02252"" which is hex. So bytes: 84 1d c8 eb 22 e0 22 52.
+
+However, the ""Recent frames for this ID:"" list shows frames with different IDs (0x521, 0x54b, etc.) all with the same data ""841dc8eb22e02252"". That's weird: they say ""Recent frames for this ID:"" but then list a bunch of different IDs. Possibly a mistake, or maybe they're showing other frames from the same bus that ha",15773.0,True
+claude-sonnet-5,0,0x200,841dc8eb22e02252,"{
+  ""interpretation"": ""Only one frame sample available, so byte-level meaning is speculative. Byte0 (0x84) may be a status/flag byte (bit7 set could indicate an active/error flag). Bytes1-2 (0x1DC8) and bytes3-4 (0xEB22) could be two 16-bit sensor values (e.g., speed, torque) in big-endian format, possibly scaled. Bytes5-6 (0xE022) might be another 16-bit signal, and byte7 (0x52) could serve as a checksum or rolling counter. Without additional frames showing value changes, exact scaling and role",9664.0,True
+claude-sonnet-5,1,0x214,841dc8eb22e02252,"{
+  ""interpretation"": ""Only one sample seen for ID 0x214, and it matches the payload seen on a different ID (0x200), suggesting this may be a static/configuration frame rather than a dynamically changing signal. Byte0 (0x84) could be a status/mode flag byte, bytes1-2 (0x1D,0xC8) may form a 16-bit counter or sensor value (29,896 or little-endian 0xC81D=51229), bytes3-4 (0xEB,0x22) another 16-bit field, byte5 (0xE0) possibly a flags/state byte, bytes6-7 (0x22,0x52) another 16-bit value or checksum",7109.0,True
+claude-sonnet-5,2,0x226,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""All 8 bytes are identical across different CAN IDs (0x200, 0x214, 0x226) and timestamps, suggesting this is either static/constant data (e.g., fixed configuration, serial number, or version ID) rather than dynamic sensor telemetry, or the capture represents simulated/replayed test data. Byte0=0x84 (132), Byte1=0x1D (29), Byte2=0xC8 (200), Byte3=0xEB (235), Byte4=0x22 (34), Byte5=0xE0 (224), Byte6=0x22 (34), Byte7=0x52 (82). No variation observed to infer scaling or",6717.0,True
+claude-sonnet-5,3,0x234,841dc8eb22e02252,"{""interpretation"": ""All observed frames (across multiple CAN IDs) share the exact same 8-byte payload, indicating this data is either a static configuration/status block or a padding pattern rather than a dynamically changing signal. Byte0=0x84 (possible status/mode flags), Byte1=0x1D (counter/const), Byte2=0xC8, Byte3=0xEB, Byte4=0x22, Byte5=0xE0, Byte6=0x22, Byte7=0x52 – no bit changes observed to isolate individual signal boundaries. Likely a fixed calibration, identifier, or default payload ",6964.0,True
+claude-sonnet-5,4,0x244,841dc8eb22e02252,"{""interpretation"": ""All 8 bytes are identical across every observed frame (different CAN IDs, different timestamps), indicating this payload is either static/constant data (e.g., a fixed configuration, version string, or padding) rather than a dynamically changing sensor value. Byte-level meaning cannot be reliably inferred from a single repeating pattern: byte0=0x84 (possible status/flags byte, bit7 set), byte1=0x1D, byte2=0xC8, byte3=0xEB, byte4=0x22, byte5=0xE0, byte6=0x22, byte7=0x52 (possib",7785.0,True
+claude-sonnet-5,5,0x255,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""All observed frames (different CAN IDs) share identical, static payload bytes [84 1d c8 eb 22 e0 22 52]. This suggests either a fixed/constant configuration message, a counter or checksum that hasn't changed within this short capture window, or possibly a test/idle pattern rather than dynamic sensor data. Byte-level meaning cannot be reliably determined since no bits vary across samples: byte0=0x84 (const), byte1=0x1d (const), byte2=0xc8 (const), byte3=0xeb (const)",4369.0,True
+claude-sonnet-5,6,0x260,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""All 8 bytes are identical across many different CAN IDs and timestamps, indicating this is likely a static/constant payload (e.g., counter/heartbeat placeholder, fixed configuration, or possibly a copy/padding artifact from capture tooling) rather than dynamically encoded signals. Byte0=0x84,Byte1=0x1d,Byte2=0xc8,Byte3=0xeb,Byte4=0x22,Byte5=0xe0,Byte6=0x22,Byte7=0x52 - no variation observed to infer scaling/offset meaning."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMa",3524.0,True
+claude-sonnet-5,7,0x268,841dc8eb22e02252,"{""interpretation"": ""All bytes are identical (0x84 0x1d 0xc8 0xeb 0x22 0xe0 0x22 0x52) across multiple different CAN IDs (0x200-0x268) with varying timestamps, indicating this is a static/fixed payload rather than ID-specific dynamic data. Likely a test pattern, padding, or unimplemented/placeholder signal set rather than real sensor telemetry."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",4810.0,True
+claude-sonnet-5,8,0x274,841dc8eb22e02252,"{""interpretation"": ""All 8 bytes are identical (0x84 0x1D 0xC8 0xEB 0x22 0xE0 0x22 0x52) across many different CAN IDs and timestamps, indicating this is likely static/placeholder or non-signal data (e.g., a fixed key, counter seed, or test pattern) rather than a live sensor value. No byte varies with time or ID, so no dynamic physical quantity can be inferred from this sample alone."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",5015.0,True
+claude-sonnet-5,9,0x280,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""Data payload is identical across many different CAN IDs (0x200-0x280), suggesting either a static/test pattern, a counter or fixed calibration frame, or possibly an unrelated bus capture artifact (e.g., replay/loopback). Byte-level meaning cannot be reliably derived since content doesn't vary with ID: Byte0=0x84 (const), Byte1=0x1D (const), Byte2=0xC8 (const), Byte3=0xEB (const), Byte4=0x22 (const), Byte5=0xE0 (const), Byte6=0x22 (const), Byte7=0x52 (const). No dyn",3676.0,True
+claude-sonnet-5,10,0x28b,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""Data payload is identical (841dc8eb22e02252) across many different CAN IDs, suggesting this is either a static/constant configuration frame, a heartbeat with fixed payload, or possibly bus noise/test data rather than meaningful signal encoding. Byte0=0x84 (possible status/flags), Byte1=0x1d, Byte2=0xc8, Byte3=0xeb, Byte4=0x22, Byte5=0xe0, Byte6=0x22, Byte7=0x52 - no variation observed to infer scaling or bit-level meaning."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMa",3129.0,True
+claude-sonnet-5,11,0x294,841dc8eb22e02252,"{
+  ""interpretation"": ""All 8 bytes are identical (84 1d c8 eb 22 e0 22 52) across every observed CAN ID (0x200–0x294), which strongly suggests this is static/test/placeholder data rather than a genuine signal-encoded message. No byte varies with ID or time, so no meaningful physical signal (RPM, speed, temp, etc.) can be inferred from this sample alone. Likely a bus simulator or logging artifact reusing a fixed payload template. Real interpretation would require frames with varying data over tim",5682.0,True
+claude-sonnet-5,12,0x2a2,841dc8eb22e02252,"{
+  ""interpretation"": ""All 8 bytes are identical (0x84 0x1D 0xC8 0xEB 0x22 0xE0 0x22 0x52) across every observed CAN ID and timestamp. This strongly suggests the payload is either a static/test pattern, a shared calibration constant, or non-signal filler data rather than an ID-specific encoded signal. No byte varies with time or CAN ID, so no dynamic signal (e.g., counter, checksum, sensor value) can be isolated from this data alone. Byte-level meaning cannot be reliably determined without varia",6120.0,True
+claude-sonnet-5,13,0x2b3,841dc8eb22e02252,"{""interpretation"": ""All bytes are identical (841dc8eb22e02252) across many different CAN IDs, indicating this payload is likely static test/calibration data or a fixed default frame rather than meaningful sensor data. Byte0=0x84, Byte1=0x1d, Byte2=0xc8, Byte3=0xeb, Byte4=0x22, Byte5=0xe0, Byte6=0x22, Byte7=0x52 - no variation observed to infer scaling or bit-fields."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",4494.0,True
+claude-sonnet-5,14,0x2bf,841dc8eb22e02252,"{""interpretation"": ""All observed frames across many different CAN IDs share the exact same 8-byte payload (84 1D C8 EB 22 E0 22 52). This strongly suggests these are not genuine distinct signals but either a test/simulation pattern, a bus replay artifact, or a fixed calibration/static payload rather than real-time sensor data. No per-byte signal variation can be inferred since payload never changes."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",4721.0,True
+claude-sonnet-5,15,0x2ca,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""Data payload is identical across many different CAN IDs (0x200-0x2ca), strongly suggesting this is either a fixed/static test pattern, a shared static configuration payload, or a bus capture artifact (e.g., replayed/looped data) rather than a genuine per-ID signal encoding. No byte varies with time or ID, so no real signal can be isolated. Bytes likely represent: [0]=const 0x84, [1]=const 0x1d, [2]=const 0xc8, [3]=const 0xeb, [4]=const 0x22, [5]=const 0xe0, [6]=con",5067.0,True
+claude-sonnet-5,16,0x2d9,841dc8eb22e02252,"{""interpretation"": ""All bytes are identical (841dc8eb22e02252) across many different CAN IDs, indicating this is likely static/test/padding data rather than meaningful sensor signals. No byte varies with ID or time, so no reliable per-byte signal meaning can be derived. Possibly a fixed calibration frame, bus-off filler, or replay/test capture artifact."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",4728.0,True
+claude-sonnet-5,17,0x2e7,841dc8eb22e02252,"{""interpretation"": ""All 8 bytes are constant (0x84 0x1d 0xc8 0xeb 0x22 0xe0 0x22 0x52) across many different CAN IDs, strongly suggesting this is a fixed/test payload (e.g., static injection, bus fuzzing, or a constant calibration/version string) rather than a live signal-encoded frame. No byte varies with time or ID, so no scaling/offset relationship can be derived from this data."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",4069.0,True
+claude-sonnet-5,18,0x2f1,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""Identical constant payload (84 1d c8 eb 22 e0 22 52) observed across many different CAN IDs, suggesting this is likely static/test/padding data (e.g., a fixed calibration pattern, counter/checksum placeholder, or bus-fill data) rather than a meaningful signal tied to this specific ID. No byte varies across frames, so no dynamic field can be identified from this sample."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+ ",5498.0,True
+claude-sonnet-5,19,0x2ff,841dc8eb22e02252,"{""interpretation"": ""All observed frames (across many different CAN IDs from 0x200 to 0x2ff) share the exact same 8-byte payload [84 1d c8 eb 22 e0 22 52]. This strongly suggests either a static/test payload, a replay capture, or a placeholder dataset rather than real sensor-derived data. No byte varies with ID or time, so no meaningful per-signal encoding (counters, checksums, physical values) can be inferred from this sample. Byte-level guesses: byte0=0x84 possibly status/flags, byte1=0x1d poss",7690.0,True
+claude-sonnet-5,20,0x312,841dc8eb22e02252,"{""interpretation"": ""The exact same 8-byte payload (84 1d c8 eb 22 e0 22 52) appears across many different CAN IDs (0x200-0x312), indicating this is likely static/test/simulated data rather than genuine sensor signal data. No meaningful byte-level signal encoding can be inferred since the payload doesn't vary with ID or time. If this were real traffic, byte0=0x84 could be a status/mode flag, bytes1-2 (0x1dc8) a possible counter or sensor value, bytes3-4 (0xeb22) another value, and bytes5-7 (0xe02",6716.0,True
+claude-sonnet-5,21,0x321,841dc8eb22e02252,"{""interpretation"": ""All bytes are identical (0x84 0x1d 0xc8 0xeb 0x22 0xe0 0x22 0x52) across many different CAN IDs, indicating this is likely a static/test payload rather than meaningful sensor data—possibly a bus simulator, replay tool, or fixed calibration/test pattern. No per-ID variation means individual byte fields cannot be reliably decoded as signals."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",4966.0,True
+claude-sonnet-5,22,0x32e,841dc8eb22e02252,"{""interpretation"": ""All observed frames across many different CAN IDs share the exact same 8-byte payload (84 1d c8 eb 22 e0 22 52), which strongly suggests this is static/test/replayed data rather than a live signal encoding. No byte varies with ID or time, so no meaningful per-byte signal (counter, checksum, sensor value) can be identified from this sample. If real, byte0 (0x84) could be a status/flags byte, bytes1-2 (0x1dc8) a possible 16-bit value, bytes3-4 (0xebeb... wait 0xeb,0x22) etc., b",7421.0,True
+claude-sonnet-5,23,0x340,841dc8eb22e02252,"{""interpretation"": ""Identical static payload (84 1d c8 eb 22 e0 22 52) observed across many different CAN IDs, suggesting this is either a fixed/test pattern, padding data, or a bus capture artifact rather than a meaningful signal-encoded frame. No byte appears to vary with time or ID, so no real signal can be extracted."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.2}",3703.0,True
+claude-sonnet-5,24,0x34a,841dc8eb22e02252,"{""interpretation"": ""Identical static payload (841dc8eb22e02252) observed across many different CAN IDs, suggesting this is either test/injected data, a fixed calibration pattern, or a bus capture artifact rather than genuinely decoded signal data. No byte varies with time or ID, so no real per-signal meaning can be derived from this sample alone."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.1}",3080.0,True
+claude-sonnet-5,25,0x353,841dc8eb22e02252,"```json
+{
+  ""interpretation"": ""Identical payload (84 1D C8 EB 22 E0 22 52) appears across many different CAN IDs (0x200–0x353+), suggesting this is either static/test data, a fixed calibration frame, or a logging artifact rather than genuine per-ID signal data. Byte-level meaning cannot be reliably derived since the payload doesn't vary with ID or time. If real: B0=0x84 (status/flags), B1=0x1D (counter/enum), B2=0xC8 (value 200), B3=0xEB (value 235), B4=0x22 (value 34), B5=0xE0 (value 224), B6=0",8178.0,True
+claude-sonnet-5,26,0x365,841dc8eb22e02252,"{""interpretation"": ""The payload (84 1d c8 eb 22 e0 22 52) is identical across many different CAN IDs (0x200–0x365+), which is not typical of real bus traffic. This strongly suggests either a test/replay artifact, a copy-paste logging bug, or a static/idle placeholder frame rather than meaningful signal data. No reliable per-byte signal meaning can be derived until unique, ID-specific payloads are observed. If treated at face value: byte0=0x84 (bit-flags/status), byte1=0x1d (counter/mode), bytes2",6487.0,True
+claude-sonnet-5,27,0x375,841dc8eb22e02252,"{""interpretation"": ""Data payload is identical across many different CAN IDs, suggesting this is either a fixed/static test pattern, a bus-wide broadcast placeholder, or non-decoded filler data rather than meaningful per-ID signal content. Byte0=0x84, Byte1=0x1d, Byte2=0xc8, Byte3=0xeb, Byte4=0x22, Byte5=0xe0, Byte6=0x22, Byte7=0x52 - no variation observed to correlate with ID changes, so no signal boundaries can be inferred from this sample alone."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""sca",3972.0,True
+claude-sonnet-5,28,0x380,841dc8eb22e02252,"{""interpretation"": ""Identical data payload (84 1d c8 eb 22 e0 22 52) appears across many different CAN IDs, indicating this is likely static/test/placeholder data rather than meaningful sensor values. No byte-level signal can be reliably inferred since the payload doesn't vary with ID or time."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.1}",3483.0,True
+claude-sonnet-5,29,0x38a,841dc8eb22e02252,"{""interpretation"": ""All bytes are identical across many different CAN IDs and never change, suggesting this is either static/padding data, a test/fuzzing pattern, or a fixed placeholder payload rather than meaningful signal data. Byte0=0x84,Byte1=0x1d,Byte2=0xc8,Byte3=0xeb,Byte4=0x22,Byte5=0xe0,Byte6=0x22,Byte7=0x52 - no variation observed to infer scaling/semantics."", ""rule"": {""byteIdx"": 0, ""bitMask"": ""0xFF"", ""scale"": 1.0, ""offset"": 0.0}, ""confidence"": 0.1}",5331.0,True
+gpt-5.6-sol,0,0x396,841dc8eb22e02252,"{
+  ""interpretation"": ""Insufficient variation to identify physical signals. Bytes 0-6 are unknown payload fields and may contain packed multi-byte sensor/status values. Byte 7 may combine status/checksum bits with a 4-bit rolling counter in its low nibble; this is only a hypothesis requiring sequential frames."",
+  ""rule"": {
+    ""byteIdx"": 7,
+    ""bitMask"": ""0x0F"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.08
+}",7069.0,True
+gpt-5.6-sol,1,0x3a6,841dc8eb22e02252,"{
+  ""interpretation"": ""Insufficient variation to infer signals. Byte 0=0x84 unknown/status; byte 1=0x1D unknown; byte 2=0xC8 unknown; byte 3=0xEB unknown; byte 4=0x22 unknown; byte 5=0xE0 unknown; byte 6=0x22 unknown; byte 7=0x52 possibly counter/checksum. Identical payload on IDs 0x396 and 0x3A6 may indicate duplicated/forwarded data rather than normal sensor encoding."",
+  ""rule"": {
+    ""byteIdx"": 7,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.08
+}",5455.0,True
+gpt-5.6-sol,2,0x3b2,841dc8eb22e02252,"{
+  ""interpretation"": ""No changing samples are available, and the identical payload appears under multiple CAN IDs, suggesting a fixed test, diagnostic, or replay pattern rather than normal vehicle signals. Bytes 0-7 should currently be treated as unknown raw values: B0=0x84, B1=0x1D, B2=0xC8, B3=0xEB, B4=0x22, B5=0xE0, B6=0x22, B7=0x52. There is insufficient evidence to identify RPM, temperature, counters, checksums, or endianness."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""sca",6176.0,True
+gpt-5.6-sol,3,0x3c0,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are 0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52. The identical payload appearing under several CAN IDs suggests a fixed test, discovery, gateway, or diagnostic payload rather than live signals such as RPM or temperature. No byte-level counter or changing physical value is observable; treat each byte as raw/opaque until varying samples are available."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": ",5529.0,True
+gpt-5.6-sol,4,0x3ce,841dc8eb22e02252,"{""interpretation"":""All bytes are constant across the supplied frames despite changing CAN IDs: B0=0x84, B1=0x1D, B2=0xC8, B3=0xEB, B4=0x22, B5=0xE0, B6=0x22, B7=0x52. They are more likely a repeated opaque payload, identifier/authentication pattern, or diagnostic data than independently changing RPM, temperature, or counter fields. No counter or checksum can be identified from this sample."",""rule"":{""byteIdx"":0,""bitMask"":""0xFF"",""scale"":1.0,""offset"":0.0},""confidence"":0.08}",7847.0,True
+gpt-5.6-sol,5,0x3e0,841dc8eb22e02252,"{
+  ""interpretation"": ""All eight payload bytes are constant across frames while the CAN IDs change, suggesting a diagnostic/fuzzing probe or replayed static payload rather than live telemetry. Byte 0=0x84, byte 1=0x1D, byte 2=0xC8, byte 3=0xEB, byte 4=0x22, byte 5=0xE0, byte 6=0x22, byte 7=0x52; no RPM, temperature, counter, or checksum can be reliably identified without payload variation. Treat bytes as raw data."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offs",4809.0,True
+gpt-5.6-sol,6,0x3ed,841dc8eb22e02252,"{
+  ""interpretation"": ""All observed frames contain the identical payload while the CAN ID changes, suggesting a scan/test pattern rather than live signals. Bytes 0-7 are static raw values: 0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52. No RPM, temperature, rolling counter, or checksum can be reliably identified from this sample."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",4088.0,True
+gpt-5.6-sol,7,0x3f9,841dc8eb22e02252,"{
+  ""interpretation"": ""Payload is constant across multiple different CAN IDs, so no dynamic signal can be identified. Bytes 0-7 are raw constants: B0=0x84, B1=0x1D, B2=0xC8, B3=0xEB, B4=0x22, B5=0xE0, B6=0x22, B7=0x52. This likely represents a fixed test/diagnostic pattern, identifier, or configuration block rather than RPM, temperature, or a counter."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.18
+}",6597.0,True
+gpt-5.6-sol,8,0x409,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are constant raw values [0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52]. No byte-level physical meaning, counter, or checksum can be inferred because every sample has the same payload and most samples use different CAN IDs. This likely represents a fixed test/signature payload rather than changing RPM or temperature data."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",5250.0,True
+gpt-5.6-sol,9,0x415,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are constant (0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52). No byte-level signal such as RPM, temperature, or counter can be inferred because every sample has the identical payload while the CAN ID changes. The bytes likely form a fixed opaque payload, identifier, or test pattern; the changing CAN ID may carry the actual varying value."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",4033.0,True
+gpt-5.6-sol,10,0x41e,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are constant raw values: [0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52]. No byte-level RPM, temperature, counter, or checksum behavior can be inferred because every payload is identical while the CAN ID changes. The sequence likely reflects ID scanning/replay rather than normal signals for ID 0x41E."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",4610.0,True
+gpt-5.6-sol,11,0x42b,841dc8eb22e02252,"{
+  ""interpretation"": ""No byte-level signal meaning can be inferred because all payloads are identical while the CAN IDs change. Bytes 0-7 are constant raw values [0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52]; there is no observable RPM, temperature, or payload counter. The changing arbitration ID may represent a scan or ID-level counter rather than normal traffic."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.08
+}",4099.0,True
+gpt-5.6-sol,12,0x437,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are constant (84 1D C8 EB 22 E0 22 52), so no RPM, temperature, counter, or checksum can be inferred. The identical payload across many changing CAN IDs suggests a diagnostic/probing payload or logging/parsing artifact rather than a normal periodic signal. Byte 0 may be an opcode/header; bytes 1-7 are opaque constant parameters or signature data."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.15
+}",4830.0,True
+gpt-5.6-sol,13,0x442,841dc8eb22e02252,"{
+  ""interpretation"": ""All observed frames have identical payloads despite changing CAN IDs, so no dynamic signals such as RPM, temperature, or counters can be established. Byte 0=0x84, byte 1=0x1D, byte 2=0xC8, byte 3=0xEB, byte 4=0x22, byte 5=0xE0, byte 6=0x22, byte 7=0x52; these most likely form a fixed signature/configuration value or replayed payload. The changing arbitration ID may itself be generated or swept rather than identifying one message stream."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ",4236.0,True
+gpt-5.6-sol,14,0x44d,841dc8eb22e02252,"{
+  ""interpretation"": ""All payload bytes remain constant while the CAN ID changes, so signal semantics cannot be inferred. Byte 0=0x84, byte 1=0x1D, byte 2=0xC8, byte 3=0xEB, byte 4=0x22, byte 5=0xE0, byte 6=0x22, byte 7=0x52; these likely form a fixed identifier/configuration payload rather than RPM, temperature, or counters. The changing CAN ID may itself be generated incorrectly or encode a sequence."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  ",5132.0,True
+gpt-5.6-sol,15,0x459,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are constant across all samples: B0=0x84, B1=0x1D, B2=0xC8, B3=0xEB, B4=0x22, B5=0xE0, B6=0x22, B7=0x52. No byte-level RPM, temperature, or counter can be inferred because the payload never changes; it is more likely a fixed identifier, test pattern, or opaque/authentication value. The changing CAN IDs suggest the ID, rather than the payload, may carry the varying value."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  ",5631.0,True
+gpt-5.6-sol,16,0x466,841dc8eb22e02252,"{
+  ""interpretation"": ""No reliable physical signal can be inferred: every listed frame has the identical payload while the CAN ID changes, suggesting a static identifier/test pattern or capture artifact. Bytes 0-7 are constant values 0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52; none can be identified as RPM, temperature, or counter without varying samples."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",4295.0,True
+gpt-5.6-sol,17,0x472,841dc8eb22e02252,"{
+  ""interpretation"": ""All observed payloads are identical despite changing CAN IDs, so no RPM, temperature, or counter can be inferred. Byte 0=0x84 unknown flags/value; byte 1=0x1D unknown; byte 2=0xC8 unknown; byte 3=0xEB unknown; byte 4=0x22 unknown; byte 5=0xE0 unknown; byte 6=0x22 unknown; byte 7=0x52 unknown, possibly checksum/static identifier. The changing arbitration ID, rather than the payload, may encode the swept or variable parameter."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": """,5948.0,True
+gpt-5.6-sol,18,0x481,841dc8eb22e02252,"{""interpretation"":""Payload is invariant while arbitration IDs change, suggesting a static test/signature payload rather than live telemetry. B0=0x84 likely flags/status; B1=0x1D, B2=0xC8, B3=0xEB, B4=0x22, B5=0xE0, B6=0x22, B7=0x52 are unknown constant data, possibly configuration, identifier, or test-pattern bytes. No counter, RPM, or temperature can be established from one unique payload."",""rule"":{""byteIdx"":0,""bitMask"":""0xFF"",""scale"":1.0,""offset"":0.0},""confidence"":0.08}",7992.0,True
+gpt-5.6-sol,19,0x493,841dc8eb22e02252,"{
+  ""interpretation"": ""No reliable physical signal can be inferred because all payloads are identical while CAN IDs change. Byte 0=0x84, byte 1=0x1D, byte 2=0xC8, byte 3=0xEB, byte 4=0x22, byte 5=0xE0, byte 6=0x22, byte 7=0x52; these likely form a static payload, identifier, or test pattern rather than RPM, temperature, or a counter. The changing CAN ID may be the actual swept/counter field."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confid",5839.0,True
+gpt-5.6-sol,20,0x4a0,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are constant (84 1D C8 EB 22 E0 22 52) across many different CAN IDs, suggesting a test/replay payload, gateway artifact, or parsing issue rather than live RPM/temperature/counter data. No changing byte, rolling counter, or checksum can be identified. Byte 0 may be treated as an opaque raw field; bytes 1-7 remain unknown."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",4916.0,True
+gpt-5.6-sol,21,0x4ae,841dc8eb22e02252,"{""interpretation"":""Bytes 0-7 are constant (0x84,0x1D,0xC8,0xEB,0x22,0xE0,0x22,0x52); no RPM, temperature, counter, or checksum can be identified from invariant payloads. The changing CAN IDs suggest scanning/fuzzing or malformed grouping rather than normal signal traffic."",""rule"":{""byteIdx"":0,""bitMask"":""0xFF"",""scale"":1.0,""offset"":0.0},""confidence"":0.08}",5274.0,True
+gpt-5.6-sol,22,0x4ba,841dc8eb22e02252,"{
+  ""interpretation"": ""No reliable signal mapping can be inferred. Bytes 0-7 remain constant (0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52) while the CAN ID changes, suggesting a fixed test payload, replay, or diagnostic scan rather than live RPM/temperature/counter data. No byte exhibits counter or checksum behavior."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",4663.0,True
+gpt-5.6-sol,23,0x4c4,841dc8eb22e02252,"{
+  ""interpretation"": ""Payload is constant across many different CAN IDs, so no byte-level physical signal can be inferred. Bytes 0-7 are fixed values [0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52], likely a test/scanning pattern or static identifier rather than RPM, temperature, or counters. The changing CAN ID, not the payload, appears to carry the variation."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.18
+}",4404.0,True
+gpt-5.6-sol,24,0x4cf,841dc8eb22e02252,"{
+  ""interpretation"": ""No byte-level physical signals can be inferred: bytes 0-7 are constant raw values [0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52]. The history shows changing CAN IDs with an identical payload, suggesting scanning/fuzzing or replay rather than normal telemetry. Counters, checksums, RPM, and temperature are unsupported by the samples."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",4612.0,True
+gpt-5.6-sol,25,0x4db,841dc8eb22e02252,"{
+  ""interpretation"": ""No signal variation is available: the identical payload appears under many changing CAN IDs, suggesting a scan/replay artifact or fixed test pattern rather than normal telemetry. Byte 0=0x84, byte 1=0x1D, byte 2=0xC8, byte 3=0xEB, byte 4=0x22, byte 5=0xE0, byte 6=0x22, byte 7=0x52; their individual meanings cannot be determined. Treat each as an opaque raw byte until frames with changing payload and correlated vehicle state are captured."",
+  ""rule"": {
+    ""byteIdx"": 0,
+   ",5326.0,True
+gpt-5.6-sol,26,0x4e9,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 (84 1D C8 EB 22 E0 22 52) remain identical while the CAN identifier changes, so no byte can reliably be assigned to RPM, temperature, or a counter. The payload is likely an opaque constant, replay/test pattern, identifier-independent token, or encrypted/authentication data. Byte 0=0x84, byte 1=0x1D, byte 2=0xC8, byte 3=0xEB, byte 4=0x22, byte 5=0xE0, byte 6=0x22, byte 7=0x52; none shows observable signal variation."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": """,4850.0,True
+gpt-5.6-sol,27,0x4f4,841dc8eb22e02252,"{
+  ""interpretation"": ""No physical signal can be inferred because every observed frame has the identical payload while CAN IDs change. Bytes 0-7 are constant raw values: B0=0x84, B1=0x1D, B2=0xC8, B3=0xEB, B4=0x22, B5=0xE0, B6=0x22, B7=0x52. This likely represents a fixed test/fuzzing payload, opaque identifier, or static data rather than RPM, temperature, or a counter."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",6019.0,True
+gpt-5.6-sol,28,0x502,841dc8eb22e02252,"{
+  ""interpretation"": ""No byte-level signal can be inferred: bytes 0-7 remain constant (0x84, 0x1D, 0xC8, 0xEB, 0x22, 0xE0, 0x22, 0x52) while the listed CAN IDs change. This resembles ID scanning/fuzzing or a fixed diagnostic payload rather than periodic sensor data. Treat all bytes as opaque raw data; no counter, RPM, or temperature field is evident."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.12
+}",5325.0,True
+gpt-5.6-sol,29,0x510,841dc8eb22e02252,"{
+  ""interpretation"": ""Bytes 0-7 are constant (84 1D C8 EB 22 E0 22 52) while the CAN ID changes, so no RPM, temperature, or counter can be identified. Likely a static payload, replay/test pattern, or capture-parsing issue. Byte meanings: B0=unknown/static, B1=unknown/static, B2=unknown/static, B3=unknown/static, B4=unknown/static, B5=unknown/static, B6=unknown/static, B7=unknown/static. More samples with changing vehicle state are required."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",",6968.0,True
+gemini-3.6-flash,0,0x400,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: System status flags; Bytes 1-2: Motor/Engine RPM or primary signal (0x2872); Byte 3: Temperature/State index (0x05); Bytes 4-5: Bus Voltage/Current raw payload (0x359A); Byte",20479.0,True
+gemini-3.6-flash,1,0x42a,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: System status flags (0x81); Bytes 1-2: Primary high-resolution signal (0x2872); Bytes 3-4: Engine/Motor Speed signal (0x0572 = 1394 RPM, Little-Endian); Bytes 5-6: Auxiliary sensor payload; Byte 7: High nibble counter / Low nibble CRC checksum."",
+  ""rule"": {
+    ""byteIdx"":",12811.0,True
+gemini-3.6-flash,2,0x446,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0 (0x81): Status/Mode flags; Byte 1 (0x28): Sensor reading or target setpoint (40 decimal); Bytes 2-3 (0x7",15878.0,True
+gemini-3.6-flash,3,0x468,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Static status/diagnostic payload consistent across IDs 0x400-0x468. Byte 0 (0x81) acts as a message header/status flag, Bytes 1-2 (0x2872) represent a fixed sensor offset or state value, Bytes 3-5 contain system status parameters, and Bytes 6-7 (0x0FB0) likely serve as a checksum or message tail."",
+  ""rule"": {
+    ""byteIdx"": 1,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.5
+}
+```",14275.0,True
+gemini-3.6-flash,4,0x487,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: Status/Mode bits (0x81); Bytes 1-2: Unsigned 16-bit sensor value 1 (0x2872 = 10354 raw); Bytes 3-4: Unsigned 16-bit sensor value 2 (0x0535 = 1333 raw",18542.0,True
+gemini-3.6-flash,5,0x4ad,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: Status/enable flags (0x81 = active status). Bytes 1-2: Multi-byte sensor/telemetry",18438.0,True
+gemini-3.6-flash,6,0x4d4,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""B0: Mode/Status flags (0x81), B1-B2: Primary sensor signal (0x2872 = 10354), B3-B4: Secondary sensor signal (0x0535 = 1333), B5: Auxiliary status byte (0x9A), B6: Sequence/Sub-ID counter (0x0F), B7: CRC/Checksum byte (0xB0). Payload remains static across observed IDs."",
+  ""rule"": {
+    ""byteIdx"": 1,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,",17321.0,True
+gemini-3.6-flash,7,0x4fa,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: Status/Control flags (0x81 indicates active state); Bytes 1-2: Big-endian unsigned raw telemetry signal (0x2872 =",14302.0,True
+gemini-3.6-flash,8,0x519,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: System status/mode flags (0x81). Bytes 1-2: Primary unsigned sensor value (0x2872 = 10354). Bytes 3-4: Secondary sensor measurement (0x0535 = 1333). Bytes 5-7",12991.0,True
+gemini-3.6-flash,9,0x535,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""B0: Status/header (0x81); B1-B2: Primary sensor value (0x2872 = 10354 raw); B3-B4: Embedded CAN ID identifier (0x0535); B5-B6: Secondary sensor value (0x9A0F); B7: Checksum/",16166.0,True
+gemini-3.6-flash,10,0x558,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: System status flags (0x81); Bytes 1-2: Primary sensor value (Big-Endian, 0x2872 = 10354); Bytes 3-4: Secondary status value (0x0535 = 1333); Bytes 5-7: Fixed device payload/checksum."",
+  ""rule"": {
+    ""byteIdx"": 1,
+    ""bitMask"": ""0xFFFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.5
+}
+```",18112.0,True
+gemini-3.6-flash,11,0x57f,81287205359a0fb0,,2773.0,False
+gemini-3.6-flash,12,0x586,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0 (0x81): Control/Header flag. Bytes 1-2 (0x2872):",16830.0,True
+gemini-3.6-flash,13,0x5a9,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""B0: Control/Status flags (0x81), B1-B2: Big-endian 16-bit value (0x2872 = 10354), B3: Channel/State identifier (0x05), B4-B5: 16-bit data field (0x359A = 13722), B6: Sub-status/Nibble flags (0x0F), B7: Rolling counter/Checksum byte (0xB0)."",
+  ""rule"": {
+    ""byteIdx"": 1,
+    ""bitMask"": ""0xFF"",
+    ""scale"":",26403.0,True
+gemini-3.6-flash,14,0x5e0,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0: Device status flags (0x81). Bytes 1-2: Main signal value (0x2872 = 10354 raw). Byte 3: Status/Temperature (0x05). Bytes 4-5: Secondary uint16 signal (0x359a). Byte 6: Sub-mode/nibble flags (0x0F). Byte 7: Rolling counter or checksum (0xB0)."",
+  ""rule"": {
+    ""byteIdx"": 1,
+    ""bitMask"": ""0xFFFF"",
+    ""scale",20874.0,True
+gemini-3.6-flash,15,0x60b,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""B0: Message/Object ID or Status header (0x81). B1-B2: Longitudinal Distance (16-bit",16777.0,True
+gemini-3.6-flash,16,0x62f,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""B0: Control header or status flags (0x81 = active/valid status); B1-B7: Static device identifier, calibration payload, or static status data across IDs."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.5
+}
+```",19234.0,True
+gemini-3.6-flash,17,0x658,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0 (0x81): Node status/control flags (Bit 7 active). Bytes 1-2 (0x2872 = 10354): Primary sensor measurement value (16-bit big-endian). Byte 3 (0x05): Sub-mode or subsystem status. Bytes 4-5 (0x359A = 13722): Secondary sensor measurement value. Bytes 6-7 (0x0FB0): Reserved status or checksum. Payload is static across all recorded IDs."",
+  ""rule"": {
+    ""byteIdx"": 1,
+    ""bitMask"": ""0xFFFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.5
+}
+```",12687.0,True
+gemini-3.6-flash,18,0x673,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""B0: System status/flags (0x81), B1-B2: Primary 16-bit signal (0x2872 = 10354, e.g., raw",14170.0,True
+gemini-3.6-flash,19,0x690,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""Byte 0 (0x81): Status/Header flags or frame identifier. Bytes 1-2 (0x2872): Fixed 16-bit reference value (10354 decimal). Bytes 3-4 (0x0535): Static sensor reading (1333 decimal). Bytes 5-6 (0x9A0F): Secondary internal parameter. Byte 7 (0xB0): Rolling counter or checksum byte. Note: Payload remains completely static across multiple sequential CAN IDs."",
+  ""rule"": {
+    ""byteIdx"": 0,
+    ""bitMask"": ""0xFF"",
+    ""scale"": 1.0,
+    ""offset"": 0.0
+  },
+  ""confidence"": 0.",21916.0,True
+gemini-3.6-flash,20,0x6bd,81287205359a0fb0,"```json
+{
+  ""interpretation"": ""B0: Master status/validity flags (0x81 = active/valid flag set); B1-B2: System param 1 (0x2872 = 10354); B3-B",16780.0,True
+gemini-3.6-flash,21,0x6e0,81287205359a0fb0,,614.0,False
+gemini-3.6-flash,22,0x6e2,81287205359a0fb0,,1277.0,False
+gemini-3.6-flash,23,0x6e6,81287205359a0fb0,,1030.0,False
+gemini-3.6-flash,24,0x6e9,81287205359a0fb0,,134.0,False
+gemini-3.6-flash,25,0x6eb,81287205359a0fb0,,159.0,False
+gemini-3.6-flash,26,0x6ed,81287205359a0fb0,,617.0,False
+gemini-3.6-flash,27,0x6ef,81287205359a0fb0,,613.0,False
+gemini-3.6-flash,28,0x6f1,81287205359a0fb0,,778.0,False
+gemini-3.6-flash,29,0x6f4,81287205359a0fb0,,175.0,False

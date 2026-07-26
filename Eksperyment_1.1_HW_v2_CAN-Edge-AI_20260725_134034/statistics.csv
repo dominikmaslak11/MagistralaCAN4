@@ -1,0 +1,5 @@
+Model,N_success,mean_t_det_us_ms,sigma_t_det_us_ms,mean_t_tx_up_us_ms,sigma_t_tx_up_us_ms,mean_t_llm_us_ms,sigma_t_llm_us_ms,mean_t_comp_us_ms,sigma_t_comp_us_ms,mean_t_ota_us_ms,sigma_t_ota_us_ms,mean_total_ms,sigma_total_ms
+claude-sonnet-5,30,0.029,0.005,245.169,217.492,4741.033,1305.132,0.0,0.0,786.229,767.051,5772.46,1725.992
+gpt-5.6-sol,30,0.035,0.026,198.085,159.005,4889.367,1110.506,0.0,0.0,778.034,381.148,5865.52,1251.402
+deepseek-v4-pro,30,0.027,0.007,270.398,284.461,18641.8,1352.049,0.0,0.0,637.578,457.585,19549.803,1501.994
+gemini-3.6-flash,30,0.031,0.015,242.555,163.391,8522.1,3321.428,0.0,0.0,723.144,398.512,9487.83,3216.222

@@ -1,0 +1,150 @@
+WebSocket (ws://) nasłuchuje na porcie 9000
+WebSocketServer nasluchuje na ws://0.0.0.0:9000 — skonfiguruj w esp_experiment_1_1.ino WS_SERVER_IP na adres IP tego komputera w sieci lokalnej i WS_SERVER_PORT=9000. Eksperyment czeka na pierwsza ramke CAN od ESP32...
+[ExperimentRunner] Starting experiment: 1 models, 12 trials each
+[ExperimentRunner] Starting model: "gemini-3.6-flash" ( 1 / 1 )
+[  0.0%] Model 1/1: gemini-3.6-flash — trial 0/12
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 12 for model "gemini-3.6-flash"
+[  0.0%] Model 1/1: gemini-3.6-flash — trial 1/12 (waiting for cold start...)
+WS: klient podłączony – razem: 1
+[WebSocketServer] Polaczonych klientow (ESP32): 1
+[ColdStartDetector] new CAN ID 0x "500" detected
+[ExperimentRunner] Cold start detected: "ID=0x500 reason=new_id tDet=41 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 721 bytes
+WS: ramka odebrana od klienta — ID: 500
+WS: ramka odebrana od klienta — ID: 501
+WS: ramka odebrana od klienta — ID: 502
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 1328 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 12 for model "gemini-3.6-flash"
+[  8.3%] Model 1/1: gemini-3.6-flash — trial 2/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "503" detected
+[ExperimentRunner] Cold start detected: "ID=0x503 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 783 bytes
+WS: ramka odebrana od klienta — ID: 503
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 269 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 12 for model "gemini-3.6-flash"
+[ 16.7%] Model 1/1: gemini-3.6-flash — trial 3/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "504" detected
+[ExperimentRunner] Cold start detected: "ID=0x504 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 845 bytes
+WS: ramka odebrana od klienta — ID: 504
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 220 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 12 for model "gemini-3.6-flash"
+[ 25.0%] Model 1/1: gemini-3.6-flash — trial 4/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "505" detected
+[ExperimentRunner] Cold start detected: "ID=0x505 reason=new_id tDet=58 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 907 bytes
+WS: ramka odebrana od klienta — ID: 505
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 212 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 12 for model "gemini-3.6-flash"
+[ 33.3%] Model 1/1: gemini-3.6-flash — trial 5/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "506" detected
+[ExperimentRunner] Cold start detected: "ID=0x506 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 969 bytes
+WS: ramka odebrana od klienta — ID: 506
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 252 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 12 for model "gemini-3.6-flash"
+[ 41.7%] Model 1/1: gemini-3.6-flash — trial 6/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "507" detected
+[ExperimentRunner] Cold start detected: "ID=0x507 reason=new_id tDet=29 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1031 bytes
+WS: ramka odebrana od klienta — ID: 507
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 313 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 12 for model "gemini-3.6-flash"
+[ 50.0%] Model 1/1: gemini-3.6-flash — trial 7/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "508" detected
+[ExperimentRunner] Cold start detected: "ID=0x508 reason=new_id tDet=43 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1093 bytes
+WS: ramka odebrana od klienta — ID: 508
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 138 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 12 for model "gemini-3.6-flash"
+[ 58.3%] Model 1/1: gemini-3.6-flash — trial 8/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "509" detected
+[ExperimentRunner] Cold start detected: "ID=0x509 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1155 bytes
+WS: ramka odebrana od klienta — ID: 509
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 148 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 12 for model "gemini-3.6-flash"
+[ 66.7%] Model 1/1: gemini-3.6-flash — trial 9/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "50a" detected
+[ExperimentRunner] Cold start detected: "ID=0x50a reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1217 bytes
+WS: ramka odebrana od klienta — ID: 50a
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 136 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 12 for model "gemini-3.6-flash"
+[ 75.0%] Model 1/1: gemini-3.6-flash — trial 10/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "50b" detected
+[ExperimentRunner] Cold start detected: "ID=0x50b reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1279 bytes
+WS: ramka odebrana od klienta — ID: 50b
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 114 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 12 for model "gemini-3.6-flash"
+[ 83.3%] Model 1/1: gemini-3.6-flash — trial 11/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "50c" detected
+[ExperimentRunner] Cold start detected: "ID=0x50c reason=new_id tDet=60 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1341 bytes
+WS: ramka odebrana od klienta — ID: 50c
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 135 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 12 for model "gemini-3.6-flash"
+[ 91.7%] Model 1/1: gemini-3.6-flash — trial 12/12 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "50d" detected
+[ExperimentRunner] Cold start detected: "ID=0x50d reason=new_id tDet=34 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1403 bytes
+WS: ramka odebrana od klienta — ID: 50d
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 154 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LatencyProfiler] Model "gemini-3.6-flash" complete: 12 / 12 samples
+=== gemini-3.6-flash zakonczony: t_llm=284.9ms t_tx_up=0.00ms t_ota=0.0ms (N=12) ===
+[ExperimentRunner] State: Done
+[ExperimentRunner] Experiment finished. Report: "Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw_gemini2/latency_report_hw.json"
+[100.0%] Experiment complete — report saved to Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw_gemini2/latency_report_hw.json
+Eksperyment (HW) zakonczony, raport: Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw_gemini2/latency_report_hw.json
+QObject::startTimer: Timers can only be used with threads started with QThread
+[WebSocketServer] Polaczonych klientow (ESP32): 0
+WebSocket server zatrzymany

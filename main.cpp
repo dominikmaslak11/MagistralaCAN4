@@ -149,7 +149,8 @@ static int runHeadlessExperiment(int argc, char *argv[], const QString &apiKeysP
 // ═══════════════════════════════════════════════════════════════════════════
 
 static int runHeadlessExperimentHw(int argc, char *argv[], const QString &apiKeysPath,
-                                    const QString &outDir, int trialsPerModel, quint16 port)
+                                    const QString &outDir, int trialsPerModel, quint16 port,
+                                    const QStringList &modelsFilter = {})
 {
     QCoreApplication app(argc, argv);
     qRegisterMetaType<CanFrame>("CanFrame");
@@ -179,14 +180,28 @@ static int runHeadlessExperimentHw(int argc, char *argv[], const QString &apiKey
     const QString deepseekModel = QStringLiteral("deepseek-v4-pro");
     const QString geminiModel   = QStringLiteral("gemini-3.6-flash");
 
-    runner->addModel(claudeModel);
-    runner->setApiKey(claudeModel, keys.value(QStringLiteral("CLAUDE API Key")));
-    runner->addModel(openaiModel);
-    runner->setApiKey(openaiModel, keys.value(QStringLiteral("CODEX API Key")));
-    runner->addModel(deepseekModel);
-    runner->setApiKey(deepseekModel, keys.value(QStringLiteral("DeepSeek API Key")));
-    runner->addModel(geminiModel);
-    runner->setApiKey(geminiModel, keys.value(QStringLiteral("Gemini API Key")));
+    // Domyslnie wszystkie 4 modele; modelsFilter pozwala dogonic pojedynczy
+    // model (np. po unieważnieniu klucza) bez powtarzania juz ukonczonych.
+    auto wantModel = [&modelsFilter](const QString &m) {
+        return modelsFilter.isEmpty() || modelsFilter.contains(m);
+    };
+
+    if (wantModel(claudeModel)) {
+        runner->addModel(claudeModel);
+        runner->setApiKey(claudeModel, keys.value(QStringLiteral("CLAUDE API Key")));
+    }
+    if (wantModel(openaiModel)) {
+        runner->addModel(openaiModel);
+        runner->setApiKey(openaiModel, keys.value(QStringLiteral("CODEX API Key")));
+    }
+    if (wantModel(deepseekModel)) {
+        runner->addModel(deepseekModel);
+        runner->setApiKey(deepseekModel, keys.value(QStringLiteral("DeepSeek API Key")));
+    }
+    if (wantModel(geminiModel)) {
+        runner->addModel(geminiModel);
+        runner->setApiKey(geminiModel, keys.value(QStringLiteral("Gemini API Key")));
+    }
 
     QObject::connect(wsServer, &WebSocketServer::errorOccurred, [](const QString &msg) {
         qCritical().noquote() << "[WebSocketServer]" << msg;
@@ -271,16 +286,18 @@ int main(int argc, char *argv[])
         }
         if (QString(argv[i]) == QStringLiteral("--run-experiment-hw")) {
             if (i + 2 >= argc) {
-                qCritical() << "Uzycie: --run-experiment-hw <plik_kluczy_api> <katalog_wyjsciowy> [N_prob_na_model=30] [port=9000]";
+                qCritical() << "Uzycie: --run-experiment-hw <plik_kluczy_api> <katalog_wyjsciowy> [N_prob_na_model=30] [port=9000] [modele_po_przecinku]";
                 return 1;
             }
             const QString apiKeysPath = argv[i + 1];
             const QString outDir = argv[i + 2];
             int trials = 30;
             quint16 port = 9000;
+            QStringList modelsFilter;
             if (i + 3 < argc) trials = QString(argv[i + 3]).toInt();
             if (i + 4 < argc) port = static_cast<quint16>(QString(argv[i + 4]).toUInt());
-            return runHeadlessExperimentHw(argc, argv, apiKeysPath, outDir, trials, port);
+            if (i + 5 < argc) modelsFilter = QString(argv[i + 5]).split(',', Qt::SkipEmptyParts);
+            return runHeadlessExperimentHw(argc, argv, apiKeysPath, outDir, trials, port, modelsFilter);
         }
     }
 

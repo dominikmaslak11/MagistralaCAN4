@@ -1,0 +1,35 @@
+======================================================================
+EKSPERYMENT 1.1 — Cold Start Latency Breakdown
+MagistralaCAN4 (realna infrastruktura C++/Qt6: ColdStartDetector,
+LlmQueryClient, LatencyProfiler, ExperimentRunner)
+======================================================================
+Prob na model: 30
+
+Modele testowane:
+  - claude-sonnet-5 (model_id=claude-sonnet-5)
+  - gpt-5.6-sol (model_id=gpt-5.6-sol)
+  - deepseek-v4-pro (model_id=deepseek-v4-pro)
+  - gemini-3.6-flash (model_id=gemini-3.6-flash)
+
+Model                   N        t_llm [ms]      T_total [ms]
+-------------------------------------------------------------
+claude-sonnet-5        30      4741±1305        5772±1726  
+gpt-5.6-sol            30      4889±1111        5866±1251  
+gemini-3.6-flash       30      8522±3321        9488±3216  
+deepseek-v4-pro        30     18642±1352       19550±1502  
+
+WNIOSKI:
+  Najszybszy model (t_llm): claude-sonnet-5 (4741 ms)
+  Najwolniejszy model (t_llm): deepseek-v4-pro (18642 ms)
+  t_llm dominuje T_total dla wszystkich modeli (>50%),
+  co potwierdza teze, ze czas wnioskowania LLM jest
+  glownym waskim gardlem fazy Cold Start.
+
+METODOLOGIA:
+  Pomiar na realnym sprzecie: ESP32+MCP2515 (esp_experiment_1_1.ino)
+  polaczony przez WiFi/WebSocket z MagistralaCAN4, ruch CAN generowany
+  na fizycznej magistrali (PCAN-USB). WSZYSTKIE skladowe sa realnymi
+  pomiarami: t_llm/t_comp (zegar serwera), t_det (czas decyzji
+  ColdStartDetector), t_tx_up (transmisja bezprzewodowa, korekta zegara
+  ESP32 metoda time_sync/NTP-style), t_ota (realny round-trip
+  apply_rule -> rule_ack).

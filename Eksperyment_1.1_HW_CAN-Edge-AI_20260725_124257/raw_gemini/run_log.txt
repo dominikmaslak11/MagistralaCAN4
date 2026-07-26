@@ -1,0 +1,1113 @@
+WebSocket (ws://) nasłuchuje na porcie 9000
+WebSocketServer nasluchuje na ws://0.0.0.0:9000 — skonfiguruj w esp_experiment_1_1.ino WS_SERVER_IP na adres IP tego komputera w sieci lokalnej i WS_SERVER_PORT=9000. Eksperyment czeka na pierwsza ramke CAN od ESP32...
+[ExperimentRunner] Starting experiment: 1 models, 30 trials each
+[ExperimentRunner] Starting model: "gemini-3.6-flash" ( 1 / 1 )
+[  0.0%] Model 1/1: gemini-3.6-flash — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "gemini-3.6-flash"
+[  0.0%] Model 1/1: gemini-3.6-flash — trial 1/30 (waiting for cold start...)
+WS: klient podłączony – razem: 1
+[WebSocketServer] Polaczonych klientow (ESP32): 1
+[ColdStartDetector] new CAN ID 0x "400" detected
+[ExperimentRunner] Cold start detected: "ID=0x400 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 721 bytes
+WS: ramka odebrana od klienta — ID: 400
+WS: ramka odebrana od klienta — ID: 401
+WS: ramka odebrana od klienta — ID: 402
+WS: ramka odebrana od klienta — ID: 403
+WS: ramka odebrana od klienta — ID: 404
+WS: ramka odebrana od klienta — ID: 405
+WS: ramka odebrana od klienta — ID: 406
+WS: ramka odebrana od klienta — ID: 407
+WS: ramka odebrana od klienta — ID: 408
+WS: ramka odebrana od klienta — ID: 409
+WS: ramka odebrana od klienta — ID: 40a
+WS: ramka odebrana od klienta — ID: 40b
+WS: ramka odebrana od klienta — ID: 40c
+WS: ramka odebrana od klienta — ID: 40d
+WS: ramka odebrana od klienta — ID: 40e
+WS: ramka odebrana od klienta — ID: 40f
+WS: ramka odebrana od klienta — ID: 410
+WS: ramka odebrana od klienta — ID: 411
+WS: ramka odebrana od klienta — ID: 412
+WS: ramka odebrana od klienta — ID: 413
+WS: ramka odebrana od klienta — ID: 414
+WS: ramka odebrana od klienta — ID: 415
+WS: ramka odebrana od klienta — ID: 416
+WS: ramka odebrana od klienta — ID: 417
+WS: ramka odebrana od klienta — ID: 418
+WS: ramka odebrana od klienta — ID: 419
+WS: ramka odebrana od klienta — ID: 41a
+WS: ramka odebrana od klienta — ID: 41b
+WS: ramka odebrana od klienta — ID: 41c
+WS: ramka odebrana od klienta — ID: 41d
+WS: ramka odebrana od klienta — ID: 41e
+WS: ramka odebrana od klienta — ID: 41f
+WS: ramka odebrana od klienta — ID: 420
+WS: ramka odebrana od klienta — ID: 421
+WS: ramka odebrana od klienta — ID: 422
+WS: ramka odebrana od klienta — ID: 423
+WS: ramka odebrana od klienta — ID: 424
+WS: ramka odebrana od klienta — ID: 425
+WS: ramka odebrana od klienta — ID: 426
+WS: ramka odebrana od klienta — ID: 427
+WS: ramka odebrana od klienta — ID: 428
+[LlmQueryClient] Response received, t_llm = 20479 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 20479 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 429
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 20479 ms tComp= 0 ms tOta= 140 ms tTotal= 20619 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "gemini-3.6-flash"
+[  3.3%] Model 1/1: gemini-3.6-flash — trial 2/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "42a" detected
+[ExperimentRunner] Cold start detected: "ID=0x42a reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 783 bytes
+WS: ramka odebrana od klienta — ID: 42a
+WS: ramka odebrana od klienta — ID: 42b
+WS: ramka odebrana od klienta — ID: 42c
+WS: ramka odebrana od klienta — ID: 42d
+WS: ramka odebrana od klienta — ID: 42e
+WS: ramka odebrana od klienta — ID: 42f
+WS: ramka odebrana od klienta — ID: 430
+WS: ramka odebrana od klienta — ID: 431
+WS: ramka odebrana od klienta — ID: 432
+WS: ramka odebrana od klienta — ID: 433
+WS: ramka odebrana od klienta — ID: 434
+WS: ramka odebrana od klienta — ID: 435
+WS: ramka odebrana od klienta — ID: 436
+WS: ramka odebrana od klienta — ID: 437
+WS: ramka odebrana od klienta — ID: 438
+WS: ramka odebrana od klienta — ID: 439
+WS: ramka odebrana od klienta — ID: 43a
+WS: ramka odebrana od klienta — ID: 43b
+WS: ramka odebrana od klienta — ID: 43c
+WS: ramka odebrana od klienta — ID: 43d
+WS: ramka odebrana od klienta — ID: 43e
+WS: ramka odebrana od klienta — ID: 43f
+WS: ramka odebrana od klienta — ID: 440
+WS: ramka odebrana od klienta — ID: 441
+WS: ramka odebrana od klienta — ID: 442
+WS: ramka odebrana od klienta — ID: 443
+[LlmQueryClient] Response received, t_llm = 12811 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 12811 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 444
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 12811 ms tComp= 0 ms tOta= 888 ms tTotal= 13699 ms success= true
+WS: ramka odebrana od klienta — ID: 445
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "gemini-3.6-flash"
+[  6.7%] Model 1/1: gemini-3.6-flash — trial 3/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "446" detected
+[ExperimentRunner] Cold start detected: "ID=0x446 reason=new_id tDet=46 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 845 bytes
+WS: ramka odebrana od klienta — ID: 446
+WS: ramka odebrana od klienta — ID: 447
+WS: ramka odebrana od klienta — ID: 448
+WS: ramka odebrana od klienta — ID: 449
+WS: ramka odebrana od klienta — ID: 44a
+WS: ramka odebrana od klienta — ID: 44b
+WS: ramka odebrana od klienta — ID: 44c
+WS: ramka odebrana od klienta — ID: 44d
+WS: ramka odebrana od klienta — ID: 44e
+WS: ramka odebrana od klienta — ID: 44f
+WS: ramka odebrana od klienta — ID: 450
+WS: ramka odebrana od klienta — ID: 451
+WS: ramka odebrana od klienta — ID: 452
+WS: ramka odebrana od klienta — ID: 453
+WS: ramka odebrana od klienta — ID: 454
+WS: ramka odebrana od klienta — ID: 455
+WS: ramka odebrana od klienta — ID: 456
+WS: ramka odebrana od klienta — ID: 457
+WS: ramka odebrana od klienta — ID: 458
+WS: ramka odebrana od klienta — ID: 459
+WS: ramka odebrana od klienta — ID: 45a
+WS: ramka odebrana od klienta — ID: 45b
+WS: ramka odebrana od klienta — ID: 45c
+WS: ramka odebrana od klienta — ID: 45d
+WS: ramka odebrana od klienta — ID: 45e
+WS: ramka odebrana od klienta — ID: 45f
+WS: ramka odebrana od klienta — ID: 460
+WS: ramka odebrana od klienta — ID: 461
+WS: ramka odebrana od klienta — ID: 462
+WS: ramka odebrana od klienta — ID: 463
+WS: ramka odebrana od klienta — ID: 464
+WS: ramka odebrana od klienta — ID: 465
+[LlmQueryClient] Response received, t_llm = 15878 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15878 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 466
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 11 ms tLlm= 15878 ms tComp= 0 ms tOta= 921 ms tTotal= 16811 ms success= true
+WS: ramka odebrana od klienta — ID: 467
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "gemini-3.6-flash"
+[ 10.0%] Model 1/1: gemini-3.6-flash — trial 4/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "468" detected
+[ExperimentRunner] Cold start detected: "ID=0x468 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 907 bytes
+WS: ramka odebrana od klienta — ID: 468
+WS: ramka odebrana od klienta — ID: 469
+WS: ramka odebrana od klienta — ID: 46a
+WS: ramka odebrana od klienta — ID: 46b
+WS: ramka odebrana od klienta — ID: 46c
+WS: ramka odebrana od klienta — ID: 46d
+WS: ramka odebrana od klienta — ID: 46e
+WS: ramka odebrana od klienta — ID: 46f
+WS: ramka odebrana od klienta — ID: 470
+WS: ramka odebrana od klienta — ID: 471
+WS: ramka odebrana od klienta — ID: 472
+WS: ramka odebrana od klienta — ID: 473
+WS: ramka odebrana od klienta — ID: 474
+WS: ramka odebrana od klienta — ID: 475
+WS: ramka odebrana od klienta — ID: 476
+WS: ramka odebrana od klienta — ID: 477
+WS: ramka odebrana od klienta — ID: 478
+WS: ramka odebrana od klienta — ID: 479
+WS: ramka odebrana od klienta — ID: 47a
+WS: ramka odebrana od klienta — ID: 47b
+WS: ramka odebrana od klienta — ID: 47c
+WS: ramka odebrana od klienta — ID: 47d
+WS: ramka odebrana od klienta — ID: 47e
+WS: ramka odebrana od klienta — ID: 47f
+WS: ramka odebrana od klienta — ID: 480
+WS: ramka odebrana od klienta — ID: 481
+WS: ramka odebrana od klienta — ID: 482
+WS: ramka odebrana od klienta — ID: 483
+WS: ramka odebrana od klienta — ID: 484
+[LlmQueryClient] Response received, t_llm = 14275 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 14275 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 485
+WS: ramka odebrana od klienta — ID: 486
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 14275 ms tComp= 0 ms tOta= 804 ms tTotal= 15079 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "gemini-3.6-flash"
+[ 13.3%] Model 1/1: gemini-3.6-flash — trial 5/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "487" detected
+[ExperimentRunner] Cold start detected: "ID=0x487 reason=new_id tDet=31 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 969 bytes
+WS: ramka odebrana od klienta — ID: 487
+WS: ramka odebrana od klienta — ID: 488
+WS: ramka odebrana od klienta — ID: 489
+WS: ramka odebrana od klienta — ID: 48a
+WS: ramka odebrana od klienta — ID: 48b
+WS: ramka odebrana od klienta — ID: 48c
+WS: ramka odebrana od klienta — ID: 48d
+WS: ramka odebrana od klienta — ID: 48e
+WS: ramka odebrana od klienta — ID: 48f
+WS: ramka odebrana od klienta — ID: 490
+WS: ramka odebrana od klienta — ID: 491
+WS: ramka odebrana od klienta — ID: 492
+WS: ramka odebrana od klienta — ID: 493
+WS: ramka odebrana od klienta — ID: 494
+WS: ramka odebrana od klienta — ID: 495
+WS: ramka odebrana od klienta — ID: 496
+WS: ramka odebrana od klienta — ID: 497
+WS: ramka odebrana od klienta — ID: 498
+WS: ramka odebrana od klienta — ID: 499
+WS: ramka odebrana od klienta — ID: 49a
+WS: ramka odebrana od klienta — ID: 49b
+WS: ramka odebrana od klienta — ID: 49c
+WS: ramka odebrana od klienta — ID: 49d
+WS: ramka odebrana od klienta — ID: 49e
+WS: ramka odebrana od klienta — ID: 49f
+WS: ramka odebrana od klienta — ID: 4a0
+WS: ramka odebrana od klienta — ID: 4a1
+WS: ramka odebrana od klienta — ID: 4a2
+WS: ramka odebrana od klienta — ID: 4a3
+WS: ramka odebrana od klienta — ID: 4a4
+WS: ramka odebrana od klienta — ID: 4a5
+WS: ramka odebrana od klienta — ID: 4a6
+WS: ramka odebrana od klienta — ID: 4a7
+WS: ramka odebrana od klienta — ID: 4a8
+WS: ramka odebrana od klienta — ID: 4a9
+WS: ramka odebrana od klienta — ID: 4aa
+WS: ramka odebrana od klienta — ID: 4ab
+[LlmQueryClient] Response received, t_llm = 18542 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18542 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4ac
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 18542 ms tComp= 0 ms tOta= 303 ms tTotal= 18845 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "gemini-3.6-flash"
+[ 16.7%] Model 1/1: gemini-3.6-flash — trial 6/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4ad" detected
+[ExperimentRunner] Cold start detected: "ID=0x4ad reason=new_id tDet=34 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1031 bytes
+WS: ramka odebrana od klienta — ID: 4ad
+WS: ramka odebrana od klienta — ID: 4ae
+WS: ramka odebrana od klienta — ID: 4af
+WS: ramka odebrana od klienta — ID: 4b0
+WS: ramka odebrana od klienta — ID: 4b1
+WS: ramka odebrana od klienta — ID: 4b2
+WS: ramka odebrana od klienta — ID: 4b3
+WS: ramka odebrana od klienta — ID: 4b4
+WS: ramka odebrana od klienta — ID: 4b5
+WS: ramka odebrana od klienta — ID: 4b6
+WS: ramka odebrana od klienta — ID: 4b7
+WS: ramka odebrana od klienta — ID: 4b8
+WS: ramka odebrana od klienta — ID: 4b9
+WS: ramka odebrana od klienta — ID: 4ba
+WS: ramka odebrana od klienta — ID: 4bb
+WS: ramka odebrana od klienta — ID: 4bc
+WS: ramka odebrana od klienta — ID: 4bd
+WS: ramka odebrana od klienta — ID: 4be
+WS: ramka odebrana od klienta — ID: 4bf
+WS: ramka odebrana od klienta — ID: 4c0
+WS: ramka odebrana od klienta — ID: 4c1
+WS: ramka odebrana od klienta — ID: 4c2
+WS: ramka odebrana od klienta — ID: 4c3
+WS: ramka odebrana od klienta — ID: 4c4
+WS: ramka odebrana od klienta — ID: 4c5
+WS: ramka odebrana od klienta — ID: 4c6
+WS: ramka odebrana od klienta — ID: 4c7
+WS: ramka odebrana od klienta — ID: 4c8
+WS: ramka odebrana od klienta — ID: 4c9
+WS: ramka odebrana od klienta — ID: 4ca
+WS: ramka odebrana od klienta — ID: 4cb
+WS: ramka odebrana od klienta — ID: 4cc
+WS: ramka odebrana od klienta — ID: 4cd
+WS: ramka odebrana od klienta — ID: 4ce
+WS: ramka odebrana od klienta — ID: 4cf
+WS: ramka odebrana od klienta — ID: 4d0
+WS: ramka odebrana od klienta — ID: 4d1
+[LlmQueryClient] Response received, t_llm = 18438 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18438 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4d2
+WS: ramka odebrana od klienta — ID: 4d3
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 18438 ms tComp= 0 ms tOta= 733 ms tTotal= 19172 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "gemini-3.6-flash"
+[ 20.0%] Model 1/1: gemini-3.6-flash — trial 7/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4d4" detected
+[ExperimentRunner] Cold start detected: "ID=0x4d4 reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1093 bytes
+WS: ramka odebrana od klienta — ID: 4d4
+WS: ramka odebrana od klienta — ID: 4d5
+WS: ramka odebrana od klienta — ID: 4d6
+WS: ramka odebrana od klienta — ID: 4d7
+WS: ramka odebrana od klienta — ID: 4d8
+WS: ramka odebrana od klienta — ID: 4d9
+WS: ramka odebrana od klienta — ID: 4da
+WS: ramka odebrana od klienta — ID: 4db
+WS: ramka odebrana od klienta — ID: 4dc
+WS: ramka odebrana od klienta — ID: 4dd
+WS: ramka odebrana od klienta — ID: 4de
+WS: ramka odebrana od klienta — ID: 4df
+WS: ramka odebrana od klienta — ID: 4e0
+WS: ramka odebrana od klienta — ID: 4e1
+WS: ramka odebrana od klienta — ID: 4e2
+WS: ramka odebrana od klienta — ID: 4e3
+WS: ramka odebrana od klienta — ID: 4e4
+WS: ramka odebrana od klienta — ID: 4e5
+WS: ramka odebrana od klienta — ID: 4e6
+WS: ramka odebrana od klienta — ID: 4e7
+WS: ramka odebrana od klienta — ID: 4e8
+WS: ramka odebrana od klienta — ID: 4e9
+WS: ramka odebrana od klienta — ID: 4ea
+WS: ramka odebrana od klienta — ID: 4eb
+WS: ramka odebrana od klienta — ID: 4ec
+WS: ramka odebrana od klienta — ID: 4ed
+WS: ramka odebrana od klienta — ID: 4ee
+WS: ramka odebrana od klienta — ID: 4ef
+WS: ramka odebrana od klienta — ID: 4f0
+WS: ramka odebrana od klienta — ID: 4f1
+WS: ramka odebrana od klienta — ID: 4f2
+WS: ramka odebrana od klienta — ID: 4f3
+WS: ramka odebrana od klienta — ID: 4f4
+WS: ramka odebrana od klienta — ID: 4f5
+WS: ramka odebrana od klienta — ID: 4f6
+[LlmQueryClient] Response received, t_llm = 17321 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17321 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4f7
+WS: ramka odebrana od klienta — ID: 4f8
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 17321 ms tComp= 0 ms tOta= 1225 ms tTotal= 18546 ms success= true
+WS: ramka odebrana od klienta — ID: 4f9
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "gemini-3.6-flash"
+[ 23.3%] Model 1/1: gemini-3.6-flash — trial 8/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4fa" detected
+[ExperimentRunner] Cold start detected: "ID=0x4fa reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1155 bytes
+WS: ramka odebrana od klienta — ID: 4fa
+WS: ramka odebrana od klienta — ID: 4fb
+WS: ramka odebrana od klienta — ID: 4fc
+WS: ramka odebrana od klienta — ID: 4fd
+WS: ramka odebrana od klienta — ID: 4fe
+WS: ramka odebrana od klienta — ID: 4ff
+WS: ramka odebrana od klienta — ID: 500
+WS: ramka odebrana od klienta — ID: 501
+WS: ramka odebrana od klienta — ID: 502
+WS: ramka odebrana od klienta — ID: 503
+WS: ramka odebrana od klienta — ID: 504
+WS: ramka odebrana od klienta — ID: 505
+WS: ramka odebrana od klienta — ID: 506
+WS: ramka odebrana od klienta — ID: 507
+WS: ramka odebrana od klienta — ID: 508
+WS: ramka odebrana od klienta — ID: 509
+WS: ramka odebrana od klienta — ID: 50a
+WS: ramka odebrana od klienta — ID: 50b
+WS: ramka odebrana od klienta — ID: 50c
+WS: ramka odebrana od klienta — ID: 50d
+WS: ramka odebrana od klienta — ID: 50e
+WS: ramka odebrana od klienta — ID: 50f
+WS: ramka odebrana od klienta — ID: 510
+WS: ramka odebrana od klienta — ID: 511
+WS: ramka odebrana od klienta — ID: 512
+WS: ramka odebrana od klienta — ID: 513
+WS: ramka odebrana od klienta — ID: 514
+WS: ramka odebrana od klienta — ID: 515
+WS: ramka odebrana od klienta — ID: 516
+[LlmQueryClient] Response received, t_llm = 14302 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 14302 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 517
+WS: ramka odebrana od klienta — ID: 518
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 14302 ms tComp= 0 ms tOta= 1129 ms tTotal= 15431 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "gemini-3.6-flash"
+[ 26.7%] Model 1/1: gemini-3.6-flash — trial 9/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "519" detected
+[ExperimentRunner] Cold start detected: "ID=0x519 reason=new_id tDet=20 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1217 bytes
+WS: ramka odebrana od klienta — ID: 519
+WS: ramka odebrana od klienta — ID: 51a
+WS: ramka odebrana od klienta — ID: 51b
+WS: ramka odebrana od klienta — ID: 51c
+WS: ramka odebrana od klienta — ID: 51d
+WS: ramka odebrana od klienta — ID: 51e
+WS: ramka odebrana od klienta — ID: 51f
+WS: ramka odebrana od klienta — ID: 520
+WS: ramka odebrana od klienta — ID: 521
+WS: ramka odebrana od klienta — ID: 522
+WS: ramka odebrana od klienta — ID: 523
+WS: ramka odebrana od klienta — ID: 524
+WS: ramka odebrana od klienta — ID: 525
+WS: ramka odebrana od klienta — ID: 526
+WS: ramka odebrana od klienta — ID: 527
+WS: ramka odebrana od klienta — ID: 528
+WS: ramka odebrana od klienta — ID: 529
+WS: ramka odebrana od klienta — ID: 52a
+WS: ramka odebrana od klienta — ID: 52b
+WS: ramka odebrana od klienta — ID: 52c
+WS: ramka odebrana od klienta — ID: 52d
+WS: ramka odebrana od klienta — ID: 52e
+WS: ramka odebrana od klienta — ID: 52f
+WS: ramka odebrana od klienta — ID: 530
+WS: ramka odebrana od klienta — ID: 531
+WS: ramka odebrana od klienta — ID: 532
+WS: ramka odebrana od klienta — ID: 533
+[LlmQueryClient] Response received, t_llm = 12991 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 12991 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 534
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 198 ms tLlm= 12991 ms tComp= 0 ms tOta= 407 ms tTotal= 13596 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "gemini-3.6-flash"
+[ 30.0%] Model 1/1: gemini-3.6-flash — trial 10/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "535" detected
+[ExperimentRunner] Cold start detected: "ID=0x535 reason=new_id tDet=30 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1279 bytes
+WS: ramka odebrana od klienta — ID: 535
+WS: ramka odebrana od klienta — ID: 536
+WS: ramka odebrana od klienta — ID: 537
+WS: ramka odebrana od klienta — ID: 538
+WS: ramka odebrana od klienta — ID: 539
+WS: ramka odebrana od klienta — ID: 53a
+WS: ramka odebrana od klienta — ID: 53b
+WS: ramka odebrana od klienta — ID: 53c
+WS: ramka odebrana od klienta — ID: 53d
+WS: ramka odebrana od klienta — ID: 53e
+WS: ramka odebrana od klienta — ID: 53f
+WS: ramka odebrana od klienta — ID: 540
+WS: ramka odebrana od klienta — ID: 541
+WS: ramka odebrana od klienta — ID: 542
+WS: ramka odebrana od klienta — ID: 543
+WS: ramka odebrana od klienta — ID: 544
+WS: ramka odebrana od klienta — ID: 545
+WS: ramka odebrana od klienta — ID: 546
+WS: ramka odebrana od klienta — ID: 547
+WS: ramka odebrana od klienta — ID: 548
+WS: ramka odebrana od klienta — ID: 549
+WS: ramka odebrana od klienta — ID: 54a
+WS: ramka odebrana od klienta — ID: 54b
+WS: ramka odebrana od klienta — ID: 54c
+WS: ramka odebrana od klienta — ID: 54d
+WS: ramka odebrana od klienta — ID: 54e
+WS: ramka odebrana od klienta — ID: 54f
+WS: ramka odebrana od klienta — ID: 550
+WS: ramka odebrana od klienta — ID: 551
+WS: ramka odebrana od klienta — ID: 552
+WS: ramka odebrana od klienta — ID: 553
+WS: ramka odebrana od klienta — ID: 554
+WS: ramka odebrana od klienta — ID: 555
+[LlmQueryClient] Response received, t_llm = 16166 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16166 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 556
+WS: ramka odebrana od klienta — ID: 557
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 76 ms tLlm= 16166 ms tComp= 0 ms tOta= 623 ms tTotal= 16866 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "gemini-3.6-flash"
+[ 33.3%] Model 1/1: gemini-3.6-flash — trial 11/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "558" detected
+[ExperimentRunner] Cold start detected: "ID=0x558 reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1341 bytes
+WS: ramka odebrana od klienta — ID: 558
+WS: ramka odebrana od klienta — ID: 559
+WS: ramka odebrana od klienta — ID: 55a
+WS: ramka odebrana od klienta — ID: 55b
+WS: ramka odebrana od klienta — ID: 55c
+WS: ramka odebrana od klienta — ID: 55d
+WS: ramka odebrana od klienta — ID: 55e
+WS: ramka odebrana od klienta — ID: 55f
+WS: ramka odebrana od klienta — ID: 560
+WS: ramka odebrana od klienta — ID: 561
+WS: ramka odebrana od klienta — ID: 562
+WS: ramka odebrana od klienta — ID: 563
+WS: ramka odebrana od klienta — ID: 564
+WS: ramka odebrana od klienta — ID: 565
+WS: ramka odebrana od klienta — ID: 566
+WS: ramka odebrana od klienta — ID: 567
+WS: ramka odebrana od klienta — ID: 568
+WS: ramka odebrana od klienta — ID: 569
+WS: ramka odebrana od klienta — ID: 56a
+WS: ramka odebrana od klienta — ID: 56b
+WS: ramka odebrana od klienta — ID: 56c
+WS: ramka odebrana od klienta — ID: 56d
+WS: ramka odebrana od klienta — ID: 56e
+WS: ramka odebrana od klienta — ID: 56f
+WS: ramka odebrana od klienta — ID: 570
+WS: ramka odebrana od klienta — ID: 571
+WS: ramka odebrana od klienta — ID: 572
+WS: ramka odebrana od klienta — ID: 573
+WS: ramka odebrana od klienta — ID: 574
+WS: ramka odebrana od klienta — ID: 575
+WS: ramka odebrana od klienta — ID: 576
+WS: ramka odebrana od klienta — ID: 577
+WS: ramka odebrana od klienta — ID: 578
+WS: ramka odebrana od klienta — ID: 579
+WS: ramka odebrana od klienta — ID: 57a
+WS: ramka odebrana od klienta — ID: 57b
+WS: ramka odebrana od klienta — ID: 57c
+[LlmQueryClient] Response received, t_llm = 18112 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18112 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 57d
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 18112 ms tComp= 0 ms tOta= 1331 ms tTotal= 19443 ms success= true
+WS: ramka odebrana od klienta — ID: 57e
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "gemini-3.6-flash"
+[ 36.7%] Model 1/1: gemini-3.6-flash — trial 12/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "57f" detected
+[ExperimentRunner] Cold start detected: "ID=0x57f reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1403 bytes
+WS: ramka odebrana od klienta — ID: 57f
+WS: ramka odebrana od klienta — ID: 580
+WS: ramka odebrana od klienta — ID: 581
+WS: ramka odebrana od klienta — ID: 582
+WS: ramka odebrana od klienta — ID: 583
+WS: ramka odebrana od klienta — ID: 584
+WS: ramka odebrana od klienta — ID: 585
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 503"
+[LlmQueryClient] Response received, t_llm = 2773 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 503"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "gemini-3.6-flash"
+[ 40.0%] Model 1/1: gemini-3.6-flash — trial 13/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "586" detected
+[ExperimentRunner] Cold start detected: "ID=0x586 reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1465 bytes
+WS: ramka odebrana od klienta — ID: 586
+WS: ramka odebrana od klienta — ID: 587
+WS: ramka odebrana od klienta — ID: 588
+WS: ramka odebrana od klienta — ID: 589
+WS: ramka odebrana od klienta — ID: 58a
+WS: ramka odebrana od klienta — ID: 58b
+WS: ramka odebrana od klienta — ID: 58c
+WS: ramka odebrana od klienta — ID: 58d
+WS: ramka odebrana od klienta — ID: 58e
+WS: ramka odebrana od klienta — ID: 58f
+WS: ramka odebrana od klienta — ID: 590
+WS: ramka odebrana od klienta — ID: 591
+WS: ramka odebrana od klienta — ID: 592
+WS: ramka odebrana od klienta — ID: 593
+WS: ramka odebrana od klienta — ID: 594
+WS: ramka odebrana od klienta — ID: 595
+WS: ramka odebrana od klienta — ID: 596
+WS: ramka odebrana od klienta — ID: 597
+WS: ramka odebrana od klienta — ID: 598
+WS: ramka odebrana od klienta — ID: 599
+WS: ramka odebrana od klienta — ID: 59a
+WS: ramka odebrana od klienta — ID: 59b
+WS: ramka odebrana od klienta — ID: 59c
+WS: ramka odebrana od klienta — ID: 59d
+WS: ramka odebrana od klienta — ID: 59e
+WS: ramka odebrana od klienta — ID: 59f
+WS: ramka odebrana od klienta — ID: 5a0
+WS: ramka odebrana od klienta — ID: 5a1
+WS: ramka odebrana od klienta — ID: 5a2
+WS: ramka odebrana od klienta — ID: 5a3
+WS: ramka odebrana od klienta — ID: 5a4
+WS: ramka odebrana od klienta — ID: 5a5
+WS: ramka odebrana od klienta — ID: 5a6
+WS: ramka odebrana od klienta — ID: 5a7
+[LlmQueryClient] Response received, t_llm = 16830 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16830 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 16830 ms tComp= 0 ms tOta= 412 ms tTotal= 17242 ms success= true
+WS: ramka odebrana od klienta — ID: 5a8
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "gemini-3.6-flash"
+[ 43.3%] Model 1/1: gemini-3.6-flash — trial 14/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "5a9" detected
+[ExperimentRunner] Cold start detected: "ID=0x5a9 reason=new_id tDet=29 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1527 bytes
+WS: ramka odebrana od klienta — ID: 5a9
+WS: ramka odebrana od klienta — ID: 5aa
+WS: ramka odebrana od klienta — ID: 5ab
+WS: ramka odebrana od klienta — ID: 5ac
+WS: ramka odebrana od klienta — ID: 5ad
+WS: ramka odebrana od klienta — ID: 5ae
+WS: ramka odebrana od klienta — ID: 5af
+WS: ramka odebrana od klienta — ID: 5b0
+WS: ramka odebrana od klienta — ID: 5b1
+WS: ramka odebrana od klienta — ID: 5b2
+WS: ramka odebrana od klienta — ID: 5b3
+WS: ramka odebrana od klienta — ID: 5b4
+WS: ramka odebrana od klienta — ID: 5b5
+WS: ramka odebrana od klienta — ID: 5b6
+WS: ramka odebrana od klienta — ID: 5b7
+WS: ramka odebrana od klienta — ID: 5b8
+WS: ramka odebrana od klienta — ID: 5b9
+WS: ramka odebrana od klienta — ID: 5ba
+WS: ramka odebrana od klienta — ID: 5bb
+WS: ramka odebrana od klienta — ID: 5bc
+WS: ramka odebrana od klienta — ID: 5bd
+WS: ramka odebrana od klienta — ID: 5be
+WS: ramka odebrana od klienta — ID: 5bf
+WS: ramka odebrana od klienta — ID: 5c0
+WS: ramka odebrana od klienta — ID: 5c1
+WS: ramka odebrana od klienta — ID: 5c2
+WS: ramka odebrana od klienta — ID: 5c3
+WS: ramka odebrana od klienta — ID: 5c4
+WS: ramka odebrana od klienta — ID: 5c5
+WS: ramka odebrana od klienta — ID: 5c6
+WS: ramka odebrana od klienta — ID: 5c7
+WS: ramka odebrana od klienta — ID: 5c8
+WS: ramka odebrana od klienta — ID: 5c9
+WS: ramka odebrana od klienta — ID: 5ca
+WS: ramka odebrana od klienta — ID: 5cb
+WS: ramka odebrana od klienta — ID: 5cc
+WS: ramka odebrana od klienta — ID: 5cd
+WS: ramka odebrana od klienta — ID: 5ce
+WS: ramka odebrana od klienta — ID: 5cf
+WS: ramka odebrana od klienta — ID: 5d0
+WS: ramka odebrana od klienta — ID: 5d1
+WS: ramka odebrana od klienta — ID: 5d2
+WS: ramka odebrana od klienta — ID: 5d3
+WS: ramka odebrana od klienta — ID: 5d4
+WS: ramka odebrana od klienta — ID: 5d5
+WS: ramka odebrana od klienta — ID: 5d6
+WS: ramka odebrana od klienta — ID: 5d7
+WS: ramka odebrana od klienta — ID: 5d8
+WS: ramka odebrana od klienta — ID: 5d9
+WS: ramka odebrana od klienta — ID: 5da
+WS: ramka odebrana od klienta — ID: 5db
+WS: ramka odebrana od klienta — ID: 5dc
+WS: ramka odebrana od klienta — ID: 5dd
+WS: ramka odebrana od klienta — ID: 5de
+[LlmQueryClient] Response received, t_llm = 26403 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 26403 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 5df
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 61 ms tLlm= 26403 ms tComp= 0 ms tOta= 479 ms tTotal= 26943 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "gemini-3.6-flash"
+[ 46.7%] Model 1/1: gemini-3.6-flash — trial 15/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "5e0" detected
+[ExperimentRunner] Cold start detected: "ID=0x5e0 reason=new_id tDet=29 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1589 bytes
+WS: ramka odebrana od klienta — ID: 5e0
+WS: ramka odebrana od klienta — ID: 5e1
+WS: ramka odebrana od klienta — ID: 5e2
+WS: ramka odebrana od klienta — ID: 5e3
+WS: ramka odebrana od klienta — ID: 5e4
+WS: ramka odebrana od klienta — ID: 5e5
+WS: ramka odebrana od klienta — ID: 5e6
+WS: ramka odebrana od klienta — ID: 5e7
+WS: ramka odebrana od klienta — ID: 5e8
+WS: ramka odebrana od klienta — ID: 5e9
+WS: ramka odebrana od klienta — ID: 5ea
+WS: ramka odebrana od klienta — ID: 5eb
+WS: ramka odebrana od klienta — ID: 5ec
+WS: ramka odebrana od klienta — ID: 5ed
+WS: ramka odebrana od klienta — ID: 5ee
+WS: ramka odebrana od klienta — ID: 5ef
+WS: ramka odebrana od klienta — ID: 5f0
+WS: ramka odebrana od klienta — ID: 5f1
+WS: ramka odebrana od klienta — ID: 5f2
+WS: ramka odebrana od klienta — ID: 5f3
+WS: ramka odebrana od klienta — ID: 5f4
+WS: ramka odebrana od klienta — ID: 5f5
+WS: ramka odebrana od klienta — ID: 5f6
+WS: ramka odebrana od klienta — ID: 5f7
+WS: ramka odebrana od klienta — ID: 5f8
+WS: ramka odebrana od klienta — ID: 5f9
+WS: ramka odebrana od klienta — ID: 5fa
+WS: ramka odebrana od klienta — ID: 5fb
+WS: ramka odebrana od klienta — ID: 5fc
+WS: ramka odebrana od klienta — ID: 5fd
+WS: ramka odebrana od klienta — ID: 5fe
+WS: ramka odebrana od klienta — ID: 5ff
+WS: ramka odebrana od klienta — ID: 600
+WS: ramka odebrana od klienta — ID: 601
+WS: ramka odebrana od klienta — ID: 602
+WS: ramka odebrana od klienta — ID: 603
+WS: ramka odebrana od klienta — ID: 604
+WS: ramka odebrana od klienta — ID: 605
+WS: ramka odebrana od klienta — ID: 606
+WS: ramka odebrana od klienta — ID: 607
+WS: ramka odebrana od klienta — ID: 608
+WS: ramka odebrana od klienta — ID: 609
+[LlmQueryClient] Response received, t_llm = 20874 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 20874 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 60a
+[ExperimentRunner] Trial 15 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 20874 ms tComp= 0 ms tOta= 19 ms tTotal= 20893 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "gemini-3.6-flash"
+[ 50.0%] Model 1/1: gemini-3.6-flash — trial 16/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "60b" detected
+[ExperimentRunner] Cold start detected: "ID=0x60b reason=new_id tDet=36 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1651 bytes
+WS: ramka odebrana od klienta — ID: 60b
+WS: ramka odebrana od klienta — ID: 60c
+WS: ramka odebrana od klienta — ID: 60d
+WS: ramka odebrana od klienta — ID: 60e
+WS: ramka odebrana od klienta — ID: 60f
+WS: ramka odebrana od klienta — ID: 610
+WS: ramka odebrana od klienta — ID: 611
+WS: ramka odebrana od klienta — ID: 612
+WS: ramka odebrana od klienta — ID: 613
+WS: ramka odebrana od klienta — ID: 614
+WS: ramka odebrana od klienta — ID: 615
+WS: ramka odebrana od klienta — ID: 616
+WS: ramka odebrana od klienta — ID: 617
+WS: ramka odebrana od klienta — ID: 618
+WS: ramka odebrana od klienta — ID: 619
+WS: ramka odebrana od klienta — ID: 61a
+WS: ramka odebrana od klienta — ID: 61b
+WS: ramka odebrana od klienta — ID: 61c
+WS: ramka odebrana od klienta — ID: 61d
+WS: ramka odebrana od klienta — ID: 61e
+WS: ramka odebrana od klienta — ID: 61f
+WS: ramka odebrana od klienta — ID: 620
+WS: ramka odebrana od klienta — ID: 621
+WS: ramka odebrana od klienta — ID: 622
+WS: ramka odebrana od klienta — ID: 623
+WS: ramka odebrana od klienta — ID: 624
+WS: ramka odebrana od klienta — ID: 625
+WS: ramka odebrana od klienta — ID: 626
+WS: ramka odebrana od klienta — ID: 627
+WS: ramka odebrana od klienta — ID: 628
+WS: ramka odebrana od klienta — ID: 629
+WS: ramka odebrana od klienta — ID: 62a
+WS: ramka odebrana od klienta — ID: 62b
+WS: ramka odebrana od klienta — ID: 62c
+WS: ramka odebrana od klienta — ID: 62d
+[LlmQueryClient] Response received, t_llm = 16777 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16777 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 62e
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 143 ms tLlm= 16777 ms tComp= 0 ms tOta= 618 ms tTotal= 17539 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "gemini-3.6-flash"
+[ 53.3%] Model 1/1: gemini-3.6-flash — trial 17/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "62f" detected
+[ExperimentRunner] Cold start detected: "ID=0x62f reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1713 bytes
+WS: ramka odebrana od klienta — ID: 62f
+WS: ramka odebrana od klienta — ID: 630
+WS: ramka odebrana od klienta — ID: 631
+WS: ramka odebrana od klienta — ID: 632
+WS: ramka odebrana od klienta — ID: 633
+WS: ramka odebrana od klienta — ID: 634
+WS: ramka odebrana od klienta — ID: 635
+WS: ramka odebrana od klienta — ID: 636
+WS: ramka odebrana od klienta — ID: 637
+WS: ramka odebrana od klienta — ID: 638
+WS: ramka odebrana od klienta — ID: 639
+WS: ramka odebrana od klienta — ID: 63a
+WS: ramka odebrana od klienta — ID: 63b
+WS: ramka odebrana od klienta — ID: 63c
+WS: ramka odebrana od klienta — ID: 63d
+WS: ramka odebrana od klienta — ID: 63e
+WS: ramka odebrana od klienta — ID: 63f
+WS: ramka odebrana od klienta — ID: 640
+WS: ramka odebrana od klienta — ID: 641
+WS: ramka odebrana od klienta — ID: 642
+WS: ramka odebrana od klienta — ID: 643
+WS: ramka odebrana od klienta — ID: 644
+WS: ramka odebrana od klienta — ID: 645
+WS: ramka odebrana od klienta — ID: 646
+WS: ramka odebrana od klienta — ID: 647
+WS: ramka odebrana od klienta — ID: 648
+WS: ramka odebrana od klienta — ID: 649
+WS: ramka odebrana od klienta — ID: 64a
+WS: ramka odebrana od klienta — ID: 64b
+WS: ramka odebrana od klienta — ID: 64c
+WS: ramka odebrana od klienta — ID: 64d
+WS: ramka odebrana od klienta — ID: 64e
+WS: ramka odebrana od klienta — ID: 64f
+WS: ramka odebrana od klienta — ID: 650
+WS: ramka odebrana od klienta — ID: 651
+WS: ramka odebrana od klienta — ID: 652
+WS: ramka odebrana od klienta — ID: 653
+WS: ramka odebrana od klienta — ID: 654
+WS: ramka odebrana od klienta — ID: 655
+[LlmQueryClient] Response received, t_llm = 19234 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 19234 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 656
+WS: ramka odebrana od klienta — ID: 657
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 19234 ms tComp= 0 ms tOta= 1022 ms tTotal= 20256 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "gemini-3.6-flash"
+[ 56.7%] Model 1/1: gemini-3.6-flash — trial 18/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "658" detected
+[ExperimentRunner] Cold start detected: "ID=0x658 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1775 bytes
+WS: ramka odebrana od klienta — ID: 658
+WS: ramka odebrana od klienta — ID: 659
+WS: ramka odebrana od klienta — ID: 65a
+WS: ramka odebrana od klienta — ID: 65b
+WS: ramka odebrana od klienta — ID: 65c
+WS: ramka odebrana od klienta — ID: 65d
+WS: ramka odebrana od klienta — ID: 65e
+WS: ramka odebrana od klienta — ID: 65f
+WS: ramka odebrana od klienta — ID: 660
+WS: ramka odebrana od klienta — ID: 661
+WS: ramka odebrana od klienta — ID: 662
+WS: ramka odebrana od klienta — ID: 663
+WS: ramka odebrana od klienta — ID: 664
+WS: ramka odebrana od klienta — ID: 665
+WS: ramka odebrana od klienta — ID: 666
+WS: ramka odebrana od klienta — ID: 667
+WS: ramka odebrana od klienta — ID: 668
+WS: ramka odebrana od klienta — ID: 669
+WS: ramka odebrana od klienta — ID: 66a
+WS: ramka odebrana od klienta — ID: 66b
+WS: ramka odebrana od klienta — ID: 66c
+WS: ramka odebrana od klienta — ID: 66d
+WS: ramka odebrana od klienta — ID: 66e
+WS: ramka odebrana od klienta — ID: 66f
+WS: ramka odebrana od klienta — ID: 670
+WS: ramka odebrana od klienta — ID: 671
+WS: ramka odebrana od klienta — ID: 672
+[LlmQueryClient] Response received, t_llm = 12687 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 12687 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 153 ms tLlm= 12687 ms tComp= 0 ms tOta= 208 ms tTotal= 13048 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "gemini-3.6-flash"
+[ 60.0%] Model 1/1: gemini-3.6-flash — trial 19/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "673" detected
+[ExperimentRunner] Cold start detected: "ID=0x673 reason=new_id tDet=29 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1837 bytes
+WS: ramka odebrana od klienta — ID: 673
+WS: ramka odebrana od klienta — ID: 674
+WS: ramka odebrana od klienta — ID: 675
+WS: ramka odebrana od klienta — ID: 676
+WS: ramka odebrana od klienta — ID: 677
+WS: ramka odebrana od klienta — ID: 678
+WS: ramka odebrana od klienta — ID: 679
+WS: ramka odebrana od klienta — ID: 67a
+WS: ramka odebrana od klienta — ID: 67b
+WS: ramka odebrana od klienta — ID: 67c
+WS: ramka odebrana od klienta — ID: 67d
+WS: ramka odebrana od klienta — ID: 67e
+WS: ramka odebrana od klienta — ID: 67f
+WS: ramka odebrana od klienta — ID: 680
+WS: ramka odebrana od klienta — ID: 681
+WS: ramka odebrana od klienta — ID: 682
+WS: ramka odebrana od klienta — ID: 683
+WS: ramka odebrana od klienta — ID: 684
+WS: ramka odebrana od klienta — ID: 685
+WS: ramka odebrana od klienta — ID: 686
+WS: ramka odebrana od klienta — ID: 687
+WS: ramka odebrana od klienta — ID: 688
+WS: ramka odebrana od klienta — ID: 689
+WS: ramka odebrana od klienta — ID: 68a
+WS: ramka odebrana od klienta — ID: 68b
+WS: ramka odebrana od klienta — ID: 68c
+WS: ramka odebrana od klienta — ID: 68d
+WS: ramka odebrana od klienta — ID: 68e
+WS: ramka odebrana od klienta — ID: 68f
+[LlmQueryClient] Response received, t_llm = 14170 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 14170 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 14170 ms tComp= 0 ms tOta= 130 ms tTotal= 14300 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "gemini-3.6-flash"
+[ 63.3%] Model 1/1: gemini-3.6-flash — trial 20/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "690" detected
+[ExperimentRunner] Cold start detected: "ID=0x690 reason=new_id tDet=38 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1899 bytes
+WS: ramka odebrana od klienta — ID: 690
+WS: ramka odebrana od klienta — ID: 691
+WS: ramka odebrana od klienta — ID: 692
+WS: ramka odebrana od klienta — ID: 693
+WS: ramka odebrana od klienta — ID: 694
+WS: ramka odebrana od klienta — ID: 695
+WS: ramka odebrana od klienta — ID: 696
+WS: ramka odebrana od klienta — ID: 697
+WS: ramka odebrana od klienta — ID: 698
+WS: ramka odebrana od klienta — ID: 699
+WS: ramka odebrana od klienta — ID: 69a
+WS: ramka odebrana od klienta — ID: 69b
+WS: ramka odebrana od klienta — ID: 69c
+WS: ramka odebrana od klienta — ID: 69d
+WS: ramka odebrana od klienta — ID: 69e
+WS: ramka odebrana od klienta — ID: 69f
+WS: ramka odebrana od klienta — ID: 6a0
+WS: ramka odebrana od klienta — ID: 6a1
+WS: ramka odebrana od klienta — ID: 6a2
+WS: ramka odebrana od klienta — ID: 6a3
+WS: ramka odebrana od klienta — ID: 6a4
+WS: ramka odebrana od klienta — ID: 6a5
+WS: ramka odebrana od klienta — ID: 6a6
+WS: ramka odebrana od klienta — ID: 6a7
+WS: ramka odebrana od klienta — ID: 6a8
+WS: ramka odebrana od klienta — ID: 6a9
+WS: ramka odebrana od klienta — ID: 6aa
+WS: ramka odebrana od klienta — ID: 6ab
+WS: ramka odebrana od klienta — ID: 6ac
+WS: ramka odebrana od klienta — ID: 6ad
+WS: ramka odebrana od klienta — ID: 6ae
+WS: ramka odebrana od klienta — ID: 6af
+WS: ramka odebrana od klienta — ID: 6b0
+WS: ramka odebrana od klienta — ID: 6b1
+WS: ramka odebrana od klienta — ID: 6b2
+WS: ramka odebrana od klienta — ID: 6b3
+WS: ramka odebrana od klienta — ID: 6b4
+WS: ramka odebrana od klienta — ID: 6b5
+WS: ramka odebrana od klienta — ID: 6b6
+WS: ramka odebrana od klienta — ID: 6b7
+WS: ramka odebrana od klienta — ID: 6b8
+WS: ramka odebrana od klienta — ID: 6b9
+WS: ramka odebrana od klienta — ID: 6ba
+WS: ramka odebrana od klienta — ID: 6bb
+[LlmQueryClient] Response received, t_llm = 21916 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 21916 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 21916 ms tComp= 0 ms tOta= 348 ms tTotal= 22264 ms success= true
+WS: ramka odebrana od klienta — ID: 6bc
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "gemini-3.6-flash"
+[ 66.7%] Model 1/1: gemini-3.6-flash — trial 21/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6bd" detected
+[ExperimentRunner] Cold start detected: "ID=0x6bd reason=new_id tDet=44 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6bd
+WS: ramka odebrana od klienta — ID: 6be
+WS: ramka odebrana od klienta — ID: 6bf
+WS: ramka odebrana od klienta — ID: 6c0
+WS: ramka odebrana od klienta — ID: 6c1
+WS: ramka odebrana od klienta — ID: 6c2
+WS: ramka odebrana od klienta — ID: 6c3
+WS: ramka odebrana od klienta — ID: 6c4
+WS: ramka odebrana od klienta — ID: 6c5
+WS: ramka odebrana od klienta — ID: 6c6
+WS: ramka odebrana od klienta — ID: 6c7
+WS: ramka odebrana od klienta — ID: 6c8
+WS: ramka odebrana od klienta — ID: 6c9
+WS: ramka odebrana od klienta — ID: 6ca
+WS: ramka odebrana od klienta — ID: 6cb
+WS: ramka odebrana od klienta — ID: 6cc
+WS: ramka odebrana od klienta — ID: 6cd
+WS: ramka odebrana od klienta — ID: 6ce
+WS: ramka odebrana od klienta — ID: 6cf
+WS: ramka odebrana od klienta — ID: 6d0
+WS: ramka odebrana od klienta — ID: 6d1
+WS: ramka odebrana od klienta — ID: 6d2
+WS: ramka odebrana od klienta — ID: 6d3
+WS: ramka odebrana od klienta — ID: 6d4
+WS: ramka odebrana od klienta — ID: 6d5
+WS: ramka odebrana od klienta — ID: 6d6
+WS: ramka odebrana od klienta — ID: 6d7
+WS: ramka odebrana od klienta — ID: 6d8
+WS: ramka odebrana od klienta — ID: 6d9
+WS: ramka odebrana od klienta — ID: 6da
+WS: ramka odebrana od klienta — ID: 6db
+WS: ramka odebrana od klienta — ID: 6dc
+WS: ramka odebrana od klienta — ID: 6dd
+WS: ramka odebrana od klienta — ID: 6de
+[LlmQueryClient] Response received, t_llm = 16780 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16780 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 6df
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 0 ms tLlm= 16780 ms tComp= 0 ms tOta= 409 ms tTotal= 17189 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "gemini-3.6-flash"
+[ 70.0%] Model 1/1: gemini-3.6-flash — trial 22/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6e0" detected
+[ExperimentRunner] Cold start detected: "ID=0x6e0 reason=new_id tDet=24 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6e0
+WS: ramka odebrana od klienta — ID: 6e1
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 614 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "gemini-3.6-flash"
+[ 73.3%] Model 1/1: gemini-3.6-flash — trial 23/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6e2" detected
+[ExperimentRunner] Cold start detected: "ID=0x6e2 reason=new_id tDet=32 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6e2
+WS: ramka odebrana od klienta — ID: 6e3
+WS: ramka odebrana od klienta — ID: 6e4
+WS: ramka odebrana od klienta — ID: 6e5
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 1277 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "gemini-3.6-flash"
+[ 76.7%] Model 1/1: gemini-3.6-flash — trial 24/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6e6" detected
+[ExperimentRunner] Cold start detected: "ID=0x6e6 reason=new_id tDet=31 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6e6
+WS: ramka odebrana od klienta — ID: 6e7
+WS: ramka odebrana od klienta — ID: 6e8
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 1030 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "gemini-3.6-flash"
+[ 80.0%] Model 1/1: gemini-3.6-flash — trial 25/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6e9" detected
+[ExperimentRunner] Cold start detected: "ID=0x6e9 reason=new_id tDet=29 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6e9
+WS: ramka odebrana od klienta — ID: 6ea
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 134 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "gemini-3.6-flash"
+[ 83.3%] Model 1/1: gemini-3.6-flash — trial 26/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6eb" detected
+[ExperimentRunner] Cold start detected: "ID=0x6eb reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6eb
+WS: ramka odebrana od klienta — ID: 6ec
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 159 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "gemini-3.6-flash"
+[ 86.7%] Model 1/1: gemini-3.6-flash — trial 27/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6ed" detected
+[ExperimentRunner] Cold start detected: "ID=0x6ed reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6ed
+WS: ramka odebrana od klienta — ID: 6ee
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 617 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "gemini-3.6-flash"
+[ 90.0%] Model 1/1: gemini-3.6-flash — trial 28/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6ef" detected
+[ExperimentRunner] Cold start detected: "ID=0x6ef reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6ef
+WS: ramka odebrana od klienta — ID: 6f0
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 613 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "gemini-3.6-flash"
+[ 93.3%] Model 1/1: gemini-3.6-flash — trial 29/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6f1" detected
+[ExperimentRunner] Cold start detected: "ID=0x6f1 reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 6f1
+WS: ramka odebrana od klienta — ID: 6f2
+WS: ramka odebrana od klienta — ID: 6f3
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 778 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "gemini-3.6-flash"
+[ 96.7%] Model 1/1: gemini-3.6-flash — trial 30/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6f4" detected
+[ExperimentRunner] Cold start detected: "ID=0x6f4 reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1925 bytes
+WS: ramka odebrana od klienta — ID: 6f4
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LlmQueryClient] Response received, t_llm = 175 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429"
+[LatencyProfiler] Model "gemini-3.6-flash" complete: 30 / 30 samples
+=== gemini-3.6-flash zakonczony: t_llm=11771.9ms t_tx_up=35.07ms t_ota=405.3ms (N=30) ===
+[ExperimentRunner] State: Done
+[ExperimentRunner] Experiment finished. Report: "Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw_gemini/latency_report_hw.json"
+[100.0%] Experiment complete — report saved to Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw_gemini/latency_report_hw.json
+Eksperyment (HW) zakonczony, raport: Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw_gemini/latency_report_hw.json
+QObject::startTimer: Timers can only be used with threads started with QThread
+[WebSocketServer] Polaczonych klientow (ESP32): 0
+WebSocket server zatrzymany

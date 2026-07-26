@@ -1,0 +1,195 @@
+{
+    "generatedAt": "2026-07-25T11:23:25Z",
+    "metadata": {
+        "experiment": "1.1 — Cold Start Latency Breakdown",
+        "hardwareNote": "Pomiar na realnym ESP32 (esp_experiment_1_1.ino) przez WebSocket. t_llm, t_comp — realne (zegar serwera). t_tx_up, t_det — realne, oparte o timestamp ESP32 skorygowany kalibracją time_sync (NTP-style, dokładność rzędu WiFi jitter). t_ota — realny round-trip do rule_ack od ESP32 (z timeoutem).",
+        "hardwareSimulated": false,
+        "modelsTestedInOrder": [
+            "gemini-3.6-flash"
+        ],
+        "realHardwareMode": true
+    },
+    "samples": [
+        {
+            "canId": "0x500",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 41,
+            "tLlmUs": 1328000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 0
+        },
+        {
+            "canId": "0x503",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 25,
+            "tLlmUs": 269000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 1
+        },
+        {
+            "canId": "0x504",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 23,
+            "tLlmUs": 220000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 2
+        },
+        {
+            "canId": "0x505",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 58,
+            "tLlmUs": 212000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 3
+        },
+        {
+            "canId": "0x506",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 23,
+            "tLlmUs": 252000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 4
+        },
+        {
+            "canId": "0x507",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 29,
+            "tLlmUs": 313000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 5
+        },
+        {
+            "canId": "0x508",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 43,
+            "tLlmUs": 138000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 6
+        },
+        {
+            "canId": "0x509",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 23,
+            "tLlmUs": 148000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 7
+        },
+        {
+            "canId": "0x50a",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 22,
+            "tLlmUs": 136000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 8
+        },
+        {
+            "canId": "0x50b",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 28,
+            "tLlmUs": 114000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 9
+        },
+        {
+            "canId": "0x50c",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 60,
+            "tLlmUs": 135000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 10
+        },
+        {
+            "canId": "0x50d",
+            "error": "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 429",
+            "frameDataHex": "2d98fa7296621b96",
+            "model": "gemini-3.6-flash",
+            "success": false,
+            "tCompUs": 0,
+            "tDetUs": 34,
+            "tLlmUs": 154000,
+            "tOtaUs": 0,
+            "tTxUpUs": 0,
+            "trialIndex": 11
+        }
+    ],
+    "stats": {
+        "statistics": [
+            {
+                "meanTotalMs": 284.95074999999997,
+                "means": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.034083333333333334,
+                    "tLlmMs": 284.9166666666667,
+                    "tOtaMs": 0,
+                    "tTxUpMs": 0
+                },
+                "model": "gemini-3.6-flash",
+                "sampleCount": 12,
+                "sigmaTotalMs": 334.531473837155,
+                "sigmas": {
+                    "tCompMs": 0,
+                    "tDetMs": 0.013587817627521643,
+                    "tLlmMs": 334.52991667639395,
+                    "tOtaMs": 0,
+                    "tTxUpMs": 0
+                }
+            }
+        ]
+    },
+    "trialsPerModel": 12
+}

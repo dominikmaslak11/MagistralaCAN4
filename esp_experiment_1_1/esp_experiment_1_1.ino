@@ -38,16 +38,35 @@
 #include <ArduinoJson.h>
 
 // ──────────────────────────────────────────────────────────────
-// KONFIGURACJA — uzupelnij przed wgraniem
+// KONFIGURACJA — utworz esp_experiment_1_1/secrets.h (patrz secrets.h.example)
+// z prawdziwymi danymi WiFi. Plik secrets.h jest w .gitignore — dzieki temu
+// prawdziwe haslo WiFi nigdy nie trafia do repozytorium (w odroznieniu od
+// kluczy API w archiwum_python_v1, ktore trzeba bylo pozniej redagowac).
+// Jesli secrets.h nie istnieje, uzywane sa ponizsze wartosci domyslne/placeholdery.
 // ──────────────────────────────────────────────────────────────
+#if __has_include("secrets.h")
+#include "secrets.h"
+#endif
+
+#ifndef WIFI_SSID
 #define WIFI_SSID      "TWOJE_SSID"
+#endif
+#ifndef WIFI_PASSWORD
 #define WIFI_PASSWORD  "TWOJE_HASLO"
+#endif
+#ifndef WS_SERVER_IP
 #define WS_SERVER_IP   "192.168.1.100"   // adres IP komputera z MagistralaCAN4
+#endif
+#ifndef WS_SERVER_PORT
 #define WS_SERVER_PORT 9000              // patrz komunikat startowy --run-experiment-hw
+#endif
+#ifndef WS_SERVER_PATH
 #define WS_SERVER_PATH "/"
+#endif
 
 #define CAN_CS         5
 #define CAN_SPEED_BPS  250000UL          // 250 kbps — jak w metodyce (Grupa 2)
+#define CAN_OSC_MHZ    16                // czestotliwosc kwarcu na module MCP2515 (8 lub 16)
 
 #define STATUS_LED     2                 // wbudowana LED na wiekszosci devkitow (opcjonalne)
 
@@ -250,7 +269,7 @@ static void setupCan() {
     else if (CAN_SPEED_BPS >= 150000) spd = CAN_250KBPS;
     else                              spd = CAN_125KBPS;
 
-    mcp2515.setBitrate(spd);
+    mcp2515.setBitrate(spd, CAN_OSC_MHZ >= 16 ? MCP_16MHZ : MCP_8MHZ);
     mcp2515.setNormalMode();
     Serial.println("[CAN] MCP2515 gotowy");
 }

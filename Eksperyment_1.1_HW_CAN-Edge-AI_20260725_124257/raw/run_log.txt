@@ -1,0 +1,3417 @@
+WebSocket (ws://) nasłuchuje na porcie 9000
+WebSocketServer nasluchuje na ws://0.0.0.0:9000 — skonfiguruj w esp_experiment_1_1.ino WS_SERVER_IP na adres IP tego komputera w sieci lokalnej i WS_SERVER_PORT=9000. Eksperyment czeka na pierwsza ramke CAN od ESP32...
+[ExperimentRunner] Starting experiment: 4 models, 30 trials each
+[ExperimentRunner] Starting model: "claude-sonnet-5" ( 1 / 4 )
+[  0.0%] Model 1/4: claude-sonnet-5 — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "claude-sonnet-5"
+[  0.0%] Model 1/4: claude-sonnet-5 — trial 1/30 (waiting for cold start...)
+WS: klient podłączony – razem: 1
+[WebSocketServer] Polaczonych klientow (ESP32): 1
+[ColdStartDetector] new CAN ID 0x "200" detected
+[ExperimentRunner] Cold start detected: "ID=0x200 reason=new_id tDet=35 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 716 bytes
+WS: ramka odebrana od klienta — ID: 200
+WS: ramka odebrana od klienta — ID: 201
+WS: ramka odebrana od klienta — ID: 202
+WS: ramka odebrana od klienta — ID: 203
+WS: ramka odebrana od klienta — ID: 204
+WS: ramka odebrana od klienta — ID: 205
+WS: ramka odebrana od klienta — ID: 206
+WS: ramka odebrana od klienta — ID: 207
+WS: ramka odebrana od klienta — ID: 208
+WS: ramka odebrana od klienta — ID: 209
+WS: ramka odebrana od klienta — ID: 20a
+WS: ramka odebrana od klienta — ID: 20b
+WS: ramka odebrana od klienta — ID: 20c
+WS: ramka odebrana od klienta — ID: 20d
+WS: ramka odebrana od klienta — ID: 20e
+WS: ramka odebrana od klienta — ID: 20f
+WS: ramka odebrana od klienta — ID: 210
+WS: ramka odebrana od klienta — ID: 211
+WS: ramka odebrana od klienta — ID: 212
+WS: ramka odebrana od klienta — ID: 213
+[LlmQueryClient] Response received, t_llm = 9664 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 9664 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 169 ms tLlm= 9664 ms tComp= 0 ms tOta= 312 ms tTotal= 10145 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "claude-sonnet-5"
+[  0.8%] Model 1/4: claude-sonnet-5 — trial 2/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "214" detected
+[ExperimentRunner] Cold start detected: "ID=0x214 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 778 bytes
+WS: ramka odebrana od klienta — ID: 214
+WS: ramka odebrana od klienta — ID: 215
+WS: ramka odebrana od klienta — ID: 216
+WS: ramka odebrana od klienta — ID: 217
+WS: ramka odebrana od klienta — ID: 218
+WS: ramka odebrana od klienta — ID: 219
+WS: ramka odebrana od klienta — ID: 21a
+WS: ramka odebrana od klienta — ID: 21b
+WS: ramka odebrana od klienta — ID: 21c
+WS: ramka odebrana od klienta — ID: 21d
+WS: ramka odebrana od klienta — ID: 21e
+WS: ramka odebrana od klienta — ID: 21f
+WS: ramka odebrana od klienta — ID: 220
+WS: ramka odebrana od klienta — ID: 221
+WS: ramka odebrana od klienta — ID: 222
+[LlmQueryClient] Response received, t_llm = 7109 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7109 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 223
+WS: ramka odebrana od klienta — ID: 224
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 246 ms tLlm= 7109 ms tComp= 0 ms tOta= 1276 ms tTotal= 8631 ms success= true
+WS: ramka odebrana od klienta — ID: 225
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "claude-sonnet-5"
+[  1.7%] Model 1/4: claude-sonnet-5 — trial 3/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "226" detected
+[ExperimentRunner] Cold start detected: "ID=0x226 reason=new_id tDet=27 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 840 bytes
+WS: ramka odebrana od klienta — ID: 226
+WS: ramka odebrana od klienta — ID: 227
+WS: ramka odebrana od klienta — ID: 228
+WS: ramka odebrana od klienta — ID: 229
+WS: ramka odebrana od klienta — ID: 22a
+WS: ramka odebrana od klienta — ID: 22b
+WS: ramka odebrana od klienta — ID: 22c
+WS: ramka odebrana od klienta — ID: 22d
+WS: ramka odebrana od klienta — ID: 22e
+WS: ramka odebrana od klienta — ID: 22f
+WS: ramka odebrana od klienta — ID: 230
+WS: ramka odebrana od klienta — ID: 231
+WS: ramka odebrana od klienta — ID: 232
+WS: ramka odebrana od klienta — ID: 233
+[LlmQueryClient] Response received, t_llm = 6717 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6717 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 163 ms tLlm= 6717 ms tComp= 0 ms tOta= 64 ms tTotal= 6944 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "claude-sonnet-5"
+[  2.5%] Model 1/4: claude-sonnet-5 — trial 4/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "234" detected
+[ExperimentRunner] Cold start detected: "ID=0x234 reason=new_id tDet=30 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 902 bytes
+WS: ramka odebrana od klienta — ID: 234
+WS: ramka odebrana od klienta — ID: 235
+WS: ramka odebrana od klienta — ID: 236
+WS: ramka odebrana od klienta — ID: 237
+WS: ramka odebrana od klienta — ID: 238
+WS: ramka odebrana od klienta — ID: 239
+WS: ramka odebrana od klienta — ID: 23a
+WS: ramka odebrana od klienta — ID: 23b
+WS: ramka odebrana od klienta — ID: 23c
+WS: ramka odebrana od klienta — ID: 23d
+WS: ramka odebrana od klienta — ID: 23e
+WS: ramka odebrana od klienta — ID: 23f
+WS: ramka odebrana od klienta — ID: 240
+WS: ramka odebrana od klienta — ID: 241
+[LlmQueryClient] Response received, t_llm = 6964 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6964 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 242
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 108 ms tLlm= 6964 ms tComp= 0 ms tOta= 947 ms tTotal= 8019 ms success= true
+WS: ramka odebrana od klienta — ID: 243
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "claude-sonnet-5"
+[  3.3%] Model 1/4: claude-sonnet-5 — trial 5/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "244" detected
+[ExperimentRunner] Cold start detected: "ID=0x244 reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 964 bytes
+WS: ramka odebrana od klienta — ID: 244
+WS: ramka odebrana od klienta — ID: 245
+WS: ramka odebrana od klienta — ID: 246
+WS: ramka odebrana od klienta — ID: 247
+WS: ramka odebrana od klienta — ID: 248
+WS: ramka odebrana od klienta — ID: 249
+WS: ramka odebrana od klienta — ID: 24a
+WS: ramka odebrana od klienta — ID: 24b
+WS: ramka odebrana od klienta — ID: 24c
+WS: ramka odebrana od klienta — ID: 24d
+WS: ramka odebrana od klienta — ID: 24e
+WS: ramka odebrana od klienta — ID: 24f
+WS: ramka odebrana od klienta — ID: 250
+WS: ramka odebrana od klienta — ID: 251
+WS: ramka odebrana od klienta — ID: 252
+WS: ramka odebrana od klienta — ID: 253
+WS: ramka odebrana od klienta — ID: 254
+[LlmQueryClient] Response received, t_llm = 7785 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7785 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 562 ms tLlm= 7785 ms tComp= 0 ms tOta= 205 ms tTotal= 8553 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "claude-sonnet-5"
+[  4.2%] Model 1/4: claude-sonnet-5 — trial 6/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "255" detected
+[ExperimentRunner] Cold start detected: "ID=0x255 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1026 bytes
+WS: ramka odebrana od klienta — ID: 255
+WS: ramka odebrana od klienta — ID: 256
+WS: ramka odebrana od klienta — ID: 257
+WS: ramka odebrana od klienta — ID: 258
+WS: ramka odebrana od klienta — ID: 259
+WS: ramka odebrana od klienta — ID: 25a
+WS: ramka odebrana od klienta — ID: 25b
+WS: ramka odebrana od klienta — ID: 25c
+WS: ramka odebrana od klienta — ID: 25d
+[LlmQueryClient] Response received, t_llm = 4369 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4369 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 25e
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 90 ms tLlm= 4369 ms tComp= 0 ms tOta= 927 ms tTotal= 5386 ms success= true
+WS: ramka odebrana od klienta — ID: 25f
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "claude-sonnet-5"
+[  5.0%] Model 1/4: claude-sonnet-5 — trial 7/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "260" detected
+[ExperimentRunner] Cold start detected: "ID=0x260 reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1088 bytes
+WS: ramka odebrana od klienta — ID: 260
+WS: ramka odebrana od klienta — ID: 261
+WS: ramka odebrana od klienta — ID: 262
+WS: ramka odebrana od klienta — ID: 263
+WS: ramka odebrana od klienta — ID: 264
+WS: ramka odebrana od klienta — ID: 265
+WS: ramka odebrana od klienta — ID: 266
+[LlmQueryClient] Response received, t_llm = 3524 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3524 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 267
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 88 ms tLlm= 3524 ms tComp= 0 ms tOta= 7 ms tTotal= 3619 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "claude-sonnet-5"
+[  5.8%] Model 1/4: claude-sonnet-5 — trial 8/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "268" detected
+[ExperimentRunner] Cold start detected: "ID=0x268 reason=new_id tDet=37 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1150 bytes
+WS: ramka odebrana od klienta — ID: 268
+WS: ramka odebrana od klienta — ID: 269
+WS: ramka odebrana od klienta — ID: 26a
+WS: ramka odebrana od klienta — ID: 26b
+WS: ramka odebrana od klienta — ID: 26c
+WS: ramka odebrana od klienta — ID: 26d
+WS: ramka odebrana od klienta — ID: 26e
+WS: ramka odebrana od klienta — ID: 26f
+WS: ramka odebrana od klienta — ID: 270
+WS: ramka odebrana od klienta — ID: 271
+[LlmQueryClient] Response received, t_llm = 4810 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4810 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 272
+WS: ramka odebrana od klienta — ID: 273
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 87 ms tLlm= 4810 ms tComp= 0 ms tOta= 1023 ms tTotal= 5921 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "claude-sonnet-5"
+[  6.7%] Model 1/4: claude-sonnet-5 — trial 9/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "274" detected
+[ExperimentRunner] Cold start detected: "ID=0x274 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1212 bytes
+WS: ramka odebrana od klienta — ID: 274
+WS: ramka odebrana od klienta — ID: 275
+WS: ramka odebrana od klienta — ID: 276
+WS: ramka odebrana od klienta — ID: 277
+WS: ramka odebrana od klienta — ID: 278
+WS: ramka odebrana od klienta — ID: 279
+WS: ramka odebrana od klienta — ID: 27a
+WS: ramka odebrana od klienta — ID: 27b
+WS: ramka odebrana od klienta — ID: 27c
+WS: ramka odebrana od klienta — ID: 27d
+WS: ramka odebrana od klienta — ID: 27e
+[LlmQueryClient] Response received, t_llm = 5015 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5015 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 27f
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 335 ms tLlm= 5015 ms tComp= 0 ms tOta= 656 ms tTotal= 6006 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "claude-sonnet-5"
+[  7.5%] Model 1/4: claude-sonnet-5 — trial 10/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "280" detected
+[ExperimentRunner] Cold start detected: "ID=0x280 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1274 bytes
+WS: ramka odebrana od klienta — ID: 280
+WS: ramka odebrana od klienta — ID: 281
+WS: ramka odebrana od klienta — ID: 282
+WS: ramka odebrana od klienta — ID: 283
+WS: ramka odebrana od klienta — ID: 284
+WS: ramka odebrana od klienta — ID: 285
+WS: ramka odebrana od klienta — ID: 286
+WS: ramka odebrana od klienta — ID: 287
+[LlmQueryClient] Response received, t_llm = 3676 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3676 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 288
+WS: ramka odebrana od klienta — ID: 289
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 73 ms tLlm= 3676 ms tComp= 0 ms tOta= 1321 ms tTotal= 5070 ms success= true
+WS: ramka odebrana od klienta — ID: 28a
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "claude-sonnet-5"
+[  8.3%] Model 1/4: claude-sonnet-5 — trial 11/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "28b" detected
+[ExperimentRunner] Cold start detected: "ID=0x28b reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1336 bytes
+WS: ramka odebrana od klienta — ID: 28b
+WS: ramka odebrana od klienta — ID: 28c
+WS: ramka odebrana od klienta — ID: 28d
+WS: ramka odebrana od klienta — ID: 28e
+WS: ramka odebrana od klienta — ID: 28f
+WS: ramka odebrana od klienta — ID: 290
+WS: ramka odebrana od klienta — ID: 291
+[LlmQueryClient] Response received, t_llm = 3129 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3129 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 292
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 67 ms tLlm= 3129 ms tComp= 0 ms tOta= 1182 ms tTotal= 4379 ms success= true
+WS: ramka odebrana od klienta — ID: 293
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "claude-sonnet-5"
+[  9.2%] Model 1/4: claude-sonnet-5 — trial 12/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "294" detected
+[ExperimentRunner] Cold start detected: "ID=0x294 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1398 bytes
+WS: ramka odebrana od klienta — ID: 294
+WS: ramka odebrana od klienta — ID: 295
+WS: ramka odebrana od klienta — ID: 296
+WS: ramka odebrana od klienta — ID: 297
+WS: ramka odebrana od klienta — ID: 298
+WS: ramka odebrana od klienta — ID: 299
+WS: ramka odebrana od klienta — ID: 29a
+WS: ramka odebrana od klienta — ID: 29b
+WS: ramka odebrana od klienta — ID: 29c
+WS: ramka odebrana od klienta — ID: 29d
+WS: ramka odebrana od klienta — ID: 29e
+WS: ramka odebrana od klienta — ID: 29f
+WS: ramka odebrana od klienta — ID: 2a0
+[LlmQueryClient] Response received, t_llm = 5682 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5682 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2a1
+[ExperimentRunner] Trial 12 completed: tDet= 0 ms tTxUp= 928 ms tLlm= 5682 ms tComp= 0 ms tOta= 11 ms tTotal= 6621 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "claude-sonnet-5"
+[ 10.0%] Model 1/4: claude-sonnet-5 — trial 13/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2a2" detected
+[ExperimentRunner] Cold start detected: "ID=0x2a2 reason=new_id tDet=24 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1460 bytes
+WS: ramka odebrana od klienta — ID: 2a2
+WS: ramka odebrana od klienta — ID: 2a3
+WS: ramka odebrana od klienta — ID: 2a4
+WS: ramka odebrana od klienta — ID: 2a5
+WS: ramka odebrana od klienta — ID: 2a6
+WS: ramka odebrana od klienta — ID: 2a7
+WS: ramka odebrana od klienta — ID: 2a8
+WS: ramka odebrana od klienta — ID: 2a9
+WS: ramka odebrana od klienta — ID: 2aa
+WS: ramka odebrana od klienta — ID: 2ab
+WS: ramka odebrana od klienta — ID: 2ac
+WS: ramka odebrana od klienta — ID: 2ad
+WS: ramka odebrana od klienta — ID: 2ae
+WS: ramka odebrana od klienta — ID: 2af
+[LlmQueryClient] Response received, t_llm = 6120 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6120 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2b0
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 573 ms tLlm= 6120 ms tComp= 0 ms tOta= 1905 ms tTotal= 8598 ms success= true
+WS: ramka odebrana od klienta — ID: 2b1
+WS: ramka odebrana od klienta — ID: 2b2
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "claude-sonnet-5"
+[ 10.8%] Model 1/4: claude-sonnet-5 — trial 14/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2b3" detected
+[ExperimentRunner] Cold start detected: "ID=0x2b3 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1522 bytes
+WS: ramka odebrana od klienta — ID: 2b3
+WS: ramka odebrana od klienta — ID: 2b4
+WS: ramka odebrana od klienta — ID: 2b5
+WS: ramka odebrana od klienta — ID: 2b6
+WS: ramka odebrana od klienta — ID: 2b7
+WS: ramka odebrana od klienta — ID: 2b8
+WS: ramka odebrana od klienta — ID: 2b9
+WS: ramka odebrana od klienta — ID: 2ba
+WS: ramka odebrana od klienta — ID: 2bb
+WS: ramka odebrana od klienta — ID: 2bc
+WS: ramka odebrana od klienta — ID: 2bd
+[LlmQueryClient] Response received, t_llm = 4494 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4494 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2be
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 1088 ms tLlm= 4494 ms tComp= 0 ms tOta= 175 ms tTotal= 5758 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "claude-sonnet-5"
+[ 11.7%] Model 1/4: claude-sonnet-5 — trial 15/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2bf" detected
+[ExperimentRunner] Cold start detected: "ID=0x2bf reason=new_id tDet=32 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1584 bytes
+WS: ramka odebrana od klienta — ID: 2bf
+WS: ramka odebrana od klienta — ID: 2c0
+WS: ramka odebrana od klienta — ID: 2c1
+WS: ramka odebrana od klienta — ID: 2c2
+WS: ramka odebrana od klienta — ID: 2c3
+WS: ramka odebrana od klienta — ID: 2c4
+WS: ramka odebrana od klienta — ID: 2c5
+WS: ramka odebrana od klienta — ID: 2c6
+WS: ramka odebrana od klienta — ID: 2c7
+WS: ramka odebrana od klienta — ID: 2c8
+[LlmQueryClient] Response received, t_llm = 4721 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4721 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2c9
+[ExperimentRunner] Trial 15 completed: tDet= 0 ms tTxUp= 288 ms tLlm= 4721 ms tComp= 0 ms tOta= 378 ms tTotal= 5387 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "claude-sonnet-5"
+[ 12.5%] Model 1/4: claude-sonnet-5 — trial 16/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2ca" detected
+[ExperimentRunner] Cold start detected: "ID=0x2ca reason=new_id tDet=29 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1646 bytes
+WS: ramka odebrana od klienta — ID: 2ca
+WS: ramka odebrana od klienta — ID: 2cb
+WS: ramka odebrana od klienta — ID: 2cc
+WS: ramka odebrana od klienta — ID: 2cd
+WS: ramka odebrana od klienta — ID: 2ce
+WS: ramka odebrana od klienta — ID: 2cf
+WS: ramka odebrana od klienta — ID: 2d0
+WS: ramka odebrana od klienta — ID: 2d1
+WS: ramka odebrana od klienta — ID: 2d2
+WS: ramka odebrana od klienta — ID: 2d3
+WS: ramka odebrana od klienta — ID: 2d4
+[LlmQueryClient] Response received, t_llm = 5067 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5067 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2d5
+WS: ramka odebrana od klienta — ID: 2d6
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 437 ms tLlm= 5067 ms tComp= 0 ms tOta= 1773 ms tTotal= 7277 ms success= true
+WS: ramka odebrana od klienta — ID: 2d7
+WS: ramka odebrana od klienta — ID: 2d8
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "claude-sonnet-5"
+[ 13.3%] Model 1/4: claude-sonnet-5 — trial 17/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2d9" detected
+[ExperimentRunner] Cold start detected: "ID=0x2d9 reason=new_id tDet=39 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1708 bytes
+WS: ramka odebrana od klienta — ID: 2d9
+WS: ramka odebrana od klienta — ID: 2da
+WS: ramka odebrana od klienta — ID: 2db
+WS: ramka odebrana od klienta — ID: 2dc
+WS: ramka odebrana od klienta — ID: 2dd
+WS: ramka odebrana od klienta — ID: 2de
+WS: ramka odebrana od klienta — ID: 2df
+WS: ramka odebrana od klienta — ID: 2e0
+WS: ramka odebrana od klienta — ID: 2e1
+WS: ramka odebrana od klienta — ID: 2e2
+WS: ramka odebrana od klienta — ID: 2e3
+[LlmQueryClient] Response received, t_llm = 4728 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4728 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2e4
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 446 ms tLlm= 4728 ms tComp= 0 ms tOta= 1687 ms tTotal= 6861 ms success= true
+WS: ramka odebrana od klienta — ID: 2e5
+WS: ramka odebrana od klienta — ID: 2e6
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "claude-sonnet-5"
+[ 14.2%] Model 1/4: claude-sonnet-5 — trial 18/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2e7" detected
+[ExperimentRunner] Cold start detected: "ID=0x2e7 reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1770 bytes
+WS: ramka odebrana od klienta — ID: 2e7
+WS: ramka odebrana od klienta — ID: 2e8
+WS: ramka odebrana od klienta — ID: 2e9
+WS: ramka odebrana od klienta — ID: 2ea
+WS: ramka odebrana od klienta — ID: 2eb
+WS: ramka odebrana od klienta — ID: 2ec
+WS: ramka odebrana od klienta — ID: 2ed
+WS: ramka odebrana od klienta — ID: 2ee
+WS: ramka odebrana od klienta — ID: 2ef
+[LlmQueryClient] Response received, t_llm = 4069 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4069 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2f0
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 52 ms tLlm= 4069 ms tComp= 0 ms tOta= 519 ms tTotal= 4640 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "claude-sonnet-5"
+[ 15.0%] Model 1/4: claude-sonnet-5 — trial 19/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2f1" detected
+[ExperimentRunner] Cold start detected: "ID=0x2f1 reason=new_id tDet=45 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1832 bytes
+WS: ramka odebrana od klienta — ID: 2f1
+WS: ramka odebrana od klienta — ID: 2f2
+WS: ramka odebrana od klienta — ID: 2f3
+WS: ramka odebrana od klienta — ID: 2f4
+WS: ramka odebrana od klienta — ID: 2f5
+WS: ramka odebrana od klienta — ID: 2f6
+WS: ramka odebrana od klienta — ID: 2f7
+WS: ramka odebrana od klienta — ID: 2f8
+WS: ramka odebrana od klienta — ID: 2f9
+WS: ramka odebrana od klienta — ID: 2fa
+WS: ramka odebrana od klienta — ID: 2fb
+WS: ramka odebrana od klienta — ID: 2fc
+[LlmQueryClient] Response received, t_llm = 5498 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5498 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 2fd
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 200 ms tLlm= 5498 ms tComp= 0 ms tOta= 1179 ms tTotal= 6878 ms success= true
+WS: ramka odebrana od klienta — ID: 2fe
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "claude-sonnet-5"
+[ 15.8%] Model 1/4: claude-sonnet-5 — trial 20/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "2ff" detected
+[ExperimentRunner] Cold start detected: "ID=0x2ff reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1894 bytes
+WS: ramka odebrana od klienta — ID: 2ff
+WS: ramka odebrana od klienta — ID: 300
+WS: ramka odebrana od klienta — ID: 301
+WS: ramka odebrana od klienta — ID: 302
+WS: ramka odebrana od klienta — ID: 303
+WS: ramka odebrana od klienta — ID: 304
+WS: ramka odebrana od klienta — ID: 305
+WS: ramka odebrana od klienta — ID: 306
+WS: ramka odebrana od klienta — ID: 307
+WS: ramka odebrana od klienta — ID: 308
+WS: ramka odebrana od klienta — ID: 309
+WS: ramka odebrana od klienta — ID: 30a
+WS: ramka odebrana od klienta — ID: 30b
+WS: ramka odebrana od klienta — ID: 30c
+WS: ramka odebrana od klienta — ID: 30d
+WS: ramka odebrana od klienta — ID: 30e
+[LlmQueryClient] Response received, t_llm = 7690 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7690 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 30f
+WS: ramka odebrana od klienta — ID: 310
+WS: ramka odebrana od klienta — ID: 311
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 32 ms tLlm= 7690 ms tComp= 0 ms tOta= 1559 ms tTotal= 9282 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "claude-sonnet-5"
+[ 16.7%] Model 1/4: claude-sonnet-5 — trial 21/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "312" detected
+[ExperimentRunner] Cold start detected: "ID=0x312 reason=new_id tDet=19 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 312
+WS: ramka odebrana od klienta — ID: 313
+WS: ramka odebrana od klienta — ID: 314
+WS: ramka odebrana od klienta — ID: 315
+WS: ramka odebrana od klienta — ID: 316
+WS: ramka odebrana od klienta — ID: 317
+WS: ramka odebrana od klienta — ID: 318
+WS: ramka odebrana od klienta — ID: 319
+WS: ramka odebrana od klienta — ID: 31a
+WS: ramka odebrana od klienta — ID: 31b
+WS: ramka odebrana od klienta — ID: 31c
+WS: ramka odebrana od klienta — ID: 31d
+WS: ramka odebrana od klienta — ID: 31e
+WS: ramka odebrana od klienta — ID: 31f
+[LlmQueryClient] Response received, t_llm = 6716 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6716 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 294 ms tLlm= 6716 ms tComp= 0 ms tOta= 16 ms tTotal= 7027 ms success= true
+WS: ramka odebrana od klienta — ID: 320
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "claude-sonnet-5"
+[ 17.5%] Model 1/4: claude-sonnet-5 — trial 22/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "321" detected
+[ExperimentRunner] Cold start detected: "ID=0x321 reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 321
+WS: ramka odebrana od klienta — ID: 322
+WS: ramka odebrana od klienta — ID: 323
+WS: ramka odebrana od klienta — ID: 324
+WS: ramka odebrana od klienta — ID: 325
+WS: ramka odebrana od klienta — ID: 326
+WS: ramka odebrana od klienta — ID: 327
+WS: ramka odebrana od klienta — ID: 328
+WS: ramka odebrana od klienta — ID: 329
+WS: ramka odebrana od klienta — ID: 32a
+WS: ramka odebrana od klienta — ID: 32b
+[LlmQueryClient] Response received, t_llm = 4966 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4966 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 32c
+[ExperimentRunner] Trial 22 completed: tDet= 0 ms tTxUp= 166 ms tLlm= 4966 ms tComp= 0 ms tOta= 933 ms tTotal= 6066 ms success= true
+WS: ramka odebrana od klienta — ID: 32d
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "claude-sonnet-5"
+[ 18.3%] Model 1/4: claude-sonnet-5 — trial 23/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "32e" detected
+[ExperimentRunner] Cold start detected: "ID=0x32e reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 32e
+WS: ramka odebrana od klienta — ID: 32f
+WS: ramka odebrana od klienta — ID: 330
+WS: ramka odebrana od klienta — ID: 331
+WS: ramka odebrana od klienta — ID: 332
+WS: ramka odebrana od klienta — ID: 333
+WS: ramka odebrana od klienta — ID: 334
+WS: ramka odebrana od klienta — ID: 335
+WS: ramka odebrana od klienta — ID: 336
+WS: ramka odebrana od klienta — ID: 337
+WS: ramka odebrana od klienta — ID: 338
+WS: ramka odebrana od klienta — ID: 339
+WS: ramka odebrana od klienta — ID: 33a
+WS: ramka odebrana od klienta — ID: 33b
+WS: ramka odebrana od klienta — ID: 33c
+WS: ramka odebrana od klienta — ID: 33d
+WS: ramka odebrana od klienta — ID: 33e
+[LlmQueryClient] Response received, t_llm = 7421 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7421 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 33f
+[ExperimentRunner] Trial 23 completed: tDet= 0 ms tTxUp= 1354 ms tLlm= 7421 ms tComp= 0 ms tOta= 7 ms tTotal= 8782 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "claude-sonnet-5"
+[ 19.2%] Model 1/4: claude-sonnet-5 — trial 24/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "340" detected
+[ExperimentRunner] Cold start detected: "ID=0x340 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 340
+WS: ramka odebrana od klienta — ID: 341
+WS: ramka odebrana od klienta — ID: 342
+WS: ramka odebrana od klienta — ID: 343
+WS: ramka odebrana od klienta — ID: 344
+WS: ramka odebrana od klienta — ID: 345
+WS: ramka odebrana od klienta — ID: 346
+WS: ramka odebrana od klienta — ID: 347
+[LlmQueryClient] Response received, t_llm = 3703 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3703 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 348
+[ExperimentRunner] Trial 24 completed: tDet= 0 ms tTxUp= 438 ms tLlm= 3703 ms tComp= 0 ms tOta= 1074 ms tTotal= 5216 ms success= true
+WS: ramka odebrana od klienta — ID: 349
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "claude-sonnet-5"
+[ 20.0%] Model 1/4: claude-sonnet-5 — trial 25/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "34a" detected
+[ExperimentRunner] Cold start detected: "ID=0x34a reason=new_id tDet=46 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 34a
+WS: ramka odebrana od klienta — ID: 34b
+WS: ramka odebrana od klienta — ID: 34c
+WS: ramka odebrana od klienta — ID: 34d
+WS: ramka odebrana od klienta — ID: 34e
+WS: ramka odebrana od klienta — ID: 34f
+WS: ramka odebrana od klienta — ID: 350
+[LlmQueryClient] Response received, t_llm = 3080 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3080 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 351
+[ExperimentRunner] Trial 25 completed: tDet= 0 ms tTxUp= 346 ms tLlm= 3080 ms tComp= 0 ms tOta= 1030 ms tTotal= 4456 ms success= true
+WS: ramka odebrana od klienta — ID: 352
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "claude-sonnet-5"
+[ 20.8%] Model 1/4: claude-sonnet-5 — trial 26/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "353" detected
+[ExperimentRunner] Cold start detected: "ID=0x353 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 353
+WS: ramka odebrana od klienta — ID: 354
+WS: ramka odebrana od klienta — ID: 355
+WS: ramka odebrana od klienta — ID: 356
+WS: ramka odebrana od klienta — ID: 357
+WS: ramka odebrana od klienta — ID: 358
+WS: ramka odebrana od klienta — ID: 359
+WS: ramka odebrana od klienta — ID: 35a
+WS: ramka odebrana od klienta — ID: 35b
+WS: ramka odebrana od klienta — ID: 35c
+WS: ramka odebrana od klienta — ID: 35d
+WS: ramka odebrana od klienta — ID: 35e
+WS: ramka odebrana od klienta — ID: 35f
+WS: ramka odebrana od klienta — ID: 360
+WS: ramka odebrana od klienta — ID: 361
+WS: ramka odebrana od klienta — ID: 362
+WS: ramka odebrana od klienta — ID: 363
+[LlmQueryClient] Response received, t_llm = 8178 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 8178 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 364
+[ExperimentRunner] Trial 26 completed: tDet= 0 ms tTxUp= 542 ms tLlm= 8178 ms tComp= 0 ms tOta= 636 ms tTotal= 9356 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "claude-sonnet-5"
+[ 21.7%] Model 1/4: claude-sonnet-5 — trial 27/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "365" detected
+[ExperimentRunner] Cold start detected: "ID=0x365 reason=new_id tDet=27 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 365
+WS: ramka odebrana od klienta — ID: 366
+WS: ramka odebrana od klienta — ID: 367
+WS: ramka odebrana od klienta — ID: 368
+WS: ramka odebrana od klienta — ID: 369
+WS: ramka odebrana od klienta — ID: 36a
+WS: ramka odebrana od klienta — ID: 36b
+WS: ramka odebrana od klienta — ID: 36c
+WS: ramka odebrana od klienta — ID: 36d
+WS: ramka odebrana od klienta — ID: 36e
+WS: ramka odebrana od klienta — ID: 36f
+WS: ramka odebrana od klienta — ID: 370
+WS: ramka odebrana od klienta — ID: 371
+WS: ramka odebrana od klienta — ID: 372
+[LlmQueryClient] Response received, t_llm = 6487 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6487 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 373
+WS: ramka odebrana od klienta — ID: 374
+[ExperimentRunner] Trial 27 completed: tDet= 0 ms tTxUp= 783 ms tLlm= 6487 ms tComp= 0 ms tOta= 1036 ms tTotal= 8306 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "claude-sonnet-5"
+[ 22.5%] Model 1/4: claude-sonnet-5 — trial 28/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "375" detected
+[ExperimentRunner] Cold start detected: "ID=0x375 reason=new_id tDet=24 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 375
+WS: ramka odebrana od klienta — ID: 376
+WS: ramka odebrana od klienta — ID: 377
+WS: ramka odebrana od klienta — ID: 378
+WS: ramka odebrana od klienta — ID: 379
+WS: ramka odebrana od klienta — ID: 37a
+WS: ramka odebrana od klienta — ID: 37b
+WS: ramka odebrana od klienta — ID: 37c
+[LlmQueryClient] Response received, t_llm = 3972 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3972 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 37d
+WS: ramka odebrana od klienta — ID: 37e
+[ExperimentRunner] Trial 28 completed: tDet= 0 ms tTxUp= 349 ms tLlm= 3972 ms tComp= 0 ms tOta= 1434 ms tTotal= 5756 ms success= true
+WS: ramka odebrana od klienta — ID: 37f
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "claude-sonnet-5"
+[ 23.3%] Model 1/4: claude-sonnet-5 — trial 29/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "380" detected
+[ExperimentRunner] Cold start detected: "ID=0x380 reason=new_id tDet=30 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1919 bytes
+WS: ramka odebrana od klienta — ID: 380
+WS: ramka odebrana od klienta — ID: 381
+WS: ramka odebrana od klienta — ID: 382
+WS: ramka odebrana od klienta — ID: 383
+WS: ramka odebrana od klienta — ID: 384
+WS: ramka odebrana od klienta — ID: 385
+WS: ramka odebrana od klienta — ID: 386
+WS: ramka odebrana od klienta — ID: 387
+[LlmQueryClient] Response received, t_llm = 3483 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 3483 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 388
+WS: ramka odebrana od klienta — ID: 389
+[ExperimentRunner] Trial 29 completed: tDet= 0 ms tTxUp= 827 ms tLlm= 3483 ms tComp= 0 ms tOta= 627 ms tTotal= 4938 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "claude-sonnet-5"
+[ 24.2%] Model 1/4: claude-sonnet-5 — trial 30/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "38a" detected
+[ExperimentRunner] Cold start detected: "ID=0x38a reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.anthropic.com/v1/messages" model: "claude-sonnet-5" payload size: 1920 bytes
+WS: ramka odebrana od klienta — ID: 38a
+WS: ramka odebrana od klienta — ID: 38b
+WS: ramka odebrana od klienta — ID: 38c
+WS: ramka odebrana od klienta — ID: 38d
+WS: ramka odebrana od klienta — ID: 38e
+WS: ramka odebrana od klienta — ID: 38f
+WS: ramka odebrana od klienta — ID: 390
+WS: ramka odebrana od klienta — ID: 391
+[LlmQueryClient] Response received, t_llm = 5331 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5331 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 392
+WS: ramka odebrana od klienta — ID: 393
+WS: ramka odebrana od klienta — ID: 394
+WS: ramka odebrana od klienta — ID: 395
+[LatencyProfiler] Model "claude-sonnet-5" complete: 30 / 30 samples
+[ExperimentRunner] Trial 30 completed: tDet= 0 ms tTxUp= 500 ms tLlm= 5331 ms tComp= 0 ms tOta= 402 ms tTotal= 6233 ms success= true
+=== claude-sonnet-5 zakonczony: t_llm=5472.3ms t_tx_up=388.15ms t_ota=810.5ms (N=30) ===
+[ExperimentRunner] Starting model: "gpt-5.6-sol" ( 2 / 4 )
+[ 25.0%] Model 2/4: gpt-5.6-sol — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "gpt-5.6-sol"
+[ 25.0%] Model 2/4: gpt-5.6-sol — trial 1/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "396" detected
+[ExperimentRunner] Cold start detected: "ID=0x396 reason=new_id tDet=32 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 993 bytes
+WS: ramka odebrana od klienta — ID: 396
+WS: ramka odebrana od klienta — ID: 397
+WS: ramka odebrana od klienta — ID: 398
+WS: ramka odebrana od klienta — ID: 399
+WS: ramka odebrana od klienta — ID: 39a
+WS: ramka odebrana od klienta — ID: 39b
+WS: ramka odebrana od klienta — ID: 39c
+WS: ramka odebrana od klienta — ID: 39d
+WS: ramka odebrana od klienta — ID: 39e
+WS: ramka odebrana od klienta — ID: 39f
+WS: ramka odebrana od klienta — ID: 3a0
+WS: ramka odebrana od klienta — ID: 3a1
+WS: ramka odebrana od klienta — ID: 3a2
+WS: ramka odebrana od klienta — ID: 3a3
+WS: ramka odebrana od klienta — ID: 3a4
+[LlmQueryClient] Response received, t_llm = 7069 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7069 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 3a5
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 803 ms tLlm= 7069 ms tComp= 0 ms tOta= 308 ms tTotal= 8181 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "gpt-5.6-sol"
+[ 25.8%] Model 2/4: gpt-5.6-sol — trial 2/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "3a6" detected
+[ExperimentRunner] Cold start detected: "ID=0x3a6 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1055 bytes
+WS: ramka odebrana od klienta — ID: 3a6
+WS: ramka odebrana od klienta — ID: 3a7
+WS: ramka odebrana od klienta — ID: 3a8
+WS: ramka odebrana od klienta — ID: 3a9
+WS: ramka odebrana od klienta — ID: 3aa
+WS: ramka odebrana od klienta — ID: 3ab
+WS: ramka odebrana od klienta — ID: 3ac
+WS: ramka odebrana od klienta — ID: 3ad
+WS: ramka odebrana od klienta — ID: 3ae
+WS: ramka odebrana od klienta — ID: 3af
+WS: ramka odebrana od klienta — ID: 3b0
+[LlmQueryClient] Response received, t_llm = 5455 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5455 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 3b1
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 445 ms tLlm= 5455 ms tComp= 0 ms tOta= 195 ms tTotal= 6095 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "gpt-5.6-sol"
+[ 26.7%] Model 2/4: gpt-5.6-sol — trial 3/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "3b2" detected
+[ExperimentRunner] Cold start detected: "ID=0x3b2 reason=new_id tDet=19 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1117 bytes
+WS: ramka odebrana od klienta — ID: 3b2
+WS: ramka odebrana od klienta — ID: 3b3
+WS: ramka odebrana od klienta — ID: 3b4
+WS: ramka odebrana od klienta — ID: 3b5
+WS: ramka odebrana od klienta — ID: 3b6
+WS: ramka odebrana od klienta — ID: 3b7
+WS: ramka odebrana od klienta — ID: 3b8
+WS: ramka odebrana od klienta — ID: 3b9
+WS: ramka odebrana od klienta — ID: 3ba
+WS: ramka odebrana od klienta — ID: 3bb
+WS: ramka odebrana od klienta — ID: 3bc
+WS: ramka odebrana od klienta — ID: 3bd
+WS: ramka odebrana od klienta — ID: 3be
+[LlmQueryClient] Response received, t_llm = 6176 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6176 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 3bf
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 365 ms tLlm= 6176 ms tComp= 0 ms tOta= 416 ms tTotal= 6958 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "gpt-5.6-sol"
+[ 27.5%] Model 2/4: gpt-5.6-sol — trial 4/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "3c0" detected
+[ExperimentRunner] Cold start detected: "ID=0x3c0 reason=new_id tDet=55 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1179 bytes
+WS: ramka odebrana od klienta — ID: 3c0
+WS: ramka odebrana od klienta — ID: 3c1
+WS: ramka odebrana od klienta — ID: 3c2
+WS: ramka odebrana od klienta — ID: 3c3
+WS: ramka odebrana od klienta — ID: 3c4
+WS: ramka odebrana od klienta — ID: 3c5
+WS: ramka odebrana od klienta — ID: 3c6
+WS: ramka odebrana od klienta — ID: 3c7
+WS: ramka odebrana od klienta — ID: 3c8
+WS: ramka odebrana od klienta — ID: 3c9
+WS: ramka odebrana od klienta — ID: 3ca
+WS: ramka odebrana od klienta — ID: 3cb
+[LlmQueryClient] Response received, t_llm = 5529 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5529 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 3cc
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 533 ms tLlm= 5529 ms tComp= 0 ms tOta= 1229 ms tTotal= 7292 ms success= true
+WS: ramka odebrana od klienta — ID: 3cd
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "gpt-5.6-sol"
+[ 28.3%] Model 2/4: gpt-5.6-sol — trial 5/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "3ce" detected
+[ExperimentRunner] Cold start detected: "ID=0x3ce reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1241 bytes
+WS: ramka odebrana od klienta — ID: 3ce
+WS: ramka odebrana od klienta — ID: 3cf
+WS: ramka odebrana od klienta — ID: 3d0
+WS: ramka odebrana od klienta — ID: 3d1
+WS: ramka odebrana od klienta — ID: 3d2
+WS: ramka odebrana od klienta — ID: 3d3
+WS: ramka odebrana od klienta — ID: 3d4
+WS: ramka odebrana od klienta — ID: 3d5
+WS: ramka odebrana od klienta — ID: 3d6
+WS: ramka odebrana od klienta — ID: 3d7
+WS: ramka odebrana od klienta — ID: 3d8
+WS: ramka odebrana od klienta — ID: 3d9
+WS: ramka odebrana od klienta — ID: 3da
+WS: ramka odebrana od klienta — ID: 3db
+WS: ramka odebrana od klienta — ID: 3dc
+WS: ramka odebrana od klienta — ID: 3dd
+[LlmQueryClient] Response received, t_llm = 7847 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7847 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 3de
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 584 ms tLlm= 7847 ms tComp= 0 ms tOta= 614 ms tTotal= 9046 ms success= true
+WS: ramka odebrana od klienta — ID: 3df
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "gpt-5.6-sol"
+[ 29.2%] Model 2/4: gpt-5.6-sol — trial 6/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "3e0" detected
+[ExperimentRunner] Cold start detected: "ID=0x3e0 reason=new_id tDet=37 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1303 bytes
+WS: ramka odebrana od klienta — ID: 3e0
+WS: ramka odebrana od klienta — ID: 3e1
+WS: ramka odebrana od klienta — ID: 3e2
+WS: ramka odebrana od klienta — ID: 3e3
+WS: ramka odebrana od klienta — ID: 3e4
+WS: ramka odebrana od klienta — ID: 3e5
+WS: ramka odebrana od klienta — ID: 3e6
+WS: ramka odebrana od klienta — ID: 3e7
+WS: ramka odebrana od klienta — ID: 3e8
+WS: ramka odebrana od klienta — ID: 3e9
+[LlmQueryClient] Response received, t_llm = 4809 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4809 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 3ea
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 481 ms tLlm= 4809 ms tComp= 0 ms tOta= 1227 ms tTotal= 6517 ms success= true
+WS: ramka odebrana od klienta — ID: 3eb
+WS: ramka odebrana od klienta — ID: 3ec
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "gpt-5.6-sol"
+[ 30.0%] Model 2/4: gpt-5.6-sol — trial 7/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "3ed" detected
+[ExperimentRunner] Cold start detected: "ID=0x3ed reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1365 bytes
+WS: ramka odebrana od klienta — ID: 3ed
+WS: ramka odebrana od klienta — ID: 3ee
+WS: ramka odebrana od klienta — ID: 3ef
+WS: ramka odebrana od klienta — ID: 3f0
+WS: ramka odebrana od klienta — ID: 3f1
+WS: ramka odebrana od klienta — ID: 3f2
+WS: ramka odebrana od klienta — ID: 3f3
+WS: ramka odebrana od klienta — ID: 3f4
+WS: ramka odebrana od klienta — ID: 3f5
+[LlmQueryClient] Response received, t_llm = 4088 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4088 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 3f6
+WS: ramka odebrana od klienta — ID: 3f7
+WS: ramka odebrana od klienta — ID: 3f8
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 777 ms tLlm= 4088 ms tComp= 0 ms tOta= 1237 ms tTotal= 6103 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "gpt-5.6-sol"
+[ 30.8%] Model 2/4: gpt-5.6-sol — trial 8/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "3f9" detected
+[ExperimentRunner] Cold start detected: "ID=0x3f9 reason=new_id tDet=44 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1427 bytes
+WS: ramka odebrana od klienta — ID: 3f9
+WS: ramka odebrana od klienta — ID: 3fa
+WS: ramka odebrana od klienta — ID: 3fb
+WS: ramka odebrana od klienta — ID: 3fc
+WS: ramka odebrana od klienta — ID: 3fd
+WS: ramka odebrana od klienta — ID: 3fe
+WS: ramka odebrana od klienta — ID: 3ff
+WS: ramka odebrana od klienta — ID: 400
+WS: ramka odebrana od klienta — ID: 401
+WS: ramka odebrana od klienta — ID: 402
+WS: ramka odebrana od klienta — ID: 403
+WS: ramka odebrana od klienta — ID: 404
+WS: ramka odebrana od klienta — ID: 405
+WS: ramka odebrana od klienta — ID: 406
+[LlmQueryClient] Response received, t_llm = 6597 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6597 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 407
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 362 ms tLlm= 6597 ms tComp= 0 ms tOta= 1265 ms tTotal= 8224 ms success= true
+WS: ramka odebrana od klienta — ID: 408
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "gpt-5.6-sol"
+[ 31.7%] Model 2/4: gpt-5.6-sol — trial 9/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "409" detected
+[ExperimentRunner] Cold start detected: "ID=0x409 reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1489 bytes
+WS: ramka odebrana od klienta — ID: 409
+WS: ramka odebrana od klienta — ID: 40a
+WS: ramka odebrana od klienta — ID: 40b
+WS: ramka odebrana od klienta — ID: 40c
+WS: ramka odebrana od klienta — ID: 40d
+WS: ramka odebrana od klienta — ID: 40e
+WS: ramka odebrana od klienta — ID: 40f
+WS: ramka odebrana od klienta — ID: 410
+WS: ramka odebrana od klienta — ID: 411
+WS: ramka odebrana od klienta — ID: 412
+WS: ramka odebrana od klienta — ID: 413
+WS: ramka odebrana od klienta — ID: 414
+[LlmQueryClient] Response received, t_llm = 5250 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5250 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 764 ms tLlm= 5250 ms tComp= 0 ms tOta= 138 ms tTotal= 6153 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "gpt-5.6-sol"
+[ 32.5%] Model 2/4: gpt-5.6-sol — trial 10/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "415" detected
+[ExperimentRunner] Cold start detected: "ID=0x415 reason=new_id tDet=30 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1551 bytes
+WS: ramka odebrana od klienta — ID: 415
+WS: ramka odebrana od klienta — ID: 416
+WS: ramka odebrana od klienta — ID: 417
+WS: ramka odebrana od klienta — ID: 418
+WS: ramka odebrana od klienta — ID: 419
+WS: ramka odebrana od klienta — ID: 41a
+WS: ramka odebrana od klienta — ID: 41b
+WS: ramka odebrana od klienta — ID: 41c
+[LlmQueryClient] Response received, t_llm = 4033 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4033 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 41d
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 355 ms tLlm= 4033 ms tComp= 0 ms tOta= 13 ms tTotal= 4401 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "gpt-5.6-sol"
+[ 33.3%] Model 2/4: gpt-5.6-sol — trial 11/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "41e" detected
+[ExperimentRunner] Cold start detected: "ID=0x41e reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1613 bytes
+WS: ramka odebrana od klienta — ID: 41e
+WS: ramka odebrana od klienta — ID: 41f
+WS: ramka odebrana od klienta — ID: 420
+WS: ramka odebrana od klienta — ID: 421
+WS: ramka odebrana od klienta — ID: 422
+WS: ramka odebrana od klienta — ID: 423
+WS: ramka odebrana od klienta — ID: 424
+WS: ramka odebrana od klienta — ID: 425
+WS: ramka odebrana od klienta — ID: 426
+WS: ramka odebrana od klienta — ID: 427
+[LlmQueryClient] Response received, t_llm = 4610 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4610 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 428
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 611 ms tLlm= 4610 ms tComp= 0 ms tOta= 1242 ms tTotal= 6463 ms success= true
+WS: ramka odebrana od klienta — ID: 429
+WS: ramka odebrana od klienta — ID: 42a
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "gpt-5.6-sol"
+[ 34.2%] Model 2/4: gpt-5.6-sol — trial 12/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "42b" detected
+[ExperimentRunner] Cold start detected: "ID=0x42b reason=new_id tDet=39 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1675 bytes
+WS: ramka odebrana od klienta — ID: 42b
+WS: ramka odebrana od klienta — ID: 42c
+WS: ramka odebrana od klienta — ID: 42d
+WS: ramka odebrana od klienta — ID: 42e
+WS: ramka odebrana od klienta — ID: 42f
+WS: ramka odebrana od klienta — ID: 430
+WS: ramka odebrana od klienta — ID: 431
+WS: ramka odebrana od klienta — ID: 432
+WS: ramka odebrana od klienta — ID: 433
+[LlmQueryClient] Response received, t_llm = 4099 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4099 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 434
+WS: ramka odebrana od klienta — ID: 435
+WS: ramka odebrana od klienta — ID: 436
+[ExperimentRunner] Trial 12 completed: tDet= 0 ms tTxUp= 612 ms tLlm= 4099 ms tComp= 0 ms tOta= 1227 ms tTotal= 5938 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "gpt-5.6-sol"
+[ 35.0%] Model 2/4: gpt-5.6-sol — trial 13/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "437" detected
+[ExperimentRunner] Cold start detected: "ID=0x437 reason=new_id tDet=35 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1737 bytes
+WS: ramka odebrana od klienta — ID: 437
+WS: ramka odebrana od klienta — ID: 438
+WS: ramka odebrana od klienta — ID: 439
+WS: ramka odebrana od klienta — ID: 43a
+WS: ramka odebrana od klienta — ID: 43b
+WS: ramka odebrana od klienta — ID: 43c
+WS: ramka odebrana od klienta — ID: 43d
+WS: ramka odebrana od klienta — ID: 43e
+WS: ramka odebrana od klienta — ID: 43f
+WS: ramka odebrana od klienta — ID: 440
+[LlmQueryClient] Response received, t_llm = 4830 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4830 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 441
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 410 ms tLlm= 4830 ms tComp= 0 ms tOta= 181 ms tTotal= 5421 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "gpt-5.6-sol"
+[ 35.8%] Model 2/4: gpt-5.6-sol — trial 14/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "442" detected
+[ExperimentRunner] Cold start detected: "ID=0x442 reason=new_id tDet=49 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1799 bytes
+WS: ramka odebrana od klienta — ID: 442
+WS: ramka odebrana od klienta — ID: 443
+WS: ramka odebrana od klienta — ID: 444
+WS: ramka odebrana od klienta — ID: 445
+WS: ramka odebrana od klienta — ID: 446
+WS: ramka odebrana od klienta — ID: 447
+WS: ramka odebrana od klienta — ID: 448
+WS: ramka odebrana od klienta — ID: 449
+WS: ramka odebrana od klienta — ID: 44a
+[LlmQueryClient] Response received, t_llm = 4236 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4236 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 44b
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 445 ms tLlm= 4236 ms tComp= 0 ms tOta= 921 ms tTotal= 5603 ms success= true
+WS: ramka odebrana od klienta — ID: 44c
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "gpt-5.6-sol"
+[ 36.7%] Model 2/4: gpt-5.6-sol — trial 15/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "44d" detected
+[ExperimentRunner] Cold start detected: "ID=0x44d reason=new_id tDet=32 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1861 bytes
+WS: ramka odebrana od klienta — ID: 44d
+WS: ramka odebrana od klienta — ID: 44e
+WS: ramka odebrana od klienta — ID: 44f
+WS: ramka odebrana od klienta — ID: 450
+WS: ramka odebrana od klienta — ID: 451
+WS: ramka odebrana od klienta — ID: 452
+WS: ramka odebrana od klienta — ID: 453
+WS: ramka odebrana od klienta — ID: 454
+WS: ramka odebrana od klienta — ID: 455
+[LlmQueryClient] Response received, t_llm = 5132 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5132 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 456
+WS: ramka odebrana od klienta — ID: 457
+[ExperimentRunner] Trial 15 completed: tDet= 0 ms tTxUp= 522 ms tLlm= 5132 ms tComp= 0 ms tOta= 246 ms tTotal= 5901 ms success= true
+WS: ramka odebrana od klienta — ID: 458
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "gpt-5.6-sol"
+[ 37.5%] Model 2/4: gpt-5.6-sol — trial 16/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "459" detected
+[ExperimentRunner] Cold start detected: "ID=0x459 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1923 bytes
+WS: ramka odebrana od klienta — ID: 459
+WS: ramka odebrana od klienta — ID: 45a
+WS: ramka odebrana od klienta — ID: 45b
+WS: ramka odebrana od klienta — ID: 45c
+WS: ramka odebrana od klienta — ID: 45d
+WS: ramka odebrana od klienta — ID: 45e
+WS: ramka odebrana od klienta — ID: 45f
+WS: ramka odebrana od klienta — ID: 460
+WS: ramka odebrana od klienta — ID: 461
+WS: ramka odebrana od klienta — ID: 462
+WS: ramka odebrana od klienta — ID: 463
+WS: ramka odebrana od klienta — ID: 464
+[LlmQueryClient] Response received, t_llm = 5631 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5631 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 359 ms tLlm= 5631 ms tComp= 0 ms tOta= 349 ms tTotal= 6339 ms success= true
+WS: ramka odebrana od klienta — ID: 465
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "gpt-5.6-sol"
+[ 38.3%] Model 2/4: gpt-5.6-sol — trial 17/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "466" detected
+[ExperimentRunner] Cold start detected: "ID=0x466 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 1985 bytes
+WS: ramka odebrana od klienta — ID: 466
+WS: ramka odebrana od klienta — ID: 467
+WS: ramka odebrana od klienta — ID: 468
+WS: ramka odebrana od klienta — ID: 469
+WS: ramka odebrana od klienta — ID: 46a
+WS: ramka odebrana od klienta — ID: 46b
+WS: ramka odebrana od klienta — ID: 46c
+WS: ramka odebrana od klienta — ID: 46d
+WS: ramka odebrana od klienta — ID: 46e
+[LlmQueryClient] Response received, t_llm = 4295 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4295 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 46f
+WS: ramka odebrana od klienta — ID: 470
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 565 ms tLlm= 4295 ms tComp= 0 ms tOta= 1167 ms tTotal= 6027 ms success= true
+WS: ramka odebrana od klienta — ID: 471
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "gpt-5.6-sol"
+[ 39.2%] Model 2/4: gpt-5.6-sol — trial 18/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "472" detected
+[ExperimentRunner] Cold start detected: "ID=0x472 reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2047 bytes
+WS: ramka odebrana od klienta — ID: 472
+WS: ramka odebrana od klienta — ID: 473
+WS: ramka odebrana od klienta — ID: 474
+WS: ramka odebrana od klienta — ID: 475
+WS: ramka odebrana od klienta — ID: 476
+WS: ramka odebrana od klienta — ID: 477
+WS: ramka odebrana od klienta — ID: 478
+WS: ramka odebrana od klienta — ID: 479
+WS: ramka odebrana od klienta — ID: 47a
+WS: ramka odebrana od klienta — ID: 47b
+WS: ramka odebrana od klienta — ID: 47c
+WS: ramka odebrana od klienta — ID: 47d
+WS: ramka odebrana od klienta — ID: 47e
+[LlmQueryClient] Response received, t_llm = 5948 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5948 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 47f
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 654 ms tLlm= 5948 ms tComp= 0 ms tOta= 1218 ms tTotal= 7821 ms success= true
+WS: ramka odebrana od klienta — ID: 480
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "gpt-5.6-sol"
+[ 40.0%] Model 2/4: gpt-5.6-sol — trial 19/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "481" detected
+[ExperimentRunner] Cold start detected: "ID=0x481 reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2109 bytes
+WS: ramka odebrana od klienta — ID: 481
+WS: ramka odebrana od klienta — ID: 482
+WS: ramka odebrana od klienta — ID: 483
+WS: ramka odebrana od klienta — ID: 484
+WS: ramka odebrana od klienta — ID: 485
+WS: ramka odebrana od klienta — ID: 486
+WS: ramka odebrana od klienta — ID: 487
+WS: ramka odebrana od klienta — ID: 488
+WS: ramka odebrana od klienta — ID: 489
+WS: ramka odebrana od klienta — ID: 48a
+WS: ramka odebrana od klienta — ID: 48b
+WS: ramka odebrana od klienta — ID: 48c
+WS: ramka odebrana od klienta — ID: 48d
+WS: ramka odebrana od klienta — ID: 48e
+WS: ramka odebrana od klienta — ID: 48f
+WS: ramka odebrana od klienta — ID: 490
+[LlmQueryClient] Response received, t_llm = 7992 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 7992 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 491
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 665 ms tLlm= 7992 ms tComp= 0 ms tOta= 613 ms tTotal= 9271 ms success= true
+WS: ramka odebrana od klienta — ID: 492
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "gpt-5.6-sol"
+[ 40.8%] Model 2/4: gpt-5.6-sol — trial 20/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "493" detected
+[ExperimentRunner] Cold start detected: "ID=0x493 reason=new_id tDet=38 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2171 bytes
+WS: ramka odebrana od klienta — ID: 493
+WS: ramka odebrana od klienta — ID: 494
+WS: ramka odebrana od klienta — ID: 495
+WS: ramka odebrana od klienta — ID: 496
+WS: ramka odebrana od klienta — ID: 497
+WS: ramka odebrana od klienta — ID: 498
+WS: ramka odebrana od klienta — ID: 499
+WS: ramka odebrana od klienta — ID: 49a
+WS: ramka odebrana od klienta — ID: 49b
+WS: ramka odebrana od klienta — ID: 49c
+WS: ramka odebrana od klienta — ID: 49d
+WS: ramka odebrana od klienta — ID: 49e
+[LlmQueryClient] Response received, t_llm = 5839 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5839 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 403 ms tLlm= 5839 ms tComp= 0 ms tOta= 306 ms tTotal= 6549 ms success= true
+WS: ramka odebrana od klienta — ID: 49f
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "gpt-5.6-sol"
+[ 41.7%] Model 2/4: gpt-5.6-sol — trial 21/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4a0" detected
+[ExperimentRunner] Cold start detected: "ID=0x4a0 reason=new_id tDet=52 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4a0
+WS: ramka odebrana od klienta — ID: 4a1
+WS: ramka odebrana od klienta — ID: 4a2
+WS: ramka odebrana od klienta — ID: 4a3
+WS: ramka odebrana od klienta — ID: 4a4
+WS: ramka odebrana od klienta — ID: 4a5
+WS: ramka odebrana od klienta — ID: 4a6
+WS: ramka odebrana od klienta — ID: 4a7
+WS: ramka odebrana od klienta — ID: 4a8
+WS: ramka odebrana od klienta — ID: 4a9
+WS: ramka odebrana od klienta — ID: 4aa
+[LlmQueryClient] Response received, t_llm = 4916 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4916 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4ab
+WS: ramka odebrana od klienta — ID: 4ac
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 609 ms tLlm= 4916 ms tComp= 0 ms tOta= 1638 ms tTotal= 7164 ms success= true
+WS: ramka odebrana od klienta — ID: 4ad
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "gpt-5.6-sol"
+[ 42.5%] Model 2/4: gpt-5.6-sol — trial 22/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4ae" detected
+[ExperimentRunner] Cold start detected: "ID=0x4ae reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4ae
+WS: ramka odebrana od klienta — ID: 4af
+WS: ramka odebrana od klienta — ID: 4b0
+WS: ramka odebrana od klienta — ID: 4b1
+WS: ramka odebrana od klienta — ID: 4b2
+WS: ramka odebrana od klienta — ID: 4b3
+WS: ramka odebrana od klienta — ID: 4b4
+WS: ramka odebrana od klienta — ID: 4b5
+WS: ramka odebrana od klienta — ID: 4b6
+WS: ramka odebrana od klienta — ID: 4b7
+WS: ramka odebrana od klienta — ID: 4b8
+[LlmQueryClient] Response received, t_llm = 5274 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5274 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4b9
+[ExperimentRunner] Trial 22 completed: tDet= 0 ms tTxUp= 619 ms tLlm= 5274 ms tComp= 0 ms tOta= 114 ms tTotal= 6007 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "gpt-5.6-sol"
+[ 43.3%] Model 2/4: gpt-5.6-sol — trial 23/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4ba" detected
+[ExperimentRunner] Cold start detected: "ID=0x4ba reason=new_id tDet=55 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4ba
+WS: ramka odebrana od klienta — ID: 4bb
+WS: ramka odebrana od klienta — ID: 4bc
+WS: ramka odebrana od klienta — ID: 4bd
+WS: ramka odebrana od klienta — ID: 4be
+WS: ramka odebrana od klienta — ID: 4bf
+WS: ramka odebrana od klienta — ID: 4c0
+WS: ramka odebrana od klienta — ID: 4c1
+WS: ramka odebrana od klienta — ID: 4c2
+WS: ramka odebrana od klienta — ID: 4c3
+[LlmQueryClient] Response received, t_llm = 4663 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4663 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 23 completed: tDet= 0 ms tTxUp= 371 ms tLlm= 4663 ms tComp= 0 ms tOta= 87 ms tTotal= 5121 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "gpt-5.6-sol"
+[ 44.2%] Model 2/4: gpt-5.6-sol — trial 24/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4c4" detected
+[ExperimentRunner] Cold start detected: "ID=0x4c4 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4c4
+WS: ramka odebrana od klienta — ID: 4c5
+WS: ramka odebrana od klienta — ID: 4c6
+WS: ramka odebrana od klienta — ID: 4c7
+WS: ramka odebrana od klienta — ID: 4c8
+WS: ramka odebrana od klienta — ID: 4c9
+WS: ramka odebrana od klienta — ID: 4ca
+WS: ramka odebrana od klienta — ID: 4cb
+WS: ramka odebrana od klienta — ID: 4cc
+[LlmQueryClient] Response received, t_llm = 4404 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4404 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4cd
+WS: ramka odebrana od klienta — ID: 4ce
+[ExperimentRunner] Trial 24 completed: tDet= 0 ms tTxUp= 379 ms tLlm= 4404 ms tComp= 0 ms tOta= 631 ms tTotal= 5415 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "gpt-5.6-sol"
+[ 45.0%] Model 2/4: gpt-5.6-sol — trial 25/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4cf" detected
+[ExperimentRunner] Cold start detected: "ID=0x4cf reason=new_id tDet=42 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4cf
+WS: ramka odebrana od klienta — ID: 4d0
+WS: ramka odebrana od klienta — ID: 4d1
+WS: ramka odebrana od klienta — ID: 4d2
+WS: ramka odebrana od klienta — ID: 4d3
+WS: ramka odebrana od klienta — ID: 4d4
+WS: ramka odebrana od klienta — ID: 4d5
+WS: ramka odebrana od klienta — ID: 4d6
+WS: ramka odebrana od klienta — ID: 4d7
+WS: ramka odebrana od klienta — ID: 4d8
+[LlmQueryClient] Response received, t_llm = 4612 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4612 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4d9
+[ExperimentRunner] Trial 25 completed: tDet= 0 ms tTxUp= 470 ms tLlm= 4612 ms tComp= 0 ms tOta= 918 ms tTotal= 6000 ms success= true
+WS: ramka odebrana od klienta — ID: 4da
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "gpt-5.6-sol"
+[ 45.8%] Model 2/4: gpt-5.6-sol — trial 26/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4db" detected
+[ExperimentRunner] Cold start detected: "ID=0x4db reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4db
+WS: ramka odebrana od klienta — ID: 4dc
+WS: ramka odebrana od klienta — ID: 4dd
+WS: ramka odebrana od klienta — ID: 4de
+WS: ramka odebrana od klienta — ID: 4df
+WS: ramka odebrana od klienta — ID: 4e0
+WS: ramka odebrana od klienta — ID: 4e1
+WS: ramka odebrana od klienta — ID: 4e2
+WS: ramka odebrana od klienta — ID: 4e3
+WS: ramka odebrana od klienta — ID: 4e4
+WS: ramka odebrana od klienta — ID: 4e5
+[LlmQueryClient] Response received, t_llm = 5326 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5326 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 4e6
+WS: ramka odebrana od klienta — ID: 4e7
+[ExperimentRunner] Trial 26 completed: tDet= 0 ms tTxUp= 564 ms tLlm= 5326 ms tComp= 0 ms tOta= 1047 ms tTotal= 6937 ms success= true
+WS: ramka odebrana od klienta — ID: 4e8
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "gpt-5.6-sol"
+[ 46.7%] Model 2/4: gpt-5.6-sol — trial 27/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4e9" detected
+[ExperimentRunner] Cold start detected: "ID=0x4e9 reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4e9
+WS: ramka odebrana od klienta — ID: 4ea
+WS: ramka odebrana od klienta — ID: 4eb
+WS: ramka odebrana od klienta — ID: 4ec
+WS: ramka odebrana od klienta — ID: 4ed
+WS: ramka odebrana od klienta — ID: 4ee
+WS: ramka odebrana od klienta — ID: 4ef
+WS: ramka odebrana od klienta — ID: 4f0
+WS: ramka odebrana od klienta — ID: 4f1
+WS: ramka odebrana od klienta — ID: 4f2
+WS: ramka odebrana od klienta — ID: 4f3
+[LlmQueryClient] Response received, t_llm = 4850 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 4850 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 27 completed: tDet= 0 ms tTxUp= 878 ms tLlm= 4850 ms tComp= 0 ms tOta= 74 ms tTotal= 5803 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "gpt-5.6-sol"
+[ 47.5%] Model 2/4: gpt-5.6-sol — trial 28/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "4f4" detected
+[ExperimentRunner] Cold start detected: "ID=0x4f4 reason=new_id tDet=39 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 4f4
+WS: ramka odebrana od klienta — ID: 4f5
+WS: ramka odebrana od klienta — ID: 4f6
+WS: ramka odebrana od klienta — ID: 4f7
+WS: ramka odebrana od klienta — ID: 4f8
+WS: ramka odebrana od klienta — ID: 4f9
+WS: ramka odebrana od klienta — ID: 4fa
+WS: ramka odebrana od klienta — ID: 4fb
+WS: ramka odebrana od klienta — ID: 4fc
+WS: ramka odebrana od klienta — ID: 4fd
+WS: ramka odebrana od klienta — ID: 4fe
+WS: ramka odebrana od klienta — ID: 4ff
+[LlmQueryClient] Response received, t_llm = 6019 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6019 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 500
+WS: ramka odebrana od klienta — ID: 501
+[ExperimentRunner] Trial 28 completed: tDet= 0 ms tTxUp= 375 ms tLlm= 6019 ms tComp= 0 ms tOta= 1024 ms tTotal= 7418 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "gpt-5.6-sol"
+[ 48.3%] Model 2/4: gpt-5.6-sol — trial 29/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "502" detected
+[ExperimentRunner] Cold start detected: "ID=0x502 reason=new_id tDet=31 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2196 bytes
+WS: ramka odebrana od klienta — ID: 502
+WS: ramka odebrana od klienta — ID: 503
+WS: ramka odebrana od klienta — ID: 504
+WS: ramka odebrana od klienta — ID: 505
+WS: ramka odebrana od klienta — ID: 506
+WS: ramka odebrana od klienta — ID: 507
+WS: ramka odebrana od klienta — ID: 508
+WS: ramka odebrana od klienta — ID: 509
+WS: ramka odebrana od klienta — ID: 50a
+WS: ramka odebrana od klienta — ID: 50b
+WS: ramka odebrana od klienta — ID: 50c
+WS: ramka odebrana od klienta — ID: 50d
+[LlmQueryClient] Response received, t_llm = 5325 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 5325 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 50e
+WS: ramka odebrana od klienta — ID: 50f
+[ExperimentRunner] Trial 29 completed: tDet= 0 ms tTxUp= 975 ms tLlm= 5325 ms tComp= 0 ms tOta= 633 ms tTotal= 6933 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "gpt-5.6-sol"
+[ 49.2%] Model 2/4: gpt-5.6-sol — trial 30/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "510" detected
+[ExperimentRunner] Cold start detected: "ID=0x510 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.openai.com/v1/chat/completions" model: "gpt-5.6-sol" payload size: 2197 bytes
+WS: ramka odebrana od klienta — ID: 510
+WS: ramka odebrana od klienta — ID: 511
+WS: ramka odebrana od klienta — ID: 512
+WS: ramka odebrana od klienta — ID: 513
+WS: ramka odebrana od klienta — ID: 514
+WS: ramka odebrana od klienta — ID: 515
+WS: ramka odebrana od klienta — ID: 516
+WS: ramka odebrana od klienta — ID: 517
+WS: ramka odebrana od klienta — ID: 518
+WS: ramka odebrana od klienta — ID: 519
+WS: ramka odebrana od klienta — ID: 51a
+WS: ramka odebrana od klienta — ID: 51b
+WS: ramka odebrana od klienta — ID: 51c
+WS: ramka odebrana od klienta — ID: 51d
+WS: ramka odebrana od klienta — ID: 51e
+[LlmQueryClient] Response received, t_llm = 6968 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 6968 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 51f
+WS: ramka odebrana od klienta — ID: 520
+[LatencyProfiler] Model "gpt-5.6-sol" complete: 30 / 30 samples
+[ExperimentRunner] Trial 30 completed: tDet= 0 ms tTxUp= 879 ms tLlm= 6968 ms tComp= 0 ms tOta= 818 ms tTotal= 8666 ms success= true
+=== gpt-5.6-sol zakonczony: t_llm=5394.1ms t_tx_up=561.58ms t_ota=703.7ms (N=30) ===
+[ExperimentRunner] Starting model: "deepseek-v4-pro" ( 3 / 4 )
+[ 50.0%] Model 3/4: deepseek-v4-pro — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "deepseek-v4-pro"
+[ 50.0%] Model 3/4: deepseek-v4-pro — trial 1/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "521" detected
+[ExperimentRunner] Cold start detected: "ID=0x521 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1004 bytes
+WS: ramka odebrana od klienta — ID: 521
+WS: ramka odebrana od klienta — ID: 522
+WS: ramka odebrana od klienta — ID: 523
+WS: ramka odebrana od klienta — ID: 524
+WS: ramka odebrana od klienta — ID: 525
+WS: ramka odebrana od klienta — ID: 526
+WS: ramka odebrana od klienta — ID: 527
+WS: ramka odebrana od klienta — ID: 528
+WS: ramka odebrana od klienta — ID: 529
+WS: ramka odebrana od klienta — ID: 52a
+WS: ramka odebrana od klienta — ID: 52b
+WS: ramka odebrana od klienta — ID: 52c
+WS: ramka odebrana od klienta — ID: 52d
+WS: ramka odebrana od klienta — ID: 52e
+WS: ramka odebrana od klienta — ID: 52f
+WS: ramka odebrana od klienta — ID: 530
+WS: ramka odebrana od klienta — ID: 531
+WS: ramka odebrana od klienta — ID: 532
+WS: ramka odebrana od klienta — ID: 533
+WS: ramka odebrana od klienta — ID: 534
+WS: ramka odebrana od klienta — ID: 535
+WS: ramka odebrana od klienta — ID: 536
+WS: ramka odebrana od klienta — ID: 537
+WS: ramka odebrana od klienta — ID: 538
+WS: ramka odebrana od klienta — ID: 539
+WS: ramka odebrana od klienta — ID: 53a
+WS: ramka odebrana od klienta — ID: 53b
+WS: ramka odebrana od klienta — ID: 53c
+WS: ramka odebrana od klienta — ID: 53d
+WS: ramka odebrana od klienta — ID: 53e
+WS: ramka odebrana od klienta — ID: 53f
+WS: ramka odebrana od klienta — ID: 540
+WS: ramka odebrana od klienta — ID: 541
+WS: ramka odebrana od klienta — ID: 542
+WS: ramka odebrana od klienta — ID: 543
+WS: ramka odebrana od klienta — ID: 544
+WS: ramka odebrana od klienta — ID: 545
+WS: ramka odebrana od klienta — ID: 546
+WS: ramka odebrana od klienta — ID: 547
+WS: ramka odebrana od klienta — ID: 548
+[LlmQueryClient] Response received, t_llm = 19457 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 19457 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 1 completed: tDet= 0 ms tTxUp= 710 ms tLlm= 19457 ms tComp= 0 ms tOta= 1232 ms tTotal= 21399 ms success= true
+WS: ramka odebrana od klienta — ID: 549
+WS: ramka odebrana od klienta — ID: 54a
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "deepseek-v4-pro"
+[ 50.8%] Model 3/4: deepseek-v4-pro — trial 2/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "54b" detected
+[ExperimentRunner] Cold start detected: "ID=0x54b reason=new_id tDet=32 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1066 bytes
+WS: ramka odebrana od klienta — ID: 54b
+WS: ramka odebrana od klienta — ID: 54c
+WS: ramka odebrana od klienta — ID: 54d
+WS: ramka odebrana od klienta — ID: 54e
+WS: ramka odebrana od klienta — ID: 54f
+WS: ramka odebrana od klienta — ID: 550
+WS: ramka odebrana od klienta — ID: 551
+WS: ramka odebrana od klienta — ID: 552
+WS: ramka odebrana od klienta — ID: 553
+WS: ramka odebrana od klienta — ID: 554
+WS: ramka odebrana od klienta — ID: 555
+WS: ramka odebrana od klienta — ID: 556
+WS: ramka odebrana od klienta — ID: 557
+WS: ramka odebrana od klienta — ID: 558
+WS: ramka odebrana od klienta — ID: 559
+WS: ramka odebrana od klienta — ID: 55a
+WS: ramka odebrana od klienta — ID: 55b
+WS: ramka odebrana od klienta — ID: 55c
+WS: ramka odebrana od klienta — ID: 55d
+WS: ramka odebrana od klienta — ID: 55e
+WS: ramka odebrana od klienta — ID: 55f
+WS: ramka odebrana od klienta — ID: 560
+WS: ramka odebrana od klienta — ID: 561
+WS: ramka odebrana od klienta — ID: 562
+WS: ramka odebrana od klienta — ID: 563
+WS: ramka odebrana od klienta — ID: 564
+WS: ramka odebrana od klienta — ID: 565
+WS: ramka odebrana od klienta — ID: 566
+WS: ramka odebrana od klienta — ID: 567
+WS: ramka odebrana od klienta — ID: 568
+WS: ramka odebrana od klienta — ID: 569
+WS: ramka odebrana od klienta — ID: 56a
+WS: ramka odebrana od klienta — ID: 56b
+WS: ramka odebrana od klienta — ID: 56c
+WS: ramka odebrana od klienta — ID: 56d
+WS: ramka odebrana od klienta — ID: 56e
+WS: ramka odebrana od klienta — ID: 56f
+[LlmQueryClient] Response received, t_llm = 18141 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18141 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 570
+[ExperimentRunner] Trial 2 completed: tDet= 0 ms tTxUp= 836 ms tLlm= 18141 ms tComp= 0 ms tOta= 198 ms tTotal= 19175 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "deepseek-v4-pro"
+[ 51.7%] Model 3/4: deepseek-v4-pro — trial 3/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "571" detected
+[ExperimentRunner] Cold start detected: "ID=0x571 reason=new_id tDet=24 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1128 bytes
+WS: ramka odebrana od klienta — ID: 571
+WS: ramka odebrana od klienta — ID: 572
+WS: ramka odebrana od klienta — ID: 573
+WS: ramka odebrana od klienta — ID: 574
+WS: ramka odebrana od klienta — ID: 575
+WS: ramka odebrana od klienta — ID: 576
+WS: ramka odebrana od klienta — ID: 577
+WS: ramka odebrana od klienta — ID: 578
+WS: ramka odebrana od klienta — ID: 579
+WS: ramka odebrana od klienta — ID: 57a
+WS: ramka odebrana od klienta — ID: 57b
+WS: ramka odebrana od klienta — ID: 57c
+WS: ramka odebrana od klienta — ID: 57d
+WS: ramka odebrana od klienta — ID: 57e
+WS: ramka odebrana od klienta — ID: 57f
+WS: ramka odebrana od klienta — ID: 580
+WS: ramka odebrana od klienta — ID: 581
+WS: ramka odebrana od klienta — ID: 582
+WS: ramka odebrana od klienta — ID: 583
+WS: ramka odebrana od klienta — ID: 584
+WS: ramka odebrana od klienta — ID: 585
+WS: ramka odebrana od klienta — ID: 586
+WS: ramka odebrana od klienta — ID: 587
+WS: ramka odebrana od klienta — ID: 588
+WS: ramka odebrana od klienta — ID: 589
+WS: ramka odebrana od klienta — ID: 58a
+WS: ramka odebrana od klienta — ID: 58b
+WS: ramka odebrana od klienta — ID: 58c
+WS: ramka odebrana od klienta — ID: 58d
+WS: ramka odebrana od klienta — ID: 58e
+WS: ramka odebrana od klienta — ID: 58f
+WS: ramka odebrana od klienta — ID: 590
+WS: ramka odebrana od klienta — ID: 591
+WS: ramka odebrana od klienta — ID: 592
+WS: ramka odebrana od klienta — ID: 593
+WS: ramka odebrana od klienta — ID: 594
+WS: ramka odebrana od klienta — ID: 595
+WS: ramka odebrana od klienta — ID: 596
+[LlmQueryClient] Response received, t_llm = 18849 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18849 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 597
+[ExperimentRunner] Trial 3 completed: tDet= 0 ms tTxUp= 723 ms tLlm= 18849 ms tComp= 0 ms tOta= 614 ms tTotal= 20187 ms success= true
+WS: ramka odebrana od klienta — ID: 598
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "deepseek-v4-pro"
+[ 52.5%] Model 3/4: deepseek-v4-pro — trial 4/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "599" detected
+[ExperimentRunner] Cold start detected: "ID=0x599 reason=new_id tDet=27 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1190 bytes
+WS: ramka odebrana od klienta — ID: 599
+WS: ramka odebrana od klienta — ID: 59a
+WS: ramka odebrana od klienta — ID: 59b
+WS: ramka odebrana od klienta — ID: 59c
+WS: ramka odebrana od klienta — ID: 59d
+WS: ramka odebrana od klienta — ID: 59e
+WS: ramka odebrana od klienta — ID: 59f
+WS: ramka odebrana od klienta — ID: 5a0
+WS: ramka odebrana od klienta — ID: 5a1
+WS: ramka odebrana od klienta — ID: 5a2
+WS: ramka odebrana od klienta — ID: 5a3
+WS: ramka odebrana od klienta — ID: 5a4
+WS: ramka odebrana od klienta — ID: 5a5
+WS: ramka odebrana od klienta — ID: 5a6
+WS: ramka odebrana od klienta — ID: 5a7
+WS: ramka odebrana od klienta — ID: 5a8
+WS: ramka odebrana od klienta — ID: 5a9
+WS: ramka odebrana od klienta — ID: 5aa
+WS: ramka odebrana od klienta — ID: 5ab
+WS: ramka odebrana od klienta — ID: 5ac
+WS: ramka odebrana od klienta — ID: 5ad
+WS: ramka odebrana od klienta — ID: 5ae
+WS: ramka odebrana od klienta — ID: 5af
+WS: ramka odebrana od klienta — ID: 5b0
+WS: ramka odebrana od klienta — ID: 5b1
+WS: ramka odebrana od klienta — ID: 5b2
+WS: ramka odebrana od klienta — ID: 5b3
+WS: ramka odebrana od klienta — ID: 5b4
+WS: ramka odebrana od klienta — ID: 5b5
+WS: ramka odebrana od klienta — ID: 5b6
+WS: ramka odebrana od klienta — ID: 5b7
+WS: ramka odebrana od klienta — ID: 5b8
+WS: ramka odebrana od klienta — ID: 5b9
+WS: ramka odebrana od klienta — ID: 5ba
+WS: ramka odebrana od klienta — ID: 5bb
+WS: ramka odebrana od klienta — ID: 5bc
+WS: ramka odebrana od klienta — ID: 5bd
+[LlmQueryClient] Response received, t_llm = 18612 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18612 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 5be
+[ExperimentRunner] Trial 4 completed: tDet= 0 ms tTxUp= 457 ms tLlm= 18612 ms tComp= 0 ms tOta= 16 ms tTotal= 19085 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "deepseek-v4-pro"
+[ 53.3%] Model 3/4: deepseek-v4-pro — trial 5/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "5bf" detected
+[ExperimentRunner] Cold start detected: "ID=0x5bf reason=new_id tDet=24 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1252 bytes
+WS: ramka odebrana od klienta — ID: 5bf
+WS: ramka odebrana od klienta — ID: 5c0
+WS: ramka odebrana od klienta — ID: 5c1
+WS: ramka odebrana od klienta — ID: 5c2
+WS: ramka odebrana od klienta — ID: 5c3
+WS: ramka odebrana od klienta — ID: 5c4
+WS: ramka odebrana od klienta — ID: 5c5
+WS: ramka odebrana od klienta — ID: 5c6
+WS: ramka odebrana od klienta — ID: 5c7
+WS: ramka odebrana od klienta — ID: 5c8
+WS: ramka odebrana od klienta — ID: 5c9
+WS: ramka odebrana od klienta — ID: 5ca
+WS: ramka odebrana od klienta — ID: 5cb
+WS: ramka odebrana od klienta — ID: 5cc
+WS: ramka odebrana od klienta — ID: 5cd
+WS: ramka odebrana od klienta — ID: 5ce
+WS: ramka odebrana od klienta — ID: 5cf
+WS: ramka odebrana od klienta — ID: 5d0
+WS: ramka odebrana od klienta — ID: 5d1
+WS: ramka odebrana od klienta — ID: 5d2
+WS: ramka odebrana od klienta — ID: 5d3
+WS: ramka odebrana od klienta — ID: 5d4
+WS: ramka odebrana od klienta — ID: 5d5
+WS: ramka odebrana od klienta — ID: 5d6
+WS: ramka odebrana od klienta — ID: 5d7
+WS: ramka odebrana od klienta — ID: 5d8
+WS: ramka odebrana od klienta — ID: 5d9
+WS: ramka odebrana od klienta — ID: 5da
+WS: ramka odebrana od klienta — ID: 5db
+WS: ramka odebrana od klienta — ID: 5dc
+WS: ramka odebrana od klienta — ID: 5dd
+WS: ramka odebrana od klienta — ID: 5de
+WS: ramka odebrana od klienta — ID: 5df
+WS: ramka odebrana od klienta — ID: 5e0
+WS: ramka odebrana od klienta — ID: 5e1
+WS: ramka odebrana od klienta — ID: 5e2
+WS: ramka odebrana od klienta — ID: 5e3
+[LlmQueryClient] Response received, t_llm = 17729 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17729 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 5 completed: tDet= 0 ms tTxUp= 935 ms tLlm= 17729 ms tComp= 0 ms tOta= 702 ms tTotal= 19367 ms success= true
+WS: ramka odebrana od klienta — ID: 5e4
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "deepseek-v4-pro"
+[ 54.2%] Model 3/4: deepseek-v4-pro — trial 6/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "5e5" detected
+[ExperimentRunner] Cold start detected: "ID=0x5e5 reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1314 bytes
+WS: ramka odebrana od klienta — ID: 5e5
+WS: ramka odebrana od klienta — ID: 5e6
+WS: ramka odebrana od klienta — ID: 5e7
+WS: ramka odebrana od klienta — ID: 5e8
+WS: ramka odebrana od klienta — ID: 5e9
+WS: ramka odebrana od klienta — ID: 5ea
+WS: ramka odebrana od klienta — ID: 5eb
+WS: ramka odebrana od klienta — ID: 5ec
+WS: ramka odebrana od klienta — ID: 5ed
+WS: ramka odebrana od klienta — ID: 5ee
+WS: ramka odebrana od klienta — ID: 5ef
+WS: ramka odebrana od klienta — ID: 5f0
+WS: ramka odebrana od klienta — ID: 5f1
+WS: ramka odebrana od klienta — ID: 5f2
+WS: ramka odebrana od klienta — ID: 5f3
+WS: ramka odebrana od klienta — ID: 5f4
+WS: ramka odebrana od klienta — ID: 5f5
+WS: ramka odebrana od klienta — ID: 5f6
+WS: ramka odebrana od klienta — ID: 5f7
+WS: ramka odebrana od klienta — ID: 5f8
+WS: ramka odebrana od klienta — ID: 5f9
+WS: ramka odebrana od klienta — ID: 5fa
+WS: ramka odebrana od klienta — ID: 5fb
+WS: ramka odebrana od klienta — ID: 5fc
+WS: ramka odebrana od klienta — ID: 5fd
+WS: ramka odebrana od klienta — ID: 5fe
+WS: ramka odebrana od klienta — ID: 5ff
+WS: ramka odebrana od klienta — ID: 600
+WS: ramka odebrana od klienta — ID: 601
+WS: ramka odebrana od klienta — ID: 602
+WS: ramka odebrana od klienta — ID: 603
+WS: ramka odebrana od klienta — ID: 604
+WS: ramka odebrana od klienta — ID: 605
+WS: ramka odebrana od klienta — ID: 606
+WS: ramka odebrana od klienta — ID: 607
+WS: ramka odebrana od klienta — ID: 608
+WS: ramka odebrana od klienta — ID: 609
+[LlmQueryClient] Response received, t_llm = 18230 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18230 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 60a
+[ExperimentRunner] Trial 6 completed: tDet= 0 ms tTxUp= 832 ms tLlm= 18230 ms tComp= 0 ms tOta= 17 ms tTotal= 19079 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "deepseek-v4-pro"
+[ 55.0%] Model 3/4: deepseek-v4-pro — trial 7/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "60b" detected
+[ExperimentRunner] Cold start detected: "ID=0x60b reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1376 bytes
+WS: ramka odebrana od klienta — ID: 60b
+WS: ramka odebrana od klienta — ID: 60c
+WS: ramka odebrana od klienta — ID: 60d
+WS: ramka odebrana od klienta — ID: 60e
+WS: ramka odebrana od klienta — ID: 60f
+WS: ramka odebrana od klienta — ID: 610
+WS: ramka odebrana od klienta — ID: 611
+WS: ramka odebrana od klienta — ID: 612
+WS: ramka odebrana od klienta — ID: 613
+WS: ramka odebrana od klienta — ID: 614
+WS: ramka odebrana od klienta — ID: 615
+WS: ramka odebrana od klienta — ID: 616
+WS: ramka odebrana od klienta — ID: 617
+WS: ramka odebrana od klienta — ID: 618
+WS: ramka odebrana od klienta — ID: 619
+WS: ramka odebrana od klienta — ID: 61a
+WS: ramka odebrana od klienta — ID: 61b
+WS: ramka odebrana od klienta — ID: 61c
+WS: ramka odebrana od klienta — ID: 61d
+WS: ramka odebrana od klienta — ID: 61e
+WS: ramka odebrana od klienta — ID: 61f
+WS: ramka odebrana od klienta — ID: 620
+WS: ramka odebrana od klienta — ID: 621
+WS: ramka odebrana od klienta — ID: 622
+WS: ramka odebrana od klienta — ID: 623
+WS: ramka odebrana od klienta — ID: 624
+WS: ramka odebrana od klienta — ID: 625
+WS: ramka odebrana od klienta — ID: 626
+WS: ramka odebrana od klienta — ID: 627
+WS: ramka odebrana od klienta — ID: 628
+WS: ramka odebrana od klienta — ID: 629
+WS: ramka odebrana od klienta — ID: 62a
+WS: ramka odebrana od klienta — ID: 62b
+WS: ramka odebrana od klienta — ID: 62c
+[LlmQueryClient] Response received, t_llm = 17104 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17104 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 62d
+[ExperimentRunner] Trial 7 completed: tDet= 0 ms tTxUp= 416 ms tLlm= 17104 ms tComp= 0 ms tOta= 1141 ms tTotal= 18662 ms success= true
+WS: ramka odebrana od klienta — ID: 62e
+WS: ramka odebrana od klienta — ID: 62f
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "deepseek-v4-pro"
+[ 55.8%] Model 3/4: deepseek-v4-pro — trial 8/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "630" detected
+[ExperimentRunner] Cold start detected: "ID=0x630 reason=new_id tDet=27 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1438 bytes
+WS: ramka odebrana od klienta — ID: 630
+WS: ramka odebrana od klienta — ID: 631
+WS: ramka odebrana od klienta — ID: 632
+WS: ramka odebrana od klienta — ID: 633
+WS: ramka odebrana od klienta — ID: 634
+WS: ramka odebrana od klienta — ID: 635
+WS: ramka odebrana od klienta — ID: 636
+WS: ramka odebrana od klienta — ID: 637
+WS: ramka odebrana od klienta — ID: 638
+WS: ramka odebrana od klienta — ID: 639
+WS: ramka odebrana od klienta — ID: 63a
+WS: ramka odebrana od klienta — ID: 63b
+WS: ramka odebrana od klienta — ID: 63c
+WS: ramka odebrana od klienta — ID: 63d
+WS: ramka odebrana od klienta — ID: 63e
+WS: ramka odebrana od klienta — ID: 63f
+WS: ramka odebrana od klienta — ID: 640
+WS: ramka odebrana od klienta — ID: 641
+WS: ramka odebrana od klienta — ID: 642
+WS: ramka odebrana od klienta — ID: 643
+WS: ramka odebrana od klienta — ID: 644
+WS: ramka odebrana od klienta — ID: 645
+WS: ramka odebrana od klienta — ID: 646
+WS: ramka odebrana od klienta — ID: 647
+WS: ramka odebrana od klienta — ID: 648
+WS: ramka odebrana od klienta — ID: 649
+WS: ramka odebrana od klienta — ID: 64a
+WS: ramka odebrana od klienta — ID: 64b
+WS: ramka odebrana od klienta — ID: 64c
+WS: ramka odebrana od klienta — ID: 64d
+WS: ramka odebrana od klienta — ID: 64e
+WS: ramka odebrana od klienta — ID: 64f
+WS: ramka odebrana od klienta — ID: 650
+WS: ramka odebrana od klienta — ID: 651
+WS: ramka odebrana od klienta — ID: 652
+WS: ramka odebrana od klienta — ID: 653
+WS: ramka odebrana od klienta — ID: 654
+WS: ramka odebrana od klienta — ID: 655
+[LlmQueryClient] Response received, t_llm = 18641 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18641 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 8 completed: tDet= 0 ms tTxUp= 709 ms tLlm= 18641 ms tComp= 0 ms tOta= 1185 ms tTotal= 20536 ms success= true
+WS: ramka odebrana od klienta — ID: 656
+WS: ramka odebrana od klienta — ID: 657
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "deepseek-v4-pro"
+[ 56.7%] Model 3/4: deepseek-v4-pro — trial 9/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "658" detected
+[ExperimentRunner] Cold start detected: "ID=0x658 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1500 bytes
+WS: ramka odebrana od klienta — ID: 658
+WS: ramka odebrana od klienta — ID: 659
+WS: ramka odebrana od klienta — ID: 65a
+WS: ramka odebrana od klienta — ID: 65b
+WS: ramka odebrana od klienta — ID: 65c
+WS: ramka odebrana od klienta — ID: 65d
+WS: ramka odebrana od klienta — ID: 65e
+WS: ramka odebrana od klienta — ID: 65f
+WS: ramka odebrana od klienta — ID: 660
+WS: ramka odebrana od klienta — ID: 661
+WS: ramka odebrana od klienta — ID: 662
+WS: ramka odebrana od klienta — ID: 663
+WS: ramka odebrana od klienta — ID: 664
+WS: ramka odebrana od klienta — ID: 665
+WS: ramka odebrana od klienta — ID: 666
+WS: ramka odebrana od klienta — ID: 667
+WS: ramka odebrana od klienta — ID: 668
+WS: ramka odebrana od klienta — ID: 669
+WS: ramka odebrana od klienta — ID: 66a
+WS: ramka odebrana od klienta — ID: 66b
+WS: ramka odebrana od klienta — ID: 66c
+WS: ramka odebrana od klienta — ID: 66d
+WS: ramka odebrana od klienta — ID: 66e
+WS: ramka odebrana od klienta — ID: 66f
+WS: ramka odebrana od klienta — ID: 670
+WS: ramka odebrana od klienta — ID: 671
+WS: ramka odebrana od klienta — ID: 672
+WS: ramka odebrana od klienta — ID: 673
+WS: ramka odebrana od klienta — ID: 674
+WS: ramka odebrana od klienta — ID: 675
+WS: ramka odebrana od klienta — ID: 676
+WS: ramka odebrana od klienta — ID: 677
+WS: ramka odebrana od klienta — ID: 678
+WS: ramka odebrana od klienta — ID: 679
+WS: ramka odebrana od klienta — ID: 67a
+WS: ramka odebrana od klienta — ID: 67b
+WS: ramka odebrana od klienta — ID: 67c
+WS: ramka odebrana od klienta — ID: 67d
+WS: ramka odebrana od klienta — ID: 67e
+WS: ramka odebrana od klienta — ID: 67f
+[LlmQueryClient] Response received, t_llm = 19657 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 19657 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 680
+WS: ramka odebrana od klienta — ID: 681
+[ExperimentRunner] Trial 9 completed: tDet= 0 ms tTxUp= 1237 ms tLlm= 19657 ms tComp= 0 ms tOta= 611 ms tTotal= 21505 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "deepseek-v4-pro"
+[ 57.5%] Model 3/4: deepseek-v4-pro — trial 10/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "682" detected
+[ExperimentRunner] Cold start detected: "ID=0x682 reason=new_id tDet=35 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1562 bytes
+WS: ramka odebrana od klienta — ID: 682
+WS: ramka odebrana od klienta — ID: 683
+WS: ramka odebrana od klienta — ID: 684
+WS: ramka odebrana od klienta — ID: 685
+WS: ramka odebrana od klienta — ID: 686
+WS: ramka odebrana od klienta — ID: 687
+WS: ramka odebrana od klienta — ID: 688
+WS: ramka odebrana od klienta — ID: 689
+WS: ramka odebrana od klienta — ID: 68a
+WS: ramka odebrana od klienta — ID: 68b
+WS: ramka odebrana od klienta — ID: 68c
+WS: ramka odebrana od klienta — ID: 68d
+WS: ramka odebrana od klienta — ID: 68e
+WS: ramka odebrana od klienta — ID: 68f
+WS: ramka odebrana od klienta — ID: 690
+WS: ramka odebrana od klienta — ID: 691
+WS: ramka odebrana od klienta — ID: 692
+WS: ramka odebrana od klienta — ID: 693
+WS: ramka odebrana od klienta — ID: 694
+WS: ramka odebrana od klienta — ID: 695
+WS: ramka odebrana od klienta — ID: 696
+WS: ramka odebrana od klienta — ID: 697
+WS: ramka odebrana od klienta — ID: 698
+WS: ramka odebrana od klienta — ID: 699
+WS: ramka odebrana od klienta — ID: 69a
+WS: ramka odebrana od klienta — ID: 69b
+WS: ramka odebrana od klienta — ID: 69c
+WS: ramka odebrana od klienta — ID: 69d
+WS: ramka odebrana od klienta — ID: 69e
+WS: ramka odebrana od klienta — ID: 69f
+WS: ramka odebrana od klienta — ID: 6a0
+WS: ramka odebrana od klienta — ID: 6a1
+WS: ramka odebrana od klienta — ID: 6a2
+WS: ramka odebrana od klienta — ID: 6a3
+WS: ramka odebrana od klienta — ID: 6a4
+WS: ramka odebrana od klienta — ID: 6a5
+WS: ramka odebrana od klienta — ID: 6a6
+[LlmQueryClient] Response received, t_llm = 18020 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18020 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 10 completed: tDet= 0 ms tTxUp= 700 ms tLlm= 18020 ms tComp= 0 ms tOta= 1435 ms tTotal= 20155 ms success= true
+WS: ramka odebrana od klienta — ID: 6a7
+WS: ramka odebrana od klienta — ID: 6a8
+WS: ramka odebrana od klienta — ID: 6a9
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "deepseek-v4-pro"
+[ 58.3%] Model 3/4: deepseek-v4-pro — trial 11/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6aa" detected
+[ExperimentRunner] Cold start detected: "ID=0x6aa reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1624 bytes
+WS: ramka odebrana od klienta — ID: 6aa
+WS: ramka odebrana od klienta — ID: 6ab
+WS: ramka odebrana od klienta — ID: 6ac
+WS: ramka odebrana od klienta — ID: 6ad
+WS: ramka odebrana od klienta — ID: 6ae
+WS: ramka odebrana od klienta — ID: 6af
+WS: ramka odebrana od klienta — ID: 6b0
+WS: ramka odebrana od klienta — ID: 6b1
+WS: ramka odebrana od klienta — ID: 6b2
+WS: ramka odebrana od klienta — ID: 6b3
+WS: ramka odebrana od klienta — ID: 6b4
+WS: ramka odebrana od klienta — ID: 6b5
+WS: ramka odebrana od klienta — ID: 6b6
+WS: ramka odebrana od klienta — ID: 6b7
+WS: ramka odebrana od klienta — ID: 6b8
+WS: ramka odebrana od klienta — ID: 6b9
+WS: ramka odebrana od klienta — ID: 6ba
+WS: ramka odebrana od klienta — ID: 6bb
+WS: ramka odebrana od klienta — ID: 6bc
+WS: ramka odebrana od klienta — ID: 6bd
+WS: ramka odebrana od klienta — ID: 6be
+WS: ramka odebrana od klienta — ID: 6bf
+WS: ramka odebrana od klienta — ID: 6c0
+WS: ramka odebrana od klienta — ID: 6c1
+WS: ramka odebrana od klienta — ID: 6c2
+WS: ramka odebrana od klienta — ID: 6c3
+WS: ramka odebrana od klienta — ID: 6c4
+WS: ramka odebrana od klienta — ID: 6c5
+WS: ramka odebrana od klienta — ID: 6c6
+WS: ramka odebrana od klienta — ID: 6c7
+WS: ramka odebrana od klienta — ID: 6c8
+WS: ramka odebrana od klienta — ID: 6c9
+WS: ramka odebrana od klienta — ID: 6ca
+WS: ramka odebrana od klienta — ID: 6cb
+WS: ramka odebrana od klienta — ID: 6cc
+WS: ramka odebrana od klienta — ID: 6cd
+[LlmQueryClient] Response received, t_llm = 17981 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17981 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 11 completed: tDet= 0 ms tTxUp= 534 ms tLlm= 17981 ms tComp= 0 ms tOta= 40 ms tTotal= 18556 ms success= true
+WS: ramka odebrana od klienta — ID: 6ce
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "deepseek-v4-pro"
+[ 59.2%] Model 3/4: deepseek-v4-pro — trial 12/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6cf" detected
+[ExperimentRunner] Cold start detected: "ID=0x6cf reason=new_id tDet=28 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1686 bytes
+WS: ramka odebrana od klienta — ID: 6cf
+WS: ramka odebrana od klienta — ID: 6d0
+WS: ramka odebrana od klienta — ID: 6d1
+WS: ramka odebrana od klienta — ID: 6d2
+WS: ramka odebrana od klienta — ID: 6d3
+WS: ramka odebrana od klienta — ID: 6d4
+WS: ramka odebrana od klienta — ID: 6d5
+WS: ramka odebrana od klienta — ID: 6d6
+WS: ramka odebrana od klienta — ID: 6d7
+WS: ramka odebrana od klienta — ID: 6d8
+WS: ramka odebrana od klienta — ID: 6d9
+WS: ramka odebrana od klienta — ID: 6da
+WS: ramka odebrana od klienta — ID: 6db
+WS: ramka odebrana od klienta — ID: 6dc
+WS: ramka odebrana od klienta — ID: 6dd
+WS: ramka odebrana od klienta — ID: 6de
+WS: ramka odebrana od klienta — ID: 6df
+WS: ramka odebrana od klienta — ID: 6e0
+WS: ramka odebrana od klienta — ID: 6e1
+WS: ramka odebrana od klienta — ID: 6e2
+WS: ramka odebrana od klienta — ID: 6e3
+WS: ramka odebrana od klienta — ID: 6e4
+WS: ramka odebrana od klienta — ID: 6e5
+WS: ramka odebrana od klienta — ID: 6e6
+WS: ramka odebrana od klienta — ID: 6e7
+WS: ramka odebrana od klienta — ID: 6e8
+WS: ramka odebrana od klienta — ID: 6e9
+WS: ramka odebrana od klienta — ID: 6ea
+WS: ramka odebrana od klienta — ID: 6eb
+WS: ramka odebrana od klienta — ID: 6ec
+WS: ramka odebrana od klienta — ID: 6ed
+WS: ramka odebrana od klienta — ID: 6ee
+WS: ramka odebrana od klienta — ID: 6ef
+WS: ramka odebrana od klienta — ID: 6f0
+WS: ramka odebrana od klienta — ID: 6f1
+WS: ramka odebrana od klienta — ID: 6f2
+WS: ramka odebrana od klienta — ID: 6f3
+WS: ramka odebrana od klienta — ID: 6f4
+WS: ramka odebrana od klienta — ID: 6f5
+[LlmQueryClient] Response received, t_llm = 18585 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18585 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 6f6
+[ExperimentRunner] Trial 12 completed: tDet= 0 ms tTxUp= 1381 ms tLlm= 18585 ms tComp= 0 ms tOta= 924 ms tTotal= 20890 ms success= true
+WS: ramka odebrana od klienta — ID: 6f7
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "deepseek-v4-pro"
+[ 60.0%] Model 3/4: deepseek-v4-pro — trial 13/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "6f8" detected
+[ExperimentRunner] Cold start detected: "ID=0x6f8 reason=new_id tDet=35 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1748 bytes
+WS: ramka odebrana od klienta — ID: 6f8
+WS: ramka odebrana od klienta — ID: 6f9
+WS: ramka odebrana od klienta — ID: 6fa
+WS: ramka odebrana od klienta — ID: 6fb
+WS: ramka odebrana od klienta — ID: 6fc
+WS: ramka odebrana od klienta — ID: 6fd
+WS: ramka odebrana od klienta — ID: 6fe
+WS: ramka odebrana od klienta — ID: 6ff
+WS: ramka odebrana od klienta — ID: 700
+WS: ramka odebrana od klienta — ID: 701
+WS: ramka odebrana od klienta — ID: 702
+WS: ramka odebrana od klienta — ID: 703
+WS: ramka odebrana od klienta — ID: 704
+WS: ramka odebrana od klienta — ID: 705
+WS: ramka odebrana od klienta — ID: 706
+WS: ramka odebrana od klienta — ID: 707
+WS: ramka odebrana od klienta — ID: 708
+WS: ramka odebrana od klienta — ID: 709
+WS: ramka odebrana od klienta — ID: 70a
+WS: ramka odebrana od klienta — ID: 70b
+WS: ramka odebrana od klienta — ID: 70c
+WS: ramka odebrana od klienta — ID: 70d
+WS: ramka odebrana od klienta — ID: 70e
+WS: ramka odebrana od klienta — ID: 70f
+WS: ramka odebrana od klienta — ID: 710
+WS: ramka odebrana od klienta — ID: 711
+WS: ramka odebrana od klienta — ID: 712
+WS: ramka odebrana od klienta — ID: 713
+WS: ramka odebrana od klienta — ID: 714
+WS: ramka odebrana od klienta — ID: 715
+WS: ramka odebrana od klienta — ID: 716
+WS: ramka odebrana od klienta — ID: 717
+WS: ramka odebrana od klienta — ID: 718
+WS: ramka odebrana od klienta — ID: 719
+WS: ramka odebrana od klienta — ID: 71a
+WS: ramka odebrana od klienta — ID: 71b
+WS: ramka odebrana od klienta — ID: 71c
+[LlmQueryClient] Response received, t_llm = 18048 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18048 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 71d
+[ExperimentRunner] Trial 13 completed: tDet= 0 ms tTxUp= 831 ms tLlm= 18048 ms tComp= 0 ms tOta= 398 ms tTotal= 19277 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "deepseek-v4-pro"
+[ 60.8%] Model 3/4: deepseek-v4-pro — trial 14/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "71e" detected
+[ExperimentRunner] Cold start detected: "ID=0x71e reason=new_id tDet=24 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1810 bytes
+WS: ramka odebrana od klienta — ID: 71e
+WS: ramka odebrana od klienta — ID: 71f
+WS: ramka odebrana od klienta — ID: 720
+WS: ramka odebrana od klienta — ID: 721
+WS: ramka odebrana od klienta — ID: 722
+WS: ramka odebrana od klienta — ID: 723
+WS: ramka odebrana od klienta — ID: 724
+WS: ramka odebrana od klienta — ID: 725
+WS: ramka odebrana od klienta — ID: 726
+WS: ramka odebrana od klienta — ID: 727
+WS: ramka odebrana od klienta — ID: 728
+WS: ramka odebrana od klienta — ID: 729
+WS: ramka odebrana od klienta — ID: 72a
+WS: ramka odebrana od klienta — ID: 72b
+WS: ramka odebrana od klienta — ID: 72c
+WS: ramka odebrana od klienta — ID: 72d
+WS: ramka odebrana od klienta — ID: 72e
+WS: ramka odebrana od klienta — ID: 72f
+WS: ramka odebrana od klienta — ID: 730
+WS: ramka odebrana od klienta — ID: 731
+WS: ramka odebrana od klienta — ID: 732
+WS: ramka odebrana od klienta — ID: 733
+WS: ramka odebrana od klienta — ID: 734
+WS: ramka odebrana od klienta — ID: 735
+WS: ramka odebrana od klienta — ID: 736
+WS: ramka odebrana od klienta — ID: 737
+WS: ramka odebrana od klienta — ID: 738
+WS: ramka odebrana od klienta — ID: 739
+WS: ramka odebrana od klienta — ID: 73a
+WS: ramka odebrana od klienta — ID: 73b
+WS: ramka odebrana od klienta — ID: 73c
+WS: ramka odebrana od klienta — ID: 73d
+WS: ramka odebrana od klienta — ID: 73e
+WS: ramka odebrana od klienta — ID: 73f
+WS: ramka odebrana od klienta — ID: 740
+WS: ramka odebrana od klienta — ID: 741
+[LlmQueryClient] Response received, t_llm = 17674 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17674 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 14 completed: tDet= 0 ms tTxUp= 726 ms tLlm= 17674 ms tComp= 0 ms tOta= 1064 ms tTotal= 19465 ms success= true
+WS: ramka odebrana od klienta — ID: 742
+WS: ramka odebrana od klienta — ID: 743
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "deepseek-v4-pro"
+[ 61.7%] Model 3/4: deepseek-v4-pro — trial 15/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "744" detected
+[ExperimentRunner] Cold start detected: "ID=0x744 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1872 bytes
+WS: ramka odebrana od klienta — ID: 744
+WS: ramka odebrana od klienta — ID: 745
+WS: ramka odebrana od klienta — ID: 746
+WS: ramka odebrana od klienta — ID: 747
+WS: ramka odebrana od klienta — ID: 748
+WS: ramka odebrana od klienta — ID: 749
+WS: ramka odebrana od klienta — ID: 74a
+WS: ramka odebrana od klienta — ID: 74b
+WS: ramka odebrana od klienta — ID: 74c
+WS: ramka odebrana od klienta — ID: 74d
+WS: ramka odebrana od klienta — ID: 74e
+WS: ramka odebrana od klienta — ID: 74f
+WS: ramka odebrana od klienta — ID: 750
+WS: ramka odebrana od klienta — ID: 751
+WS: ramka odebrana od klienta — ID: 752
+WS: ramka odebrana od klienta — ID: 753
+WS: ramka odebrana od klienta — ID: 754
+WS: ramka odebrana od klienta — ID: 755
+WS: ramka odebrana od klienta — ID: 756
+WS: ramka odebrana od klienta — ID: 757
+WS: ramka odebrana od klienta — ID: 758
+WS: ramka odebrana od klienta — ID: 759
+WS: ramka odebrana od klienta — ID: 75a
+WS: ramka odebrana od klienta — ID: 75b
+WS: ramka odebrana od klienta — ID: 75c
+WS: ramka odebrana od klienta — ID: 75d
+WS: ramka odebrana od klienta — ID: 75e
+WS: ramka odebrana od klienta — ID: 75f
+WS: ramka odebrana od klienta — ID: 760
+WS: ramka odebrana od klienta — ID: 761
+WS: ramka odebrana od klienta — ID: 762
+WS: ramka odebrana od klienta — ID: 763
+WS: ramka odebrana od klienta — ID: 764
+WS: ramka odebrana od klienta — ID: 765
+WS: ramka odebrana od klienta — ID: 766
+WS: ramka odebrana od klienta — ID: 767
+WS: ramka odebrana od klienta — ID: 768
+[LlmQueryClient] Response received, t_llm = 17855 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17855 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 15 completed: tDet= 0 ms tTxUp= 882 ms tLlm= 17855 ms tComp= 0 ms tOta= 897 ms tTotal= 19635 ms success= true
+WS: ramka odebrana od klienta — ID: 769
+WS: ramka odebrana od klienta — ID: 76a
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "deepseek-v4-pro"
+[ 62.5%] Model 3/4: deepseek-v4-pro — trial 16/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "76b" detected
+[ExperimentRunner] Cold start detected: "ID=0x76b reason=new_id tDet=66 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1934 bytes
+WS: ramka odebrana od klienta — ID: 76b
+WS: ramka odebrana od klienta — ID: 76c
+WS: ramka odebrana od klienta — ID: 76d
+WS: ramka odebrana od klienta — ID: 76e
+WS: ramka odebrana od klienta — ID: 76f
+WS: ramka odebrana od klienta — ID: 770
+WS: ramka odebrana od klienta — ID: 771
+WS: ramka odebrana od klienta — ID: 772
+WS: ramka odebrana od klienta — ID: 773
+WS: ramka odebrana od klienta — ID: 774
+WS: ramka odebrana od klienta — ID: 775
+WS: ramka odebrana od klienta — ID: 776
+WS: ramka odebrana od klienta — ID: 777
+WS: ramka odebrana od klienta — ID: 778
+WS: ramka odebrana od klienta — ID: 779
+WS: ramka odebrana od klienta — ID: 77a
+WS: ramka odebrana od klienta — ID: 77b
+WS: ramka odebrana od klienta — ID: 77c
+WS: ramka odebrana od klienta — ID: 77d
+WS: ramka odebrana od klienta — ID: 77e
+WS: ramka odebrana od klienta — ID: 77f
+WS: ramka odebrana od klienta — ID: 780
+WS: ramka odebrana od klienta — ID: 781
+WS: ramka odebrana od klienta — ID: 782
+WS: ramka odebrana od klienta — ID: 783
+WS: ramka odebrana od klienta — ID: 784
+WS: ramka odebrana od klienta — ID: 785
+WS: ramka odebrana od klienta — ID: 786
+WS: ramka odebrana od klienta — ID: 787
+WS: ramka odebrana od klienta — ID: 788
+WS: ramka odebrana od klienta — ID: 789
+WS: ramka odebrana od klienta — ID: 78a
+WS: ramka odebrana od klienta — ID: 78b
+WS: ramka odebrana od klienta — ID: 78c
+WS: ramka odebrana od klienta — ID: 78d
+WS: ramka odebrana od klienta — ID: 78e
+WS: ramka odebrana od klienta — ID: 78f
+[LlmQueryClient] Response received, t_llm = 18132 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18132 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 16 completed: tDet= 0 ms tTxUp= 580 ms tLlm= 18132 ms tComp= 0 ms tOta= 71 ms tTotal= 18783 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "deepseek-v4-pro"
+[ 63.3%] Model 3/4: deepseek-v4-pro — trial 17/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "790" detected
+[ExperimentRunner] Cold start detected: "ID=0x790 reason=new_id tDet=35 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 1996 bytes
+WS: ramka odebrana od klienta — ID: 790
+WS: ramka odebrana od klienta — ID: 791
+WS: ramka odebrana od klienta — ID: 792
+WS: ramka odebrana od klienta — ID: 793
+WS: ramka odebrana od klienta — ID: 794
+WS: ramka odebrana od klienta — ID: 795
+WS: ramka odebrana od klienta — ID: 796
+WS: ramka odebrana od klienta — ID: 797
+WS: ramka odebrana od klienta — ID: 798
+WS: ramka odebrana od klienta — ID: 799
+WS: ramka odebrana od klienta — ID: 79a
+WS: ramka odebrana od klienta — ID: 79b
+WS: ramka odebrana od klienta — ID: 79c
+WS: ramka odebrana od klienta — ID: 79d
+WS: ramka odebrana od klienta — ID: 79e
+WS: ramka odebrana od klienta — ID: 79f
+WS: ramka odebrana od klienta — ID: 7a0
+WS: ramka odebrana od klienta — ID: 7a1
+WS: ramka odebrana od klienta — ID: 7a2
+WS: ramka odebrana od klienta — ID: 7a3
+WS: ramka odebrana od klienta — ID: 7a4
+WS: ramka odebrana od klienta — ID: 7a5
+WS: ramka odebrana od klienta — ID: 7a6
+WS: ramka odebrana od klienta — ID: 7a7
+WS: ramka odebrana od klienta — ID: 7a8
+WS: ramka odebrana od klienta — ID: 7a9
+WS: ramka odebrana od klienta — ID: 7aa
+WS: ramka odebrana od klienta — ID: 7ab
+WS: ramka odebrana od klienta — ID: 7ac
+WS: ramka odebrana od klienta — ID: 7ad
+WS: ramka odebrana od klienta — ID: 7ae
+WS: ramka odebrana od klienta — ID: 7af
+WS: ramka odebrana od klienta — ID: 7b0
+WS: ramka odebrana od klienta — ID: 7b1
+WS: ramka odebrana od klienta — ID: 7b2
+WS: ramka odebrana od klienta — ID: 7b3
+[LlmQueryClient] Response received, t_llm = 17778 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17778 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 17 completed: tDet= 0 ms tTxUp= 356 ms tLlm= 17778 ms tComp= 0 ms tOta= 1211 ms tTotal= 19345 ms success= true
+WS: ramka odebrana od klienta — ID: 7b4
+WS: ramka odebrana od klienta — ID: 7b5
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "deepseek-v4-pro"
+[ 64.2%] Model 3/4: deepseek-v4-pro — trial 18/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "7b6" detected
+[ExperimentRunner] Cold start detected: "ID=0x7b6 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2058 bytes
+WS: ramka odebrana od klienta — ID: 7b6
+WS: ramka odebrana od klienta — ID: 7b7
+WS: ramka odebrana od klienta — ID: 7b8
+WS: ramka odebrana od klienta — ID: 7b9
+WS: ramka odebrana od klienta — ID: 7ba
+WS: ramka odebrana od klienta — ID: 7bb
+WS: ramka odebrana od klienta — ID: 7bc
+WS: ramka odebrana od klienta — ID: 7bd
+WS: ramka odebrana od klienta — ID: 7be
+WS: ramka odebrana od klienta — ID: 7bf
+WS: ramka odebrana od klienta — ID: 7c0
+WS: ramka odebrana od klienta — ID: 7c1
+WS: ramka odebrana od klienta — ID: 7c2
+WS: ramka odebrana od klienta — ID: 7c3
+WS: ramka odebrana od klienta — ID: 7c4
+WS: ramka odebrana od klienta — ID: 7c5
+WS: ramka odebrana od klienta — ID: 7c6
+WS: ramka odebrana od klienta — ID: 7c7
+WS: ramka odebrana od klienta — ID: 7c8
+WS: ramka odebrana od klienta — ID: 7c9
+WS: ramka odebrana od klienta — ID: 7ca
+WS: ramka odebrana od klienta — ID: 7cb
+WS: ramka odebrana od klienta — ID: 7cc
+WS: ramka odebrana od klienta — ID: 7cd
+WS: ramka odebrana od klienta — ID: 7ce
+WS: ramka odebrana od klienta — ID: 7cf
+WS: ramka odebrana od klienta — ID: 7d0
+WS: ramka odebrana od klienta — ID: 7d1
+WS: ramka odebrana od klienta — ID: 7d2
+WS: ramka odebrana od klienta — ID: 7d3
+WS: ramka odebrana od klienta — ID: 7d4
+WS: ramka odebrana od klienta — ID: 7d5
+WS: ramka odebrana od klienta — ID: 7d6
+WS: ramka odebrana od klienta — ID: 7d7
+WS: ramka odebrana od klienta — ID: 7d8
+WS: ramka odebrana od klienta — ID: 7d9
+WS: ramka odebrana od klienta — ID: 7da
+WS: ramka odebrana od klienta — ID: 7db
+[LlmQueryClient] Response received, t_llm = 18435 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 18435 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 18 completed: tDet= 0 ms tTxUp= 597 ms tLlm= 18435 ms tComp= 0 ms tOta= 1224 ms tTotal= 20257 ms success= true
+WS: ramka odebrana od klienta — ID: 7dc
+WS: ramka odebrana od klienta — ID: 7dd
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "deepseek-v4-pro"
+[ 65.0%] Model 3/4: deepseek-v4-pro — trial 19/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "7de" detected
+[ExperimentRunner] Cold start detected: "ID=0x7de reason=new_id tDet=51 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2120 bytes
+WS: ramka odebrana od klienta — ID: 7de
+WS: ramka odebrana od klienta — ID: 7df
+WS: ramka odebrana od klienta — ID: 7e0
+WS: ramka odebrana od klienta — ID: 7e1
+WS: ramka odebrana od klienta — ID: 7e2
+WS: ramka odebrana od klienta — ID: 7e3
+WS: ramka odebrana od klienta — ID: 7e4
+WS: ramka odebrana od klienta — ID: 7e5
+WS: ramka odebrana od klienta — ID: 7e6
+WS: ramka odebrana od klienta — ID: 7e7
+WS: ramka odebrana od klienta — ID: 7e8
+WS: ramka odebrana od klienta — ID: 7e9
+WS: ramka odebrana od klienta — ID: 7ea
+WS: ramka odebrana od klienta — ID: 7eb
+WS: ramka odebrana od klienta — ID: 7ec
+WS: ramka odebrana od klienta — ID: 7ed
+WS: ramka odebrana od klienta — ID: 7ee
+WS: ramka odebrana od klienta — ID: 7ef
+WS: ramka odebrana od klienta — ID: 7f0
+WS: ramka odebrana od klienta — ID: 7f1
+WS: ramka odebrana od klienta — ID: 7f2
+WS: ramka odebrana od klienta — ID: 7f3
+WS: ramka odebrana od klienta — ID: 7f4
+WS: ramka odebrana od klienta — ID: 7f5
+WS: ramka odebrana od klienta — ID: 7f6
+WS: ramka odebrana od klienta — ID: 7f7
+WS: ramka odebrana od klienta — ID: 7f8
+WS: ramka odebrana od klienta — ID: 7f9
+WS: ramka odebrana od klienta — ID: 7fa
+WS: ramka odebrana od klienta — ID: 7fb
+WS: ramka odebrana od klienta — ID: 7fc
+WS: ramka odebrana od klienta — ID: 7fd
+WS: ramka odebrana od klienta — ID: 7fe
+WS: ramka odebrana od klienta — ID: 7ff
+WS: ramka odebrana od klienta — ID: 0
+WS: ramka odebrana od klienta — ID: 1
+WS: ramka odebrana od klienta — ID: 2
+WS: ramka odebrana od klienta — ID: 3
+WS: ramka odebrana od klienta — ID: 4
+WS: ramka odebrana od klienta — ID: 5
+WS: ramka odebrana od klienta — ID: 6
+WS: ramka odebrana od klienta — ID: 7
+WS: ramka odebrana od klienta — ID: 8
+WS: ramka odebrana od klienta — ID: 9
+[LlmQueryClient] Response received, t_llm = 20914 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 20914 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 19 completed: tDet= 0 ms tTxUp= 1515 ms tLlm= 20914 ms tComp= 0 ms tOta= 15 ms tTotal= 22445 ms success= true
+WS: ramka odebrana od klienta — ID: a
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "deepseek-v4-pro"
+[ 65.8%] Model 3/4: deepseek-v4-pro — trial 20/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "b" detected
+[ExperimentRunner] Cold start detected: "ID=0x00b reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2182 bytes
+WS: ramka odebrana od klienta — ID: b
+WS: ramka odebrana od klienta — ID: c
+WS: ramka odebrana od klienta — ID: d
+WS: ramka odebrana od klienta — ID: e
+WS: ramka odebrana od klienta — ID: f
+WS: ramka odebrana od klienta — ID: 10
+WS: ramka odebrana od klienta — ID: 11
+WS: ramka odebrana od klienta — ID: 12
+WS: ramka odebrana od klienta — ID: 13
+WS: ramka odebrana od klienta — ID: 14
+WS: ramka odebrana od klienta — ID: 15
+WS: ramka odebrana od klienta — ID: 16
+WS: ramka odebrana od klienta — ID: 17
+WS: ramka odebrana od klienta — ID: 18
+WS: ramka odebrana od klienta — ID: 19
+WS: ramka odebrana od klienta — ID: 1a
+WS: ramka odebrana od klienta — ID: 1b
+WS: ramka odebrana od klienta — ID: 1c
+WS: ramka odebrana od klienta — ID: 1d
+WS: ramka odebrana od klienta — ID: 1e
+WS: ramka odebrana od klienta — ID: 1f
+WS: ramka odebrana od klienta — ID: 20
+WS: ramka odebrana od klienta — ID: 21
+WS: ramka odebrana od klienta — ID: 22
+WS: ramka odebrana od klienta — ID: 23
+WS: ramka odebrana od klienta — ID: 24
+WS: ramka odebrana od klienta — ID: 25
+WS: ramka odebrana od klienta — ID: 26
+WS: ramka odebrana od klienta — ID: 27
+WS: ramka odebrana od klienta — ID: 28
+WS: ramka odebrana od klienta — ID: 29
+WS: ramka odebrana od klienta — ID: 2a
+WS: ramka odebrana od klienta — ID: 2b
+WS: ramka odebrana od klienta — ID: 2c
+WS: ramka odebrana od klienta — ID: 2d
+WS: ramka odebrana od klienta — ID: 2e
+WS: ramka odebrana od klienta — ID: 2f
+WS: ramka odebrana od klienta — ID: 30
+WS: ramka odebrana od klienta — ID: 31
+[LlmQueryClient] Response received, t_llm = 19434 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 19434 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 20 completed: tDet= 0 ms tTxUp= 284 ms tLlm= 19434 ms tComp= 0 ms tOta= 35 ms tTotal= 19754 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "deepseek-v4-pro"
+[ 66.7%] Model 3/4: deepseek-v4-pro — trial 21/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "32" detected
+[ExperimentRunner] Cold start detected: "ID=0x032 reason=new_id tDet=39 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: 32
+WS: ramka odebrana od klienta — ID: 33
+WS: ramka odebrana od klienta — ID: 34
+WS: ramka odebrana od klienta — ID: 35
+WS: ramka odebrana od klienta — ID: 36
+WS: ramka odebrana od klienta — ID: 37
+WS: ramka odebrana od klienta — ID: 38
+WS: ramka odebrana od klienta — ID: 39
+WS: ramka odebrana od klienta — ID: 3a
+WS: ramka odebrana od klienta — ID: 3b
+WS: ramka odebrana od klienta — ID: 3c
+WS: ramka odebrana od klienta — ID: 3d
+WS: ramka odebrana od klienta — ID: 3e
+WS: ramka odebrana od klienta — ID: 3f
+WS: ramka odebrana od klienta — ID: 40
+WS: ramka odebrana od klienta — ID: 41
+WS: ramka odebrana od klienta — ID: 42
+WS: ramka odebrana od klienta — ID: 43
+WS: ramka odebrana od klienta — ID: 44
+WS: ramka odebrana od klienta — ID: 45
+WS: ramka odebrana od klienta — ID: 46
+WS: ramka odebrana od klienta — ID: 47
+WS: ramka odebrana od klienta — ID: 48
+WS: ramka odebrana od klienta — ID: 49
+WS: ramka odebrana od klienta — ID: 4a
+WS: ramka odebrana od klienta — ID: 4b
+WS: ramka odebrana od klienta — ID: 4c
+WS: ramka odebrana od klienta — ID: 4d
+WS: ramka odebrana od klienta — ID: 4e
+WS: ramka odebrana od klienta — ID: 4f
+WS: ramka odebrana od klienta — ID: 50
+WS: ramka odebrana od klienta — ID: 51
+WS: ramka odebrana od klienta — ID: 52
+WS: ramka odebrana od klienta — ID: 53
+[LlmQueryClient] Response received, t_llm = 17095 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17095 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 54
+[ExperimentRunner] Trial 21 completed: tDet= 0 ms tTxUp= 289 ms tLlm= 17095 ms tComp= 0 ms tOta= 920 ms tTotal= 18305 ms success= true
+WS: ramka odebrana od klienta — ID: 55
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "deepseek-v4-pro"
+[ 67.5%] Model 3/4: deepseek-v4-pro — trial 22/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "56" detected
+[ExperimentRunner] Cold start detected: "ID=0x056 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: 56
+WS: ramka odebrana od klienta — ID: 57
+WS: ramka odebrana od klienta — ID: 58
+WS: ramka odebrana od klienta — ID: 59
+WS: ramka odebrana od klienta — ID: 5a
+WS: ramka odebrana od klienta — ID: 5b
+WS: ramka odebrana od klienta — ID: 5c
+WS: ramka odebrana od klienta — ID: 5d
+WS: ramka odebrana od klienta — ID: 5e
+WS: ramka odebrana od klienta — ID: 5f
+WS: ramka odebrana od klienta — ID: 60
+WS: ramka odebrana od klienta — ID: 61
+WS: ramka odebrana od klienta — ID: 62
+WS: ramka odebrana od klienta — ID: 63
+WS: ramka odebrana od klienta — ID: 64
+WS: ramka odebrana od klienta — ID: 65
+WS: ramka odebrana od klienta — ID: 66
+WS: ramka odebrana od klienta — ID: 67
+WS: ramka odebrana od klienta — ID: 68
+WS: ramka odebrana od klienta — ID: 69
+WS: ramka odebrana od klienta — ID: 6a
+WS: ramka odebrana od klienta — ID: 6b
+WS: ramka odebrana od klienta — ID: 6c
+WS: ramka odebrana od klienta — ID: 6d
+WS: ramka odebrana od klienta — ID: 6e
+WS: ramka odebrana od klienta — ID: 6f
+WS: ramka odebrana od klienta — ID: 70
+WS: ramka odebrana od klienta — ID: 71
+WS: ramka odebrana od klienta — ID: 72
+WS: ramka odebrana od klienta — ID: 73
+WS: ramka odebrana od klienta — ID: 74
+WS: ramka odebrana od klienta — ID: 75
+WS: ramka odebrana od klienta — ID: 76
+WS: ramka odebrana od klienta — ID: 77
+WS: ramka odebrana od klienta — ID: 78
+WS: ramka odebrana od klienta — ID: 79
+[LlmQueryClient] Response received, t_llm = 17524 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17524 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 22 completed: tDet= 0 ms tTxUp= 474 ms tLlm= 17524 ms tComp= 0 ms tOta= 444 ms tTotal= 18443 ms success= true
+WS: ramka odebrana od klienta — ID: 7a
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "deepseek-v4-pro"
+[ 68.3%] Model 3/4: deepseek-v4-pro — trial 23/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "7b" detected
+[ExperimentRunner] Cold start detected: "ID=0x07b reason=new_id tDet=36 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: 7b
+WS: ramka odebrana od klienta — ID: 7c
+WS: ramka odebrana od klienta — ID: 7d
+WS: ramka odebrana od klienta — ID: 7e
+WS: ramka odebrana od klienta — ID: 7f
+WS: ramka odebrana od klienta — ID: 80
+WS: ramka odebrana od klienta — ID: 81
+WS: ramka odebrana od klienta — ID: 82
+WS: ramka odebrana od klienta — ID: 83
+WS: ramka odebrana od klienta — ID: 84
+WS: ramka odebrana od klienta — ID: 85
+WS: ramka odebrana od klienta — ID: 86
+WS: ramka odebrana od klienta — ID: 87
+WS: ramka odebrana od klienta — ID: 88
+WS: ramka odebrana od klienta — ID: 89
+WS: ramka odebrana od klienta — ID: 8a
+WS: ramka odebrana od klienta — ID: 8b
+WS: ramka odebrana od klienta — ID: 8c
+WS: ramka odebrana od klienta — ID: 8d
+WS: ramka odebrana od klienta — ID: 8e
+WS: ramka odebrana od klienta — ID: 8f
+WS: ramka odebrana od klienta — ID: 90
+WS: ramka odebrana od klienta — ID: 91
+WS: ramka odebrana od klienta — ID: 92
+WS: ramka odebrana od klienta — ID: 93
+WS: ramka odebrana od klienta — ID: 94
+WS: ramka odebrana od klienta — ID: 95
+WS: ramka odebrana od klienta — ID: 96
+WS: ramka odebrana od klienta — ID: 97
+WS: ramka odebrana od klienta — ID: 98
+WS: ramka odebrana od klienta — ID: 99
+WS: ramka odebrana od klienta — ID: 9a
+WS: ramka odebrana od klienta — ID: 9b
+WS: ramka odebrana od klienta — ID: 9c
+[LlmQueryClient] Response received, t_llm = 16413 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16413 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 23 completed: tDet= 0 ms tTxUp= 809 ms tLlm= 16413 ms tComp= 0 ms tOta= 1331 ms tTotal= 18554 ms success= true
+WS: ramka odebrana od klienta — ID: 9d
+WS: ramka odebrana od klienta — ID: 9e
+WS: ramka odebrana od klienta — ID: 9f
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "deepseek-v4-pro"
+[ 69.2%] Model 3/4: deepseek-v4-pro — trial 24/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "a0" detected
+[ExperimentRunner] Cold start detected: "ID=0x0a0 reason=new_id tDet=37 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: a0
+WS: ramka odebrana od klienta — ID: a1
+WS: ramka odebrana od klienta — ID: a2
+WS: ramka odebrana od klienta — ID: a3
+WS: ramka odebrana od klienta — ID: a4
+WS: ramka odebrana od klienta — ID: a5
+WS: ramka odebrana od klienta — ID: a6
+WS: ramka odebrana od klienta — ID: a7
+WS: ramka odebrana od klienta — ID: a8
+WS: ramka odebrana od klienta — ID: a9
+WS: ramka odebrana od klienta — ID: aa
+WS: ramka odebrana od klienta — ID: ab
+WS: ramka odebrana od klienta — ID: ac
+WS: ramka odebrana od klienta — ID: ad
+WS: ramka odebrana od klienta — ID: ae
+WS: ramka odebrana od klienta — ID: af
+WS: ramka odebrana od klienta — ID: b0
+WS: ramka odebrana od klienta — ID: b1
+WS: ramka odebrana od klienta — ID: b2
+WS: ramka odebrana od klienta — ID: b3
+WS: ramka odebrana od klienta — ID: b4
+WS: ramka odebrana od klienta — ID: b5
+WS: ramka odebrana od klienta — ID: b6
+WS: ramka odebrana od klienta — ID: b7
+WS: ramka odebrana od klienta — ID: b8
+WS: ramka odebrana od klienta — ID: b9
+WS: ramka odebrana od klienta — ID: ba
+WS: ramka odebrana od klienta — ID: bb
+WS: ramka odebrana od klienta — ID: bc
+WS: ramka odebrana od klienta — ID: bd
+WS: ramka odebrana od klienta — ID: be
+WS: ramka odebrana od klienta — ID: bf
+WS: ramka odebrana od klienta — ID: c0
+WS: ramka odebrana od klienta — ID: c1
+WS: ramka odebrana od klienta — ID: c2
+WS: ramka odebrana od klienta — ID: c3
+[LlmQueryClient] Response received, t_llm = 17619 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17619 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: c4
+[ExperimentRunner] Trial 24 completed: tDet= 0 ms tTxUp= 849 ms tLlm= 17619 ms tComp= 0 ms tOta= 1021 ms tTotal= 19490 ms success= true
+WS: ramka odebrana od klienta — ID: c5
+WS: ramka odebrana od klienta — ID: c6
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "deepseek-v4-pro"
+[ 70.0%] Model 3/4: deepseek-v4-pro — trial 25/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "c7" detected
+[ExperimentRunner] Cold start detected: "ID=0x0c7 reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: c7
+WS: ramka odebrana od klienta — ID: c8
+WS: ramka odebrana od klienta — ID: c9
+WS: ramka odebrana od klienta — ID: ca
+WS: ramka odebrana od klienta — ID: cb
+WS: ramka odebrana od klienta — ID: cc
+WS: ramka odebrana od klienta — ID: cd
+WS: ramka odebrana od klienta — ID: ce
+WS: ramka odebrana od klienta — ID: cf
+WS: ramka odebrana od klienta — ID: d0
+WS: ramka odebrana od klienta — ID: d1
+WS: ramka odebrana od klienta — ID: d2
+WS: ramka odebrana od klienta — ID: d3
+WS: ramka odebrana od klienta — ID: d4
+WS: ramka odebrana od klienta — ID: d5
+WS: ramka odebrana od klienta — ID: d6
+WS: ramka odebrana od klienta — ID: d7
+WS: ramka odebrana od klienta — ID: d8
+WS: ramka odebrana od klienta — ID: d9
+WS: ramka odebrana od klienta — ID: da
+WS: ramka odebrana od klienta — ID: db
+WS: ramka odebrana od klienta — ID: dc
+WS: ramka odebrana od klienta — ID: dd
+WS: ramka odebrana od klienta — ID: de
+WS: ramka odebrana od klienta — ID: df
+WS: ramka odebrana od klienta — ID: e0
+WS: ramka odebrana od klienta — ID: e1
+WS: ramka odebrana od klienta — ID: e2
+WS: ramka odebrana od klienta — ID: e3
+WS: ramka odebrana od klienta — ID: e4
+WS: ramka odebrana od klienta — ID: e5
+WS: ramka odebrana od klienta — ID: e6
+WS: ramka odebrana od klienta — ID: e7
+WS: ramka odebrana od klienta — ID: e8
+[LlmQueryClient] Response received, t_llm = 17003 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17003 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: e9
+[ExperimentRunner] Trial 25 completed: tDet= 0 ms tTxUp= 452 ms tLlm= 17003 ms tComp= 0 ms tOta= 61 ms tTotal= 17517 ms success= true
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "deepseek-v4-pro"
+[ 70.8%] Model 3/4: deepseek-v4-pro — trial 26/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "ea" detected
+[ExperimentRunner] Cold start detected: "ID=0x0ea reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: ea
+WS: ramka odebrana od klienta — ID: eb
+WS: ramka odebrana od klienta — ID: ec
+WS: ramka odebrana od klienta — ID: ed
+WS: ramka odebrana od klienta — ID: ee
+WS: ramka odebrana od klienta — ID: ef
+WS: ramka odebrana od klienta — ID: f0
+WS: ramka odebrana od klienta — ID: f1
+WS: ramka odebrana od klienta — ID: f2
+WS: ramka odebrana od klienta — ID: f3
+WS: ramka odebrana od klienta — ID: f4
+WS: ramka odebrana od klienta — ID: f5
+WS: ramka odebrana od klienta — ID: f6
+WS: ramka odebrana od klienta — ID: f7
+WS: ramka odebrana od klienta — ID: f8
+WS: ramka odebrana od klienta — ID: f9
+WS: ramka odebrana od klienta — ID: fa
+WS: ramka odebrana od klienta — ID: fb
+WS: ramka odebrana od klienta — ID: fc
+WS: ramka odebrana od klienta — ID: fd
+WS: ramka odebrana od klienta — ID: fe
+WS: ramka odebrana od klienta — ID: ff
+WS: ramka odebrana od klienta — ID: 100
+WS: ramka odebrana od klienta — ID: 101
+WS: ramka odebrana od klienta — ID: 102
+WS: ramka odebrana od klienta — ID: 103
+WS: ramka odebrana od klienta — ID: 104
+WS: ramka odebrana od klienta — ID: 105
+WS: ramka odebrana od klienta — ID: 106
+WS: ramka odebrana od klienta — ID: 107
+WS: ramka odebrana od klienta — ID: 108
+WS: ramka odebrana od klienta — ID: 109
+WS: ramka odebrana od klienta — ID: 10a
+[LlmQueryClient] Response received, t_llm = 16374 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 16374 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 10b
+[ExperimentRunner] Trial 26 completed: tDet= 0 ms tTxUp= 427 ms tLlm= 16374 ms tComp= 0 ms tOta= 1433 ms tTotal= 18235 ms success= true
+WS: ramka odebrana od klienta — ID: 10c
+WS: ramka odebrana od klienta — ID: 10d
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "deepseek-v4-pro"
+[ 71.7%] Model 3/4: deepseek-v4-pro — trial 27/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "10e" detected
+[ExperimentRunner] Cold start detected: "ID=0x10e reason=new_id tDet=31 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: 10e
+WS: ramka odebrana od klienta — ID: 10f
+WS: ramka odebrana od klienta — ID: 110
+WS: ramka odebrana od klienta — ID: 111
+WS: ramka odebrana od klienta — ID: 112
+WS: ramka odebrana od klienta — ID: 113
+WS: ramka odebrana od klienta — ID: 114
+WS: ramka odebrana od klienta — ID: 115
+WS: ramka odebrana od klienta — ID: 116
+WS: ramka odebrana od klienta — ID: 117
+WS: ramka odebrana od klienta — ID: 118
+WS: ramka odebrana od klienta — ID: 119
+WS: ramka odebrana od klienta — ID: 11a
+WS: ramka odebrana od klienta — ID: 11b
+WS: ramka odebrana od klienta — ID: 11c
+WS: ramka odebrana od klienta — ID: 11d
+WS: ramka odebrana od klienta — ID: 11e
+WS: ramka odebrana od klienta — ID: 11f
+WS: ramka odebrana od klienta — ID: 120
+WS: ramka odebrana od klienta — ID: 121
+WS: ramka odebrana od klienta — ID: 122
+WS: ramka odebrana od klienta — ID: 123
+WS: ramka odebrana od klienta — ID: 124
+WS: ramka odebrana od klienta — ID: 125
+WS: ramka odebrana od klienta — ID: 126
+WS: ramka odebrana od klienta — ID: 127
+WS: ramka odebrana od klienta — ID: 128
+WS: ramka odebrana od klienta — ID: 129
+WS: ramka odebrana od klienta — ID: 12a
+WS: ramka odebrana od klienta — ID: 12b
+WS: ramka odebrana od klienta — ID: 12c
+WS: ramka odebrana od klienta — ID: 12d
+WS: ramka odebrana od klienta — ID: 12e
+WS: ramka odebrana od klienta — ID: 12f
+WS: ramka odebrana od klienta — ID: 130
+[LlmQueryClient] Response received, t_llm = 17306 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17306 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 131
+[ExperimentRunner] Trial 27 completed: tDet= 0 ms tTxUp= 687 ms tLlm= 17306 ms tComp= 0 ms tOta= 512 ms tTotal= 18505 ms success= true
+WS: ramka odebrana od klienta — ID: 132
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "deepseek-v4-pro"
+[ 72.5%] Model 3/4: deepseek-v4-pro — trial 28/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "133" detected
+[ExperimentRunner] Cold start detected: "ID=0x133 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: 133
+WS: ramka odebrana od klienta — ID: 134
+WS: ramka odebrana od klienta — ID: 135
+WS: ramka odebrana od klienta — ID: 136
+WS: ramka odebrana od klienta — ID: 137
+WS: ramka odebrana od klienta — ID: 138
+WS: ramka odebrana od klienta — ID: 139
+WS: ramka odebrana od klienta — ID: 13a
+WS: ramka odebrana od klienta — ID: 13b
+WS: ramka odebrana od klienta — ID: 13c
+WS: ramka odebrana od klienta — ID: 13d
+WS: ramka odebrana od klienta — ID: 13e
+WS: ramka odebrana od klienta — ID: 13f
+WS: ramka odebrana od klienta — ID: 140
+WS: ramka odebrana od klienta — ID: 141
+WS: ramka odebrana od klienta — ID: 142
+WS: ramka odebrana od klienta — ID: 143
+WS: ramka odebrana od klienta — ID: 144
+WS: ramka odebrana od klienta — ID: 145
+WS: ramka odebrana od klienta — ID: 146
+WS: ramka odebrana od klienta — ID: 147
+WS: ramka odebrana od klienta — ID: 148
+WS: ramka odebrana od klienta — ID: 149
+WS: ramka odebrana od klienta — ID: 14a
+WS: ramka odebrana od klienta — ID: 14b
+WS: ramka odebrana od klienta — ID: 14c
+WS: ramka odebrana od klienta — ID: 14d
+WS: ramka odebrana od klienta — ID: 14e
+WS: ramka odebrana od klienta — ID: 14f
+WS: ramka odebrana od klienta — ID: 150
+WS: ramka odebrana od klienta — ID: 151
+WS: ramka odebrana od klienta — ID: 152
+WS: ramka odebrana od klienta — ID: 153
+WS: ramka odebrana od klienta — ID: 154
+WS: ramka odebrana od klienta — ID: 155
+WS: ramka odebrana od klienta — ID: 156
+[LlmQueryClient] Response received, t_llm = 17620 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17620 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 28 completed: tDet= 0 ms tTxUp= 457 ms tLlm= 17620 ms tComp= 0 ms tOta= 1023 ms tTotal= 19101 ms success= true
+WS: ramka odebrana od klienta — ID: 157
+WS: ramka odebrana od klienta — ID: 158
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "deepseek-v4-pro"
+[ 73.3%] Model 3/4: deepseek-v4-pro — trial 29/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "159" detected
+[ExperimentRunner] Cold start detected: "ID=0x159 reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2207 bytes
+WS: ramka odebrana od klienta — ID: 159
+WS: ramka odebrana od klienta — ID: 15a
+WS: ramka odebrana od klienta — ID: 15b
+WS: ramka odebrana od klienta — ID: 15c
+WS: ramka odebrana od klienta — ID: 15d
+WS: ramka odebrana od klienta — ID: 15e
+WS: ramka odebrana od klienta — ID: 15f
+WS: ramka odebrana od klienta — ID: 160
+WS: ramka odebrana od klienta — ID: 161
+WS: ramka odebrana od klienta — ID: 162
+WS: ramka odebrana od klienta — ID: 163
+WS: ramka odebrana od klienta — ID: 164
+WS: ramka odebrana od klienta — ID: 165
+WS: ramka odebrana od klienta — ID: 166
+WS: ramka odebrana od klienta — ID: 167
+WS: ramka odebrana od klienta — ID: 168
+WS: ramka odebrana od klienta — ID: 169
+WS: ramka odebrana od klienta — ID: 16a
+WS: ramka odebrana od klienta — ID: 16b
+WS: ramka odebrana od klienta — ID: 16c
+WS: ramka odebrana od klienta — ID: 16d
+WS: ramka odebrana od klienta — ID: 16e
+WS: ramka odebrana od klienta — ID: 16f
+WS: ramka odebrana od klienta — ID: 170
+WS: ramka odebrana od klienta — ID: 171
+WS: ramka odebrana od klienta — ID: 172
+WS: ramka odebrana od klienta — ID: 173
+WS: ramka odebrana od klienta — ID: 174
+WS: ramka odebrana od klienta — ID: 175
+WS: ramka odebrana od klienta — ID: 176
+WS: ramka odebrana od klienta — ID: 177
+WS: ramka odebrana od klienta — ID: 178
+WS: ramka odebrana od klienta — ID: 179
+WS: ramka odebrana od klienta — ID: 17a
+WS: ramka odebrana od klienta — ID: 17b
+WS: ramka odebrana od klienta — ID: 17c
+WS: ramka odebrana od klienta — ID: 17d
+[LlmQueryClient] Response received, t_llm = 17563 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 17563 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+[ExperimentRunner] Trial 29 completed: tDet= 0 ms tTxUp= 1021 ms tLlm= 17563 ms tComp= 0 ms tOta= 1023 ms tTotal= 19608 ms success= true
+WS: ramka odebrana od klienta — ID: 17e
+WS: ramka odebrana od klienta — ID: 17f
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "deepseek-v4-pro"
+[ 74.2%] Model 3/4: deepseek-v4-pro — trial 30/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "180" detected
+[ExperimentRunner] Cold start detected: "ID=0x180 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://api.deepseek.com/v1/chat/completions" model: "deepseek-v4-pro" payload size: 2208 bytes
+WS: ramka odebrana od klienta — ID: 180
+WS: ramka odebrana od klienta — ID: 181
+WS: ramka odebrana od klienta — ID: 182
+WS: ramka odebrana od klienta — ID: 183
+WS: ramka odebrana od klienta — ID: 184
+WS: ramka odebrana od klienta — ID: 185
+WS: ramka odebrana od klienta — ID: 186
+WS: ramka odebrana od klienta — ID: 187
+WS: ramka odebrana od klienta — ID: 188
+WS: ramka odebrana od klienta — ID: 189
+WS: ramka odebrana od klienta — ID: 18a
+WS: ramka odebrana od klienta — ID: 18b
+WS: ramka odebrana od klienta — ID: 18c
+WS: ramka odebrana od klienta — ID: 18d
+WS: ramka odebrana od klienta — ID: 18e
+WS: ramka odebrana od klienta — ID: 18f
+WS: ramka odebrana od klienta — ID: 190
+WS: ramka odebrana od klienta — ID: 191
+WS: ramka odebrana od klienta — ID: 192
+WS: ramka odebrana od klienta — ID: 193
+WS: ramka odebrana od klienta — ID: 194
+WS: ramka odebrana od klienta — ID: 195
+WS: ramka odebrana od klienta — ID: 196
+WS: ramka odebrana od klienta — ID: 197
+WS: ramka odebrana od klienta — ID: 198
+WS: ramka odebrana od klienta — ID: 199
+WS: ramka odebrana od klienta — ID: 19a
+WS: ramka odebrana od klienta — ID: 19b
+WS: ramka odebrana od klienta — ID: 19c
+WS: ramka odebrana od klienta — ID: 19d
+WS: ramka odebrana od klienta — ID: 19e
+WS: ramka odebrana od klienta — ID: 19f
+[LlmQueryClient] Response received, t_llm = 15773 ms, success = true
+[ExperimentRunner] LLM response received, tLlm = 15773 ms
+[ExperimentRunner] State: Compiling
+[ExperimentRunner] State: SendingOta
+WS: ramka odebrana od klienta — ID: 1a0
+[LatencyProfiler] Model "deepseek-v4-pro" complete: 30 / 30 samples
+[ExperimentRunner] Trial 30 completed: tDet= 0 ms tTxUp= 560 ms tLlm= 15773 ms tComp= 0 ms tOta= 933 ms tTotal= 17266 ms success= true
+WS: ramka odebrana od klienta — ID: 1a1
+=== deepseek-v4-pro zakonczony: t_llm=17985.5ms t_tx_up=709.37ms t_ota=724.8ms (N=30) ===
+[ExperimentRunner] Starting model: "gemini-3.6-flash" ( 4 / 4 )
+[ 75.0%] Model 4/4: gemini-3.6-flash — trial 0/30
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 1 / 30 for model "gemini-3.6-flash"
+[ 75.0%] Model 4/4: gemini-3.6-flash — trial 1/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1a2" detected
+[ExperimentRunner] Cold start detected: "ID=0x1a2 reason=new_id tDet=73 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 721 bytes
+WS: ramka odebrana od klienta — ID: 1a2
+WS: ramka odebrana od klienta — ID: 1a3
+WS: ramka odebrana od klienta — ID: 1a4
+WS: ramka odebrana od klienta — ID: 1a5
+WS: ramka odebrana od klienta — ID: 1a6
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 1599 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 2 / 30 for model "gemini-3.6-flash"
+[ 75.8%] Model 4/4: gemini-3.6-flash — trial 2/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1a7" detected
+[ExperimentRunner] Cold start detected: "ID=0x1a7 reason=new_id tDet=30 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 783 bytes
+WS: ramka odebrana od klienta — ID: 1a7
+WS: ramka odebrana od klienta — ID: 1a8
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 514 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 3 / 30 for model "gemini-3.6-flash"
+[ 76.7%] Model 4/4: gemini-3.6-flash — trial 3/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1a9" detected
+[ExperimentRunner] Cold start detected: "ID=0x1a9 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 845 bytes
+WS: ramka odebrana od klienta — ID: 1a9
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 269 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 4 / 30 for model "gemini-3.6-flash"
+[ 77.5%] Model 4/4: gemini-3.6-flash — trial 4/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1aa" detected
+[ExperimentRunner] Cold start detected: "ID=0x1aa reason=new_id tDet=53 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 907 bytes
+WS: ramka odebrana od klienta — ID: 1aa
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 235 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 5 / 30 for model "gemini-3.6-flash"
+[ 78.3%] Model 4/4: gemini-3.6-flash — trial 5/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1ab" detected
+[ExperimentRunner] Cold start detected: "ID=0x1ab reason=new_id tDet=27 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 969 bytes
+WS: ramka odebrana od klienta — ID: 1ab
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 264 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 6 / 30 for model "gemini-3.6-flash"
+[ 79.2%] Model 4/4: gemini-3.6-flash — trial 6/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1ac" detected
+[ExperimentRunner] Cold start detected: "ID=0x1ac reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1031 bytes
+WS: ramka odebrana od klienta — ID: 1ac
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 228 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 7 / 30 for model "gemini-3.6-flash"
+[ 80.0%] Model 4/4: gemini-3.6-flash — trial 7/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1ad" detected
+[ExperimentRunner] Cold start detected: "ID=0x1ad reason=new_id tDet=30 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1093 bytes
+WS: ramka odebrana od klienta — ID: 1ad
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 237 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 8 / 30 for model "gemini-3.6-flash"
+[ 80.8%] Model 4/4: gemini-3.6-flash — trial 8/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1ae" detected
+[ExperimentRunner] Cold start detected: "ID=0x1ae reason=new_id tDet=27 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1155 bytes
+WS: ramka odebrana od klienta — ID: 1ae
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 202 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 9 / 30 for model "gemini-3.6-flash"
+[ 81.7%] Model 4/4: gemini-3.6-flash — trial 9/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1af" detected
+[ExperimentRunner] Cold start detected: "ID=0x1af reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1217 bytes
+WS: ramka odebrana od klienta — ID: 1af
+WS: ramka odebrana od klienta — ID: 1b0
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 868 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 10 / 30 for model "gemini-3.6-flash"
+[ 82.5%] Model 4/4: gemini-3.6-flash — trial 10/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1b1" detected
+[ExperimentRunner] Cold start detected: "ID=0x1b1 reason=new_id tDet=22 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1279 bytes
+WS: ramka odebrana od klienta — ID: 1b1
+WS: ramka odebrana od klienta — ID: 1b2
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 423 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 11 / 30 for model "gemini-3.6-flash"
+[ 83.3%] Model 4/4: gemini-3.6-flash — trial 11/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1b3" detected
+[ExperimentRunner] Cold start detected: "ID=0x1b3 reason=new_id tDet=50 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1341 bytes
+WS: ramka odebrana od klienta — ID: 1b3
+WS: ramka odebrana od klienta — ID: 1b4
+WS: ramka odebrana od klienta — ID: 1b5
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 1063 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 12 / 30 for model "gemini-3.6-flash"
+[ 84.2%] Model 4/4: gemini-3.6-flash — trial 12/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1b6" detected
+[ExperimentRunner] Cold start detected: "ID=0x1b6 reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1403 bytes
+WS: ramka odebrana od klienta — ID: 1b6
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 265 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 13 / 30 for model "gemini-3.6-flash"
+[ 85.0%] Model 4/4: gemini-3.6-flash — trial 13/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1b7" detected
+[ExperimentRunner] Cold start detected: "ID=0x1b7 reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1465 bytes
+WS: ramka odebrana od klienta — ID: 1b7
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 375 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 14 / 30 for model "gemini-3.6-flash"
+[ 85.8%] Model 4/4: gemini-3.6-flash — trial 14/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1b8" detected
+[ExperimentRunner] Cold start detected: "ID=0x1b8 reason=new_id tDet=4 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1527 bytes
+WS: ramka odebrana od klienta — ID: 1b8
+WS: ramka odebrana od klienta — ID: 1b9
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 543 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 15 / 30 for model "gemini-3.6-flash"
+[ 86.7%] Model 4/4: gemini-3.6-flash — trial 15/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1ba" detected
+[ExperimentRunner] Cold start detected: "ID=0x1ba reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1589 bytes
+WS: ramka odebrana od klienta — ID: 1ba
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 212 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 16 / 30 for model "gemini-3.6-flash"
+[ 87.5%] Model 4/4: gemini-3.6-flash — trial 16/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1bb" detected
+[ExperimentRunner] Cold start detected: "ID=0x1bb reason=new_id tDet=23 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1651 bytes
+WS: ramka odebrana od klienta — ID: 1bb
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 201 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 17 / 30 for model "gemini-3.6-flash"
+[ 88.3%] Model 4/4: gemini-3.6-flash — trial 17/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1bc" detected
+[ExperimentRunner] Cold start detected: "ID=0x1bc reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1713 bytes
+WS: ramka odebrana od klienta — ID: 1bc
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 258 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 18 / 30 for model "gemini-3.6-flash"
+[ 89.2%] Model 4/4: gemini-3.6-flash — trial 18/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1bd" detected
+[ExperimentRunner] Cold start detected: "ID=0x1bd reason=new_id tDet=38 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1775 bytes
+WS: ramka odebrana od klienta — ID: 1bd
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 248 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 19 / 30 for model "gemini-3.6-flash"
+[ 90.0%] Model 4/4: gemini-3.6-flash — trial 19/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1be" detected
+[ExperimentRunner] Cold start detected: "ID=0x1be reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1837 bytes
+WS: ramka odebrana od klienta — ID: 1be
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 213 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 20 / 30 for model "gemini-3.6-flash"
+[ 90.8%] Model 4/4: gemini-3.6-flash — trial 20/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1bf" detected
+[ExperimentRunner] Cold start detected: "ID=0x1bf reason=new_id tDet=30 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1899 bytes
+WS: ramka odebrana od klienta — ID: 1bf
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 668 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 21 / 30 for model "gemini-3.6-flash"
+[ 91.7%] Model 4/4: gemini-3.6-flash — trial 21/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1c0" detected
+[ExperimentRunner] Cold start detected: "ID=0x1c0 reason=new_id tDet=27 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1c0
+WS: ramka odebrana od klienta — ID: 1c1
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 405 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 22 / 30 for model "gemini-3.6-flash"
+[ 92.5%] Model 4/4: gemini-3.6-flash — trial 22/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1c2" detected
+[ExperimentRunner] Cold start detected: "ID=0x1c2 reason=new_id tDet=25 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1c2
+WS: ramka odebrana od klienta — ID: 1c3
+WS: ramka odebrana od klienta — ID: 1c4
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 671 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 23 / 30 for model "gemini-3.6-flash"
+[ 93.3%] Model 4/4: gemini-3.6-flash — trial 23/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1c5" detected
+[ExperimentRunner] Cold start detected: "ID=0x1c5 reason=new_id tDet=52 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1c5
+WS: ramka odebrana od klienta — ID: 1c6
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 587 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 24 / 30 for model "gemini-3.6-flash"
+[ 94.2%] Model 4/4: gemini-3.6-flash — trial 24/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1c7" detected
+[ExperimentRunner] Cold start detected: "ID=0x1c7 reason=new_id tDet=26 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1c7
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 409 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 25 / 30 for model "gemini-3.6-flash"
+[ 95.0%] Model 4/4: gemini-3.6-flash — trial 25/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1c8" detected
+[ExperimentRunner] Cold start detected: "ID=0x1c8 reason=new_id tDet=32 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1c8
+WS: ramka odebrana od klienta — ID: 1c9
+WS: ramka odebrana od klienta — ID: 1ca
+WS: ramka odebrana od klienta — ID: 1cb
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 1052 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 26 / 30 for model "gemini-3.6-flash"
+[ 95.8%] Model 4/4: gemini-3.6-flash — trial 26/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1cc" detected
+[ExperimentRunner] Cold start detected: "ID=0x1cc reason=new_id tDet=21 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1cc
+WS: ramka odebrana od klienta — ID: 1cd
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 978 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 27 / 30 for model "gemini-3.6-flash"
+[ 96.7%] Model 4/4: gemini-3.6-flash — trial 27/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1ce" detected
+[ExperimentRunner] Cold start detected: "ID=0x1ce reason=new_id tDet=3 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1ce
+WS: ramka odebrana od klienta — ID: 1cf
+WS: ramka odebrana od klienta — ID: 1d0
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 1068 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 28 / 30 for model "gemini-3.6-flash"
+[ 97.5%] Model 4/4: gemini-3.6-flash — trial 28/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1d1" detected
+[ExperimentRunner] Cold start detected: "ID=0x1d1 reason=new_id tDet=24 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1d1
+WS: ramka odebrana od klienta — ID: 1d2
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 614 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 29 / 30 for model "gemini-3.6-flash"
+[ 98.3%] Model 4/4: gemini-3.6-flash — trial 29/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1d3" detected
+[ExperimentRunner] Cold start detected: "ID=0x1d3 reason=new_id tDet=31 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1924 bytes
+WS: ramka odebrana od klienta — ID: 1d3
+WS: ramka odebrana od klienta — ID: 1d4
+WS: ramka odebrana od klienta — ID: 1d5
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 959 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[ExperimentRunner] State: WaitingForDetection
+[ExperimentRunner] Trial 30 / 30 for model "gemini-3.6-flash"
+[ 99.2%] Model 4/4: gemini-3.6-flash — trial 30/30 (waiting for cold start...)
+[ColdStartDetector] new CAN ID 0x "1d6" detected
+[ExperimentRunner] Cold start detected: "ID=0x1d6 reason=new_id tDet=33 μs"
+[ExperimentRunner] State: QueryingLlm
+[LlmQueryClient] Sending query to "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent" model: "gemini-3.6-flash" payload size: 1925 bytes
+WS: ramka odebrana od klienta — ID: 1d6
+WS: ramka odebrana od klienta — ID: 1d7
+WS: ramka odebrana od klienta — ID: 1d8
+[LlmQueryClient] Network error: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LlmQueryClient] Response received, t_llm = 1022 ms, success = false
+[ExperimentRunner] LLM query failed: "Error transferring https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=<REDACTED> - server replied with status code 403"
+[LatencyProfiler] Model "gemini-3.6-flash" complete: 30 / 30 samples
+=== gemini-3.6-flash zakonczony: t_llm=555.0ms t_tx_up=461.96ms t_ota=0.0ms (N=30) ===
+[ExperimentRunner] State: Done
+[ExperimentRunner] Experiment finished. Report: "Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw/latency_report_hw.json"
+[100.0%] Experiment complete — report saved to Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw/latency_report_hw.json
+Eksperyment (HW) zakonczony, raport: Eksperyment_1.1_HW_CAN-Edge-AI_20260725_124257/raw/latency_report_hw.json
+QObject::startTimer: Timers can only be used with threads started with QThread
+[WebSocketServer] Polaczonych klientow (ESP32): 0
+WebSocket server zatrzymany
