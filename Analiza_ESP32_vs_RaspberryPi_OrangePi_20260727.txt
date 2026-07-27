@@ -1,0 +1,320 @@
+ANALIZA STRATEGICZNA: ESP32 vs Raspberry Pi Zero / Orange Pi
+dla projektu CAN-Edge-AI (MagistralaCAN4)
+==============================================================================
+
+Data: 2026-07-27
+Autor analizy: Claude (Sonnet 5), na podstawie danych z Eksperymentow 1.2,
+2.1, 2.2, 4.1 przeprowadzonych na realnym sprzecie w ramach tego projektu
+Cel: material do dyskusji z wykladowca -- NIE jest to gotowa rekomendacja
+do wdrozenia, tylko usystematyzowane spostrzezenia i pytania otwarte.
+
+
+1. PUNKT WYJSCIA -- CO WIEMY Z WLASNYCH POMIAROW
+--------------------------------------------------
+
+Zanim rozwazymy zmiane platformy sprzetowej, warto podsumowac, co
+FAKTYCZNIE ustalilismy empirycznie na ESP32 w tym projekcie -- to powinno
+byc fundamentem decyzji, nie ogolne przekonania o "slabym mikrokontrolerze".
+
+* Eksperyment 1.2 (Hot Execution Latency): t_resp ~109.7us, z czego **99%
+  to narzut transakcji SPI + logiki firmware (Arduino/biblioteka MCP2515)**,
+  a tylko ~1% to czysty narzut przerwania/GPIO samego ESP32. Wynik
+  NIEZALEZNY od zegara MCP2515 i bitrate CAN (125k-1000k).
+
+* Eksperyment 2.1 (CAN Frame Throughput): FLR=0% (zero utraconych ramek)
+  na 250kbps i 500kbps w calym praktycznie osiagalnym zakresie ruchu.
+  Wazne: to SAMA MAGISTRALA CAN byla waskim gardlem (fizyczny sufit
+  przepustowosci przy tych predkosciach), NIE uklad ESP32+MCP2515. ESP32
+  nigdy nie zdradzil oznak przeciazenia w przebadanym zakresie.
+
+* Eksperyment 2.2 (Buffer Overflow Threshold): zaleznosc T_prog=bufor/f
+  potwierdzona empirycznie z duza precyzja. Znaleziona realna luka:
+  obecna architektura (esp_experiment_1_1.ino) NIE MA zadnego bufora
+  aplikacyjnego -- kazda ramka jest przekazywana przez WebSocket
+  natychmiast, bez kolejkowania. Dla typowego oczekiwania na LLM ~2.2s przy
+  1000Hz trzeba by bufora ~2200 ramek (~35KB) -- ESP32 ma na to miejsce
+  (270KB+ wolnej pamieci dynamicznej), ale TEGO KODU PO PROSTU JESZCZE NIE
+  MA. To brak w OPROGRAMOWANIU, nie ograniczenie SPRZETU.
+
+* Eksperyment 4.1 (Decoding Accuracy): skutecznosc identyfikacji struktury
+  sygnalu przez LLM (3-24% w pojedynczej probie Cold Start) jest CALKOWICIE
+  NIEZALEZNA od platformy sprzetowej ESP32/Pi/Orange Pi -- to wlasciwosc
+  modelu LLM i jednorazowego zapytania, nie mikrokontrolera. Zmiana
+  platformy NIC tu nie zmieni.
+
+**Wniosek nr 1 (kluczowy)**: ESP32 nie wykazal w naszych pomiarach ZADNEGO
+fundamentalnego ograniczenia sprzetowego -- ani w przepustowosci, ani w
+opoznieniu, ani w dostepnej pamieci. Jedyna realna luka (brak bufora
+aplikacyjnego) jest problemem BRAKUJACEGO KODU, do naprawienia bez zmiany
+platformy.
+
+
+2. CO FAKTYCZNIE ZMIENILOBY PRZEJSCIE NA RASPBERRY PI (ZERO / ZERO 2 W)
+--------------------------------------------------------------------------
+
+2.1. Warstwa CAN -- dobra wiadomosc: to juz DZIALA w kodzie
+
+MCP2515 na Raspberry Pi jest obslugiwany natywnie przez mainline'owy
+sterownik jadra Linux (`mcp251x`, dtoverlay w /boot/config.txt) i wystawiany
+jako standardowy interfejs SocketCAN (`can0`) -- DOKLADNIE TAKI SAM
+interfejs, jakiego uzywalismy przez cala sesje z PEAK PCAN-USB. Co wiecej,
+kod MagistralaCAN4 JUZ MA gotowy sterownik `SocketCanDriver`
+(`src/core/SocketCanDriver.h/.cpp`) -- nie trzeba by pisac nic nowego w tej
+warstwie. To silny argument ZA wykonalnoscia technicza.
+
+2.2. Eliminacja calego "skoku" WiFi/ESP32
+
+Obecna architektura (Eksperyment 1.1): ESP32 sniffuje CAN -> wysyla KAZDA
+ramke przez WiFi/WebSocket do OSOBNEGO komputera, ktory dopiero uruchamia
+ColdStartDetector + zapytanie LLM. Na Pi z wlasnym MCP2515 caly ten
+pipeline moglby dzialac NA JEDNYM URZADZENIU -- eliminujac:
+  - caly protokol WebSocket i jego zlozonosc,
+  - kalibracje zegara (time_sync, styl NTP) potrzebna wylacznie dlatego,
+    ze zegary ESP32 i serwera nie sa fizycznie zsynchronizowane,
+  - skladowa t_tx_up z Eksperymentu 1.1 (przestaje istniec, bo nie ma
+    transmisji miedzy dwoma urzadzeniami).
+
+To NAJWIEKSZA realna korzysc architektoniczna -- nie chodzi o "szybszy
+mikrokontroler", tylko o calkowite uproszczenie topologii systemu z
+dwoch-urzadzen-przez-WiFi na jedno-urzadzenie.
+
+2.3. Zasoby -- koniec problemu z buforem (ale to jedyny problem, ktory
+     mielismy)
+
+Pi Zero 2 W: 512MB RAM vs ESP32 ~300KB wolnej pamieci -- ~1700x wiecej.
+Rozwiazuje TRYWIALNIE jedyna realna luke znaleziona w Eksperymencie 2.2
+(mozna buforowac cale MINUTY ruchu, nie tylko sekundy). Ale -- jak
+ustalono wyzej -- ten sam efekt osiagalny jest na ESP32 samym dopisaniem
+kolejki w firmware, bez zmiany plytki.
+
+2.4. Koszt tej zmiany -- to NIE jest "darmowe" ulepszenie
+
+  - Cena: ESP32+MCP2515 ~30-50 PLN vs Raspberry Pi Zero 2 W + HAT CAN
+    ~150-250 PLN (rzad wielkosci 5x drozej).
+  - Pobor mocy: ESP32 ~150-300mW vs Pi Zero 2 W ~1-2.5W (rzad wielkosci
+    10x wiecej) -- istotne dla urzadzenia mysli o pracy na baterii/w
+    pojezdzie przez dluzszy czas.
+  - Czas rozruchu: ESP32 gotowe do pracy w <1s, Linux na Pi to
+    kilkanascie-kilkadziesiat sekund bootowania.
+  - Niezawodnosc: karta SD (typowy nosnik systemu na Pi) jest bardziej
+    podatna na uszkodzenie przy nagle utracie zasilania (typowe w
+    pojezdzie -- odciecie zaplonu) niz pamiec flash ESP32. Wymaga
+    dodatkowego zabezpieczenia (np. montaz read-only, UPS/kondensator
+    buforujacy).
+  - Powierzchnia ataku/zlozonosc: pelny Linux to znacznie wieksza
+    powierzchnia (aktualizacje bezpieczenstwa, zarzadzanie pakietami) niz
+    bare-metal firmware ESP32.
+
+**Wniosek nr 2**: Pi realnie eliminuje jeden konkretny element architektury
+(skok WiFi + kalibracja zegara), ale kosztem 5x ceny, ~10x poboru mocy,
+wolniejszego rozruchu i mniejszej odpornosci na nagle odciecie zasilania --
+co w kontekscie urzadzenia dla pojazdu (silnik gasnie = zasilanie znika) jest
+realnym ryzykiem, nie tylko teoretycznym.
+
+
+3. NAPIECIE Z TEZA PRACY -- NAJWAZNIEJSZE PYTANIE DO DYSKUSJI
+-----------------------------------------------------------------
+
+Nazwa projektu -- "CAN-Edge-AI" -- silnie sugeruje teze o rodzaju: "system
+AI dziala na SKROMNYM, ograniczonym zasobowo urzadzeniu brzegowym". ESP32
+(mikrokontroler bez systemu operacyjnego, ~300KB RAM, ~$5-10) jest
+klasycznym przykladem takiego "edge device". Raspberry Pi Zero (pelny
+Linux, 512MB RAM, ~$15-25) to juz inna kategoria sprzetowa -- SBC
+(single-board computer), nie mikrokontroler.
+
+Zmiana na Pi zmienia PYTANIE BADAWCZE:
+  - Z ESP32: "czy TANI, SKROMNY mikrokontroler udzwignie system
+    wspomagany LLM w czasie rzeczywistym na magistrali CAN?"
+  - Na Pi: "czy SBC z Linuksem to lepsza platforma dla tego zadania?"
+
+To DWIE ROZNE TEZY. Moja szczera opinia: **NIE zastepowalbym** dotychczasowej
+pracy na ESP32 przejsciem na Pi -- zainwestowano juz w to N=1000+ pomiarow
+na 4 eksperymentach, ktore daja spojna, mocna narracje "ESP32 wystarcza,
+jedyna luka to brakujacy kod bufora". Zamiast zastepowac, sugerowalbym
+DODANIE Pi jako **DRUGIEGO POZIOMU POROWNAWCZEGO** w ramach szerszej tezy
+o "hierarchii zasobowej edge computing dla CAN-AI" -- np. nowy rozdzial:
+"Por wnanie wydajnosci miedzy mikrokontrolerem (ESP32) a SBC (Raspberry Pi)
+jako wezel brzegowy" -- to WZBOGACA prace (pokazuje krzywa
+zasob-vs-mozliwosci), zamiast podwazac dotychczasowe wyniki.
+
+**Pytanie do wykladowcy**: czy teza pracy dopuszcza/wymaga takiego
+rozszerzenia, czy ma zostac wylacznie przy mikrokontrolerze? To decyzja
+programowa, nie techniczna -- nie powinienem jej podejmowac za Was.
+
+
+4. OKROJONA APLIKACJA MagistralaCAN4 NATYWNIE NA Pi -- CZY TO MOZLIWE?
+--------------------------------------------------------------------------
+
+Krotka odpowiedz: TAK, i kod juz czesciowo to udowadnia.
+
+Argumenty ZA wykonalnoscia:
+  - `SocketCanDriver` juz istnieje -- warstwa CAN gotowa.
+  - Tryby CLI `--run-experiment-hw` i `--run-experiment-4-1` juz DZIALAJA
+    w trybie headless (QCoreApplication, BEZ okna GUI, bez Qt Widgets) --
+    to juz jest dowod, ze logika core (ColdStartDetector, LlmQueryClient,
+    ExperimentRunner/DecodingAccuracyRunner) DZIALA niezaleznie od calej
+    warstwy graficznej. Zbudowanie w pelni "lean" targetu CMake
+    (bez Qt Widgets, bez OpenCL/GpuCompute, bez 11 widgetow protokolow,
+    bez Lua/skryptow, bez eksporterow MDF4/PCAP niepotrzebnych w tym
+    zastosowaniu) to raczej PRACA PORZADKOWA (audyt zaleznosci +
+    osobny plik CMakeLists dla targetu "magistrala-headless") niz
+    przepisywanie od zera.
+  - `HttpRestServer` (`src/core/HttpRestServer.h`) i `McpServer`
+    (`src/core/McpServer.h`, port 8790) JUZ ISTNIEJA w kodzie -- to
+    gotowe kandydaci na API dla przyszlej aplikacji Android, bez
+    dopisywania nowego protokolu komunikacyjnego od zera.
+
+Co trzeba by DODAC/ZMIENIC (realna praca, nie tylko "juz gotowe"):
+  - Bufor aplikacyjny (luka z Eksperymentu 2.2) -- na Pi mozna dac z
+    duzym zapasem (np. 10k+ ramek), ale trzeba go NAPISAC.
+  - Uruchomienie ColdStartDetector+LlmQueryClient bezposrednio na ramkach
+    z SocketCanDriver (dzis pipeline jest "zaszyty" pod WebSocketServer +
+    ESP32 -- trzeba dopisac wariant "lokalny", analogiczny do tego co dzis
+    robi ExperimentRunner::start() bez hardwareSimulated/realHardwareMode,
+    tylko czytajac z lokalnego SocketCanDriver).
+  - Zabezpieczenie systemu plikow (read-only rootfs / overlay) przed
+    nagla utrata zasilania w pojezdzie.
+  - Testy pod katem faktycznego zuzycia RAM/CPU na docelowym Pi Zero (nie
+    zakladac -- ZMIERZYC, tak jak robilismy z ESP32 w tej sesji).
+
+
+5. SPRZEZENIE Z PRZYSZLA APLIKACJA ANDROID -- OTWARTA DECYZJA PROJEKTOWA
+----------------------------------------------------------------------------
+
+Dwie realne sciezki, obie wykonalne z istniejacym kodem jako punktem
+startowym:
+
+  a) REST/WiFi (`HttpRestServer` juz istnieje): prostsze, mniej kodu do
+     napisania, ale wymaga, zeby telefon i Pi byly w tej samej sieci WiFi
+     (albo Pi dziala jako wlasny hotspot AP) -- realistyczne w warsztacie/
+     na stanowisku diagnostycznym, MNIEJ realistyczne w scenariuszu
+     "w biegu, w nieznanym miejscu, bez infrastruktury sieciowej".
+
+  b) Bluetooth LE (GATT): wymaga NAPISANIA NOWEGO kodu (nic gotowego w
+     repo), wieksza zlozonosc (stos BLE, parowanie), ale dziala WSZEDZIE
+     bez wzgledu na dostepnosc WiFi -- bardziej realistyczne dla
+     faktycznego uzycia w terenie/w pojezdzie.
+
+**Pytanie do wykladowcy/do Was**: jaki jest docelowy scenariusz uzycia
+aplikacji mobilnej? Od tego zalezy, ktora sciezka ma sens -- to nie jest
+pytanie techniczne, tylko o zalozony przypadek uzycia produktu koncowego.
+
+
+6. ORANGE PI JAKO ALTERNATYWA -- CZY WARTO?
+------------------------------------------------
+
+Orange Pi (np. Zero 2, Zero 3) bywa tanszy i czasem ma lepsze
+specyfikacje "na papierze" (wiecej RAM, szybszy CPU) niz porownywalny
+model Raspberry Pi. ALE, z perspektywy projektu akademickiego/inzynierskiego:
+
+  - Wsparcie oprogramowania: Raspberry Pi ma oficjalne, dojrzale,
+    najszerzej udokumentowane wsparcie (Raspberry Pi OS, ogromna
+    spolecznosc, sprawdzone overlaye dla MCP2515). Orange Pi opiera sie
+    glownie na Armbian (spolecznosciowy, mniej jednolity), z bardziej
+    fragmentaryczna dokumentacja per-model i czasem gorszym wsparciem
+    peryferiow (SPI/CAN HAT-y projektowane pod pinout Raspberry Pi moga
+    dzialac niepewnie na Orange Pi bez dodatkowej weryfikacji).
+  - Reprodukowalnosc: dla pracy naukowej/inzynierskiej, gdzie wyniki
+    powinny byc odtwarzalne przez kogos innego (np. promotora,
+    recenzenta), Raspberry Pi jest bezpieczniejszym wyborem -- mniejsze
+    ryzyko, ze ktos nie odtworzy srodowiska przez niszowy sterownik.
+  - Jesli oszczednosc kosztowa lub konkretna przewaga sprzetowa (np.
+    wiecej RAM na wieksze modele/wiecej buforow rownolegle) jest
+    decydujaca, Orange Pi jest warty rozwazenia -- ale ja bym to
+    traktowal jako optymalizacje KOSZTOWA na PoZNIEJSZYM etapie, nie jako
+    pierwszy wybor platformy do walidacji naukowej.
+
+**Moja rekomendacja tutaj**: jesli w ogole rozwazacie SBC, zaczalbym od
+Raspberry Pi Zero 2 W (najlepiej udokumentowany, najwieksza pewnosc ze
+"zadziala od razu"), a Orange Pi rozwazyl dopiero jako swiadoma
+optymalizacje kosztowa PO potwierdzeniu, ze cala koncepcja dziala.
+
+
+7. CZY NATYWNA APLIKACJA NA MINIKOMPUTERZE ZWIEKSZY WYDAJNOSC?
+--------------------------------------------------------------------
+
+Zaleznie CO rozumiemy przez "wydajnosc":
+
+  - Przepustowosc/utrata ramek (Eksperyment 2.1): NIE zmieni sie
+    znaczaco -- juz dzis to magistrala CAN, nie urzadzenie, jest waskim
+    gardlem. Pi tego nie przyspieszy (fizyka magistrali jest taka sama).
+  - Opoznienie Hot Execution (Eksperyment 1.2): NIEPEWNE -- Linux bez
+    patcha PREEMPT_RT wprowadza wlasny jitter szeregowania, ktorego
+    bare-metal ESP32 nie ma. Mozliwe ze SREDNIA bylaby podobna lub lepsza,
+    ale WARIANCJA/powtarzalnosc gorsza. Do tego trzeba by osobnego
+    eksperymentu -- NIE zakladalbym z gory ze Pi jest szybszy.
+  - Calkowity czas Cold Start (t_total z Eksperymentu 1.1): TAK, tutaj
+    realna poprawa -- eliminacja calego skoku WiFi+kalibracji zegara
+    (patrz punkt 2.2) realnie skroci t_total, bo usuwa cala skladowa
+    t_tx_up i caly narzut protokolu WebSocket.
+  - Skutecznosc dekodowania LLM (Eksperyment 4.1): ZERO wplywu -- to
+    wlasciwosc modelu jezykowego, nie platformy sprzetowej.
+
+**Wniosek nr 3**: "wydajnosc" nie jest jedna liczba -- zmiana na Pi
+poprawia JEDEN konkretny wymiar (uproszczenie architektury Cold Start),
+jest NEUTRALNA lub niepewna dla drugiego (latencja), i CALKOWICIE
+NIEISTOTNA dla trzeciego (jakosc dekodowania LLM). Decyzja "czy warto"
+zalezy od tego, KTORY z tych wymiarow jest najwazniejszy dla tezy pracy.
+
+
+8. KIERUNKI ROZWOJU / OPTYMALIZACJI -- NIEZALEZNIE OD WYBORU PLATFORMY
+--------------------------------------------------------------------------
+
+Rzeczy, ktore warto zrobic BEZ WZGLEDU na decyzje ESP32 vs Pi vs Orange Pi:
+
+  1. Dopisac bufor aplikacyjny w firmware ESP32 (luka z Eksperymentu 2.2)
+     -- najtansza, najszybsza poprawa, dziala natychmiast niezaleznie od
+     platformy docelowej.
+  2. Rozwazyc filtr sprzetowy MCP2515 + reakcja w ISR (wariant z
+     Eksperymentu 1.2 HW-filter) jesli kiedys realna aplikacja bedzie
+     wymagac response-time ponizej dzisiejszych ~110us -- pokazalismy ze
+     to mozliwe (schodzi do ~1us), kosztem architektury.
+  3. Mechanizm wielokrotnych/iteracyjnych zapytan LLM zamiast pojedynczego
+     strzalu Cold Start (Eksperyment 4.1 pokazal niska skutecznosc
+     jednorazowej probki, 3-24%) -- prawdopodobnie najwiekszy pojedynczy
+     czynnik poprawy jakosci calego systemu, NIEZALEZNY od platformy
+     sprzetowej.
+  4. Rozwazyc CAN-FD, jesli kiedys realny scenariusz wymagal bedzie
+     przepustowosci powyzej sufitu klasycznego CAN (Eksperyment 2.1
+     pokazal, ze to wlasnie magistrala klasyczna jest dzis limitem).
+  5. Jesli SBC (Pi/Orange Pi) zostanie ostatecznie wybrany: zabezpieczyc
+     system plikow (read-only/overlay) przed utrata zasilania w pojezdzie
+     -- to nie jest opcjonalne, to wymog dla realnego zastosowania
+     motoryzacyjnego.
+
+
+9. MOJE OGOLNE STANOWISKO (PODSUMOWANIE)
+-----------------------------------------------
+
+  - ESP32 W PELNI WYSTARCZA do tego, co dotychczas zmierzono -- brak
+    jakiegokolwiek twardego dowodu na jego niewydolnosc. Jedyna
+    znaleziona luka to brakujacy bufor programowy, latwy do dopisania.
+  - Przejscie na Raspberry Pi/Orange Pi NIE jest "oczywistym ulepszeniem"
+    -- to swiadomy kompromis: prostsza architektura Cold Start kosztem
+    ceny, poboru mocy, odpornosci na utrate zasilania i (byc moze)
+    powtarzalnosci opoznien.
+  - Rekomendowalbym: NIE zastepowac ESP32, tylko (jesli czas/zakres pracy
+    pozwala) potraktowac Pi jako DODATKOWY rozdzial porownawczy, wzmacniajacy
+    teze zamiast ja podwazac.
+  - Jesli SBC, to Raspberry Pi Zero 2 W jako pierwszy wybor (dojrzalosc,
+    dokumentacja, powtarzalnosc) -- Orange Pi jako pozniejsza optymalizacja
+    kosztowa, nie pierwszy krok.
+  - Wiekszosc "korzysci" z aplikacji mobilnej i lekkiej wersji
+    MagistralaCAN4 jest JUZ czesciowo obecna w kodzie (SocketCanDriver,
+    HttpRestServer, McpServer, precedens trybu headless) -- to zmniejsza
+    ryzyko tej sciezki, gdybyscie sie na nia zdecydowali.
+
+
+10. PYTANIA DO PRZEDYSKUTOWANIA Z WYKLADOWCA
+-------------------------------------------------
+
+  1. Czy teza pracy dopuszcza rozszerzenie o SBC jako drugi poziom
+     porownawczy, czy ma pozostac wylacznie przy mikrokontrolerze?
+  2. Jaki jest docelowy scenariusz uzycia aplikacji Android -- WiFi/REST
+     (prostsze, wymaga wspolnej sieci) czy Bluetooth LE (trudniejsze,
+     dziala wszedzie)?
+  3. Czy warto zainwestowac czas w eksperyment "Eksperyment 1.2 na Pi"
+     (powtorzenie pomiaru latencji na SBC), zeby empirycznie zweryfikowac
+     hipoteze o jitterze Linuksa, zamiast zakladac ja teoretycznie?
+  4. Czy budzet/czas na te prace pozwala na rownolegle prowadzenie dwoch
+     platform, czy trzeba wybrac jedna?

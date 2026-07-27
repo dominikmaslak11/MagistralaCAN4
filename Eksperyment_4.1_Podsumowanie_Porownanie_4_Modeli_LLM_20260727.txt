@@ -1,0 +1,119 @@
+EKSPERYMENT 4.1 -- Porownanie 4 modeli LLM
+(Claude Sonnet 5 vs GPT-5.6-sol vs DeepSeek-v4-pro vs Gemini-3.6-flash)
+==============================================================================
+
+Data: 2026-07-27
+Metodyka: identyczna jak w podstawowym Eksperymencie 4.1 (patrz
+"Eksperyment_4.1_Podsumowanie_20260727.txt") -- N=100 prob na kazdy model,
+ten sam syntetyczny mini-DBC (10 sygnalow / 3 CAN ID), ta sama magistrala,
+ten sam generator ruchu, ten sam sprzet ESP32.
+
+
+DRUGI BLAD METODOLOGICZNY ZNALEZIONY I NAPRAWIONY W TRAKCIE TEJ SESJI
+--------------------------------------------------------------------------
+Po pierwszym przebiegu wszystkich 4 modeli okazalo sie, ze DeepSeek i
+Gemini dawaly 0.0% detection rate na WSZYSTKICH sygnalach -- podejrzanie
+rowno zero. Inspekcja surowych odpowiedzi ujawnila: `maxTokens=1024`
+(wartosc odziedziczona z Eksperymentu 1.1, gdzie tresc odpowiedzi nie jest
+parsowana, wiec limit nie mial znaczenia) byl STANOWCZO za maly dla tego
+eksperymentu:
+  - DeepSeek (model "rozumujacy"): odpowiedz ucinana w polowie dlugiego
+    tekstu "myslenia na glos", NIGDY nie docierajac do finalnego JSON-a.
+  - Gemini: odpowiedz ucinana dosl ownie w polowie PIERWSZEGO pola JSON.
+  - Nawet Claude (pierwszy przebieg) mial 13/54 odpowiedzi nieukonczonych
+    z tego samego powodu -- GPT byl jedynym modelem bez tego problemu.
+
+Naprawione: `maxTokens` zwiekszony do 8192 (tylko w DecodingAccuracyRunner,
+NIE dotyka Eksperymentu 1.1). Wszystkie 4 modele przetestowane OD ZERA
+z poprawka -- WYNIKI PONIZEJ SA Z TEGO POPRAWIONEGO PRZEBIEGU (foldery
+`*_v2_*`). Poprzednie (bledne) przebiegi zachowane w repozytorium jako
+udokumentowana historia -- NIE uzywac ich do wnioskow.
+
+
+WYNIKI -- DETECTION RATE PER SYGNAL [%]
+------------------------------------------
+
+ sygnal          | Claude | GPT-5.6 | DeepSeek | Gemini
+ SteeringAngle    | 100.0  | 100.0   |   90.9   | 100.0
+ VehicleSpeed      | 100.0  | 100.0   |   90.9   | 100.0
+ RPM               | 100.0  | 100.0   |   85.3   | 100.0
+ CoolantTemp       | 100.0  | 100.0   |   41.2   |  94.1
+ Throttle          |  79.4  | 100.0   |   73.5   | 100.0
+ RightIndicator    |   0.0  |  36.4   |    6.1   |   3.0
+ Headlights        |   0.0  |  36.4   |    6.1   |   3.0
+ DriverDoor        |   0.0  |  36.4   |    6.1   |   3.0
+ Handbrake         |   0.0  |  33.3   |    9.1   |   3.0
+ LeftIndicator     |   0.0  |  36.4   |    6.1   |   3.0
+
+SREDNI DETECTION RATE (10 sygnalow):
+  1. GPT-5.6-sol       : 67.9%   <- NAJLEPSZY
+  2. Gemini-3.6-flash  : 50.9%
+  3. Claude Sonnet 5    : 47.9%
+  4. DeepSeek-v4-pro    : 41.5%  <- NAJSLABSZY
+
+
+JAKOSC DEKODOWANIA GDY WYKRYTE (usrednione po 5 sygnalach danego typu)
+--------------------------------------------------------------------------
+
+ model             | sredni F1 (dyskretne) | sredni RMSE (ciagle)
+ GPT-5.6-sol        | 1.000 (idealny)        | 994.4
+ DeepSeek-v4-pro     | 0.800                  | 1668.3
+ Gemini-3.6-flash    | 0.600                  | 708.7 (najlepszy RMSE)
+ Claude Sonnet 5     | brak danych (0/5)      | 2169.4 (najgorszy RMSE)
+
+
+KLUCZOWE OBSERWACJE JAKOSCIOWE
+-----------------------------------
+
+1. **GPT-5.6-sol wygrywa jednoznacznie**: najwyzszy detection rate (67.9%)
+   ORAZ perfekcyjna jakosc (F1=1.000) na wszystkich wykrytych sygnalach
+   dyskretnych ORAZ drugi najlepszy RMSE. Jedyny model, ktory konsekwentnie
+   PRAWIDLOWO rozklada bajt 0x200 na 5 osobnych flag bitowych.
+
+2. **Claude Sonnet 5 ma systematyczny, powtarzalny "styl" dekodowania
+   RÓZNY od pozostalych modeli, NIE bledny sam w sobie**: we WSZYSTKICH
+   100 probach dla wiadomosci 0x200, Claude konsekwentnie proponowal
+   JEDNA skalarna wartosc (np. nazwana "status_value", interpretowana jako
+   "tryb/licznik/pozycja biegu") zamiast dekompozycji na bity. To
+   swiadoma, spojna strategia interpretacyjna modelu -- pod naszym
+   SCISLYM kryterium oceny (dokladne trafienie pozycji bitu) daje to 0%,
+   ale w praktycznym zastosowaniu taka interpretacja MOGLABY byc rownie
+   uzyteczna dla innego typu wiadomosci (prawdziwe pojedyncze bajty stanu
+   zdarzaja sie czesto w prawdziwych DBC). Wniosek: nizsza ocena Claude'a
+   w tym konkretnym tescie odzwierciedla NIEDOPASOWANIE STRATEGII
+   interpretacyjnej modelu do STRUKTURY TEGO KONKRETNEGO sygnalu
+   testowego, niekoniecznie ogolna slabsza jakosc modelu.
+
+3. **DeepSeek-v4-pro najslabszy pod wzgledem detection rate (41.5%) I
+   najgorszy RMSE gdy prawidlowo wykryty (1668.3, drugi najgorszy po
+   Claude)**: model "rozumujacy" -- dluzszy czas odpowiedzi (obserwowane
+   t_llm rzedu 15-60s vs kilka-kilkanascie sekund dla pozostalych modeli),
+   co przy tym samym budzecie tokenow zostawia mniej miejsca na
+   precyzyjna, ustrukturyzowana odpowiedz koncowa.
+
+4. **Gemini-3.6-flash ma najlepszy RMSE (708.7) sposrod wszystkich modeli
+   gdy poprawnie zidentyfikuje sygnal**, mimo srodkowego miejsca w
+   detection rate -- sugeruje, ze gdy Gemini trafia strukture, jego
+   oszacowanie skali/offsetu jest najbardziej precyzyjne z calej czworki.
+
+
+WNIOSEK KONCOWY
+----------------
+Nie ma jednego uniwersalnego "najlepszego modelu do wszystkiego" --
+kazdy z czterech ma inny profil mocnych/slabych stron:
+  - GPT-5.6-sol: najlepszy calosciowo (wygrywa obie metryki), dobry
+    domyslny wybor dla tego zastosowania.
+  - Gemini-3.6-flash: najlepsza precyzja liczbowa gdy trafi, ale rzadziej
+    dekomponuje bity poprawnie.
+  - Claude Sonnet 5: solidny na sygnalach ciaglych (79-100% detection),
+    ale systematycznie inna (nie: gorsza) strategia dla upakowanych flag
+    bitowych -- wart przetestowania z INNYM promptem/przykladem, ktory
+    jawnie zasugerowalby mozliwosc wielu flag w jednym bajcie.
+  - DeepSeek-v4-pro: najslabszy w tym konkretnym tescie, prawdopodobnie
+    kosztem dlugiego "rozumowania" zjadajacego budzet tokenow potrzebny na
+    precyzyjna koncowa odpowiedz -- mogloby pomoc dalsze zwiekszenie
+    maxTokens albo wylaczenie trybu rozumowania jesli dostawca na to
+    pozwala.
+
+Pelne dane: `Eksperyment_4.1_Model_Comparison_20260727.csv`, wykres
+`Eksperyment_4.1_Model_Comparison_DetectionRate_20260727.png`.

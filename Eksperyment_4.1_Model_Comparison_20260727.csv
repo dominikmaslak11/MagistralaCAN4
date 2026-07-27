@@ -1,0 +1,41 @@
+model,signal,isDiscrete,detectionRate,trialsSeen,trialsDetected,f1_or_rmse
+Claude Sonnet 5,SteeringAngle,False,1,33,33,1613.479227228219
+Claude Sonnet 5,RightIndicator,True,0,33,0,0
+Claude Sonnet 5,VehicleSpeed,False,1,33,33,2913.402225949721
+Claude Sonnet 5,CoolantTemp,False,1,34,34,4246.628412133975
+Claude Sonnet 5,Throttle,False,0.7941176470588235,34,27,45.91162889976757
+Claude Sonnet 5,RPM,False,1,34,34,2027.6100749960026
+Claude Sonnet 5,Headlights,True,0,33,0,0
+Claude Sonnet 5,DriverDoor,True,0,33,0,0
+Claude Sonnet 5,Handbrake,True,0,33,0,0
+Claude Sonnet 5,LeftIndicator,True,0,33,0,0
+GPT-5.6-sol,RPM,False,1,34,34,552.8431397587464
+GPT-5.6-sol,VehicleSpeed,False,1,33,33,3246.2923185534705
+GPT-5.6-sol,SteeringAngle,False,1,33,33,1140.8353260712615
+GPT-5.6-sol,Throttle,False,1,34,34,32.14267955964208
+GPT-5.6-sol,Handbrake,True,0.3333333333333333,33,11,1
+GPT-5.6-sol,LeftIndicator,True,0.36363636363636365,33,12,1
+GPT-5.6-sol,RightIndicator,True,0.36363636363636365,33,12,1
+GPT-5.6-sol,CoolantTemp,False,1,34,34,0
+GPT-5.6-sol,Headlights,True,0.36363636363636365,33,12,1
+GPT-5.6-sol,DriverDoor,True,0.36363636363636365,33,12,1
+DeepSeek-v4-pro,RPM,False,0.8529411764705882,34,29,1302.2292556870323
+DeepSeek-v4-pro,VehicleSpeed,False,0.9090909090909091,33,30,2645.3815983070685
+DeepSeek-v4-pro,DriverDoor,True,0.06060606060606061,33,2,1
+DeepSeek-v4-pro,SteeringAngle,False,0.9090909090909091,33,30,623.3307309802715
+DeepSeek-v4-pro,RightIndicator,True,0.06060606060606061,33,2,1
+DeepSeek-v4-pro,Throttle,False,0.7352941176470589,34,25,1085.9721869780994
+DeepSeek-v4-pro,CoolantTemp,False,0.4117647058823529,34,14,2684.560132604598
+DeepSeek-v4-pro,Handbrake,True,0.09090909090909091,33,3,1
+DeepSeek-v4-pro,LeftIndicator,True,0.06060606060606061,33,2,1
+DeepSeek-v4-pro,Headlights,True,0.06060606060606061,33,2,0
+Gemini-3.6-flash,VehicleSpeed,False,1,33,33,2001.152942382557
+Gemini-3.6-flash,DriverDoor,True,0.030303030303030304,33,1,0
+Gemini-3.6-flash,RPM,False,1,34,34,1407.302855864721
+Gemini-3.6-flash,Handbrake,True,0.030303030303030304,33,1,1
+Gemini-3.6-flash,Headlights,True,0.030303030303030304,33,1,1
+Gemini-3.6-flash,CoolantTemp,False,0.9411764705882353,34,32,15.733125881400682
+Gemini-3.6-flash,LeftIndicator,True,0.030303030303030304,33,1,1
+Gemini-3.6-flash,Throttle,False,1,34,34,43.78515024050727
+Gemini-3.6-flash,SteeringAngle,False,1,33,33,75.45172146960779
+Gemini-3.6-flash,RightIndicator,True,0.030303030303030304,33,1,0

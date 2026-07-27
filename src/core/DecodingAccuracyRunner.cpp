@@ -230,6 +230,13 @@ void DecodingAccuracyRunner::start() {
     LlmConfig cfg;
     cfg.model = m_modelName;
     cfg.apiKey = m_apiKey;
+    // Domyslne maxTokens=1024 (LlmQueryClient) wystarcza Eksperymentowi 1.1
+    // (nie parsuje tresci, liczy tylko czas), ale tutaj MUSIMY otrzymac
+    // KOMPLETNY, poprawny JSON z wieloma sygnalami - 1024 okazalo sie za
+    // malo (modele reasoning jak DeepSeek ucinaly odpowiedz w polowie
+    // "myslenia na glos" zanim doszly do wlasciwego JSON-a, Gemini ucinal
+    // sie w polowie pierwszego pola). Zwiekszone z duzym zapasem.
+    cfg.maxTokens = 8192;
     if (m_modelName.startsWith("gpt-")) cfg.backend = LlmBackend::OpenAI;
     else if (m_modelName.startsWith("claude-")) cfg.backend = LlmBackend::Anthropic;
     else if (m_modelName.startsWith("deepseek")) cfg.backend = LlmBackend::DeepSeek;
