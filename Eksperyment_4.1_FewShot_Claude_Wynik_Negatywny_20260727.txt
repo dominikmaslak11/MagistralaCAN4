@@ -1,0 +1,108 @@
+EKSPERYMENT 4.1 -- Test wariantu few-shot dla Claude Sonnet 5
+WYNIK: NEGATYWNY (few-shot nie poprawil detekcji flag bitowych)
+==============================================================================
+
+Data: 2026-07-27
+Kontekst: odpowiedz na pytanie wykladowcy o mozliwosc "doszkolenia" ktoregos
+z modeli LLM do lepszej detekcji sygnalow (patrz
+Eksperyment_4.1_Mozliwosc_Doszkolenia_LLM_20260727.pdf) -- test najtanszej
+z zaproponowanych opcji (przyklady few-shot w promptcie, bez treningu).
+
+
+HIPOTEZA
+--------
+Claude Sonnet 5 w tescie zero-shot (Eksperyment_4.1, N=100) konsekwentnie
+interpretowal bajt 0x200 (5 upakowanych flag bitowych: kierunkowskazy,
+swiatla, drzwi, hamulec reczny) jako JEDNA wartosc skalarna
+("status_value"), dajac 0% detection rate na wszystkich 5 sygnalach
+dyskretnych. Hipoteza: dodanie do promptu 1-2 w pelni rozwiazanych
+przykladow (few-shot), jawnie pokazujacych dekompozycje bajtu na
+niezalezne bity, powinno przelamac te preferencje interpretacyjna modelu.
+
+
+METODOLOGIA
+-----------
+Rozszerzono DecodingAccuracyRunner o wariant promptu `buildSystemPromptFewShot()`
+(nowy tryb CLI: `--run-experiment-4-1 ... fewshot=1`) -- ten sam prompt
+bazowy + dwa w pelni rozwiazane przyklady:
+  1. Sygnal ciagly wielobajtowy (kontrolny, nie powinien nic zmienic).
+  2. KLUCZOWY: bajt zawierajacy kilka niezaleznych flag bitowych, z
+     jawna instrukcja "do NOT propose a single scalar signal... decompose
+     it into one signal per bit instead".
+CAN ID i nazwy sygnalow w przykladach CELOWO INNE niz w tescie wlasciwym
+(0x060 zamiast 0x200), zeby model uczyl sie wzorca, nie zapamietywal
+konkretnej odpowiedzi.
+
+N=100 prob, identyczna metodologia/sprzet/generator co bazowy przebieg
+Claude (`Eksperyment_4.1_DecodingAccuracy_Claude_v2_20260727_125414/`,
+zero-shot). Wynik few-shot:
+`Eksperyment_4.1_DecodingAccuracy_Claude_FewShot_20260727_174954/`.
+
+
+WYNIKI
+------
+
+ sygnal          | zero-shot | few-shot | delta
+ SteeringAngle    |   100,0%  |  100,0%  |  0,0pp
+ VehicleSpeed      |   100,0%  |  100,0%  |  0,0pp
+ RPM               |   100,0%  |   91,2%  | -8,8pp
+ CoolantTemp       |   100,0%  |   97,1%  | -2,9pp
+ Throttle          |    79,4%  |   73,5%  | -5,9pp
+ RightIndicator    |     0,0%  |    0,0%  |  0,0pp
+ Headlights        |     0,0%  |    0,0%  |  0,0pp
+ DriverDoor        |     0,0%  |    0,0%  |  0,0pp
+ Handbrake         |     0,0%  |    0,0%  |  0,0pp
+ LeftIndicator     |     0,0%  |    0,0%  |  0,0pp
+
+Srednia (10 sygnalow): zero-shot=47,9% -> few-shot=46,2% (delta -1,8pp)
+
+
+DIAGNOZA -- DLACZEGO NIE ZADZIALALO
+--------------------------------------
+Inspekcja surowej odpowiedzi Claude'a dla proby 0x200 pod promptem
+few-shot pokazuje DOKLADNIE ta sama interpretacje co w zero-shot:
+
+  {"interpretation": "Single byte counter or status value in byte 0;
+  remaining bytes unused/reserved", "signals": [{"name": "status_value",
+  "byteIdx": 0, "byteLen": 1, ..., "bitMask": null, ...}], "confidence": 0.3}
+
+Model NIE odniosl sie w ogole do przykladu pokazujacego dekompozycje
+bitowa -- potraktowal go jako nieistotny dla tej konkretnej ramki. To
+sugeruje, ze preferencja Claude'a do interpretacji "jeden bajt = jedna
+wartosc" (szczegolnie przy niskiej entropii/malym zakresie obserwowanych
+wartosci) jest SILNIEJSZA niz pojedynczy przyklad w kontekscie -- nie
+zostala przelamana mimo jawnej, wprost sformulowanej instrukcji
+przeciwnej.
+
+Dodatkowo dluzszy prompt (z przykladami) LEKKO POGORSZYL wyniki na
+sygnalach ciaglych, ktore i tak dzialaly dobrze w zero-shot (RPM: 100%->
+91.2%, Throttle: 79.4%->73.5%, CoolantTemp: 100%->97.1%) -- koszt bez
+korzysci w tych przypadkach, prawdopodobnie efekt "rozproszenia uwagi"
+modelu przez dodatkowa tresc w kontekscie, niezwiazana z akurat tym typem
+sygnalu.
+
+
+WNIOSEK
+-------
+Pojedynczy przyklad few-shot (najtansza z 3 zaproponowanych opcji) okazal
+sie NIEWYSTARCZAJACY do zmiany zachowania Claude'a dla tego konkretnego
+typu sygnalu (upakowane flagi bitowe o niskiej entropii). To wartosciowy
+wynik negatywny -- zawezaj przestrzen dalszych prob:
+
+- Nie warto powtarzac proby z WIECEJ przykladow tego samego typu bez
+  zmiany strategii -- model juz zignorowal jeden jawny przyklad.
+- Warto rozwazyc: (a) prompt wymagajacy jawnej analizy entropii/rozkladu
+  wartosci KAZDEGO bajtu osobno przed zaproponowaniem interpretacji
+  (bardziej strukturalna instrukcja niz przyklad), (b) prawdziwy
+  fine-tuning (opcja 2 z pierwotnej odpowiedzi -- ale Claude nie
+  udostepnia publicznego fine-tuningu), (c) zaakceptowanie ograniczenia i
+  uzycie GPT-5.6-sol (jedyny model konsekwentnie poprawnie dekomponujacy
+  te flagi w zero-shot, patrz Eksperyment_4.1_Model_Comparison_*) dla
+  tego typu sygnalu w praktycznym zastosowaniu.
+- DeepSeek (open-weight) pozostaje najciekawszym kandydatem do
+  faktycznego fine-tuningu, jesli few-shot/prompt engineering okaza sie
+  niewystarczajace takze dla niego.
+
+Kod (`DecodingAccuracyRunner::buildSystemPromptFewShot()`, flaga CLI
+`fewshot=0|1`) zostaje w repo jako gotowa infrastruktura do dalszych prob
+z innymi strategiami promptowania -- nie tylko do tego jednego testu.

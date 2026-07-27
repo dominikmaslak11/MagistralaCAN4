@@ -266,7 +266,8 @@ static QString modelToApiKeyName(const QString &model) {
 
 static int runDecodingAccuracyExperiment(int argc, char *argv[], const QString &apiKeysPath,
                                           const QString &outDir, int totalTrials, quint16 port,
-                                          const QString &model, int framesPerTrial)
+                                          const QString &model, int framesPerTrial,
+                                          bool fewShot = false)
 {
     QCoreApplication app(argc, argv);
     qRegisterMetaType<CanFrame>("CanFrame");
@@ -294,6 +295,7 @@ static int runDecodingAccuracyExperiment(int argc, char *argv[], const QString &
     runner->setModel(model, apiKey);
     runner->setTotalTrials(totalTrials);
     runner->setFramesToEvaluatePerTrial(framesPerTrial);
+    runner->setFewShotPrompt(fewShot);
     runner->setReportPath(outDir + "/decoding_accuracy_report.json");
 
     QObject::connect(wsServer, &WebSocketServer::errorOccurred, [](const QString &msg) {
@@ -333,8 +335,9 @@ static int runDecodingAccuracyExperiment(int argc, char *argv[], const QString &
         "WebSocketServer nasluchuje na ws://0.0.0.0:%1 — skonfiguruj esp_experiment_1_1.ino "
         "(WS_SERVER_IP/WS_SERVER_PORT=%1) i uruchom generator ruchu "
         "(esp_experiment_4_1/generate_traffic.py) na PEAK PCAN-USB. "
-        "Model: %2, N=%3 prob, %4 ramek ocenianych na probe.")
-            .arg(port).arg(model).arg(totalTrials).arg(framesPerTrial);
+        "Model: %2, N=%3 prob, %4 ramek ocenianych na probe, prompt: %5.")
+            .arg(port).arg(model).arg(totalTrials).arg(framesPerTrial)
+            .arg(fewShot ? QStringLiteral("few-shot") : QStringLiteral("zero-shot"));
 
     runner->start();
     return app.exec();
@@ -396,7 +399,7 @@ int main(int argc, char *argv[])
         if (QString(argv[i]) == QStringLiteral("--run-experiment-4-1")) {
             if (i + 2 >= argc) {
                 qCritical() << "Uzycie: --run-experiment-4-1 <plik_kluczy_api> <katalog_wyjsciowy> "
-                               "[N=100] [port=9000] [model=claude-sonnet-5] [ramek_na_probe=10]";
+                               "[N=100] [port=9000] [model=claude-sonnet-5] [ramek_na_probe=10] [fewshot=0|1]";
                 return 1;
             }
             const QString apiKeysPath = argv[i + 1];
@@ -405,12 +408,14 @@ int main(int argc, char *argv[])
             quint16 port = 9000;
             QString model = QStringLiteral("claude-sonnet-5");
             int framesPerTrial = 10;
+            bool fewShot = false;
             if (i + 3 < argc) trials = QString(argv[i + 3]).toInt();
             if (i + 4 < argc) port = static_cast<quint16>(QString(argv[i + 4]).toUInt());
             if (i + 5 < argc) model = argv[i + 5];
             if (i + 6 < argc) framesPerTrial = QString(argv[i + 6]).toInt();
+            if (i + 7 < argc) fewShot = QString(argv[i + 7]).toInt() != 0;
             return runDecodingAccuracyExperiment(argc, argv, apiKeysPath, outDir, trials, port,
-                                                  model, framesPerTrial);
+                                                  model, framesPerTrial, fewShot);
         }
     }
 

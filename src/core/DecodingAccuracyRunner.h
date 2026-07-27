@@ -39,6 +39,10 @@ public:
     void setTotalTrials(int n) { m_totalTrials = n; }
     void setFramesToEvaluatePerTrial(int n) { m_framesToEvaluate = n; }
     void setReportPath(const QString &path) { m_reportPath = path; }
+    /// Wlacza wariant promptu z przykladami few-shot (patrz buildSystemPromptFewShot())
+    /// - pokazuje jawnie ze jeden bajt moze zawierac kilka niezaleznych flag bitowych.
+    /// Domyslnie false (oryginalny zero-shot prompt, buildSystemPrompt()).
+    void setFewShotPrompt(bool enabled) { m_fewShotPrompt = enabled; }
 
     void start();
 
@@ -107,6 +111,7 @@ private:
     void evaluateFrameAgainstRules(const CanFrame &frame);
 
     [[nodiscard]] static QString buildSystemPrompt();
+    [[nodiscard]] static QString buildSystemPromptFewShot();
     [[nodiscard]] static std::vector<LlmSignalRule> parseRulesFromResponseText(const QString &text);
     [[nodiscard]] static std::vector<GroundTruthSignal> groundTruthFor(uint32_t canId);
     [[nodiscard]] static uint32_t extractRaw(const CanFrame &frame, int byteIdx, int byteLen,
@@ -125,6 +130,7 @@ private:
     int     m_totalTrials = 100;
     int     m_framesToEvaluate = 10;
     QString m_reportPath;
+    bool    m_fewShotPrompt = false;
 
     State   m_state = State::Idle;
     bool    m_running = false;

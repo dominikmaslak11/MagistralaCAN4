@@ -119,6 +119,48 @@ QString DecodingAccuracyRunner::buildSystemPrompt() {
         "decoded physical value matches plausible real-world magnitudes for that quantity.");
 }
 
+// Wariant few-shot: ten sam prompt bazowy + dwa w pelni rozwiazane przyklady.
+// Przyklad 2 jest kluczowy - pokazuje WPROST, ze JEDEN bajt moze zawierac
+// KILKA niezaleznych flag bitowych (dokladnie zaobserwowana slabosc Claude'a:
+// traktowanie takiego bajtu jako pojedynczej wartosci skalarnej). CAN ID i
+// nazwy sygnalow w przykladach sa CELOWO INNE niz w naszym tescie (0x100/
+// 0x150/0x200), zeby model uczyl sie WZORCA, nie zapamietywal konkretnej
+// odpowiedzi dla tych samych ramek.
+QString DecodingAccuracyRunner::buildSystemPromptFewShot() {
+    return buildSystemPrompt() + QStringLiteral(
+        "\n\n"
+        "Here are two fully worked examples of the expected reasoning and output:\n\n"
+        "EXAMPLE 1 — continuous multi-byte signal:\n"
+        "CAN ID: 0x050, DLC: 4\n"
+        "Recent frames: bytes 0-1 climb steadily together (e.g. 0x10 0x27, then "
+        "0x20 0x27, then 0x30 0x27 — interpreted little-endian: 10000, 10016, 10032), "
+        "bytes 2-3 stay at 0x00 0x00.\n"
+        "Correct output:\n"
+        "{\"interpretation\": \"Single 16-bit little-endian counter/speed value in "
+        "bytes 0-1; bytes 2-3 unused\", \"signals\": [{\"name\": \"wheel_speed\", "
+        "\"byteIdx\": 0, \"byteLen\": 2, \"littleEndian\": true, \"isSigned\": false, "
+        "\"bitMask\": null, \"scale\": 0.1, \"offset\": 0.0}], \"confidence\": 0.7}\n\n"
+        "EXAMPLE 2 — ONE byte packs SEVERAL independent bit flags (important pattern):\n"
+        "CAN ID: 0x060, DLC: 3\n"
+        "Recent frames: byte 2 takes values like 0x00, 0x01, 0x02, 0x03, 0x05, 0x04 "
+        "(i.e. individual bits toggle independently and in combination), bytes 0-1 "
+        "stay constant.\n"
+        "Correct output:\n"
+        "{\"interpretation\": \"Byte 2 packs at least 3 independent single-bit status "
+        "flags; bytes 0-1 constant/unused\", \"signals\": ["
+        "{\"name\": \"brake_light\", \"byteIdx\": 2, \"byteLen\": 1, \"littleEndian\": "
+        "false, \"isSigned\": false, \"bitMask\": \"0x01\", \"scale\": 1.0, \"offset\": 0.0}, "
+        "{\"name\": \"reverse_light\", \"byteIdx\": 2, \"byteLen\": 1, \"littleEndian\": "
+        "false, \"isSigned\": false, \"bitMask\": \"0x02\", \"scale\": 1.0, \"offset\": 0.0}, "
+        "{\"name\": \"seatbelt_warning\", \"byteIdx\": 2, \"byteLen\": 1, \"littleEndian\": "
+        "false, \"isSigned\": false, \"bitMask\": \"0x04\", \"scale\": 1.0, \"offset\": 0.0}"
+        "], \"confidence\": 0.6}\n"
+        "Note: do NOT propose a single scalar signal for byte 2 here — when a byte's "
+        "observed values look like independent bit combinations rather than a smooth "
+        "ordered progression, decompose it into one signal per bit instead.\n\n"
+        "Now analyze the real frame below the same way.");
+}
+
 // ── Parsowanie odpowiedzi LLM ──────────────────────────────────────────────────
 
 static QString stripCodeFences(const QString &text) {
@@ -305,7 +347,7 @@ void DecodingAccuracyRunner::onColdStartDetected(uint32_t canId, const CanFrame 
     query.canId = canId;
     query.triggerFrame = frame;
     query.recentFrames = {m_frameHistory.begin(), m_frameHistory.end()};
-    query.systemPrompt = buildSystemPrompt();
+    query.systemPrompt = m_fewShotPrompt ? buildSystemPromptFewShot() : buildSystemPrompt();
 
     m_llmClient->query(query);
 }
@@ -465,6 +507,7 @@ void DecodingAccuracyRunner::finishExperiment() {
     QJsonObject report;
     report["experiment"] = QStringLiteral("4.1 — Decoding Accuracy vs Ground Truth");
     report["model"] = m_modelName;
+    report["promptVariant"] = m_fewShotPrompt ? QStringLiteral("few-shot") : QStringLiteral("zero-shot");
     report["totalTrials"] = m_currentTrial;
     report["framesEvaluatedPerTrial"] = m_framesToEvaluate;
     report["timestamp"] = QDateTime::currentDateTime().toString(Qt::ISODate);
