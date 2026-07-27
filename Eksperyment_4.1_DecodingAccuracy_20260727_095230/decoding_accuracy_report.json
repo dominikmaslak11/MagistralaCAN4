@@ -1,0 +1,1412 @@
+{
+    "experiment": "4.1 — Decoding Accuracy vs Ground Truth",
+    "framesEvaluatedPerTrial": 10,
+    "model": "claude-sonnet-5",
+    "signals": [
+        {
+            "accuracy": 0.4393939393939394,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 185,
+                "tn": 1,
+                "tp": 144
+            },
+            "detectionRate": 1,
+            "f1": 0.6088794926004228,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 330,
+            "name": "LeftIndicator",
+            "precision": 0.4376899696048632,
+            "recall": 1,
+            "trialsDetected": 33,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.06060606060606061,
+            "isDiscrete": false,
+            "mse": 0,
+            "nSamplesEvaluated": 20,
+            "name": "SteeringAngle",
+            "rmse": 0,
+            "trialsDetected": 2,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0.509090909090909,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 162,
+                "tn": 1,
+                "tp": 167
+            },
+            "detectionRate": 1,
+            "f1": 0.6733870967741935,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 330,
+            "name": "Handbrake",
+            "precision": 0.5075987841945289,
+            "recall": 1,
+            "trialsDetected": 33,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.06060606060606061,
+            "isDiscrete": false,
+            "mse": 26900294.458320003,
+            "nSamplesEvaluated": 20,
+            "name": "VehicleSpeed",
+            "rmse": 5186.549378760411,
+            "trialsDetected": 2,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.08823529411764706,
+            "isDiscrete": false,
+            "mse": 2435682.9673750005,
+            "nSamplesEvaluated": 30,
+            "name": "RPM",
+            "rmse": 1560.6674749526244,
+            "trialsDetected": 3,
+            "trialsSeen": 34
+        },
+        {
+            "accuracy": 0.3939393939393939,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 200,
+                "tn": 1,
+                "tp": 129
+            },
+            "detectionRate": 1,
+            "f1": 0.5633187772925764,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 330,
+            "name": "Headlights",
+            "precision": 0.39209726443769,
+            "recall": 1,
+            "trialsDetected": 33,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0.5121212121212121,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 161,
+                "tn": 1,
+                "tp": 168
+            },
+            "detectionRate": 1,
+            "f1": 0.676056338028169,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 330,
+            "name": "RightIndicator",
+            "precision": 0.5106382978723404,
+            "recall": 1,
+            "trialsDetected": 33,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.029411764705882353,
+            "isDiscrete": false,
+            "mse": 2673.972,
+            "nSamplesEvaluated": 10,
+            "name": "Throttle",
+            "rmse": 51.71046315785617,
+            "trialsDetected": 1,
+            "trialsSeen": 34
+        },
+        {
+            "detectionRate": 0.08823529411764706,
+            "isDiscrete": false,
+            "mse": 14602.15891666667,
+            "nSamplesEvaluated": 30,
+            "name": "CoolantTemp",
+            "rmse": 120.83939306644449,
+            "trialsDetected": 3,
+            "trialsSeen": 34
+        },
+        {
+            "accuracy": 0.403030303030303,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 197,
+                "tn": 1,
+                "tp": 132
+            },
+            "detectionRate": 1,
+            "f1": 0.5726681127982647,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 330,
+            "name": "DriverDoor",
+            "precision": 0.4012158054711246,
+            "recall": 1,
+            "trialsDetected": 33,
+            "trialsSeen": 33
+        }
+    ],
+    "timestamp": "2026-07-27T10:18:52",
+    "totalTrials": 100,
+    "trialLog": [
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.125
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 0.01
+                },
+                {
+                    "byteIdx": 4,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_1",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely engine/vehicle telemetry frame containing an RPM-like value and a speed/temperature-like value, with remaining bytes reserved or flag bits.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_1\",\n      \"byteIdx\": 4,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 0
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a status/sensor message with four active data bytes (remaining bytes unused/padding). Byte0 may be a rolling counter or status byte, byte1 a mode/sub-status value, byte2 a temperature-like reading (offset -40C is common in automotive), and byte3 a small discrete level or gear indicator.\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"mode_flag\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temperature\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"level_or_gear\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSig",
+            "success": true,
+            "trial": 1
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "mode_state",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "flag_bit0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "flag_bit1",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Status/command message with a single active byte; byte0 likely encodes a mode/state value or discrete flags, remaining bytes unused (padding/reserved)\",\n  \"signals\": [\n    {\n      \"name\": \"mode_state\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"flag_bit0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"flag_bit1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.3\n}\n```",
+            "success": true,
+            "trial": 2
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/vehicle status frame containing engine RPM and coolant temperature, with remaining bytes reserved or unused\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 3
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/drivetrain status message with a rolling counter, status flag byte, and a 16-bit RPM or speed value\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"flag_bit1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"rpm_or_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,",
+            "success": true,
+            "trial": 4
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message ID 0x200 appears to carry a single incrementing counter or sensor value in byte0, with remaining bytes unused (all zero).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 5
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 6
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 7
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Counter or small sensor value message, first byte varies (0x12-0x19), remaining bytes constant zero padding\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.3\n}",
+            "success": true,
+            "trial": 8
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 9
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_1",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_2",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a sensor/status message containing two 16-bit signed values (e.g. steering angle/rate and a speed or torque signal), with remaining bytes unused/reserved (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 10
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_status",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message on ID 0x200 appears to carry a single small counter or status value in byte0, with remaining bytes unused (always zero)\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 11
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_a_raw",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_sensor",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "aux_status_byte",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor status frame with two multi-byte signals and a slowly varying temperature byte plus an auxiliary counter/status byte\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temp_sensor\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"aux_status_byte\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 12
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a vehicle dynamics message containing a signed rate/angle signal and an unsigned speed or engine RPM signal, packed into the first 4 bytes; remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"yaw_rate_or_lateral_signal\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm_or_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\":",
+            "success": true,
+            "trial": 13
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x200 carries a single 1-byte signal (e.g., a status/level value) in byte0; remaining bytes are unused/reserved (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 14
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 15
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a chassis/dynamics message containing two 16-bit sensor values (e.g., steering angle and a secondary rate/pressure signal); bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_sensor\",",
+            "success": true,
+            "trial": 16
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_status_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Status/counter message with a single active byte; remaining bytes unused (reserved/zero)\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 17
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 18
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 19
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single byte counter or small sensor value (e.g. gear position, pedal percentage, or status counter) in byte0; remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 20
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 21
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 22
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Likely a counter, status, or low-magnitude sensor value in byte0; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 23
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 24
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 25
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "level_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely reports a single small-range status/level value in byte0; remaining bytes are unused/reserved (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"level_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 26
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 27
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{",
+            "success": true,
+            "trial": 28
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single-byte counter or status value in byte0, remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 29
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 30
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 31
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single varying counter or sensor value in byte0, remaining bytes constant/unused (0x00)\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 32
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 33
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 34
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "status_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Status/counter message with a single active byte, likely representing a small counter, mode, or discrete sensor value; remaining bytes constant at zero\",\n  \"signals\": [\n    {\n      \"name\": \"status_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 35
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 36
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 37
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a counter or small status/event value in byte 0, with remaining bytes unused (always zero)\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 38
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 39
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a signed continuous signal (e.g. steering angle or lateral acceleration) in bytes 0-1 and an unsigned continuous signal (e.g. engine RPM) in bytes 2-3; remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 40
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 appears to carry a single active data byte (byte0) that varies between 0 and ~24 while all other bytes remain zero, suggesting a status/mode/counter value; the remaining bytes are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"status_or_counter\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 41
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 42
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely combines a signed rate/angle signal and an unsigned RPM or speed-like counter in the first four bytes; remaining bytes appear unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"angle_or_yaw_rate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm_or_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.",
+            "success": true,
+            "trial": 43
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_mode",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Likely a counter/mode/status byte message, only byte0 varies with small values (0-24), remaining bytes constant at zero\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_mode\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 44
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 45
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 46
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Status message with a single byte counter or small numeric value in byte0; remaining bytes unused/reserved (always zero)\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 47
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/drivetrain status message: contains a fast-varying 16-bit signal (e.g. RPM), a slowly incrementing 8-bit counter/state byte, and a fast-varying 8-bit signal (e.g",
+            "success": true,
+            "trial": 48
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 49
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_mode",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Counter or small status/mode value in byte0, remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_mode\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 50
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 51
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a vehicle dynamics status message containing a signed rate/angle signal and an unsigned speed-like signal, with remaining bytes unused/reserved (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"yaw_rate_or_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian",
+            "success": true,
+            "trial": 52
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Counter or single-byte sensor value message; only byte 0 is active, remaining bytes are unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 53
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a fast-changing sensor value (bytes 0-1, 16-bit) alongside a near-constant reference/offset byte (byte 2, centered around 0x7E-0x80) and a variable counter or checksum byte (byte 3). The remaining bytes are unused (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_raw_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"off",
+            "success": true,
+            "trial": 54
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a signed rate/angle value (bytes 0-1) and an unsigned RPM/speed value (bytes 2-3); bytes 4-7 unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\":",
+            "success": true,
+            "trial": 55
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_status",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\": \"Counter or small status value in byte0; remaining bytes unused/reserved\", \"signals\": [{\"name\": \"counter_or_status\", \"byteIdx\": 0, \"byteLen\": 1, \"littleEndian\": false, \"isSigned\": false, \"scale\": 1.0, \"offset\": 0.0, \"bitMask\": null}], \"confidence\": 0.35}",
+            "success": true,
+            "trial": 56
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 57
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 58
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message with a single active byte (byte0) that varies over a small numeric range, likely a counter, mode, or status/gear indicator; remaining bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 59
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status message likely containing engine RPM, a pedal/throttle position signal centered near mid-scale, and a secondary continuous signal (e.g. load or brake pressure) in the remaining byte; trailing bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"",
+            "success": true,
+            "trial": 60
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 61
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_index",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Counter or small status/index value in byte0, remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_index\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 62
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status message likely containing an RPM-like 16-bit value, a near-constant offset/reference byte, and a variable throttle/position byte.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"re",
+            "success": true,
+            "trial": 63
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a steering/chassis sensor message containing two signed 8-bit values (possibly steering angle and rate) and a 16-bit unsigned value (possibly torque or speed) in bytes 2-3.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_A_signed8\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.5,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_B_signed8\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_C_",
+            "success": true,
+            "trial": 64
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a status/counter message; byte0 varies between small values (0-20) possibly a mode/state or event counter, remaining bytes constant at zero (unused or reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"status_or_counter\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 65
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interp",
+            "success": true,
+            "trial": 66
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 67
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "event_code",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely encodes a single small counter or status/event code in the first byte; remaining bytes unused (padding/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"event_code\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 68
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 69
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely combines a signed 16-bit sensor value (e.g. steering angle or lateral acceleration) in bytes 0-1 and an unsigned 16-bit continuous measurement (e.g. engine RPM or wheel speed) in bytes 2-3. Bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteId",
+            "success": true,
+            "trial": 70
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"0x200 appears to carry a single-byte status/counter value in byte0; remaining bytes are unused/reserved (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"status_or_counter\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 71
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 72
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely combines a signed steering/lateral signal (bytes 0-1) and an unsigned RPM-like counter (bytes 2-3); bytes 4-7 are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset",
+            "success": true,
+            "trial": 73
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single-byte counter or small status/level value in byte0; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 74
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/vehicle status message containing a 16-bit RPM-like value, a status/flag byte, and an 8-bit temperature-like value\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,",
+            "success": true,
+            "trial": 75
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x150 appears to combine two continuous sensor values in the first four bytes; the remaining four bytes are always zero and likely unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"by",
+            "success": true,
+            "trial": 76
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Counter or single-byte status/event value in byte 0; remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 77
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 78
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor/status message containing two 16-bit little-endian signals: a signed rate/angle value (bytes 0-1) and an unsigned speed/RPM-like value (bytes 2-3); remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"yaw_rate_or_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {",
+            "success": true,
+            "trial": 79
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single-byte counter or small status/level value in byte0; remaining bytes unused (always zero)\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}\n```",
+            "success": true,
+            "trial": 80
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status message:",
+            "success": true,
+            "trial": 81
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a chassis/dynamics message containing a signed angular or rate signal (e.g., steering angle) and an unsigned rotational speed value (e.g., engine or wheel RPM); remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_or_rate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm",
+            "success": true,
+            "trial": 82
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_status",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message 0x200 appears to carry a single small counter or status value in byte 0, with remaining bytes unused (always zero). Likely a low-frequency event counter, gear position, or mode indicator.\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 83
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 84
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Steering/sensor message: signed angular value and an unsigned magnitude (likely wheel speed or torque), remaining bytes unused\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,",
+            "success": true,
+            "trial": 85
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single-byte counter or status value in byte0, remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 86
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 87
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 88
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely contains a single small-range counter or status value in byte0, remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 89
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 90
+        },
+        {
+            "canId": "0x150",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 91
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Counter or small status/level value in byte0, remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 92
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 93
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a vehicle dynamics message containing a signed steering/yaw-rate style signal and an engine speed (RPM) signal, both packed into the first 4 bytes; remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bit",
+            "success": true,
+            "trial": 94
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely represents a counter or small status/command value in byte0, with remaining bytes unused (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 95
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 96
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two sensor readings, e.g. a signed steering/angle or acceleration value and an unsigned speed/RPM value, packed",
+            "success": true,
+            "trial": 97
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message likely carries a single small counter or sensor value (e.g., button/mode/position) in byte 0; remaining bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 98
+        },
+        {
+            "canId": "0x100",
+            "error": "Empty response from LLM",
+            "parsedSignals": [
+            ],
+            "ruleText": "",
+            "success": false,
+            "trial": 99
+        }
+    ]
+}

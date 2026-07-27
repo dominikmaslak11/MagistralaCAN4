@@ -1,0 +1,140 @@
+EKSPERYMENT 4.1 -- Skutecznosc identyfikacji sygnalow
+(Decoding Accuracy vs Ground Truth)
+==============================================================================
+
+Data: 2026-07-27
+Sprzet: ESP32 + MCP2515 (esp_experiment_1_1.ino, NIEZMIENIONE, WiFi+WebSocket),
+        magistrala CAN sterowana przez PEAK PCAN-USB (generator syntetycznego
+        ruchu), model LLM: Claude Sonnet 5
+Zrodlo metodyki: "Pomiary dla CAN-Edge AI.md", Grupa 4, Eksperyment 4.1
+
+
+CEL
+---
+Porownanie poprawnosci odszyfrowania parametrow sygnalow CAN przez model LLM
+w zestawieniu z rzeczywista baza danych (ground truth).
+
+
+ODSTEPSTWO OD METODYKI I UZASADNIENIE
+---------------------------------------
+Metodyka zaklada podlaczenie do prawdziwego pojazdu z pelnym, zweryfikowanym
+plikiem DBC. Nie majac dostepu do takiego pojazdu, uzyto SYNTETYCZNEGO,
+samodzielnie zdefiniowanego ukladu 10 sygnalow na 3 identyfikatorach CAN
+(odpowiednik mini-DBC), generowanego w czasie rzeczywistym przez PEAK
+PCAN-USB z realistyczna zmiennoscia wartosci w czasie. Ground truth jest
+w tym podejsciu w 100% pewny (bo eksperymentator sam go definiuje i koduje),
+kosztem realizmu prawdziwego pojazdu.
+
+Uklad sygnalow:
+  CAN ID 0x100 "EngineData" (~50Hz): RPM (2 bajty), CoolantTemp (1 bajt),
+    Throttle (1 bajt)
+  CAN ID 0x150 "SteeringData" (~20Hz): SteeringAngle (2 bajty, ze znakiem),
+    VehicleSpeed (2 bajty)
+  CAN ID 0x200 "BodyStatus" (~10Hz): 5 flag bitowych w jednym bajcie
+    (LeftIndicator, RightIndicator, Headlights, DriverDoor, Handbrake)
+
+Produkcyjny kod C++ (ExperimentRunner, Eksperyment 1.1) mierzy WYLACZNIE
+czas odpowiedzi LLM, nigdy nie parsuje ani nie stosuje zwroconej reguly.
+Do tego eksperymentu dopisano nowa klase DecodingAccuracyRunner (osobny
+prompt/schemat, NIE modyfikuje kodu Eksperymentu 1.1), ktora po wykryciu
+Cold Start pyta LLM o reguly dekodujace (format rozszerzony wzgledem
+Eksperymentu 1.1 o pola byteLen/littleEndian/isSigned dla sygnalow
+wielobajtowych), stosuje je do kolejnych 10 ramek i porownuje z ground
+truth.
+
+
+METODOLOGIA POMIARU
+--------------------
+N=100 prob (cykl round-robin po 3 CAN ID, ~33-34 proby na kazde), kazda
+proba: swiezy Cold Start -> zapytanie LLM o reguly dekodujace -> ocena
+10 kolejnych ramek tego ID. Mierzone: MSE/RMSE dla sygnalow ciaglych,
+macierz pomylek + precision/recall/F1 dla sygnalow dyskretnych, oraz
+DODATKOWO "detection rate" -- odsetek prob, w ktorych LLM w ogole
+zaproponowal regule na wlasciwej pozycji bajtu/bitu (metryka spoza
+oryginalnej metodyki, ale niezbedna do poprawnej interpretacji wynikow --
+patrz nizej).
+
+
+WAZNA POPRAWKA W TRAKCIE EKSPERYMENTU
+---------------------------------------
+Pierwszy przebieg (folder ..._095230) ujawnil blad w kodzie porownujacym:
+dla 5 sygnalow dyskretnych dzielacych ten sam bajt (0x200), dopasowanie
+ground-truth do reguly LLM odbywalo sie WYLACZNIE po numerze bajtu, bez
+uwzglednienia KTORY bit maska izoluje. Skutek: wszystkie 5 sygnalow bylo
+blednie porownywane z ta sama (pierwsza) regula, co dawalo pozornie 100%
+"wykrycia", ale fizycznie bezsensowna macierz pomylek (precision ~40-50%,
+recall zawsze 1.0 -- klasyczny objaw stale "przewidywanej jedynki"). Blad
+zostal namierzony przez recznа inspekcje surowego logu odpowiedzi LLM,
+naprawiony (dopasowanie po bajcie ORAZ pozycji bitu dla sygnalow
+dyskretnych), kod przebudowany i CALY eksperyment N=100 powtorzony od zera
+na swiezych danych (folder ..._103705 -- WYNIK FINALNY, ponizej).
+
+Oba foldery (blednyi poprawiony) zachowane w repozytorium jako czesc
+historii eksperymentu -- pelna przejrzystosc metodologiczna.
+
+
+WYNIKI (przebieg finalny, po poprawce)
+----------------------------------------
+
+Sygnaly dyskretne (5x, jeden bajt 0x200):
+
+ sygnal          | detection rate | precision | recall | F1    | n (gdy wykryty)
+ LeftIndicator    |  3.0%          | 0.000     | 0.000  | --    | 10
+ RightIndicator   |  3.0%          | 0.000     | 0.000  | --    | 10
+ Headlights       |  3.0%          | 1.000     | 1.000  | 1.000 | 10
+ DriverDoor       |  3.0%          | 1.000     | 1.000  | 1.000 | 10
+ Handbrake        |  6.1%          | 1.000     | 1.000  | 1.000 | 20
+
+Sygnaly ciagle:
+
+ sygnal          | detection rate | RMSE (gdy wykryty) | n
+ RPM              |  2.9%          | ~0.0                | 10
+ CoolantTemp       |  2.9%          | ~0.0                | 10
+ Throttle          |  2.9%          | 1.13                | 10
+ SteeringAngle     | 24.2%          | 2318.0              | 80
+ VehicleSpeed      | 24.2%          | 2955.4              | 80
+
+
+INTERPRETACJA
+-------------
+1. Gdy LLM trafi DOKLADNIE wlasciwy bajt (i dla sygnalow dyskretnych --
+   wlasciwy bit) dekodowanie jest niemal idealne: precision/recall=1.000
+   dla wiekszosci wykrytych sygnalow dyskretnych, RMSE~0 dla RPM i
+   CoolantTemp. To pokazuje, ze problemem NIE jest arytmetyka/skalowanie
+   LLM w prostych przypadkach, tylko trafnosc identyfikacji struktury.
+
+2. Trafienie DOKLADNEJ struktury jest jednak rzadkie: detection rate
+   3-24% w zaleznosci od sygnalu. Dla flag bitowych jest to szczegolnie
+   trudne zadanie -- LLM musi nie tylko rozpoznac "to jest pojedynczy bit",
+   ale trafic dokladnie ktory z 5 upakowanych bitow w jednym bajcie
+   odpowiada danemu stanowi -- bardzo ostre kryterium sukcesu.
+
+3. SteeringAngle i VehicleSpeed maja katastrofalnie wysoki RMSE NAWET gdy
+   formalnie "wykryte" (dobry byteIdx) -- sugeruje to, ze LLM czasem
+   poprawnie identyfikuje POLOZENIE sygnalu, ale zgaduje zupelnie bledna
+   SKALE/OFFSET fizyczna (blad rzedu tysiecy, fizycznie niemozliwy dla
+   predkosci pojazdu czy kata kierownicy). To spojne z oczekiwaniem: bez
+   podanych jednostek/kontekstu domenowego, sama obserwacja surowych
+   bajtow nie determinuje jednoznacznie konwencji skalowania.
+
+4. OGRANICZENIE STATYSTYCZNE: przy niskich detection rates niektore
+   sygnaly maja tylko n=10 probek (1 trafiona proba x 10 ramek) --
+   MSE/precision dla nich pochodzi z pojedynczego zdarzenia, nie jest
+   solidnie usrednione. Przy N=100 podzielonym rownomiernie na 3 wiadomosci
+   (~33-34 prob/ID) i tak niskim detection rate, warto w przyszlosci
+   zwiekszyc N specyficznie dla trudniejszych sygnalow (SteeringAngle,
+   VehicleSpeed) albo powtorzyc probe kilkukrotnie na tym samym ID zamiast
+   pojedynczego strzalu na Cold Start.
+
+
+WNIOSEK KONCOWY
+----------------
+System LLM-based decoding (bez podanego DBC/jednostek) radzi sobie DOSKONALE
+z arytmetyka dekodowania, gdy poprawnie zidentyfikuje strukture sygnalu, ale
+sama identyfikacja struktury (dokladny bajt/bit + konwencja skalowania) jest
+trudnym zadaniem z niskа skutecznoscia (rzedu kilku-kilkunastu procent) przy
+JEDNORAZOWEJ probie Cold Start bez iteracyjnej korekty. Wskazuje to na
+potencjalna wartosc mechanizmu wielokrotnych/iteracyjnych zapytan
+korygujacych (podobnie jak w Eksperymencie 4.2 -- "liczba iteracji promptu")
+zamiast pojedynczego strzalu, jesli celem jest praktyczna, wysoka
+niezawodnosc systemu produkcyjnego.

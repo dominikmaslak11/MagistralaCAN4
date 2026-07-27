@@ -16,6 +16,7 @@
 #include "core/LlmQueryClient.h"
 #include "core/LatencyProfiler.h"
 #include "core/ExperimentRunner.h"
+#include "core/DecodingAccuracyRunner.h"
 #include "core/WebSocketServer.h"
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -246,6 +247,99 @@ static int runHeadlessExperimentHw(int argc, char *argv[], const QString &apiKey
     return app.exec();
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Eksperyment 4.1 — Skuteczność identyfikacji sygnałów (Decoding Accuracy)
+// Uruchamiany flagą --run-experiment-4-1 <plik_kluczy_api> <katalog_wyjsciowy>
+//   [N=100] [port=9000] [model=claude-sonnet-5] [ramek_na_probe=10]
+// Wymaga fizycznego ESP32 (esp_experiment_1_1.ino, NIEZMIENIONE) sniffującego
+// magistralę CAN z syntetycznym ruchem (10 sygnałów, 3 CAN ID — patrz
+// esp_experiment_4_1/generate_traffic.py) generowanym przez PEAK PCAN-USB.
+// ═══════════════════════════════════════════════════════════════════════════
+
+static QString modelToApiKeyName(const QString &model) {
+    if (model.startsWith("claude-")) return QStringLiteral("CLAUDE API Key");
+    if (model.startsWith("gpt-")) return QStringLiteral("CODEX API Key");
+    if (model.startsWith("deepseek")) return QStringLiteral("DeepSeek API Key");
+    if (model.startsWith("gemini")) return QStringLiteral("Gemini API Key");
+    return {};
+}
+
+static int runDecodingAccuracyExperiment(int argc, char *argv[], const QString &apiKeysPath,
+                                          const QString &outDir, int totalTrials, quint16 port,
+                                          const QString &model, int framesPerTrial)
+{
+    QCoreApplication app(argc, argv);
+    qRegisterMetaType<CanFrame>("CanFrame");
+
+    const QMap<QString, QString> keys = parseApiKeysFile(apiKeysPath);
+    if (keys.isEmpty()) {
+        qCritical() << "[Experiment 4.1] Nie udalo sie wczytac kluczy API z" << apiKeysPath;
+        return 1;
+    }
+    const QString apiKey = keys.value(modelToApiKeyName(model));
+    if (apiKey.isEmpty()) {
+        qCritical() << "[Experiment 4.1] Brak klucza API dla modelu" << model;
+        return 1;
+    }
+    QDir().mkpath(outDir);
+
+    auto *wsServer = new WebSocketServer(&app);
+    auto *detector = new ColdStartDetector(&app);
+    auto *llmClient = new LlmQueryClient(&app);
+    auto *runner = new DecodingAccuracyRunner(&app);
+
+    runner->setDetector(detector);
+    runner->setLlmClient(llmClient);
+    runner->useRealHardware(wsServer);
+    runner->setModel(model, apiKey);
+    runner->setTotalTrials(totalTrials);
+    runner->setFramesToEvaluatePerTrial(framesPerTrial);
+    runner->setReportPath(outDir + "/decoding_accuracy_report.json");
+
+    QObject::connect(wsServer, &WebSocketServer::errorOccurred, [](const QString &msg) {
+        qCritical().noquote() << "[WebSocketServer]" << msg;
+    });
+    QObject::connect(wsServer, &WebSocketServer::clientCountChanged, [](int count) {
+        qInfo().noquote() << QString("[WebSocketServer] Polaczonych klientow (ESP32): %1").arg(count);
+    });
+
+    QObject::connect(runner, &DecodingAccuracyRunner::progressChanged,
+        [](double frac, const QString &status) {
+            qInfo().noquote() << QString("[%1%] %2").arg(frac * 100.0, 5, 'f', 1).arg(status);
+        });
+    QObject::connect(runner, &DecodingAccuracyRunner::trialCompleted,
+        [](int trialIdx, uint32_t canId) {
+            qInfo().noquote() << QString("--- Proba %1 zakonczona (ID 0x%2) ---")
+                .arg(trialIdx).arg(canId, 3, 16, QChar('0'));
+        });
+    QObject::connect(runner, &DecodingAccuracyRunner::experimentFinished,
+        [&app](const QString &path) {
+            qInfo().noquote() << "Eksperyment 4.1 zakonczony, raport:" << path;
+            app.quit();
+        });
+    QObject::connect(runner, &DecodingAccuracyRunner::experimentError,
+        [&app](const QString &msg) {
+            qCritical().noquote() << "Blad eksperymentu:" << msg;
+            app.exit(1);
+        });
+
+    wsServer->start(port);
+    if (!wsServer->isRunning()) {
+        qCritical() << "[Experiment 4.1] Nie udalo sie uruchomic WebSocketServer na porcie" << port;
+        return 1;
+    }
+
+    qInfo().noquote() << QString(
+        "WebSocketServer nasluchuje na ws://0.0.0.0:%1 — skonfiguruj esp_experiment_1_1.ino "
+        "(WS_SERVER_IP/WS_SERVER_PORT=%1) i uruchom generator ruchu "
+        "(esp_experiment_4_1/generate_traffic.py) na PEAK PCAN-USB. "
+        "Model: %2, N=%3 prob, %4 ramek ocenianych na probe.")
+            .arg(port).arg(model).arg(totalTrials).arg(framesPerTrial);
+
+    runner->start();
+    return app.exec();
+}
+
 static QFile g_logFile;
 static QTextStream g_logStream;
 
@@ -298,6 +392,25 @@ int main(int argc, char *argv[])
             if (i + 4 < argc) port = static_cast<quint16>(QString(argv[i + 4]).toUInt());
             if (i + 5 < argc) modelsFilter = QString(argv[i + 5]).split(',', Qt::SkipEmptyParts);
             return runHeadlessExperimentHw(argc, argv, apiKeysPath, outDir, trials, port, modelsFilter);
+        }
+        if (QString(argv[i]) == QStringLiteral("--run-experiment-4-1")) {
+            if (i + 2 >= argc) {
+                qCritical() << "Uzycie: --run-experiment-4-1 <plik_kluczy_api> <katalog_wyjsciowy> "
+                               "[N=100] [port=9000] [model=claude-sonnet-5] [ramek_na_probe=10]";
+                return 1;
+            }
+            const QString apiKeysPath = argv[i + 1];
+            const QString outDir = argv[i + 2];
+            int trials = 100;
+            quint16 port = 9000;
+            QString model = QStringLiteral("claude-sonnet-5");
+            int framesPerTrial = 10;
+            if (i + 3 < argc) trials = QString(argv[i + 3]).toInt();
+            if (i + 4 < argc) port = static_cast<quint16>(QString(argv[i + 4]).toUInt());
+            if (i + 5 < argc) model = argv[i + 5];
+            if (i + 6 < argc) framesPerTrial = QString(argv[i + 6]).toInt();
+            return runDecodingAccuracyExperiment(argc, argv, apiKeysPath, outDir, trials, port,
+                                                  model, framesPerTrial);
         }
     }
 

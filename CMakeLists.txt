@@ -172,6 +172,7 @@ set(SOURCES
     src/core/CanSignalMapperWidget.cpp
     src/core/ColdStartDetector.cpp
     src/core/ExperimentRunner.cpp
+    src/core/DecodingAccuracyRunner.cpp
     src/core/LatencyProfiler.cpp
     src/core/LlmQueryClient.cpp
     src/gui/MainWindow.cpp
@@ -232,6 +233,7 @@ set(HEADERS
     src/core/UdsWidget.h
     src/core/ColdStartDetector.h
     src/core/ExperimentRunner.h
+    src/core/DecodingAccuracyRunner.h
     src/core/LatencyProfiler.h
     src/core/LlmQueryClient.h
     src/gui/MainWindow.h
