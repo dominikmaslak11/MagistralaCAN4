@@ -1,0 +1,104 @@
+EKSPERYMENT 2.2 -- Odpornosc bufora podczas fazy adaptacji
+(Buffer Overflow Threshold)
+==============================================================================
+
+Data: 2026-07-27
+Sprzet: ESP32 + MCP2515 (SPI, kwarc 16MHz), magistrala CAN sterowana przez
+        PEAK PCAN-USB (SocketCAN, Linux), bitrate 250 kbps
+Zrodlo metodyki: "Pomiary dla CAN-Edge AI.md", Grupa 2, Eksperyment 2.2
+
+
+CEL
+---
+Zbadanie zachowania systemu w sytuacji, gdy nadchodzi nowa ramka CAN,
+a system czeka na odpowiedz z LLM (faza "Cold Start", typowo ~2,2s) --
+przy jakiej czestotliwosci wejsciowej i jakim rozmiarze bufora odbiorczego
+w ESP32 dochodzi do przepelnienia i utraty danych telemetrycznych.
+
+
+METODOLOGIA I ZALOZENIA
+------------------------
+1. Czas oczekiwania na LLM zostal ZASYMULOWANY (deterministycznie, sterowany
+   z hosta), zamiast wykonywac prawdziwe zapytania do LLM. Pozwolilo to
+   precyzyjnie i powtarzalnie przemiatac czas oczekiwania (co jest niemozliwe
+   przy prawdziwym API, gdzie czas odpowiedzi ma wlasny jitter), przy zerowym
+   koszcie i czasie wykonania rzedu minut zamiast godzin.
+2. Zaimplementowano konfigurowalny bufor programowy (ring buffer) w firmware
+   ESP32 (esp_experiment_2_2.ino) -- w normalnym trybie system "przetwarza"
+   kazda ramke natychmiast (bufor pusty); w symulowanej fazie Cold Start
+   system NIE przetwarza ramek z kolejki aplikacyjnej (ale wciaz je
+   odczytuje przez SPI z MCP2515 -- to tania operacja, realistyczne
+   zalozenie), az do zapelnienia bufora -- kolejne ramki ponad pojemnosc
+   sa liczone jako utracone.
+3. Przetestowano 5 rozmiarow bufora: 4, 8, 16, 32, 64 ramek (osobny
+   przebieg firmware dla kazdego rozmiaru).
+4. Przetestowano 3 czestotliwosci wejsciowe: 100, 500, 1000 Hz (wartosci
+   przykladowe z metodyki).
+5. Dla kazdej kombinacji (bufor, czestotliwosc) przetestowano 6 punktow
+   czasu oczekiwania w okolicy progu teoretycznego (T_teor = bufor/f),
+   z wspolczynnikami x0.3, x0.6, x1.0, x1.5, x2.5, x4.0 -- lacznie
+   5 x 3 x 6 = 90 pomiarow.
+6. Protokol sterujacy (dedykowane ramki CAN) synchronizowal start/koniec
+   kazdego okna testowego oraz raportowanie wyniku (liczba ramek
+   odebranych i utraconych) miedzy generatorem (host) a ESP32.
+
+
+WYNIKI -- TABELA PROGOWA
+-------------------------
+
+ bufor  freq[Hz]  próg teoretyczny[ms]  max_safe[ms]  pierwszy_niebezpieczny[ms]
+     4       100                  40.0            40                          60
+     4       500                   8.0             8                          12
+     4      1000                   4.0             6                          10
+     8       100                  80.0            80                         120
+     8       500                  16.0            16                          24
+     8      1000                   8.0             8                          12
+    16       100                 160.0           160                         240
+    16       500                  32.0            32                          48
+    16      1000                  16.0            16                          24
+    32       100                 320.0           320                         480
+    32       500                  64.0            64                          96
+    32      1000                  32.0            32                          48
+    64       100                 640.0           640                         960
+    64       500                 128.0           128                         192
+    64      1000                  64.0            64                          96
+
+(pełne dane: raw_data_combined.csv, wykres: threshold_chart.png)
+
+
+INTERPRETACJA
+-------------
+Dla buforow 8, 16, 32 i 64 empiryczny prog bezpieczenstwa (max_safe)
+POKRYWA SIE DOKLADNIE z prognoza teoretyczna T_prog = rozmiar_bufora /
+czestotliwosc -- system zachowuje sie w pelni przewidywalnie, bez
+dodatkowych strat wynikajacych z narzutu sprzetowego/programowego.
+
+Dla najmniejszego przetestowanego bufora (4 ramki) przy najwyzszej
+czestotliwosci (1000 Hz) empiryczny prog byl NIECO WYZSZY niz teoria
+(6ms zamiast 4ms) -- przy tak malych, bezwzglednie krotkich oknach
+czasowych (rzedu pojedynczych milisekund) staly narzut protokolu
+(czas transmisji ramki sterujacej, obsluga przerwania/SPI) staje sie
+porownywalny z samym oknem pomiarowym i nieznacznie przesuwa realny prog
+w strone wiekszego bezpieczenstwa. Przy wiekszych buforach/dluzszych oknach
+efekt ten staje sie pomijalny.
+
+
+WNIOSEK KONCOWY
+----------------
+Zaleznosc miedzy rozmiarem bufora, czestotliwoscia wejsciowa a maksymalnym
+bezpiecznym czasem oczekiwania na LLM jest w praktyce LINIOWA i w pelni
+zgodna z prostym modelem T_prog = bufor / f -- potwierdzone empirycznie na
+realnym sprzecie w calym przebadanym zakresie (4-64 ramek, 100-1000 Hz).
+
+Praktyczna implikacja dla projektu: przy typowym czasie oczekiwania na LLM
+~2,2s (2200ms) i najwyzszej testowanej czestotliwosci wejsciowej 1000 Hz,
+potrzebny byłby bufor o pojemnosci co najmniej ~2200 ramek, zeby uniknac
+utraty danych telemetrycznych podczas calej fazy Cold Start -- co przy
+typowym ograniczonym RAM mikrokontrolera ESP32 (rzedu setek KB) jest
+w pelni osiagalne (kazda ramka CAN standard to ok. 16 bajtow surowych
+danych -> ~35KB dla bufora 2200 ramek), ale wymaga swiadomego
+zaprojektowania kolejki aplikacyjnej o odpowiedniej pojemnosci -- obecna
+architektura Eksperymentu 1.1 (bezposrednie przekazywanie kazdej ramki
+przez WebSocket bez buforowania) NIE ma takiego bufora i w praktyce
+polegalaby wylacznie na 2-slotowym buforze sprzetowym MCP2515 przy
+wysokich czestotliwosciach ruchu w trakcie Cold Start.

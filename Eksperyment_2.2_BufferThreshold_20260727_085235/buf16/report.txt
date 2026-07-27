@@ -1,0 +1,13 @@
+======================================================================
+EKSPERYMENT 2.2 — Buffer Overflow Threshold, BUFFER_SIZE=16
+======================================================================
+
+  freq[Hz]   teor.prog[ms]   max_safe[ms]  first_unsafe[ms]
+       100           160.0            160               240
+       500            32.0             32                48
+      1000            16.0             16                24
+
+Model: bufor programowy BUFFER_SIZE w ESP32, wypelniany podczas
+symulowanej fazy Cold Start (system nie 'przetwarza' ramek), az do
+pojemnosci bufora - kolejne ramki ponad pojemnosc sa tracone.
+Oczekiwana teoretycznie zaleznosc: T_prog = BUFFER_SIZE / czestotliwosc.
