@@ -1,0 +1,76 @@
+EKSPERYMENT 2.1 -- Maksymalna bezstratna przepustowosc (CAN Frame Throughput)
+==============================================================================
+
+Data: 2026-07-27
+Sprzet: ESP32 + MCP2515 (SPI, kwarc 16MHz), magistrala CAN sterowana przez
+        PEAK PCAN-USB (SocketCAN, Linux)
+Zrodlo metodyki: "Pomiary dla CAN-Edge AI.md", Grupa 2, Eksperyment 2.1
+
+
+CEL
+---
+Okreslenie maksymalnej liczby ramek na sekunde, jaka ESP32 moze przetwarzac
+w czasie rzeczywistym bez gubienia pakietow.
+
+
+METODOLOGIA
+-----------
+1. Generator ruchu (PEAK PCAN-USB, raw SocketCAN, wlasny skrypt Python)
+   wysylal ramki testowe na krokach co 100 ramek/s, od 100 do 5000 ramek/s
+   (50 punktow pomiarowych), po 2 sekundy na kazdy krok.
+2. Zbadano dwie standardowe motoryzacyjne predkosci magistrali: 250 kbps
+   i 500 kbps (osobny przebieg pelnego zakresu dla kazdej).
+3. Firmware ESP32 (esp_experiment_2_1.ino) liczyl kazda ramke testowa
+   odebrana bezblednie przez MCP2515, oraz niezaleznie monitorowal
+   sprzetowa flage przepelnienia bufora RX (EFLG.RX0OVR/RX1OVR) jako
+   dodatkowe, sprzetowe potwierdzenie ewentualnej utraty danych.
+4. Protokol sterujacy (dedykowane ramki CAN, ID 0x7FE) synchronizowal
+   start/koniec kazdego okna pomiarowego miedzy generatorem a ESP32,
+   ktory raportowal wynik przez USB Serial po kazdym oknie.
+5. N_sent liczone bylo jako faktyczna liczba ramek, ktore generator
+   skutecznie wystawil na magistrale (nie liczac ramek odrzuconych
+   lokalnie przez system operacyjny z powodu nasycenia kolejki - te
+   nigdy fizycznie nie trafily na magistrale).
+
+Wzor: FLR = (1 - N_rcvd / N_sent) x 100%
+
+
+WYNIKI
+------
+
+Bitrate      | Zakres testowy   | Sufit rzeczywisty magistrali | FLR
+-------------|------------------|-------------------------------|----------
+250 kbps     | 100-5000 ramek/s | ~2260 ramek/s (rzeczywiste)   | 0,00%
+500 kbps     | 100-5000 ramek/s | ~4365 ramek/s (rzeczywiste)   | 0,00%
+
+W CALYM zbadanym zakresie, na OBU predkosciach magistrali, ESP32 nie
+zgubil ANI JEDNEJ ramki. Rowniez sprzetowy licznik przepelnien bufora
+RX MCP2515 pozostal na zero przez caly czas trwania testow.
+
+
+INTERPRETACJA
+-------------
+Zadany zakres testowy (do 5000 ramek/s) przekracza fizyczna przepustowosc
+samej magistrali CAN dla ramek 8-bajtowych przy testowanych predkosciach --
+generator fizycznie nie byl w stanie wystawic wiecej niz ~2260 ramek/s przy
+250kbps ani ~4365 ramek/s przy 500kbps, niezaleznie od zadanego celu
+(rzeczywiscie osiagana czestotliwosc splaszcza sie powyzej tych progow,
+mimo wyzszego zadanego parametru wejsciowego generatora).
+
+W calym praktycznie osiagalnym zakresie ruchu, WASKIM GARDLEM JEST SAMA
+MAGISTRALA CAN, nie uklad ESP32+MCP2515. System odbiorczy nie wykazuje
+zadnych oznak przeciazenia (ani utraty ramek, ani przepelnienia buforow)
+az do fizycznego sufitu przepustowosci wyznaczonego przez sama magistrale.
+
+
+WNIOSEK KONCOWY
+----------------
+W ramach mozliwosci obecnego zestawu pomiarowego (pojedynczy generator
+PEAK PCAN-USB, standardowe predkosci motoryzacyjne 250/500 kbps) NIE
+udalo sie wyznaczyc rzeczywistego progu utraty ramek przez ESP32 --
+uklad odbiorczy okazal sie szybszy niz sama magistrala CAN w calym
+przebadanym zakresie. Aby wyznaczyc faktyczny limit przetwarzania ESP32,
+konieczne byloby zwiekszenie przepustowosci samej magistrali ponad ten
+fizyczny sufit -- np. poprzez zastosowanie CAN-FD (wyzsze predkosci fazy
+danych) lub uzycie wielu jednoczesnych generatorow ruchu na tej samej
+magistrali. To rekomendowany kierunek rozszerzenia eksperymentu.

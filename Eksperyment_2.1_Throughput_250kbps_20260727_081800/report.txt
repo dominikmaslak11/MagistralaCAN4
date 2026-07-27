@@ -1,0 +1,14 @@
+============================================================
+EKSPERYMENT 2.1 — CAN Frame Throughput @ 250000bps
+MagistralaCAN4 + esp_experiment_2_1.ino (ESP32 + MCP2515)
+============================================================
+Zakres: 100-5000 ramek/s, krok 100, 2.0s/krok, 50 punktow pomiarowych
+
+Pierwszy prog utraty ramek (FLR>0.1%): brak w zbadanym zakresie ramek/s
+Maksymalna faktycznie osiagnieta czestotliwosc nadawania (actual_rate_fps): 2260.5 ramek/s
+
+Wg formuly: FLR = (1 - N_rcvd/N_sent) * 100%
+N_sent = ramki faktycznie wyslane przez generator (sukces send(),
+         nie liczac ramek odrzuconych lokalnie przez ENOBUFS - te
+         nigdy nie trafily na magistrale, wiec nie licza sie jako 'wyslane').
+N_rcvd = ramki bezblednie odebrane i policzone przez ESP32+MCP2515.
