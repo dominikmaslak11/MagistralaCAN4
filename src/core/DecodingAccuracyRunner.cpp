@@ -509,21 +509,34 @@ uint8_t DecodingAccuracyRunner::independentBitMask(const std::vector<CanFrame> &
     return seen0 & seen1;
 }
 
-// Heurystyka: bajt "wyglada jak flagi bitowe" jesli (1) przynajmniej jeden bit
-// realnie przyjmuje oba stany w historii, ORAZ (2) kolejne (W KOLEJNOSCI
-// CZASOWEJ) probki czesto roznia sie SKOKOWO (>3), a nie plynnie o male kroki.
-// WAZNE: analiza samego ZBIORU wartosci (posortowanego) nie wystarcza — N
-// niezaleznych bitow generuje zbior {0..2^N-1}, czyli GESTY ciag kolejnych
-// liczb, nieodrozniajacy sie od licznika/skalara po samym zakresie. Prawdziwa
-// roznica jest w PRZEBIEGU W CZASIE: przelaczenie bitu wyzszego rzedu (np.
-// bit2..bit4) daje skok o >=4, podczas gdy skalar/licznik (np. powolny
-// random-walk throttle/temperatury) zmienia sie w kolejnych probkach o male
-// wartosci. Zweryfikowane symulacja Python przed wdrozeniem (100% trafien na
-// syntetycznych flagach bitowych, 0% falszywych trafien na syntetycznych
-// sygnalach ciaglych, w calym realistycznym zakresie odstepow probkowania).
+// Heurystyka (v2 — poprawiona po znalezieniu falszywych trafien na
+// sygnalach ciaglych podczas realnego testu N=100, patrz
+// Eksperyment_4.1_Hybrydowy_Override_Infografika_20260728.pdf, sekcja
+// "znane ograniczenie"): bajt "wyglada jak flagi bitowe" jesli:
+//   (1) LICZBA bitow niezaleznie przyjmujacych oba stany miesci sie w [2,6] —
+//       prawdziwe upakowane flagi uzywaja PODZBIORU bitow bajtu (reszta
+//       zarezerwowana/stala). Jesli warjuje niemal CALY bajt (7-8 z 8 bitow),
+//       to niemal na pewno szeroko-zakresowy skalar wykorzystujacy pelny
+//       zakres bajtu, nie pole flag — v1 tego nie sprawdzala (wymagala tylko
+//       >=1 bitu), co dawalo falszywe trafienia na CoolantTemp/Throttle
+//       (ich szeroki zakres wartosci sprawial, ze niemal KAZDY bit bajtu
+//       przyjmowal oba stany w oknie historii).
+//   (2) kolejne (W KOLEJNOSCI CZASOWEJ) probki czesto roznia sie SKOKOWO
+//       (>3), a nie plynnie o male kroki — jak w v1.
+// Zweryfikowane symulacja Python PRZED wdrozeniem tej wersji: 100% trafien
+// na syntetycznych flagach bitowych (5 bitow) w calym realistycznym
+// zakresie odstepow probkowania (3-90s), 0-4% falszywych trafien na
+// syntetycznym szeroko-zakresowym skalarze (throttle-like, 0-200) przy
+// odstepach >=20s (0% przy >=40s) - dla porownania v1 dawala tam ~100%
+// falszywych trafien. 0% falszywych trafien na waskozakresowym,
+// ustabilizowanym skalarze (coolant-temp-like) w calym zakresie.
 bool DecodingAccuracyRunner::looksLikeBitFlags(const std::vector<CanFrame> &frames, int byteIdx) {
     if (frames.size() < 2) return false;
-    if (independentBitMask(frames, byteIdx) == 0) return false;
+
+    uint8_t mask = independentBitMask(frames, byteIdx);
+    int bitCount = 0;
+    for (int b = 0; b < 8; ++b) if (mask & (1u << b)) bitCount++;
+    if (bitCount < 2 || bitCount > 6) return false;
 
     int bigJumps = 0, changedPairs = 0;
     for (size_t i = 1; i < frames.size(); ++i) {

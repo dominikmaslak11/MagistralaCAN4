@@ -1,0 +1,3146 @@
+{
+    "experiment": "4.1 — Decoding Accuracy vs Ground Truth",
+    "framesEvaluatedPerTrial": 10,
+    "model": "claude-sonnet-5",
+    "promptVariant": "zero-shot",
+    "signals": [
+        {
+            "accuracy": 1,
+            "accuracyOverride": 1,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 10
+            },
+            "confusionMatrixOverride": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 165,
+                "tp": 135
+            },
+            "detectionRate": 0.030303030303030304,
+            "detectionRateOverride": 0.9090909090909091,
+            "f1": 1,
+            "f1Override": 1,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 10,
+            "nSamplesEvaluatedOverride": 300,
+            "name": "Handbrake",
+            "precision": 1,
+            "precisionOverride": 1,
+            "recall": 1,
+            "recallOverride": 1,
+            "trialsDetected": 1,
+            "trialsDetectedOverride": 30,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 1,
+            "detectionRateOverride": 1,
+            "isDiscrete": false,
+            "mse": 2032611.4960233327,
+            "mseOverride": 2032611.4960233327,
+            "nSamplesEvaluated": 330,
+            "nSamplesEvaluatedOverride": 330,
+            "name": "SteeringAngle",
+            "rmse": 1425.6968457646713,
+            "rmseOverride": 1425.6968457646713,
+            "trialsDetected": 33,
+            "trialsDetectedOverride": 33,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 1,
+            "accuracyOverride": 1,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 9,
+                "tp": 1
+            },
+            "confusionMatrixOverride": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 174,
+                "tp": 136
+            },
+            "detectionRate": 0.030303030303030304,
+            "detectionRateOverride": 0.9393939393939394,
+            "f1": 1,
+            "f1Override": 1,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 10,
+            "nSamplesEvaluatedOverride": 310,
+            "name": "Headlights",
+            "precision": 1,
+            "precisionOverride": 1,
+            "recall": 1,
+            "recallOverride": 1,
+            "trialsDetected": 1,
+            "trialsDetectedOverride": 31,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.9705882352941176,
+            "detectionRateOverride": 0.9705882352941176,
+            "isDiscrete": false,
+            "mse": 102156.25390909093,
+            "mseOverride": 102212.83572727274,
+            "nSamplesEvaluated": 330,
+            "nSamplesEvaluatedOverride": 330,
+            "name": "CoolantTemp",
+            "rmse": 319.6189198234218,
+            "rmseOverride": 319.7074220709816,
+            "trialsDetected": 33,
+            "trialsDetectedOverride": 33,
+            "trialsSeen": 34
+        },
+        {
+            "accuracy": 1,
+            "accuracyOverride": 1,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 10
+            },
+            "confusionMatrixOverride": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 141,
+                "tp": 179
+            },
+            "detectionRate": 0.030303030303030304,
+            "detectionRateOverride": 0.9696969696969697,
+            "f1": 1,
+            "f1Override": 1,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 10,
+            "nSamplesEvaluatedOverride": 320,
+            "name": "LeftIndicator",
+            "precision": 1,
+            "precisionOverride": 1,
+            "recall": 1,
+            "recallOverride": 1,
+            "trialsDetected": 1,
+            "trialsDetectedOverride": 32,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.9705882352941176,
+            "detectionRateOverride": 0.9705882352941176,
+            "isDiscrete": false,
+            "mse": 1397.4560019407322,
+            "mseOverride": 1397.4560019407322,
+            "nSamplesEvaluated": 330,
+            "nSamplesEvaluatedOverride": 330,
+            "name": "Throttle",
+            "rmse": 37.38256280594914,
+            "rmseOverride": 37.38256280594914,
+            "trialsDetected": 33,
+            "trialsDetectedOverride": 33,
+            "trialsSeen": 34
+        },
+        {
+            "detectionRate": 1,
+            "detectionRateOverride": 1,
+            "isDiscrete": false,
+            "mse": 23452943.59517647,
+            "mseOverride": 23452943.59517647,
+            "nSamplesEvaluated": 340,
+            "nSamplesEvaluatedOverride": 340,
+            "name": "RPM",
+            "rmse": 4842.8239277488165,
+            "rmseOverride": 4842.8239277488165,
+            "trialsDetected": 34,
+            "trialsDetectedOverride": 34,
+            "trialsSeen": 34
+        },
+        {
+            "accuracy": 0,
+            "accuracyOverride": 1,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "confusionMatrixOverride": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 170,
+                "tp": 150
+            },
+            "detectionRate": 0,
+            "detectionRateOverride": 0.9696969696969697,
+            "f1": 0,
+            "f1Override": 1,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "nSamplesEvaluatedOverride": 320,
+            "name": "DriverDoor",
+            "precision": 0,
+            "precisionOverride": 1,
+            "recall": 0,
+            "recallOverride": 1,
+            "trialsDetected": 0,
+            "trialsDetectedOverride": 32,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.9696969696969697,
+            "detectionRateOverride": 0.9696969696969697,
+            "isDiscrete": false,
+            "mse": 8753402.67495594,
+            "mseOverride": 8753402.67495594,
+            "nSamplesEvaluated": 320,
+            "nSamplesEvaluatedOverride": 320,
+            "name": "VehicleSpeed",
+            "rmse": 2958.6149926876155,
+            "rmseOverride": 2958.6149926876155,
+            "trialsDetected": 32,
+            "trialsDetectedOverride": 32,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0,
+            "accuracyOverride": 1,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "confusionMatrixOverride": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 130,
+                "tp": 190
+            },
+            "detectionRate": 0,
+            "detectionRateOverride": 0.9696969696969697,
+            "f1": 0,
+            "f1Override": 1,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "nSamplesEvaluatedOverride": 320,
+            "name": "RightIndicator",
+            "precision": 0,
+            "precisionOverride": 1,
+            "recall": 0,
+            "recallOverride": 1,
+            "trialsDetected": 0,
+            "trialsDetectedOverride": 32,
+            "trialsSeen": 33
+        }
+    ],
+    "summary": {
+        "avgDetectionRate": 0.5001782531194296,
+        "avgDetectionRateOverride": 0.9668449197860962,
+        "note": "avgDetectionRateOverride uwzglednia hybrydowy override klasyczny (Kierunek B) - jesli LLM zaproponuje skalar dla bajtu wygladajacego jak flagi bitowe (na podstawie obserwowanych wartosci, nie ground truth), kod programowo wymusza dekompozycje per-bit przed ocena. avgDetectionRate (bez sufiksu) to nadal 'surowy' wynik samego LLM, porownywalny z wczesniejszymi raportami."
+    },
+    "timestamp": "2026-07-28T13:44:49",
+    "totalTrials": 100,
+    "trialLog": [
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "gear_or_mode",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message likely containing RPM, coolant temperature, and gear/mode indicator, with remaining bytes reserved or currently inactive.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"gear_or_mode\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 0
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_counter",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely an engine/vehicle status frame containing a rolling counter/status byte, a 16-bit RPM or speed value, and a temperature-like byte; remaining bytes are unused/reserved (all zero in this sample).\",\n  \"signals\": [\n    {\n      \"name\": \"status_counter\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 1
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "flag_byte1_bit0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a status/counter message; byte0 carries a small incrementing or coded value while remaining bytes are reserved/flag bits currently at zero.\",\n  \"signals\": [\n    {\n      \"name\": \"value1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"flag_byte1_bit0\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.25\n}",
+            "success": true,
+            "trial": 2
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_a_raw",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_b_raw",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry two 16-bit sensor/counter values in the first four bytes, with the remaining four bytes unused (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 3
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_a_rpm_like",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_b_secondary",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit continuous sensor values (e.g., engine speed and a secondary measurement such as temperature or pressure); bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_rpm_like\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_secondary\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 4
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 appears to carry a single 1-byte status/counter value in byte0, with the remaining bytes unused (constant zero).\",\n  \"signals\": [\n    {\n      \"name\": \"status_or_counter\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 5
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 7,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine data frame containing RPM (2-byte little-endian), coolant temperature (1-byte with -40°C offset), and throttle position (1-byte percentage) values; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.6\n}",
+            "success": true,
+            "trial": 6
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "secondary_value",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x150 appears to carry two 16-bit continuous sensor values (e.g. steering angle and a secondary torque/speed reading) packed into the first four bytes; the remaining four bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 7
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 4,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_mode",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a counter or gear/mode indicator in byte 0, remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_mode\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 8
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_load",
+                    "offset": 0,
+                    "scale": 0.4
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message containing RPM, coolant/oil temperature, and throttle/load percentage; remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_load\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.4,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 9
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_1_signed_rate",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_2_unsigned_value",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor message likely containing two 16-bit measurements (e.g., a signed rate/acceleration value and an unsigned counter or secondary sensor value); remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_1_signed_rate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_2_unsigned_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 10
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Counter or single-byte sensor value in first byte, remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 11
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed_raw",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_raw",
+                    "offset": 0,
+                    "scale": 0.4
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries an engine-related sensor cluster: two rapidly varying 16-bit values (bytes 0-1) that may represent engine speed or a fast-changing raw sensor value, plus a slowly increasing byte (byte 2) consistent with a temperature or load reading, and a highly variable single byte (byte 3) that may represent throttle position or torque. The remaining four bytes (4-7) are always zero and appear unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position_raw\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.4,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 12
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signed_value_1",
+                    "offset": 0,
+                    "scale": 0.01
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "unsigned_value_2",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor values (e.g. a signed dynamic measurement such as yaw-rate/acceleration and an unsigned counter or secondary sensor value); trailing four bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signed_value_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"unsigned_value_2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 13
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_status",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message likely reports a single counter or discrete status value in byte 0, with remaining bytes unused or reserved (constant zero across samples).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 14
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_load",
+                    "offset": 0,
+                    "scale": 0.39215686
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message containing engine RPM (2-byte little-endian), coolant temperature (1 byte, offset-based encoding), and a throttle/load value (1 byte); trailing 4 bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_load\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.39215686,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 15
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two continuous sensor values (e.g. steering/yaw signal and a speed or RPM-like counter) packed into the first 4 bytes; remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 16
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_mode",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Counter or status/mode message with single active byte, likely a rolling counter or discrete state value in byte 0; remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_mode\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1,\n      \"offset\": 0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 17
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.125
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine data frame: contains engine speed (RPM), coolant temperature, and a throttle/pedal position value; remaining bytes unused (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+            "success": true,
+            "trial": 18
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "steering_raw_counter",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a steering angle sensor message: a signed 16-bit angle value (bytes 0-1) and an unsigned 16-bit raw counter/secondary angle value (bytes 2-3); remaining bytes are unused/reserved (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"steering_raw_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 19
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message with a single active counter or sensor value in byte 0, remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 20
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 4,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "unknown_byte0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "unknown_byte1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temperature_like_metric",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "unknown_byte3_or_checksum",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"8-byte frame where only the first 4 bytes carry data; last 4 bytes are always zero (padding/reserved). Byte index 2 shows a steadily increasing value across successive frames, consistent with a slowly rising physical quantity such as a temperature. Bytes 0, 1 and 3 vary without an obvious trend and likely encode separate 8-bit signals (e.g., raw sensor bytes, counters, or checksum-like values) that could not be confidently correlated with a specific physical unit from the available samples.\",\n  \"signals\": [\n    {\n      \"name\": \"unknown_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"unknown_byte1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temperature_like_metric\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"unknown_byte3_or_checksum\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 21
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two continuously varying sensor values (e.g. steering angle and vehicle speed) packed as two little-endian 16-bit words in the first four bytes; the remaining four bytes are always zero and appear unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 22
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value_b0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message with a single varying counter or sensor value in byte 0; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value_b0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 23
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.3922
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status message containing engine RPM, coolant temperature, and throttle position; trailing bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3922,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+            "success": true,
+            "trial": 24
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_or_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a steering/torque sensor value and an engine RPM (or similar continuous speed) value, with the remaining four bytes reserved/unused (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_or_torque\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 25
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message with a single active low-order byte counter/status value; remaining bytes constant at zero, likely a small-range sensor, gear/mode indicator, or counter signal.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}\n```",
+            "success": true,
+            "trial": 26
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message: two continuous sensor values in bytes 0-1 (likely engine speed), a slowly increasing byte 2 (looks like coolant/engine temperature warming up), and a noisier byte 3 (likely throttle or load); bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 27
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely combines a signed steering-angle (or similar bidirectional sensor) value in bytes 0-1 and an unsigned RPM-like value in bytes 2-3; bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 28
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message appears to carry a single small-range counter or sensor value in byte 0; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 29
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.5
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message containing engine speed (RPM), coolant temperature, and throttle/pedal position; trailing 4 bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.5,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 30
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "engine_torque",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain data frame likely containing engine/motor torque and engine speed (RPM); remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_torque\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 31
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message with a single varying counter or small-range sensor value in byte 0; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}\n```",
+            "success": true,
+            "trial": 32
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.3922
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely combines an engine speed value (2-byte little-endian), a slowly rising temperature counter, and an auxiliary sensor byte (e.g., throttle or pressure). Bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3922,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 33
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely steering angle sensor message combined with a vehicle speed or wheel-pulse counter; bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 34
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message with a single varying counter/value byte followed by constant zero padding bytes\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}\n```",
+            "success": true,
+            "trial": 35
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.39
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely combines an engine speed value (2-byte little-endian), a slowly rising coolant/oil temperature byte, and a fluctuating pedal/throttle position byte; the last four bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.39,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 36
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN frame 0x150 carries two continuous sensor signals in the first 4 bytes; the remaining 4 bytes are unused/reserved (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 37
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single varying signal in byte0 (values range 0x01-0x1f), remaining bytes constant/unused - likely a counter, gear position, or small-range sensor value\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 38
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.3922
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status frame containing RPM (2 bytes), coolant temperature (1 byte), and throttle/load percentage (1 byte); remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3922,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 39
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 7,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": true,
+                    "littleEndian": false,
+                    "name": "angular_rate",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "torque_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a steering angle / motion sensor message: a 16-bit signed primary value (e.g., steering angle) followed by two smaller 8-bit auxiliary values (e.g., angular rate and torque/counter); trailing bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"angular_rate\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"torque_or_counter\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 40
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying counter/value in byte0; remaining bytes constant (likely unused or reserved)\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 41
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 4,
+            "parsedSignals": [
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_or_counter",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_A",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_B",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_C",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a slowly rising engine/coolant temperature or accumulating counter in byte 2, along with three faster-changing raw sensor bytes (bytes 0,1,3) whose exact scaling is unclear; bytes 4-7 are unused/padding (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"temp_or_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"sensor_A\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_B\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_C\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 42
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "sensor_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "sensor_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor channels (e.g. IMU/gyro or steering-related values) packed little-endian in bytes 0-1 and 2-3; bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 43
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying byte (likely a small counter, mode/gear indicator, or low-range sensor value); remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 44
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.3922
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status frame containing engine speed (RPM), coolant/oil temperature (slowly rising and plateauing), and a throttle/load percentage; trailing bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3922,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 45
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "lateral_accel_or_rate",
+                    "offset": 0,
+                    "scale": 0.01
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "wheel_speed_or_counter",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a vehicle dynamics message containing a signed acceleration/rate signal and an unsigned speed or counter value in the first four bytes; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"lateral_accel_or_rate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"wheel_speed_or_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 46
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single varying counter or sensor value in byte 0, remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"signal_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}\n```",
+            "success": true,
+            "trial": 47
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "aux_load_or_throttle",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message likely containing RPM, coolant temperature, and an auxiliary load/throttle value; last 4 bytes unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"aux_load_or_throttle\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 48
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x150 appears to carry two continuous signals in the first four bytes: a signed 16-bit value (likely steering angle) followed by an unsigned 16-bit value (likely engine RPM). The remaining four bytes are always zero, indicating unused padding or reserved space.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.6\n}",
+            "success": true,
+            "trial": 49
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single-byte signal in byte0 (0-31 range), rest of payload unused/reserved; likely a small sensor reading or status counter such as gear position, pedal percentage, or a rolling index value.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 50
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "aux_sensor",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message containing a 16-bit RPM-like counter, a slowly increasing temperature value, and an additional fluctuating byte (possibly a secondary sensor or noise).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"aux_sensor\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 51
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "angular_rate_or_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a steering/motion sensor message: bytes 0-1 encode a signed value (e.g., steering angle or yaw rate) that oscillates positive/negative, bytes 2-3 encode an always-positive magnitude (e.g., angular rate or torque), and bytes 4-7 are unused/reserved (constant zero).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"angular_rate_or_torque\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 52
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\": \"Single-byte counter or discrete signal in byte0, remaining bytes unused/reserved\", \"signals\": [{\"name\": \"signal_byte0\", \"byteIdx\": 0, \"byteLen\": 1, \"littleEndian\": true, \"isSigned\": false, \"bitMask\": null, \"scale\": 1.0, \"offset\": 0.0}], \"confidence\": 0.4}",
+            "success": true,
+            "trial": 53
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed_or_load",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.4
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries an engine-related status frame: a fast-fluctuating 16-bit sensor value (e.g. RPM or load), a slowly rising 8-bit value (e.g. coolant/oil temperature warming up), and a second fast-changing 8-bit value (e.g. throttle position), with the remaining 4 bytes unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_or_load\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.4,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 54
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "shaft_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "shaft_position_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a rotary/position sensor message (e.g., steering angle or motor shaft encoder) carrying two independent 16-bit fields; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"shaft_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"shaft_position_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 55
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying counter/value byte, remaining bytes constant zero; likely a small sensor value, mode, or rolling counter\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 56
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_or_load",
+                    "offset": 0,
+                    "scale": 0.4
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/vehicle status frame containing an RPM-like fast-changing 16-bit value, a slowly increasing temperature-like byte, and a rapidly varying auxiliary byte (e.g., throttle or load) with unused trailing bytes.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_or_load\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.4,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 57
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_primary",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "steering_angle_secondary",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a steering-angle sensor message containing two 16-bit little-endian values: a primary signed angle (bytes 0-1) and a secondary unsigned value (bytes 2-3), possibly a redundant/rate channel. Bytes 4-7 are unused (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_primary\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"steering_angle_secondary\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 58
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\": \"Single varying byte (0-31 range) likely representing a counter, button state, or small sensor value; remaining bytes constant/unused\", \"signals\": [{\"name\": \"value_byte0\", \"byteIdx\": 0, \"byteLen\": 1, \"littleEndian\": false, \"isSigned\": false, \"bitMask\": null, \"scale\": 1.0, \"offset\": 0.0}], \"confidence\": 0.4}",
+            "success": true,
+            "trial": 59
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed_or_fast_signal",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "slow_rising_temp_or_level",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_fluctuating_sensor",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely bundles a fast-changing engine-speed-like value (bytes0-1, little-endian 16-bit), a slowly rising temperature/level signal (byte2), and a rapidly fluctuating sensor value (byte3, e.g. throttle or load). Bytes 4-7 are always zero and appear unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_or_fast_signal\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"slow_rising_temp_or_level\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"fast_fluctuating_sensor\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 60
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely contains two continuous sensor signals: a signed value in bytes 0-1 (e.g., steering angle or lateral acceleration) and an unsigned value in bytes 2-3 (e.g., engine RPM or wheel speed). Bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 61
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying byte (0x00-0x1f range), likely a counter, mode/state value, or small sensor reading; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 62
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine data message containing RPM, coolant temperature, and throttle position\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+            "success": true,
+            "trial": 63
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message packs two 16-bit little-endian signals: a signed value oscillating around zero (likely steering angle or similar sensor) in bytes 0-1, and a positive-only value in bytes 2-3 consistent with engine RPM. Remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 64
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying counter/value in byte0, remaining bytes constant zero (likely unused or reserved)\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 65
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 4,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_a_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temperature",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_d_raw",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries four independent 1-byte sensor channels; byte2 shows a clear slow monotonic rise consistent with a temperature signal (e.g., coolant or oil temp warming up), while bytes 0, 1 and 3 appear to be fast-changing raw sensor/ADC values or counters with no clear low-frequency trend. The last four bytes are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b_raw\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temperature\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"sensor_d_raw\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 66
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two continuous sensor values: a signed oscillating signal (bytes 0-1, e.g. steering angle or similar centered around zero) and an unsigned magnitude signal (bytes 2-3, e.g. engine RPM). Remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 67
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying counter/status value in byte0 (range 0-31, ~5 bits), remaining bytes constant/unused; likely a small counter, mode, or sensor level indicator\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 68
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_load",
+                    "offset": 0,
+                    "scale": 0.5
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status message containing a slowly rising temperature/counter byte, a fluctuating 16-bit engine speed value, and an auxiliary load/torque byte; trailing 4 bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"engine_load\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.5,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 69
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a steering angle (or similar bipolar sensor) value and an engine speed (RPM) value; remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 70
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single-byte counter or small sensor value in byte0; remaining bytes unused/reserved\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 71
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 1,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "accum_counter",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_metric",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte3_metric",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry a steadily increasing 16-bit accumulator (likely an odometer, fuel-used, or engine-run counter) in bytes 1-2, plus two additional single-byte values (bytes 0 and 3) that change frame-to-frame but do not show a clear monotonic trend, suggesting they are either a rolling counter/checksum or a secondary noisy measurement (e.g., load or short-term fluctuation) rather than a smooth physical signal.\",\n  \"signals\": [\n    {\n      \"name\": \"accum_counter\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"byte0_metric\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"byte3_metric\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 72
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two independent 16-bit sensor readings (e.g. steering angle/torque and a wheel speed or rotational position counter); the last four bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 73
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Single-byte counter or small status value in byte0, rest of payload unused/reserved\",\"signals\":[{\"name\":\"counter_or_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.4}",
+            "success": true,
+            "trial": 74
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 4,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_checksum_1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_checksum_2",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temperature",
+                    "offset": -40,
+                    "scale": 0.5
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "load_or_rpm_fraction",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a slowly rising sensor value (e.g. temperature) in byte2, a rapidly fluctuating value (e.g. RPM/load) in byte3, and two additional bytes (byte0, byte1) that appear to be either a rolling counter/checksum or a fast-changing raw signal, with the remaining 4 bytes unused (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_checksum_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"counter_or_checksum_2\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temperature\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.5,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"load_or_rpm_fraction\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 75
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_rate",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message contains two 16-bit sensor values, likely a signed rate/angle signal (bytes 0-1) and an unsigned counter or speed-related value (bytes 2-3); remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_rate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 76
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a single small-range counter or sensor value in byte0, with remaining bytes unused (reserved/padding).\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 77
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "fast_dynamic_signal",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "slow_rising_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "secondary_fluctuating_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 carries three payload signals in the first 4 bytes (bytes 4-7 are always 0x00, likely unused/reserved). Bytes 0-1 form a fast-changing 16-bit little-endian value (looks like an RPM- or speed-type signal), byte 2 is a slowly, monotonically increasing 1-byte value consistent with a warming temperature, and byte 3 is a separate fluctuating 1-byte value (possibly load or a secondary sensor reading).\",\n  \"signals\": [\n    {\n      \"name\": \"fast_dynamic_signal\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"slow_rising_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"secondary_fluctuating_value\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 78
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Combined vehicle dynamics message likely containing a steering angle (or similar bipolar sensor) and an engine speed (RPM) value; remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 79
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying byte (likely a counter, mode, or small sensor value) in byte0; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 80
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_word_0_1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_like_value",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_counter_or_noise",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor/status message with a slowly increasing temperature-like value, a fast-changing counter/noise byte, and a 16-bit composite value in the first two bytes (possibly RPM or raw sensor reading); remaining bytes unused (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"raw_word_0_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temp_like_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"fast_counter_or_noise\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 81
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor values packed in the first four bytes: a signed oscillating value (e.g., steering angle or lateral position) in bytes 0-1, and an unsigned magnitude value (e.g., engine speed or pressure) in bytes 2-3. Remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 82
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message with a single varying byte (byte0) ranging 0-31, likely a counter, button/step position, or small sensor value (e.g. gear position or rotary switch); remaining bytes constant at zero.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 83
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.4
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine data frame containing RPM, coolant temperature (slowly rising warm-up curve), and a throttle/load percentage; trailing bytes unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.4,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 84
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "steering_angle_rate",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Steering angle sensor message: signed steering angle and unsigned angular rate, with trailing reserved/unused bytes\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"steering_angle_rate\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 85
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Single varying counter or sensor value in byte0, remaining bytes constant/unused (likely reserved or padding)\",\n  \"signals\": [\n    {\n      \"name\": \"signal_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 86
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm_or_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_or_load",
+                    "offset": 0,
+                    "scale": 0.39215686
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message: likely contains a slowly rising engine coolant temperature signal plus a couple of fast-changing sensor values (e.g. RPM/throttle) that appear noisy due to sampling; last 4 bytes unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"engine_rpm_or_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"throttle_or_load\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.39215686,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 87
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "torque_signal",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/drivetrain status message containing a signed torque-like value and an RPM value in the first four bytes; trailing bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"torque_signal\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 88
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single varying counter/value byte with rest of payload static (likely a small sensor value or counter)\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 89
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status frame containing RPM, coolant temperature, and throttle/pedal position\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 90
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a signed steering angle (or similar bipolar sensor) value in bytes 0-1 and an unsigned RPM-like or torque value in bytes 2-3; bytes 4-7 are unused/padding (always zero in observed samples).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 91
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 8,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "status_flags_or_small_value",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "flag_bit0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "flag_bit2",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "flag_bit4",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Byte0 appears to carry a small counter or bitfield-like value (0-31 range), consistent with a status/mode byte with multiple flag bits or a small enumerated signal; remaining bytes are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"status_flags_or_small_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"flag_bit0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"flag_bit2\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": \"0x04\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"flag_bit4\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 92
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "fast_value_16b",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "slow_rising_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_value_8b",
+                    "offset": 0,
+                    "scale": 0.5
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a sensor status message containing one slowly-increasing 8-bit measurement (e.g., temperature) alongside a fast-changing 16-bit value (e.g., engine speed or pressure) and an independent fast-changing 8-bit value (e.g., throttle or noise/counter). The last four bytes are always zero and appear unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"fast_value_16b\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"slow_rising_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"fast_value_8b\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.5,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 93
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor readings (e.g., steering angle and a torque/pressure value) packed in the first four bytes; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 94
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message with a single active byte (byte0) that varies between 2 and 31, likely a counter, mode, or status value; remaining bytes constant at zero (unused or reserved)\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 95
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 3,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.3922
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/vehicle status message: bytes0-1 form a 16-bit little-endian counter (likely engine RPM), byte2 is a slowly increasing single-byte temperature-like value (e.g. coolant temperature), byte3 is a fast-varying single-byte signal (e.g. throttle position or load), and bytes4-7 are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3922,\n      \"offset\": 0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+            "success": true,
+            "trial": 96
+        },
+        {
+            "canId": "0x150",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 2,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "steering_rate",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Steering angle sensor message: signed 16-bit steering angle and an accompanying unsigned 16-bit rate/torque value; remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"steering_rate\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 97
+        },
+        {
+            "canId": "0x200",
+            "overrideChangedRules": true,
+            "overrideRuleCount": 5,
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message with a single varying counter/status byte (byte0) ranging 0-31, rest of payload static/unused\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 98
+        },
+        {
+            "canId": "0x100",
+            "overrideChangedRules": false,
+            "overrideRuleCount": 4,
+            "parsedSignals": [
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_level",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_signal_a",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_signal_b",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_signal_c",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor status message with one steadily increasing measurement (likely temperature or fluid level) and several fast-changing raw sensor/counter bytes; last four bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"temp_level\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"fast_signal_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"fast_signal_b\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"fast_signal_c\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 99
+        }
+    ]
+}
