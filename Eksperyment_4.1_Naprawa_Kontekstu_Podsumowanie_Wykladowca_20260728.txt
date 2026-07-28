@@ -1,0 +1,119 @@
+EKSPERYMENT 4.1 -- Naprawa zanieczyszczenia kontekstu recentFrames
+Test na 4 modelach LLM: Claude, GPT, DeepSeek, Gemini
+==============================================================================
+
+Data: 2026-07-28
+Kontekst: kontynuacja Eksperymentu 4.1 (Decoding Accuracy vs Ground Truth) po
+dwoch nieudanych probach poprawy promptu (few-shot, entropy-analysis -- obie
+bez wplywu na Claude'a, patrz Eksperyment_4.1_FewShot_Claude_Wynik_Negatywny)
+oraz po analizie hipotezy o "oknie obserwacji" na juz zebranych danych.
+
+
+1. CO SPRAWDZALISMY I DLACZEGO
+--------------------------------------------------
+
+Analiza juz zebranych danych (symulacja Python na rzeczywistej sekwencji prob
+z istniejacego raportu) wykazala realny blad architektoniczny w kodzie
+eksperymentu: DecodingAccuracyRunner bada 3 CAN ID w kolejce (0x100, 0x150,
+0x200), a kontekst "recentFrames" przekazywany modelowi LLM byl budowany z
+JEDNEGO wspolnego bufora dla wszystkich 3 ID. Prompt systemowy wprost obiecuje
+modelowi "recent frames FOR THIS ID" -- ale po wypelnieniu okna (30 ramek)
+tylko 33% z nich faktycznie dotyczylo badanego ID, reszta to szum z dwoch
+innych, zupelnie odmiennych sygnalow.
+
+Hipoteza: ten szum mogl byc jedna z przyczyn, dla ktorej wszystkie 4 modele
+mialy skrajnie niska skutecznosc (0-36%) w rozpoznawaniu 5 sygnalow
+dyskretnych (flag bitowych upakowanych w jednym bajcie) -- najslabszej
+kategorii sygnalow w calym eksperymencie.
+
+Poprawka: kazde CAN ID dostalo wlasny, czysty bufor historii (30 ramek).
+Kod skompilowany bez bledow, zweryfikowany, ze nie narusza Eksperymentu 1.1
+(latency-only, niezalezna klasa).
+
+
+2. METODOLOGIA TESTU
+--------------------------------------------------
+
+Dla kazdego z 4 modeli: N=100 prob, wariant zero-shot (celowo bez few-shot/
+entropy-analysis, zeby izolowac WYLACZNIE efekt poprawki kontekstu), na
+naprawionym binarce, identyczny sprzet (ESP32+MCP2515, PEAK PCAN-USB,
+syntetyczny generator 10 sygnalow / 3 CAN ID) i identyczny generator ruchu
+co w istniejacym baseline'ie zero-shot.
+
+
+3. WYNIKI -- srednia detekcji (10 sygnalow) i sygnaly dyskretne (5 flag bitowych)
+--------------------------------------------------
+
+ model              | srednia PRZED | srednia PO | delta   | dyskretne PRZED | dyskretne PO | delta
+ Claude Sonnet 5     |    47,9%       |   47,4%    | -0,6pp  |      0,0%        |     0,0%     |  0,0pp
+ GPT-5.6-sol         |    67,9%       |   43,8%    | -24,1pp |     35,8%        |     0,0%     | -35,8pp
+ DeepSeek-v4-pro     |    41,5%       |   38,8%    | -2,7pp  |      6,7%        |     3,0%     | -3,6pp
+ Gemini-3.6-flash    |    50,9%       |   50,7%    | -0,2pp  |      3,0%        |     6,1%     | +3,0pp
+ SREDNIA (4 modele)  |    52,1%       |   45,2%    | -6,9pp  |     11,4%        |     2,3%     | -9,1pp
+
+Wszystkie 4 przebiegi zakonczyly sie bez bledow technicznych (parsowanie
+odpowiedzi LLM) -- to nie jest artefakt techniczny, tylko rzeczywista zmiana
+zachowania modeli.
+
+
+4. WNIOSEK GLOWNY
+--------------------------------------------------
+
+Poprawka NIE POPRAWILA wynikow zadnego z 4 modeli -- hipoteza wyjsciowa
+("czystszy kontekst -> lepsza detekcja flag bitowych") zostala OBALONA.
+
+Co wiecej, u GPT poprawka spowodowala DRASTYCZNA REGRESJE: srednia spadla z
+67,9% do 43,8%, a detekcja flag bitowych z 35,8% do doslownie 0%. Liczba prob,
+w ktorych GPT w ogole probowal zaproponowac dekompozycje na kilka sygnalow
+(zamiast jednego skalara) spadla z 12/33 do 0/33.
+
+Robocza hipoteza wyjasniajaca: flagi bitowe przelaczaja sie losowo raz na
+3-20 sekund -- rzadziej niz pelny cykl round-robin miedzy 3 CAN ID. Czysty,
+ale mniej zroznicowany bufor (tylko prawdziwe ramki tego ID) czesto pokazuje
+modelowi powtarzajace sie, niezmienne wartosci bajtu -- bo model rzadko
+trafia na moment przelaczenia flagi. Stary, zanieczyszczony bufor przypadkiem
+pokazywal WIECEJ pozornej roznorodnosci wartosci (choc blednie przypisanej,
+z innych ID) -- co mogl czesciej "podpowiadac" modelowi hipoteze o zlozonej
+strukturze bajtu, nawet jesli podstawa tego rozumowania byla nietrafna.
+Innymi slowy: przypadkowy szum z innych sygnalow mogl dzialac jak niezamierzony
+sygnal ostrzegawczy "tu jest cos zlozonego", ktorego zabraklo w czystych, ale
+ubogich w warianty danych. To hipoteza robocza, nie potwierdzony mechanizm --
+wymagalaby dalszej weryfikacji.
+
+WAZNE: poprawka mimo to zostaje w kodzie -- jest slusznie architektonicznie
+(recentFrames faktycznie odpowiada teraz obietnicy z promptu), nawet jesli
+akurat nie pomaga w tym konkretnym zadaniu. To dwie niezalezne osie: poprawnosc
+kodu i skutecznosc modelu moga sie rozjezdzac.
+
+
+5. SZERSZY WNIOSEK Z CALEJ SERII TESTOW
+
+To juz CZWARTY z rzedu negatywny/neutralny wynik interwencji na poziomie
+promptu/kontekstu (zero-shot baseline, few-shot, entropy-analysis, context-fix)
+wobec tego samego problemu: dekompozycji flag bitowych. Silny sygnal, ze
+problem nie lezy w tym, CO mowimy modelowi ani JAK czysty jest kontekst --
+tylko w tym, ze modele zawodnie licza entropie/niesekwencyjnosc bajtu z
+surowego zapisu hex w jednym przebiegu wnioskowania, niezaleznie od instrukcji
+czy jakosci danych wejsciowych.
+
+
+6. PROPOZYCJE DALSZYCH KROKOW (skrot)
+
+Pelny opis w Eksperyment_4.2_Propozycja_Dalszej_Optymalizacji_LLM_20260728.md.
+
+* Kierunek rekomendowany do dalszych badan (Eksperyment 4.2): dostarczyc
+  modelowi JUZ POLICZONE statystyki per bajt (liczba unikalnych wartosci,
+  niezaleznosc przelaczania bitow, monotonicznosc) zamiast prosic go, zeby
+  liczyl je sam z surowego hexu -- zmienia zadanie z "policz i zauwaz" na
+  "zinterpretuj gotowa obserwacje".
+
+* Kierunek rekomendowany do wdrozenia PRODUKCYJNEGO (niezaleznie od dalszych
+  eksperymentow): hybrydowy override -- jesli LLM zaproponuje skalar, kod
+  deterministycznie sprawdza, czy wartosci tworza wzorzec typowy dla flag
+  bitowych, i w takim razie programowo wymusza dekompozycje. Gwarantowana
+  poprawa, niezalezna od ograniczen modelu.
+
+Pelna lista otwartych pytan i kwestii do dyskusji (m.in. czy dalsza praca ma
+byc czysto naukowa -- testowanie granic samego LLM, czy inzynierska --
+najlepszy praktyczny pipeline dekodowania) w osobnym pliku:
+Pytania_Do_Wykladowcy_Eksperyment_4.1_20260728.md

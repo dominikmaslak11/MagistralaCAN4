@@ -35,14 +35,19 @@ public:
     void setLlmClient(LlmQueryClient *client);
     void useRealHardware(WebSocketServer *server);
 
+    /// Warianty promptu systemowego wyslanego do LLM - patrz build*() w .cpp.
+    enum class PromptVariant {
+        ZeroShot,         ///< oryginalny prompt, bez przykladow/dodatkowych instrukcji
+        FewShot,          ///< + 2 w pelni rozwiazane przyklady (WYNIK: negatywny, patrz pamiec/raport)
+        EntropyAnalysis,  ///< + wymuszona procedura krok-po-kroku: sprawdz kazdy bajt
+                          ///< pod katem "upakowane flagi bitowe" vs "skalar" PRZED odpowiedzia
+    };
+
     void setModel(const QString &modelName, const QString &apiKey);
     void setTotalTrials(int n) { m_totalTrials = n; }
     void setFramesToEvaluatePerTrial(int n) { m_framesToEvaluate = n; }
     void setReportPath(const QString &path) { m_reportPath = path; }
-    /// Wlacza wariant promptu z przykladami few-shot (patrz buildSystemPromptFewShot())
-    /// - pokazuje jawnie ze jeden bajt moze zawierac kilka niezaleznych flag bitowych.
-    /// Domyslnie false (oryginalny zero-shot prompt, buildSystemPrompt()).
-    void setFewShotPrompt(bool enabled) { m_fewShotPrompt = enabled; }
+    void setPromptVariant(PromptVariant v) { m_promptVariant = v; }
 
     void start();
 
@@ -102,6 +107,15 @@ private:
         std::vector<double> squaredErrors;
         // dyskretne: macierz pomyłek 2x2 (tylko wśród wykrytych)
         int tp = 0, tn = 0, fp = 0, fn = 0;
+
+        // Metryki RÓWNOLEGŁE, z zastosowanym hybrydowym override'em klasycznym
+        // (Kierunek B — patrz Eksperyment_4.2_Propozycja_Dalszej_Optymalizacji_LLM).
+        // Osobny, dodatkowy zestaw liczników — NIE zastępuje powyższych "surowych"
+        // metryk LLM, żeby dotychczasowe raporty/porównania (4 modele, warianty
+        // promptu) pozostały ważne i porównywalne bez zmian.
+        int trialsDetectedOverride = 0;
+        std::vector<double> squaredErrorsOverride;
+        int tpOverride = 0, tnOverride = 0, fpOverride = 0, fnOverride = 0;
     };
 
     void setState(State s);
@@ -112,6 +126,7 @@ private:
 
     [[nodiscard]] static QString buildSystemPrompt();
     [[nodiscard]] static QString buildSystemPromptFewShot();
+    [[nodiscard]] static QString buildSystemPromptEntropyAnalysis();
     [[nodiscard]] static std::vector<LlmSignalRule> parseRulesFromResponseText(const QString &text);
     [[nodiscard]] static std::vector<GroundTruthSignal> groundTruthFor(uint32_t canId);
     [[nodiscard]] static uint32_t extractRaw(const CanFrame &frame, int byteIdx, int byteLen,
@@ -119,6 +134,17 @@ private:
     [[nodiscard]] static int singleBitPosition(uint32_t mask);
     [[nodiscard]] static const LlmSignalRule *findMatchingRule(
         const GroundTruthSignal &gt, const std::vector<LlmSignalRule> &rules);
+
+    // ── Hybrydowy override klasyczny (Kierunek B) ──────────────────────────────
+    // Deterministyczna klasyfikacja bajtu na podstawie OBSERWOWANYCH wartości w
+    // historii ramek (NIE na podstawie ground truth — to musi być uczciwa
+    // heurystyka, nie podglądanie odpowiedzi). Jeśli LLM zaproponuje pojedynczy
+    // skalar dla bajtu, który wygląda jak niezależne flagi bitowe, override
+    // programowo zastępuje tę regułę zestawem reguł per-bit.
+    [[nodiscard]] static uint8_t independentBitMask(const std::vector<CanFrame> &frames, int byteIdx);
+    [[nodiscard]] static bool looksLikeBitFlags(const std::vector<CanFrame> &frames, int byteIdx);
+    [[nodiscard]] static std::vector<LlmSignalRule> applyBitFlagOverride(
+        const std::vector<LlmSignalRule> &rules, const std::vector<CanFrame> &frames);
 
     ColdStartDetector *m_detector = nullptr;
     LlmQueryClient    *m_llmClient = nullptr;
@@ -130,7 +156,7 @@ private:
     int     m_totalTrials = 100;
     int     m_framesToEvaluate = 10;
     QString m_reportPath;
-    bool    m_fewShotPrompt = false;
+    PromptVariant m_promptVariant = PromptVariant::ZeroShot;
 
     State   m_state = State::Idle;
     bool    m_running = false;
@@ -141,10 +167,18 @@ private:
     uint32_t m_targetCanId = 0;
     uint32_t m_currentCanId = 0;
 
-    std::deque<CanFrame> m_frameHistory;
+    // Osobny bufor historii NA KAZDE CAN ID (naprawa zanieczyszczenia kontekstu:
+    // przed ta zmiana wspolny bufor FIFO mieszal ramki wszystkich 3 ID, wiec po
+    // ustabilizowaniu (round-robin) tylko ~10/30=33% recentFrames dotyczylo
+    // faktycznie badanego ID - reszta byla nieistotnym szumem z pozostalych
+    // wiadomosci, mimo ze prompt jawnie obiecuje modelowi "recent frames FOR
+    // THIS ID"). Kazde ID ma teraz wlasny, czysty bufor do 30 ramek.
+    QHash<uint32_t, std::deque<CanFrame>> m_frameHistoryByCanId;
     static constexpr int kMaxHistory = 30;
 
     std::vector<LlmSignalRule>      m_currentRules;
+    std::vector<LlmSignalRule>      m_currentRulesOverride; // patrz applyBitFlagOverride()
+    std::vector<CanFrame>           m_currentHistoryFrames; // te same ramki, ktore widzial LLM w recentFrames
     std::vector<GroundTruthSignal>  m_currentGroundTruth;
     int m_framesCollected = 0;
 

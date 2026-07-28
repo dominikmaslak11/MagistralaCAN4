@@ -1,0 +1,2941 @@
+{
+    "experiment": "4.1 — Decoding Accuracy vs Ground Truth",
+    "framesEvaluatedPerTrial": 10,
+    "model": "claude-sonnet-5",
+    "promptVariant": "entropy-analysis",
+    "signals": [
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "Headlights",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "LeftIndicator",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.7352941176470589,
+            "isDiscrete": false,
+            "mse": 4032.357063631999,
+            "nSamplesEvaluated": 250,
+            "name": "Throttle",
+            "rmse": 63.50084301512854,
+            "trialsDetected": 25,
+            "trialsSeen": 34
+        },
+        {
+            "detectionRate": 0.9696969696969697,
+            "isDiscrete": false,
+            "mse": 18535.870592812505,
+            "nSamplesEvaluated": 320,
+            "name": "SteeringAngle",
+            "rmse": 136.14650415200717,
+            "trialsDetected": 32,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.9696969696969697,
+            "isDiscrete": false,
+            "mse": 7202501.066353127,
+            "nSamplesEvaluated": 320,
+            "name": "VehicleSpeed",
+            "rmse": 2683.7475787326066,
+            "trialsDetected": 32,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "RightIndicator",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 1,
+            "isDiscrete": false,
+            "mse": 37131659.14580148,
+            "nSamplesEvaluated": 340,
+            "name": "RPM",
+            "rmse": 6093.57523509815,
+            "trialsDetected": 34,
+            "trialsSeen": 34
+        },
+        {
+            "detectionRate": 1,
+            "isDiscrete": false,
+            "mse": 174620030.72419116,
+            "nSamplesEvaluated": 340,
+            "name": "CoolantTemp",
+            "rmse": 13214.387262532877,
+            "trialsDetected": 34,
+            "trialsSeen": 34
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "DriverDoor",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "Handbrake",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        }
+    ],
+    "timestamp": "2026-07-27T18:59:39",
+    "totalTrials": 100,
+    "trialLog": [
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value1_raw",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value2_raw",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a sensor/status frame with two 16-bit little-endian scalar values (e.g., RPM and temperature/pressure) in the first four bytes; remaining bytes are zero/reserved and no temporal variation was observed to confirm bit-flag behavior.\",\n  \"signals\": [\n    {\n      \"name\": \"value1_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"value2_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.25\n}",
+            "success": true,
+            "trial": 0
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 1,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "primary_value_16b",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "secondary_value_8b",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 appears to carry a 16-bit sensor value (bytes 1-2) plus a secondary 8-bit scalar (byte 3); remaining bytes are zero/reserved in the single observed sample.\",\n  \"signals\": [\n    {\n      \"name\": \"primary_value_16b\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_value_8b\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.25\n}",
+            "success": true,
+            "trial": 1
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_or_mode_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Mostly static status/counter frame on ID 0x200; only byte 0 carries a nonzero value, remaining bytes are zero (unused or reserved). Insufficient variation observed to confidently split byte 0 into bit-flags versus scalar, but its binary pattern (00011100) and lack of other data suggest a small status/mode/counter byte.\",\n  \"signals\": [\n    {\n      \"name\": \"status_or_mode_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.25\n}",
+            "success": true,
+            "trial": 2
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_A",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_B",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor/counter values packed into bytes 0-3, with bytes 4-7 reserved or unused (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"value_A\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"value_B\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 3
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flags",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "const_flag_byte1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "sensor_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Status/enable flags byte followed by a 16-bit scalar measurement (e.g. sensor value or counter) packed into bytes 2-3; remaining bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flags\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0xC0\",\n      \"scale\": 1,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"const_flag_byte1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"sensor_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1,\n      \"offset\": 0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 4
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 appears to carry a single-byte scalar value (e.g., a counter, temperature, or level indicator) in byte 0; remaining bytes are constant zero across all observed samples and likely unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 5
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_a_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_raw",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x100 appears to carry two 16-bit sensor/measurement values in the first four bytes, with the remaining four bytes unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 6
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "flag_bit7",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "flag_bit6",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "flag_bit4",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "flag_bit3",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b2",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b3",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"0x150 appears to combine a status/flag byte, a constant/reserved byte, and two independent scalar sensor readings in the low bytes.\",\n  \"signals\": [\n    {\n      \"name\": \"flag_bit7\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"flag_bit6\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"flag_bit4\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"flag_bit3\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x08\",\n      \"scale\": 1,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"sensor_b2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1,\n      \"offset\": 0\n    },\n    {\n      \"name\": \"sensor_b3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1,\n      \"offset\": 0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 7
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x200 appears to carry a single 8-bit scalar signal in byte 0 (e.g. a counter, level, or status value); the remaining 7 bytes are always zero and show no variation, suggesting they are unused/reserved padding.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 8
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_byte0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_byte1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries an engine/vehicle speed-related counter (bytes 2-3, steadily increasing) plus two independent 8-bit sensor values in bytes 0 and 1; bytes 4-7 are unused/reserved (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_byte1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 9
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_A_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_B_raw",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 appears to carry two 16-bit little-endian scalar signals in the first four bytes; the remaining four bytes are always zero and likely reserved/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_A_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_B_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 10
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 appears to carry a single active byte (byte0) that varies between a few small values while the remaining 7 bytes stay constant at zero; likely a status/level scalar rather than independent flags.\",\n  \"signals\": [\n    {\n      \"name\": \"status_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 11
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_a",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_b",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry two 16-bit sensor/counter values in the first four bytes; the remaining four bytes are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"value_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"value_b\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 12
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "sensor_a_value",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "sensor_b_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x150 carries two 16-bit little-endian sensor values in bytes 0-3; bytes 4-7 are unused/reserved (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 13
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message appears to carry a single 1-byte counter or measurement value in byte0; remaining 7 bytes are always zero and likely unused/reserved padding in this dataset.\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 14
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/status message with an RPM-like 16-bit value, a slowly rising temperature byte, and a variable throttle/position byte; final two bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 15
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 appears to carry two independent continuous sensor values packed into the first four bytes, with the remaining four bytes unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 16
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message contains a single small counter or measurement value in byte 0; remaining bytes are unused/zero padding.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 17
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "raw_value_16b",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_like_counter",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "aux_scalar",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a fluctuating 16-bit sensor value (e.g. engine speed/load) in bytes 0-1, a slowly increasing temperature-like counter in byte 2, and an independent noisy scalar (e.g. voltage or pressure) in byte 3. Bytes 4-7 are always zero and appear to be padding/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"raw_value_16b\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temp_like_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"aux_scalar\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 18
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signed_value_1",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely combines two 16-bit sensor values: a signed value (bytes 0-1, e.g. steering angle or lateral acceleration) and an unsigned value (bytes 2-3, e.g. engine RPM). Bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signed_value_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 19
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "```json\n{\n  \"interpretation\": \"Message likely contains a single counter or measurement value in byte 0, with remaining bytes unused/reserved (always 0x00)\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}\n```",
+            "success": true,
+            "trial": 20
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_load",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry three independent continuously-varying measurements packed into the first four bytes (bytes 4-7 are always zero/unused). Byte 2 rises steadily across the recent frames, consistent with a slowly increasing physical quantity such as coolant/engine temperature. Bytes 0-1 combine into a 16-bit little-endian value that fluctuates broadly, consistent with an RPM-type signal. Byte 3 fluctuates independently and does not correlate with byte 2, suggesting a separate scalar (e.g. load or secondary sensor reading) rather than bit-flags, since it never takes on a small repeated set of values.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"engine_load\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 21
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_rate",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_position",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor signals (e.g. a signed rate/delta value and an unsigned position/angle value), with the remaining 4 bytes unused (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_rate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_position\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 22
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 carries a single small-range counter or measurement in byte 0; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 23
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_a_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_or_counter",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_c_raw",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 packs four independent 8-bit signals in the first 4 bytes; the last 4 bytes are always zero (unused/padding). Byte2 shows a smooth monotonically increasing trend across frames, consistent with a slowly-rising sensor value (e.g. temperature or accumulating counter), while bytes 0, 1 and 3 show highly variable, non-repeating, non-sequential values with no bit-flag structure (too many distinct values, no smooth counting sequence), consistent with independent fast-changing scalar measurements rather than discrete flags.\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b_raw\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temp_or_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"sensor_c_raw\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 24
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signed_rate_or_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm_or_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x150 carries two continuous sensor values packed into the first four bytes; remaining bytes are unused (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"signed_rate_or_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm_or_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 25
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 carries a single 8-bit counter or measurement value in byte0; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 26
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_a",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message contains two 16-bit little-endian continuous sensor values (e.g., raw ADC or positional counters) in the first 4 bytes; bytes 4-7 are unused/reserved and always zero.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 27
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed_16",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned_16",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x150 carries two 16-bit sensor signals packed in bytes 0-3 (bytes 4-7 unused/padding). Likely a signed value (e.g. steering angle or lateral acceleration) in bytes 0-1 and a second unsigned/large-range value (e.g. yaw rate or wheel speed) in bytes 2-3.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed_16\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned_16\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 28
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message with a single active byte carrying a small-range counter or status value; remaining bytes are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 29
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_A_raw",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_B_raw",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor readings (e.g. steering angle and a related rate/torque value) in the first 4 bytes; the last 4 bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_A_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_B_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 30
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x150 carries two 16-bit sensor values packed into the first 4 bytes (likely steering angle and engine RPM), with the remaining 4 bytes unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 31
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single active byte likely representing a small counter or discrete measurement (e.g. gear position, mode, or short-range sensor value); remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 32
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_A",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_B",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x100 appears to carry two independent 16-bit sensor/measurement values in the first four bytes; the remaining four bytes are always zero and likely unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"value_A\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"value_B\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 33
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_rate_or_accel",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_magnitude_or_counter",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"0x150 appears to carry two 16-bit sensor values (e.g. a signed rate/acceleration signal and an unsigned magnitude/counter signal) packed into the first four bytes, with the remaining four bytes unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_rate_or_accel\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_magnitude_or_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 34
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 carries a single active byte (byte0) that varies over a range of small integer values while all other bytes remain zero; likely a counter, mode/state value, or low-resolution scalar measurement.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 35
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed_raw",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "aux_sensor_val",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry three packed signals in the first 4 bytes (bytes 4-7 are always 0x00 and unused/reserved): a fast-changing 16-bit value in bytes 0-1 (likely an engine speed or similar rapidly varying measurement), a slowly and monotonically increasing 8-bit value in byte 2 (likely a temperature), and a noisier independent 8-bit value in byte 3 (likely a separate sensor reading).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"aux_sensor_val\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 36
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x150 carries two 16-bit sensor values packed as little-endian words in bytes 0-1 and 2-3; bytes 4-7 are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 37
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_val",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single-byte scalar signal in byte 0 (e.g. sensor level, count, or small measurement), remaining bytes unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_val\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 38
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_value_0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_value_1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temperature",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_value_3",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message packs four independent 8-bit sensor values (bytes 4-7 unused/zero). Byte 2 shows a narrow, temperature-like range consistent with an offset-encoded temperature; the other three bytes vary widely and appear to be independent raw scalar measurements (e.g. sensor counts or fast-changing analog readings) rather than bit-flags, since each byte takes many distinct, non-repeating values with no small enumerable set.\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_value_0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_value_1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temperature\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"sensor_value_3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 39
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two continuous sensor signals: a signed value in bytes0-1 (e.g., steering angle or lateral acceleration) and an unsigned value in bytes2-3 (e.g., wheel speed or torque sensor reading). Bytes 4-7 are unused/reserved (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 40
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 carries a single 1-byte scalar value in byte0; remaining bytes are unused/padding (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 41
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "channel_a",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "channel_b",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "channel_c",
+                    "offset": -40,
+                    "scale": 0.5
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "channel_d",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x100 appears to carry four independent 8-bit sensor/status values (e.g., raw sensor channels or diagnostic counters). Bytes 4-7 are always zero (unused/reserved). No byte shows the classic bit-flag signature (small set of non-sequential values); instead each byte spans a wide or moderately wide range of values that change frame-to-frame in a non-monotonic but continuous fashion, consistent with independent scalar channels rather than packed boolean flags.\",\n  \"signals\": [\n    {\n      \"name\": \"channel_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"channel_b\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"channel_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.5,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"channel_d\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 42
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.01
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_scalar",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 appears to carry two 16-bit sensor/measurement values in the first four bytes; the remaining four bytes are constant zero (unused/reserved) across all observed frames.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_scalar\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 43
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Counter or small varying scalar value in byte 0; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 44
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_val_0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_est_1",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "speed_est_2",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_val_3",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 packs four independent 1-byte sensor values in bytes 0-3; bytes 4-7 are always zero (unused/padding). No repeating small value sets were seen in any byte, so none of them show a bit-flag pattern - each byte behaves as an independent scalar measurement.\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_val_0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temp_est_1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"speed_est_2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_val_3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 45
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signed_value_16",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "scalar_byte2",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "scalar_byte3",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor telemetry frame likely containing a signed 16-bit measurement (e.g. yaw rate or lateral acceleration) followed by two independent 8-bit scalar readings (e.g. temperature and a counter/status value); trailing bytes unused.\",\n  \"signals\": [\n    {\n      \"name\": \"signed_value_16\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"scalar_byte2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"scalar_byte3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 46
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a counter or small event/status value in byte 0, rest of payload unused\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 47
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_A",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_B",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "slow_counter_or_temp",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_C",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry four independent 8-bit sensor/status values packed into the first four bytes; bytes 4-7 are always zero (reserved/unused).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_A\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_B\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"slow_counter_or_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_C\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 48
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signed_measurement_1",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm_or_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x150 carries two 16-bit sensor values packed little-endian in bytes 0-3; bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signed_measurement_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm_or_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 49
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_or_mode_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 appears to carry a single low-range status/counter value in byte 0, with the remaining seven bytes constantly zero (likely reserved/padding).\",\n  \"signals\": [\n    {\n      \"name\": \"status_or_mode_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 50
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_value_1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_value_2",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "slow_scalar_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "fast_value_3",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry four independent 8-bit values: two fast-changing raw values (bytes 0 and 1), one slowly increasing scalar (byte 2, likely a temperature or gradually varying sensor), and one fast-changing raw value (byte 3). Bytes 4-7 are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"fast_value_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"fast_value_2\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"slow_scalar_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"fast_value_3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 51
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"CAN ID 0x150 appears to carry two independent 16-bit sensor readings packed into the first four bytes; the remaining four bytes are always zero and show no signal activity across all observed frames.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 52
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_status_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 appears to carry a single-byte counter or status scalar in byte 0, with the remaining 7 bytes unused (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 53
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "sensor_a",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_c",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x100 appears to carry two multi-byte sensor/measurement values in the first two bytes plus two additional single-byte scalar readings; remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"sensor_c\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 54
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor status message containing two 16-bit signed/unsigned measurement signals (bytes 0-3); bytes 4-7 are unused/reserved (always 0x00) in observed traffic.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 55
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x200 appears to carry a single-byte status/counter value in byte 0; remaining bytes are always zero and carry no information.\",\n  \"signals\": [\n    {\n      \"name\": \"status_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 56
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_a_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "centered_position",
+                    "offset": -128,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_d_raw",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 carries four independent 1-byte sensor/state values in bytes 0-3; bytes 4-7 are always zero (unused/reserved). No byte shows a small set of repeating non-sequential values, so no bit-flag pattern was detected; all four active bytes vary smoothly/widely across frames consistent with continuous scalar measurements.\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b_raw\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"centered_position\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -128.0\n    },\n    {\n      \"name\": \"sensor_d_raw\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 57
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed16",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned16",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 appears to carry two 16-bit sensor values packed into the first four bytes (e.g. an angular/position signal and a secondary sensor/counter value); the remaining four bytes are constant (0x00) and show no bit-flag activity, so they are treated as reserved/unused.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed16\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned16\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 58
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "level_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 carries a single-byte counter or status/level value in byte0; remaining bytes are unused/reserved (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"level_or_counter\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 59
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_val_0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_val_1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": true,
+                    "littleEndian": false,
+                    "name": "center_offset_val",
+                    "offset": -128,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_val_3",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 packs four independent single-byte sensor/status values in the first four bytes; bytes 4-7 are unused/reserved (always 0x00). Byte 2 appears to be a signed value centered around a mid-point (0x80), suggesting a small offset/deviation measurement (e.g. angle or bias), while bytes 0, 1 and 3 vary broadly and independently, consistent with separate raw sensor readings or counters rather than bit-flags (each has many distinct, non-repeating values spanning a wide numeric range with no small enumerable set of states).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_val_0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_val_1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"center_offset_val\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -128.0\n    },\n    {\n      \"name\": \"sensor_val_3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 60
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "rate_signal",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "magnitude_signal",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 carries two 16-bit sensor values in the first four bytes; bytes 4-7 are unused/reserved (always 0x00). Byte0-1 forms a signed 16-bit value that oscillates around zero (consistent with a rate/delta signal such as steering angle rate or yaw rate), while byte2-3 forms an unsigned 16-bit magnitude value (consistent with a speed, pressure, or position-like reading).\",\n  \"signals\": [\n    {\n      \"name\": \"rate_signal\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"magnitude_signal\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 61
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_status",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 appears to carry a single small counter or status scalar in byte 0; remaining bytes are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_status\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 62
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_val_byte0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_val_byte1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "centered_measurement",
+                    "offset": -32768,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x100 appears to carry a sensor status frame with two independent 8-bit counters/measurements in bytes 0-1, a 16-bit centered measurement (e.g. angle or torque offset) spanning bytes 2-3, and an unused/reserved zero-padded tail (bytes 4-7).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_val_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_val_byte1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"centered_measurement\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -32768.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 63
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_scalar",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x150 appears to carry two independent 16-bit sensor values (e.g. a signed offset/torque-like value and an RPM-like scalar), with the remaining four bytes always zero and not currently informative.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_scalar\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 64
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 appears to carry a single-byte counter or status value in byte 0; remaining bytes are always zero and show no signal activity, likely reserved/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"status_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 65
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_a",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "centered_offset",
+                    "offset": -128,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_c",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x100 appears to carry four independent 8-bit analog/status values packed into the first four bytes, with the remaining four bytes unused (always 0x00). Byte2 stays in a tight band around 128, suggesting it represents a signed value centered at zero (e.g., a small deviation/offset signal), while bytes 0,1,3 show wide, non-sequential variation typical of raw sensor or measurement bytes rather than bit-flags (each byte takes many distinct values, not a small non-monotonic set).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"centered_offset\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -128.0\n    },\n    {\n      \"name\": \"sensor_c\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 66
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x150 carries two 16-bit little-endian sensor values (e.g., a signed angular/differential signal and an unsigned magnitude signal) packed in the first four bytes; the remaining four bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 67
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Counter or single-byte scalar value in byte 0, remaining bytes unused (always zero)\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1,\n      \"offset\": 0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 68
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_byte0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_byte1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": true,
+                    "littleEndian": false,
+                    "name": "centered_offset_byte2",
+                    "offset": -128,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_byte3",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries four independent 8-bit sensor/status values in bytes 0-3 (e.g., raw analog readings or control values); bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_byte1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"centered_offset_byte2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -128.0\n    },\n    {\n      \"name\": \"sensor_byte3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 69
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "primary_signed_value",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "secondary_scalar",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "tertiary_scalar",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Sensor frame (ID 0x150) combining a signed 16-bit primary measurement (e.g. steering angle or similar bidirectional value) in bytes 0-1, with two additional 8-bit scalar signals in bytes 2 and 3; bytes 4-7 unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"primary_signed_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_scalar\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"tertiary_scalar\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 70
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 appears to carry a single status/counter byte in byte0; remaining bytes are always zero and likely unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"status_or_counter\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 71
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_a",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_c_centered",
+                    "offset": -128,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_d",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 carries four independent 1-byte sensor values in bytes 0-3 (bytes 4-7 unused/reserved, always 0x00). No bit-flag patterns detected; all four bytes show wide, non-repeating, continuously varying raw values rather than small repeated sets, indicating each is a scalar measurement rather than packed status bits.\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_c_centered\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -128.0\n    },\n    {\n      \"name\": \"sensor_d\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 72
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "rate_signal",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "position_signal",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor signals (e.g. a rate/torque value and a position/angle value); bytes 4-7 are unused/padding (constant 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"rate_signal\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"position_signal\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 73
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 appears to carry a single 8-bit scalar counter or status value in byte 0; remaining 7 bytes are always zero and likely unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 74
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "primary_value_16b",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_bit0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "secondary_value_8b",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/vehicle status message: a 16-bit primary measurement (e.g. RPM) in bytes0-1, a status/flag byte in byte2 with one toggling bit, and a secondary 8-bit measurement (e.g. load or pedal position) in byte3; bytes4-7 unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"primary_value_16b\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit0\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_value_8b\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 75
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"0x150 appears to carry two 16-bit sensor/measurement values (e.g. steering angle and a secondary counter/speed value) packed in bytes 0-3; bytes 4-7 are always zero and likely unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 76
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 carries a single scalar signal in byte 0 (remaining bytes constant at zero); likely a counter, status level, or small sensor value that changes over time while other bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 77
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "primary_value",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_bit0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "aux_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain data frame containing a 16-bit sensor/counter value, a status flag bit, and an 8-bit auxiliary measurement\",\n  \"signals\": [\n    {\n      \"name\": \"primary_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit0\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"aux_value\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 78
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_A",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "value_B",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 appears to carry two independent 16-bit little-endian sensor values in the first four bytes (e.g., two speed/torque/pressure-like measurements), with the remaining four bytes unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"value_A\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"value_B\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.35\n}",
+            "success": true,
+            "trial": 79
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely reports a single counter or low-range sensor value in byte0, with remaining bytes unused/reserved (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 80
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_a",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_b",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.392
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/vehicle status frame containing a 16-bit engine speed value, a status byte with two discrete flags, and an 8-bit throttle/pedal position value; trailing bytes unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_a\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_b\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.392,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.6\n}",
+            "success": true,
+            "trial": 81
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "primary_signed_value",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": true,
+                    "littleEndian": false,
+                    "name": "secondary_signed_value",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "state_or_mode_byte",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x150 appears to carry a primary 16-bit signed sensor value (bytes 0-1, e.g. steering angle or similar oscillating measurement) plus two secondary single-byte values in bytes 2-3 that vary independently; bytes 4-7 are always zero (reserved/unused in observed traffic).\",\n  \"signals\": [\n    {\n      \"name\": \"primary_signed_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_signed_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"state_or_mode_byte\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 82
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message on ID 0x200 appears to carry a single 8-bit counter or level value in byte0, with remaining bytes unused/reserved (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 83
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_b0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_b1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_level_b2",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temp_b3",
+                    "offset": -40,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x100 appears to carry four independent single-byte scalar signals (bytes 4-7 are always zero and unused). Byte 2 clusters tightly around 0x80-0x82, suggesting a slowly varying analog quantity (e.g. voltage/status level) rather than discrete flags, since the values increment in an ordered fashion rather than showing independent bit toggling.\",\n  \"signals\": [\n    {\n      \"name\": \"value_b0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"value_b1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_level_b2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temp_b3\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 84
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor values (e.g., two axis measurements such as accelerometer/gyro or position/speed deltas), packed as little-endian words in bytes 0-1 and 2-3; bytes 4-7 are unused/reserved (always 0x00 across all observed frames).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 85
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries a single counter or small scalar measurement in byte 0; remaining bytes are unused/reserved (always zero).\",\n  \"signals\": [\n    {\n      \"name\": \"counter_or_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 86
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "primary_measurement",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "secondary_measurement",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/drivetrain status frame: 16-bit primary measurement (e.g. RPM or speed) in bytes 0-1, a status/mode byte in byte 2 with one toggling bit, and an 8-bit secondary measurement (e.g. throttle/temperature) in byte 3. Bytes 4-7 unused (always 0).\",\n  \"signals\": [\n    {\n      \"name\": \"primary_measurement\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_measurement\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 87
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_rate",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_value",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor measurements (e.g. a signed rate/angle value and an unsigned counter/speed value); remaining bytes are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_rate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 88
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message contains a single 8-bit scalar signal that varies over time (e.g. temperature, load, or counter); remaining bytes are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 89
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_a",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_b",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_bit0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_bit1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_bit7_const",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "sensor_d",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message 0x100 packs two independent scalar sensor values (bytes 0 and 1), a status/flag byte (byte 2) with a constant high bit and a toggling low bit pair, and another scalar sensor value (byte 3). Remaining bytes 4-7 are always zero (unused/reserved).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_b\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit0\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit1\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit7_const\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_d\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 90
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_scalar",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x150 appears to carry two independent 16-bit sensor values (e.g. a signed oscillating signal such as yaw-rate/lateral-accel in bytes0-1, and a second larger-magnitude value such as a pressure/speed/position reading in bytes2-3); bytes4-7 are always zero and carry no information in the observed traffic.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_scalar\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 91
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_scalar_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"0x200 appears to carry a single slowly varying scalar value in byte 0 (e.g. a temperature, level, or status count), with the remaining 7 bytes constant at zero and unused.\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_scalar_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 92
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.39
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine data message: 16-bit engine RPM (little-endian), plus temperature and throttle/load bytes; remaining bytes unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.39,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 93
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signal_a_signed",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "signal_b_unsigned",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message likely carries two 16-bit sensor values (e.g. steering angle/yaw-rate and a secondary torque/position signal); remaining bytes are unused/reserved (constant 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"signal_a_signed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_b_unsigned\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 94
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_scalar",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Counter or slowly varying single-byte scalar (e.g. small counter, gear, or level indicator) in byte 0; remaining bytes constant/unused\",\n  \"signals\": [\n    {\n      \"name\": \"byte0_scalar\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.4\n}",
+            "success": true,
+            "trial": 95
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_A_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_B_raw",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_bit0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_bit1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "signal_C_temp",
+                    "offset": -40,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine/vehicle status message on ID 0x100 containing three independent scalar sensor values and two mutually-exclusive status bits packed in byte 2.\",\n  \"signals\": [\n    {\n      \"name\": \"signal_A_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_B_raw\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit0\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit1\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"signal_C_temp\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 96
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "sensor_val_A",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "sensor_val_B",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"0x150 appears to carry two 16-bit signed sensor values (e.g. accelerometer/gyro or angle-rate pair), packed little-endian across bytes 0-1 and 2-3; bytes 4-7 are unused/reserved (always 0x00).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_val_A\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_val_B\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 97
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_byte0",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"ID 0x200 appears to carry a single slowly-varying scalar value (e.g. temperature, gear, or counter) in byte 0; remaining bytes are always zero and carry no information.\",\n  \"signals\": [\n    {\n      \"name\": \"value_byte0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 98
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_bit0",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_flag_bit1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temp",
+                    "offset": -40,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine data frame: contains engine RPM, coolant/temperature reading, and two status bit-flags in byte2.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit0\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit1\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temp\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+            "success": true,
+            "trial": 99
+        }
+    ]
+}

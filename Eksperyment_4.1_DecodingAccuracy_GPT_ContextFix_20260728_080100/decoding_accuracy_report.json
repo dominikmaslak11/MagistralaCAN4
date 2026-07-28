@@ -1,0 +1,2635 @@
+{
+    "experiment": "4.1 — Decoding Accuracy vs Ground Truth",
+    "framesEvaluatedPerTrial": 10,
+    "model": "gpt-5.6-sol",
+    "promptVariant": "zero-shot",
+    "signals": [
+        {
+            "detectionRate": 0.9411764705882353,
+            "isDiscrete": false,
+            "mse": 66564386.1757715,
+            "nSamplesEvaluated": 320,
+            "name": "RPM",
+            "rmse": 8158.700029770153,
+            "trialsDetected": 32,
+            "trialsSeen": 34
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "Headlights",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 1,
+            "isDiscrete": false,
+            "mse": 501.49159363636363,
+            "nSamplesEvaluated": 330,
+            "name": "SteeringAngle",
+            "rmse": 22.394007985091985,
+            "trialsDetected": 33,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.5,
+            "isDiscrete": false,
+            "mse": 14955.6930687577,
+            "nSamplesEvaluated": 170,
+            "name": "Throttle",
+            "rmse": 122.29347107984833,
+            "trialsDetected": 17,
+            "trialsSeen": 34
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "LeftIndicator",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "detectionRate": 0.9411764705882353,
+            "isDiscrete": false,
+            "mse": 63065425.60660505,
+            "nSamplesEvaluated": 320,
+            "name": "CoolantTemp",
+            "rmse": 7941.374289542399,
+            "trialsDetected": 32,
+            "trialsSeen": 34
+        },
+        {
+            "detectionRate": 1,
+            "isDiscrete": false,
+            "mse": 7205176.28473909,
+            "nSamplesEvaluated": 330,
+            "name": "VehicleSpeed",
+            "rmse": 2684.2459434148523,
+            "trialsDetected": 33,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "Handbrake",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "RightIndicator",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        },
+        {
+            "accuracy": 0,
+            "confusionMatrix": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 0,
+                "tp": 0
+            },
+            "detectionRate": 0,
+            "f1": 0,
+            "isDiscrete": true,
+            "nSamplesEvaluated": 0,
+            "name": "DriverDoor",
+            "precision": 0,
+            "recall": 0,
+            "trialsDetected": 0,
+            "trialsSeen": 33
+        }
+    ],
+    "timestamp": "2026-07-28T08:34:42",
+    "totalTrials": 100,
+    "trialLog": [
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\"interpretation\":\"Unknown 8-byte message; a single observed frame provides insufficient variation to distinguish counters, measurements, or discrete states reliably.\",\"signals\":[],\"confidence\":0.05}",
+            "success": true,
+            "trial": 0
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Likely powertrain status containing a signed torque/load value and rotational speed; bytes 4-7 appear unused or reserved.\",\"signals\":[{\"name\":\"torque\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.42}",
+            "success": true,
+            "trial": 1
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+            ],
+            "ruleText": "{\"interpretation\":\"Unknown message; a single static frame is insufficient to distinguish whether byte 0 value 0x07 is a bitfield, counter, or numeric signal. Bytes 1-7 may be unused or zero-valued signals.\",\"signals\":[],\"confidence\":0.05}",
+            "success": true,
+            "trial": 2
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 0.001
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely two little-endian 16-bit measurements: engine speed followed by vehicle speed; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.001,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+            "success": true,
+            "trial": 3
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "engine_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Likely powertrain status containing signed engine torque and engine speed; bytes 4-7 appear unused or reserved.\",\"signals\":[{\"name\":\"engine_torque\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.58}",
+            "success": true,
+            "trial": 4
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "state_or_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 is a varying unsigned counter or operating-state value (7 to 27); bytes 1-7 remain zero and cannot be identified as signals.\",\"signals\":[{\"name\":\"state_or_counter\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.38}",
+            "success": true,
+            "trial": 5
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_1",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "counter_2",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Bytes 0-3 contain two monotonically increasing 16-bit little-endian values, likely counters or accumulated measurements; bytes 4-7 are constant zero padding. Exact physical meanings and units cannot be determined from three samples.\",\n  \"signals\": [\n    {\n      \"name\": \"counter_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"counter_2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.46\n}",
+            "success": true,
+            "trial": 6
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signed_position_or_torque",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "unsigned_magnitude",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Two little-endian measurement channels: a signed bidirectional value in bytes 0-1, plausibly position/angle or torque, and an unsigned 12-bit-range magnitude in bytes 2-3, plausibly speed or sensor level; bytes 4-7 are constant padding.\",\"signals\":[{\"name\":\"signed_position_or_torque\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"unsigned_magnitude\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.68}",
+            "success": true,
+            "trial": 7
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "command_or_position",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message carries one varying unsigned 8-bit value in byte 0, likely a low-range command, position, or state value; bytes 1-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"command_or_position\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+            "success": true,
+            "trial": 8
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine telemetry containing engine speed, coolant temperature, and throttle position; bytes 4-7 appear unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3921568627,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.84\n}",
+            "success": true,
+            "trial": 9
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "engine_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Powertrain status containing signed engine torque and engine speed; bytes 4-7 appear reserved or unused.\",\"signals\":[{\"name\":\"engine_torque\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_speed_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.68}",
+            "success": true,
+            "trial": 10
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "counter_or_status",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 is the only changing field and likely contains an unsigned counter or generic status value; bytes 1-7 appear unused or reserved.\",\"signals\":[{\"name\":\"counter_or_status\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.42}",
+            "success": true,
+            "trial": 11
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.39215686
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain dynamics message containing engine RPM, vehicle speed, and accelerator/throttle position; bytes 4-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.39215686,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.74\n}",
+            "success": true,
+            "trial": 12
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Two little-endian 16-bit dynamic signals: a signed bidirectional angle-like value and an unsigned rotational-speed-like value; bytes 4-7 are constant padding.\",\"signals\":[{\"name\":\"steering_angle\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_speed\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.58}",
+            "success": true,
+            "trial": 13
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_code",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Message carries a single varying 8-bit status or command value in byte 0; bytes 1-7 appear unused or reserved. The observed sequence is not consistent with a monotonic counter.\",\"signals\":[{\"name\":\"status_code\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.62}",
+            "success": true,
+            "trial": 14
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.5
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Engine telemetry containing engine RPM, coolant temperature, and throttle position; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature_c\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":-40.0},{\"name\":\"throttle_position_pct\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.5,\"offset\":0.0}],\"confidence\":0.9}",
+            "success": true,
+            "trial": 15
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Two little-endian 16-bit signals: a signed steering-angle-like value in bytes 0-1 and engine RPM in bytes 2-3; bytes 4-7 are constant padding.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+            "success": true,
+            "trial": 16
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 100
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message appears to carry a single dynamic engine-speed-like value in byte 0; bytes 1-7 remain zero and are likely unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 100.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.48\n}",
+            "success": true,
+            "trial": 17
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.5
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Powertrain status containing engine RPM, vehicle speed, and throttle position; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"vehicle_speed_kph\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"throttle_position_pct\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.5,\"offset\":0.0}],\"confidence\":0.93}",
+            "success": true,
+            "trial": 18
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "engine_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely engine operating data containing signed engine torque and engine speed; bytes 4-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_torque\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+            "success": true,
+            "trial": 19
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Single varying unsigned value in byte 0, likely a low-range measurement or state code; bytes 1-7 are constant zero and cannot be identified as signals.\",\"signals\":[{\"name\":\"raw_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.52}",
+            "success": true,
+            "trial": 20
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 0.01
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Vehicle dynamics message containing vehicle speed and engine RPM; bytes 4-7 appear to be constant padding.\",\"signals\":[{\"name\":\"vehicle_speed_kph\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.01,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.84}",
+            "success": true,
+            "trial": 21
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "motor_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "rotational_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely electric motor or drivetrain telemetry containing signed torque and rotational speed; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"motor_torque\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"rotational_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 22
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "level_or_command",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 is a low-range variable level or command value; its non-monotonic changes make a rolling counter unlikely. Bytes 1-7 appear unused or reserved and remain zero.\",\"signals\":[{\"name\":\"level_or_command\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.42}",
+            "success": true,
+            "trial": 23
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Engine status message containing engine speed, coolant temperature, and throttle position; bytes 4-7 appear unused or reserved.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature_c\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":-40.0},{\"name\":\"throttle_position_pct\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.3921568627,\"offset\":0.0}],\"confidence\":0.84}",
+            "success": true,
+            "trial": 24
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed_kmh",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Vehicle dynamics message containing signed steering angle in bytes 0-1 and vehicle speed in bytes 2-3; bytes 4-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_deg\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed_kmh\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+            "success": true,
+            "trial": 25
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "byte0_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Message carries one varying unsigned 8-bit value in byte 0, plausibly a low-range measurement, command, or counter; bytes 1-7 appear constant or unused. Available samples are insufficient to assign a specific physical meaning.\",\"signals\":[{\"name\":\"byte0_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.48}",
+            "success": true,
+            "trial": 26
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 1,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "trip_distance_km",
+                    "offset": 0,
+                    "scale": 0.001
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a monotonically increasing trip-distance accumulator in bytes 1-2, with approximately 1-meter resolution. Bytes 0 and 3 appear to be changing integrity or rolling fields but cannot be decoded confidently; bytes 4-7 are constant padding.\",\n  \"signals\": [\n    {\n      \"name\": \"trip_distance_km\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.001,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.73\n}",
+            "success": true,
+            "trial": 27
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "engine_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Likely engine telemetry containing signed engine torque and engine speed; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"engine_torque\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.62}",
+            "success": true,
+            "trial": 28
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "unknown_state_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Message carries one low-range unsigned measurement or state value in byte 0; bytes 1-7 appear unused or reserved. The variation is not consistent with a rolling counter.\",\"signals\":[{\"name\":\"unknown_state_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.48}",
+            "success": true,
+            "trial": 29
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Powertrain dynamics message containing engine speed, vehicle speed, and accelerator/throttle position; remaining bytes are unused.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"vehicle_speed_kph\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"throttle_position_pct\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.3921568627,\"offset\":0.0}],\"confidence\":0.87}",
+            "success": true,
+            "trial": 30
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Vehicle dynamics message containing signed steering angle and engine speed; bytes 4-7 are constant padding.\",\"signals\":[{\"name\":\"steering_angle_deg\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.86}",
+            "success": true,
+            "trial": 31
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "rolling_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 is likely a rolling counter or sequence value, probably modulo 32; bytes 1-7 are constant zero padding with no distinguishable signals.\",\"signals\":[{\"name\":\"rolling_counter\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.68}",
+            "success": true,
+            "trial": 32
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine operating data containing engine speed, coolant temperature, and throttle position; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3921568627,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.95\n}",
+            "success": true,
+            "trial": 33
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "signed_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "rotational_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Two active 16-bit little-endian signals followed by four constant padding bytes: a signed bidirectional position/angle-like value and an unsigned rotational-speed-like value.\",\"signals\":[{\"name\":\"signed_angle\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"rotational_speed\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.66}",
+            "success": true,
+            "trial": 34
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "command_position_pct",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 is a low-range unsigned command or position value, plausibly pedal/throttle percentage; bytes 1-7 are constant zero padding. The sequence does not resemble a rolling counter.\",\"signals\":[{\"name\":\"command_position_pct\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.48}",
+            "success": true,
+            "trial": 35
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "accelerator_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Engine operating data containing an 8-bit checksum, accelerator/throttle position, and engine RPM; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"checksum\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"accelerator_position_pct\",\"byteIdx\":1,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.3921568627,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0}],\"confidence\":0.82}",
+            "success": true,
+            "trial": 36
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Two independent 16-bit little-endian measurements: a signed steering-angle-like value followed by an unsigned engine-speed-like value; bytes 4-7 are constant padding.\",\"signals\":[{\"name\":\"steering_angle\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.66}",
+            "success": true,
+            "trial": 37
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_value_or_status",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Byte 0 contains a varying unsigned raw value or status code in the observed range 0-27; bytes 1-7 are constant zero with no distinguishable signals.\",\n  \"signals\": [\n    {\n      \"name\": \"raw_value_or_status\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+            "success": true,
+            "trial": 38
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Powertrain status containing engine RPM, coolant temperature, and vehicle speed; bytes 4-7 are unused padding.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature_c\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":-40.0},{\"name\":\"vehicle_speed_kph\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.93}",
+            "success": true,
+            "trial": 39
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "rotational_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Likely a motion/control message containing a signed steering-angle-like value in bytes 0-1 and an unsigned rotational-speed-like value in bytes 2-3; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"steering_angle\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"rotational_speed\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.64}",
+            "success": true,
+            "trial": 40
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_counter_or_state",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 contains a varying low-range unsigned value, plausibly a counter or raw state index; bytes 1-7 are constant zero with no distinguishable signals.\",\"signals\":[{\"name\":\"raw_counter_or_state\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.58}",
+            "success": true,
+            "trial": 41
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.5
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message containing engine RPM, coolant temperature, and throttle position; bytes 4-7 appear unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.5,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.96\n}",
+            "success": true,
+            "trial": 42
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely a combined steering-angle and engine-speed message. Bytes 0-1 form a signed little-endian steering angle; bytes 2-3 form an unsigned little-endian RPM value. Bytes 4-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_deg\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.68\n}",
+            "success": true,
+            "trial": 43
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "unknown_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message carries one varying unsigned 8-bit value in byte 0; bytes 1-7 appear unused or zero-padded. The value may be a low-range measurement, command, or counter, but its physical meaning is not identifiable from these frames alone.\",\n  \"signals\": [\n    {\n      \"name\": \"unknown_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 44
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status message containing a checksum-like byte, vehicle speed, warming coolant temperature, and engine RPM.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed_kph\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 25.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+            "success": true,
+            "trial": 45
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "engine_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely powertrain status containing signed engine torque and engine speed; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_torque\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.66\n}",
+            "success": true,
+            "trial": 46
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Single unsigned 8-bit raw value or counter in byte 0; bytes 1-7 appear unused or reserved. Physical meaning cannot be determined from the observed variation alone.\",\"signals\":[{\"name\":\"raw_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.45}",
+            "success": true,
+            "trial": 47
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 0.00390625
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Engine operating data containing engine speed and coolant temperature.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature_c\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.00390625,\"offset\":-40.0}],\"confidence\":0.97}",
+            "success": true,
+            "trial": 48
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Message carrying signed steering angle and unsigned engine speed; bytes 4-7 appear unused or reserved.\",\"signals\":[{\"name\":\"steering_angle_deg\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.84}",
+            "success": true,
+            "trial": 49
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "status_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 contains a varying unsigned low-range scalar or state code (0-27 observed); it is not consistent with a rolling counter. Bytes 1-7 are constant zero padding with no distinguishable signals.\",\"signals\":[{\"name\":\"status_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.42}",
+            "success": true,
+            "trial": 50
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum_or_integrity",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine-status message containing a 16-bit engine-speed value, a warm-up temperature, an integrity/checksum byte, and four unused zero-filled bytes.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"checksum_or_integrity\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.88\n}",
+            "success": true,
+            "trial": 51
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely vehicle dynamics message containing signed steering-wheel angle and vehicle speed; bytes 4-7 are constant padding.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_deg\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed_kph\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+            "success": true,
+            "trial": 52
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Byte 0 contains a variable unsigned 8-bit value in the observed range 0-27; its physical meaning and scaling cannot be determined from these frames alone. Bytes 1-7 are constant zero and no distinct signals can be identified in them.\",\"signals\":[{\"name\":\"raw_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.48}",
+            "success": true,
+            "trial": 53
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine telemetry containing engine speed, coolant temperature, and throttle position; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3921568627,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.94\n}",
+            "success": true,
+            "trial": 54
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Steering angle and engine speed; bytes 4-7 are constant padding.\",\"signals\":[{\"name\":\"steering_angle_deg\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.76}",
+            "success": true,
+            "trial": 55
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Byte 0 appears to contain a low-range unsigned measurement, plausibly vehicle speed in km/h; bytes 1-7 are constant zero and likely unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.38\n}",
+            "success": true,
+            "trial": 56
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Powertrain status containing engine RPM, coolant temperature, and throttle position; unused bytes 4-7 are zero.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature_c\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":-40.0},{\"name\":\"throttle_position_pct\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.3921568627,\"offset\":0.0}],\"confidence\":0.86}",
+            "success": true,
+            "trial": 57
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Combined signed steering angle and engine speed message; bytes 4-7 are constant padding.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.86\n}",
+            "success": true,
+            "trial": 58
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_level",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Byte 0 contains a single low-range unsigned value, possibly a sensor level or command; bytes 1-7 are constant zero and expose no distinguishable signals.\",\n  \"signals\": [\n    {\n      \"name\": \"raw_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+            "success": true,
+            "trial": 59
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position",
+                    "offset": 0,
+                    "scale": 0.39215686
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely engine-status frame containing a checksum, throttle/load measurement, and big-endian engine-speed value; bytes 4-7 are constant padding.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"throttle_position\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.39215686,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.67\n}",
+            "success": true,
+            "trial": 60
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Vehicle dynamics message containing signed steering angle and engine speed; bytes 4-7 are unused or reserved and remain zero.\",\"signals\":[{\"name\":\"steering_angle_deg\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.82}",
+            "success": true,
+            "trial": 61
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single active 8-bit measurement in byte 0, likely low-range vehicle speed; bytes 1-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+            "success": true,
+            "trial": 62
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "primary_shaft_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "secondary_shaft_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Two unsigned rotational-speed-like measurements: a rapidly varying primary shaft speed in bytes 0-1 and a smoother, generally increasing secondary shaft speed in bytes 2-3; bytes 4-7 are unused constants.\",\n  \"signals\": [\n    {\n      \"name\": \"primary_shaft_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_shaft_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+            "success": true,
+            "trial": 63
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Two little-endian 16-bit signals: signed steering angle followed by unsigned vehicle speed; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_deg\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed_kph\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.84\n}",
+            "success": true,
+            "trial": 64
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "possible_vehicle_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single unsigned low-range measurement in byte 0, possibly vehicle speed; bytes 1-7 are constant zero with no distinguishable signals.\",\n  \"signals\": [\n    {\n      \"name\": \"possible_vehicle_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+            "success": true,
+            "trial": 65
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Engine status containing engine RPM, coolant temperature, and throttle position; bytes 4-7 are unused/padding.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature_c\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":-40.0},{\"name\":\"throttle_position_pct\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.3921568627,\"offset\":0.0}],\"confidence\":0.96}",
+            "success": true,
+            "trial": 66
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Steering-state message containing signed steering wheel angle and unsigned vehicle speed; bytes 4-7 are unused or reserved zeros.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_deg\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed_kph\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+            "success": true,
+            "trial": 67
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "raw_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Byte 0 carries a single unsigned low-range value or counter-like signal; bytes 1-7 are constant zero with no distinguishable signals.\",\n  \"signals\": [\n    {\n      \"name\": \"raw_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+            "success": true,
+            "trial": 68
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status frame containing an integrity/checksum byte, throttle or load position, and a big-endian engine-speed value; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3921568627,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.7\n}",
+            "success": true,
+            "trial": 69
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "rotational_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Two independent 16-bit measurements: a signed bidirectional angle/position in bytes 0-1 and an unsigned rotational-speed-like value in bytes 2-3; bytes 4-7 are constant padding.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"rotational_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+            "success": true,
+            "trial": 70
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "variable_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Message contains one varying unsigned low-range value in byte 0, possibly a counter or low-range measurement; bytes 1-7 are constant zero with no distinguishable signals.\",\"signals\":[{\"name\":\"variable_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.55}",
+            "success": true,
+            "trial": 71
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Vehicle motion/powertrain status containing an opaque checksum byte, vehicle speed, and big-endian engine RPM; bytes 4-7 are unused padding.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"vehicle_speed_kph\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+            "success": true,
+            "trial": 72
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "longitudinal_acceleration",
+                    "offset": 0,
+                    "scale": 0.01
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Vehicle dynamics message containing signed longitudinal acceleration and vehicle speed; bytes 4-7 are constant padding.\",\"signals\":[{\"name\":\"longitudinal_acceleration\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.01,\"offset\":0.0},{\"name\":\"vehicle_speed\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.01,\"offset\":0.0}],\"confidence\":0.82}",
+            "success": true,
+            "trial": 73
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_candidate",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Single low-range continuous value in byte 0, plausibly vehicle speed; bytes 1-7 are constant padding. Trigger value decodes to 17.\",\n  \"signals\": [\n    {\n      \"name\": \"vehicle_speed_candidate\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.5\n}",
+            "success": true,
+            "trial": 74
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.3921568627
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine operating data containing engine speed, coolant temperature, and throttle position; bytes 4-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3921568627,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.94\n}",
+            "success": true,
+            "trial": 75
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely combined signed steering angle and engine speed message; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+            "success": true,
+            "trial": 76
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "value_or_state",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"One low-range unsigned value or enumerated state in byte 0; bytes 1-7 appear unused or zero padding. The changing values are not consistent with a sequential counter.\",\n  \"signals\": [\n    {\n      \"name\": \"value_or_state\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+            "success": true,
+            "trial": 77
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Powertrain status containing engine RPM, coolant temperature, and vehicle speed; remaining bytes are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    },\n    {\n      \"name\": \"vehicle_speed_kph\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.86\n}",
+            "success": true,
+            "trial": 78
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Steering angle and engine speed; bytes 4-7 are constant padding. Trigger decodes to approximately -61.6 degrees and 2710 RPM.\",\"signals\":[{\"name\":\"steering_angle_deg\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.88}",
+            "success": true,
+            "trial": 79
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "unknown_scalar",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Message carries one varying unsigned 8-bit scalar in byte 0; its physical meaning and scaling cannot be determined from the observed non-monotonic values. Bytes 1-7 are constant zero and appear unused or reserved.\",\"signals\":[{\"name\":\"unknown_scalar\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.48}",
+            "success": true,
+            "trial": 80
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -40,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 3,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Powertrain status containing engine RPM, coolant temperature, and vehicle speed; bytes 4-7 are unused/padding.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature_c\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":-40.0},{\"name\":\"vehicle_speed_kph\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.96}",
+            "success": true,
+            "trial": 81
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "steering_rate",
+                    "offset": 0,
+                    "scale": 0.1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Steering sensor message containing signed steering-wheel angle and unsigned steering angular-rate magnitude; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"steering_angle\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"steering_rate\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0}],\"confidence\":0.72}",
+            "success": true,
+            "trial": 82
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Byte 0 carries a low-range unsigned measurement, plausibly vehicle speed; bytes 1-7 appear to be constant zero padding. The sequence is not consistent with a rolling counter.\",\n  \"signals\": [\n    {\n      \"name\": \"vehicle_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.38\n}",
+            "success": true,
+            "trial": 83
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum16",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.125
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine-speed message containing a big-endian 16-bit RPM value, a likely 16-bit checksum/integrity field, and four zero padding bytes.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum16\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.79\n}",
+            "success": true,
+            "trial": 84
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Combined steering-angle and engine-speed message; bytes 4-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle_deg\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+            "success": true,
+            "trial": 85
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "unknown_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Message carries one low-range unsigned value or command in byte 0; bytes 1-7 are consistently zero with no distinguishable signals.\",\"signals\":[{\"name\":\"unknown_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.62}",
+            "success": true,
+            "trial": 86
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "auxiliary_rate",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "angular_position",
+                    "offset": 0,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely steering/rotary-position message containing an 8-bit checksum, an auxiliary rate or effort measurement, and a 16-bit big-endian angular position; bytes 4-7 are unused padding.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"auxiliary_rate\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"angular_position\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.67\n}",
+            "success": true,
+            "trial": 87
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Likely steering angle and engine speed message; bytes 4-7 appear unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.68\n}",
+            "success": true,
+            "trial": 88
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "scalar_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Byte 0 is a low-range unsigned scalar, plausibly a speed or command value; the trigger decodes to 30. Bytes 1-7 remain zero and appear reserved or unused. The changing bit patterns in byte 0 cannot confidently be separated into independent discrete signals.\",\n  \"signals\": [\n    {\n      \"name\": \"scalar_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+            "success": true,
+            "trial": 89
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "cumulative_counter",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Two packed 16-bit signals: a rapidly varying value consistent with engine RPM and a generally increasing big-endian counter or position accumulator; bytes 4-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"cumulative_counter\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+            "success": true,
+            "trial": 90
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Two independent 16-bit measurements: a signed bidirectional value likely steering angle, followed by an unsigned value plausibly engine speed; bytes 4-7 are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+            "success": true,
+            "trial": 91
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Low-range unsigned measurement in byte 0, plausibly vehicle speed; bytes 1-7 appear to be constant padding.\",\"signals\":[{\"name\":\"vehicle_speed\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.55}",
+            "success": true,
+            "trial": 92
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "checksum",
+                    "offset": 0,
+                    "scale": 1
+                },
+                {
+                    "byteIdx": 1,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "throttle_percent",
+                    "offset": 0,
+                    "scale": 0.4
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.125
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine status message containing a changing throttle/load command, big-endian engine RPM, and a likely checksum byte; bytes 4-7 are unused padding.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"throttle_percent\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.4,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+            "success": true,
+            "trial": 93
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "engine_torque",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_speed",
+                    "offset": 0,
+                    "scale": 0.25
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Powertrain telemetry containing signed shaft/engine torque and rotational speed; bytes 4-7 appear unused or reserved.\",\"signals\":[{\"name\":\"engine_torque\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_speed\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.68}",
+            "success": true,
+            "trial": 94
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "command_or_measurement",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Message carries one active unsigned 8-bit measurement or command value in byte 0; bytes 1-7 appear unused or reserved. The observed nonsequential range of 0-30 does not support a rolling-counter interpretation.\",\n  \"signals\": [\n    {\n      \"name\": \"command_or_measurement\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+            "success": true,
+            "trial": 95
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 0.25
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "coolant_temperature_c",
+                    "offset": -273.15,
+                    "scale": 0.01
+                }
+            ],
+            "ruleText": "{\n  \"interpretation\": \"Engine telemetry containing a rapidly varying engine-speed value and a gradually warming coolant-temperature value; bytes 4-7 are unused padding.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": -273.15\n    }\n  ],\n  \"confidence\": 0.78\n}",
+            "success": true,
+            "trial": 96
+        },
+        {
+            "canId": "0x150",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": true,
+                    "littleEndian": true,
+                    "name": "steering_angle_deg",
+                    "offset": 0,
+                    "scale": 0.1
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "engine_rpm",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Steering angle and engine speed packed as two little-endian 16-bit signals; bytes 4-7 are unused/padding.\",\"signals\":[{\"name\":\"steering_angle_deg\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.84}",
+            "success": true,
+            "trial": 97
+        },
+        {
+            "canId": "0x200",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 1,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "low_range_value",
+                    "offset": 0,
+                    "scale": 1
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Only byte 0 is active and appears to carry a low-range scalar value (0-30), possibly a sampled measurement or modulo counter; bytes 1-7 are constant zero padding. The exact physical meaning cannot be determined from these frames alone.\",\"signals\":[{\"name\":\"low_range_value\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.58}",
+            "success": true,
+            "trial": 98
+        },
+        {
+            "canId": "0x100",
+            "parsedSignals": [
+                {
+                    "byteIdx": 0,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": true,
+                    "name": "throttle_position_pct",
+                    "offset": 0,
+                    "scale": 0.00390625
+                },
+                {
+                    "byteIdx": 2,
+                    "byteLen": 2,
+                    "isSigned": false,
+                    "littleEndian": false,
+                    "name": "vehicle_speed_kph",
+                    "offset": 0,
+                    "scale": 0.00390625
+                }
+            ],
+            "ruleText": "{\"interpretation\":\"Vehicle dynamics message containing throttle position and vehicle speed as two unsigned Q8.8 fixed-point values; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"throttle_position_pct\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.00390625,\"offset\":0.0},{\"name\":\"vehicle_speed_kph\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.00390625,\"offset\":0.0}],\"confidence\":0.87}",
+            "success": true,
+            "trial": 99
+        }
+    ]
+}

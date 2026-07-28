@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QTimer>
 #include <cmath>
+#include <algorithm>
 
 // ── Ground truth: 10 syntetycznych sygnałów na 3 CAN ID (mini-DBC) ────────────
 // Musi być IDENTYCZNE z kodowaniem w generatorze ruchu (Python, PEAK PCAN-USB) —
@@ -161,6 +162,45 @@ QString DecodingAccuracyRunner::buildSystemPromptFewShot() {
         "Now analyze the real frame below the same way.");
 }
 
+// Wariant "entropy-analysis": zamiast przykladow, WYMUSZA jawna, obowiazkowa
+// procedure krok-po-kroku sprawdzenia KAZDEGO bajtu PRZED zaproponowaniem
+// interpretacji. W przeciwienstwie do few-shot (ktory Claude calkowicie
+// zignorowal - patrz Eksperyment_4.1_FewShot_Claude_Wynik_Negatywny_20260727.txt),
+// to nie jest przyklad do naslodowania, tylko wprost sformulowany algorytm
+// decyzyjny, ktory model MA zastosowac do KAZDEGO bajtu tej konkretnej ramki.
+QString DecodingAccuracyRunner::buildSystemPromptEntropyAnalysis() {
+    return buildSystemPrompt() + QStringLiteral(
+        "\n\n"
+        "MANDATORY procedure — apply this to EVERY byte position (0 to DLC-1) "
+        "BEFORE deciding on your final signal list. Do not skip this, and do not "
+        "default to treating a byte as a single scalar without first ruling out "
+        "the bit-flags pattern below:\n\n"
+        "For byte position B:\n"
+        "  1. List the distinct raw values observed for byte B across the trigger "
+        "frame and all recent frames.\n"
+        "  2. Write each distinct value in binary (8 bits).\n"
+        "  3. Check the BIT-FLAGS pattern: if byte B has only a FEW distinct values "
+        "(roughly 2-8) AND the bits that differ between those values do not form a "
+        "smooth ordered/incrementing sequence (e.g. observed set is like "
+        "{0x00, 0x01, 0x02, 0x03, 0x10, 0x11} rather than {0x00, 0x01, 0x02, 0x03, "
+        "0x04, 0x05, ...} counting up by 1), this is strong evidence of MULTIPLE "
+        "INDEPENDENT BIT FLAGS packed into byte B, not one scalar value.\n"
+        "  4. Check the SCALAR pattern: if the values change in a smooth, ordered, "
+        "roughly monotonic or counter-like way, OR the byte combines with an "
+        "adjacent byte to form a larger measurement, this is a genuine scalar/"
+        "multi-byte signal.\n"
+        "  5. If step 3 applies to byte B: propose ONE separate signal per bit "
+        "position that actually changes across observations (byteIdx=B, byteLen=1, "
+        "bitMask isolating exactly that bit, scale=1, offset=0) — do NOT also "
+        "propose a combined scalar signal for that same byte.\n"
+        "  6. If step 4 applies: propose the scalar/multi-byte signal as usual.\n\n"
+        "This byte-by-byte bit-flags-vs-scalar check is mandatory for every byte, "
+        "including byte 0. A byte with a small set of non-sequential values is "
+        "bit flags far more often than it is a meaningful single scalar — treat "
+        "the bit-flags interpretation as the default hypothesis to disprove, not "
+        "the other way around.");
+}
+
 // ── Parsowanie odpowiedzi LLM ──────────────────────────────────────────────────
 
 static QString stripCodeFences(const QString &text) {
@@ -297,7 +337,7 @@ void DecodingAccuracyRunner::start() {
     m_targetCanId = kMessageIds[0];
     m_results.clear();
     m_trialLog = QJsonArray{};
-    m_frameHistory.clear();
+    m_frameHistoryByCanId.clear();
 
     m_detector->reset();
     setState(State::WaitingForColdStart);
@@ -336,18 +376,25 @@ void DecodingAccuracyRunner::onColdStartDetected(uint32_t canId, const CanFrame 
     }
 
     m_currentCanId = canId;
-    m_frameHistory.push_back(frame);
-    while (static_cast<int>(m_frameHistory.size()) > kMaxHistory) m_frameHistory.pop_front();
+    std::deque<CanFrame> &history = m_frameHistoryByCanId[canId];
+    history.push_back(frame);
+    while (static_cast<int>(history.size()) > kMaxHistory) history.pop_front();
     m_detector->markKnownWithPattern(canId, frame);
     m_currentGroundTruth = groundTruthFor(canId);
+    m_currentHistoryFrames = {history.begin(), history.end()};
 
     setState(State::QueryingLlm);
 
     LlmQuery query;
     query.canId = canId;
     query.triggerFrame = frame;
-    query.recentFrames = {m_frameHistory.begin(), m_frameHistory.end()};
-    query.systemPrompt = m_fewShotPrompt ? buildSystemPromptFewShot() : buildSystemPrompt();
+    query.recentFrames = m_currentHistoryFrames;
+    switch (m_promptVariant) {
+        case PromptVariant::FewShot:         query.systemPrompt = buildSystemPromptFewShot(); break;
+        case PromptVariant::EntropyAnalysis: query.systemPrompt = buildSystemPromptEntropyAnalysis(); break;
+        case PromptVariant::ZeroShot:
+        default:                            query.systemPrompt = buildSystemPrompt(); break;
+    }
 
     m_llmClient->query(query);
 }
@@ -364,6 +411,9 @@ void DecodingAccuracyRunner::onLlmResponse(const LlmResponse &resp) {
 
     m_currentRules = resp.success ? parseRulesFromResponseText(resp.ruleText)
                                    : std::vector<LlmSignalRule>{};
+    m_currentRulesOverride = applyBitFlagOverride(m_currentRules, m_currentHistoryFrames);
+    logEntry["overrideRuleCount"] = static_cast<int>(m_currentRulesOverride.size());
+    logEntry["overrideChangedRules"] = (m_currentRulesOverride.size() != m_currentRules.size());
 
     QJsonArray parsedArr;
     for (const auto &r : m_currentRules) {
@@ -442,28 +492,120 @@ const DecodingAccuracyRunner::LlmSignalRule *DecodingAccuracyRunner::findMatchin
     return fallback;
 }
 
+// ── Hybrydowy override klasyczny (Kierunek B) ──────────────────────────────────
+// Zwraca maske bitow na pozycji byteIdx, ktore w podanych ramkach przyjmuja
+// OBA stany (0 i 1) — kandydaci na niezalezne flagi bitowe. Liczone WYLACZNIE
+// z obserwowanych wartosci (nie z ground truth) — to musi byc uczciwa,
+// samodzielna heurystyka, nie podgladanie odpowiedzi.
+uint8_t DecodingAccuracyRunner::independentBitMask(const std::vector<CanFrame> &frames, int byteIdx) {
+    uint8_t seen0 = 0, seen1 = 0;
+    for (const auto &f : frames) {
+        uint8_t v = f.byteAt(byteIdx);
+        for (int b = 0; b < 8; ++b) {
+            if (v & (1u << b)) seen1 |= static_cast<uint8_t>(1u << b);
+            else seen0 |= static_cast<uint8_t>(1u << b);
+        }
+    }
+    return seen0 & seen1;
+}
+
+// Heurystyka: bajt "wyglada jak flagi bitowe" jesli (1) przynajmniej jeden bit
+// realnie przyjmuje oba stany w historii, ORAZ (2) kolejne (W KOLEJNOSCI
+// CZASOWEJ) probki czesto roznia sie SKOKOWO (>3), a nie plynnie o male kroki.
+// WAZNE: analiza samego ZBIORU wartosci (posortowanego) nie wystarcza — N
+// niezaleznych bitow generuje zbior {0..2^N-1}, czyli GESTY ciag kolejnych
+// liczb, nieodrozniajacy sie od licznika/skalara po samym zakresie. Prawdziwa
+// roznica jest w PRZEBIEGU W CZASIE: przelaczenie bitu wyzszego rzedu (np.
+// bit2..bit4) daje skok o >=4, podczas gdy skalar/licznik (np. powolny
+// random-walk throttle/temperatury) zmienia sie w kolejnych probkach o male
+// wartosci. Zweryfikowane symulacja Python przed wdrozeniem (100% trafien na
+// syntetycznych flagach bitowych, 0% falszywych trafien na syntetycznych
+// sygnalach ciaglych, w calym realistycznym zakresie odstepow probkowania).
+bool DecodingAccuracyRunner::looksLikeBitFlags(const std::vector<CanFrame> &frames, int byteIdx) {
+    if (frames.size() < 2) return false;
+    if (independentBitMask(frames, byteIdx) == 0) return false;
+
+    int bigJumps = 0, changedPairs = 0;
+    for (size_t i = 1; i < frames.size(); ++i) {
+        int a = frames[i - 1].byteAt(byteIdx);
+        int b = frames[i].byteAt(byteIdx);
+        if (a == b) continue;
+        changedPairs++;
+        if (std::abs(a - b) > 3) bigJumps++;
+    }
+    if (changedPairs == 0) return false;
+    return (double(bigJumps) / double(changedPairs)) >= 0.5;
+}
+
+// Jesli LLM zaproponowal pojedynczy skalar (bitMask=null, byteLen=1) dla bajtu,
+// ktory klasyfikuje sie jako flagi bitowe, zastepuje te regule zestawem reguł
+// per-bit (po jednej na kazdy bit realnie przyjmujacy oba stany). Inne reguly
+// (wielobajtowe skalary, juz zamaskowane, bajty nie-flagowe) przechodza bez zmian.
+std::vector<DecodingAccuracyRunner::LlmSignalRule> DecodingAccuracyRunner::applyBitFlagOverride(
+        const std::vector<LlmSignalRule> &rules, const std::vector<CanFrame> &frames) {
+    std::vector<LlmSignalRule> out;
+    for (const auto &r : rules) {
+        bool isPlainByteScalar = (r.byteLen == 1 && r.bitMask == 0xFFFFFFFFu);
+        if (isPlainByteScalar && !frames.empty() && looksLikeBitFlags(frames, r.byteIdx)) {
+            uint8_t mask = independentBitMask(frames, r.byteIdx);
+            for (int b = 0; b < 8; ++b) {
+                if (!(mask & (1u << b))) continue;
+                LlmSignalRule bitRule;
+                bitRule.name = QString("%1_bit%2_override").arg(r.name).arg(b);
+                bitRule.byteIdx = r.byteIdx;
+                bitRule.byteLen = 1;
+                bitRule.littleEndian = true;
+                bitRule.isSigned = false;
+                bitRule.bitMask = (1u << b);
+                bitRule.scale = 1.0;
+                bitRule.offset = 0.0;
+                out.push_back(bitRule);
+            }
+            continue; // oryginalny skalar zastapiony regulami per-bit
+        }
+        out.push_back(r);
+    }
+    return out;
+}
+
 void DecodingAccuracyRunner::evaluateFrameAgainstRules(const CanFrame &frame) {
     for (const auto &gt : m_currentGroundTruth) {
-        const LlmSignalRule *matched = findMatchingRule(gt, m_currentRules);
-        if (!matched) continue; // brak dopasowania — zliczone w finalizeCurrentTrial()
-
-        double truth = gt.decode(frame);
-        double pred = matched->decode(frame);
-
         SignalAccum &acc = m_results[gt.name];
         acc.name = gt.name;
         acc.isDiscrete = gt.isDiscrete;
 
-        if (gt.isDiscrete) {
-            int truthClass = truth >= 0.5 ? 1 : 0;
-            int predClass  = pred  >= 0.5 ? 1 : 0;
-            if (truthClass == 1 && predClass == 1) acc.tp++;
-            else if (truthClass == 0 && predClass == 0) acc.tn++;
-            else if (truthClass == 0 && predClass == 1) acc.fp++;
-            else acc.fn++;
-        } else {
-            double err = truth - pred;
-            acc.squaredErrors.push_back(err * err);
+        if (const LlmSignalRule *matched = findMatchingRule(gt, m_currentRules)) {
+            double truth = gt.decode(frame);
+            double pred = matched->decode(frame);
+            if (gt.isDiscrete) {
+                int truthClass = truth >= 0.5 ? 1 : 0;
+                int predClass  = pred  >= 0.5 ? 1 : 0;
+                if (truthClass == 1 && predClass == 1) acc.tp++;
+                else if (truthClass == 0 && predClass == 0) acc.tn++;
+                else if (truthClass == 0 && predClass == 1) acc.fp++;
+                else acc.fn++;
+            } else {
+                double err = truth - pred;
+                acc.squaredErrors.push_back(err * err);
+            }
+        }
+
+        // Rownolegla ocena z zastosowanym hybrydowym override'em (Kierunek B) —
+        // patrz applyBitFlagOverride(). Nie wplywa na powyzsze "surowe" liczniki.
+        if (const LlmSignalRule *matchedOv = findMatchingRule(gt, m_currentRulesOverride)) {
+            double truth = gt.decode(frame);
+            double pred = matchedOv->decode(frame);
+            if (gt.isDiscrete) {
+                int truthClass = truth >= 0.5 ? 1 : 0;
+                int predClass  = pred  >= 0.5 ? 1 : 0;
+                if (truthClass == 1 && predClass == 1) acc.tpOverride++;
+                else if (truthClass == 0 && predClass == 0) acc.tnOverride++;
+                else if (truthClass == 0 && predClass == 1) acc.fpOverride++;
+                else acc.fnOverride++;
+            } else {
+                double err = truth - pred;
+                acc.squaredErrorsOverride.push_back(err * err);
+            }
         }
     }
 }
@@ -475,6 +617,7 @@ void DecodingAccuracyRunner::finalizeCurrentTrial() {
         acc.isDiscrete = gt.isDiscrete;
         acc.trialsSeen++;
         if (findMatchingRule(gt, m_currentRules) != nullptr) acc.trialsDetected++;
+        if (findMatchingRule(gt, m_currentRulesOverride) != nullptr) acc.trialsDetectedOverride++;
     }
 
     m_currentTrial++;
@@ -507,12 +650,19 @@ void DecodingAccuracyRunner::finishExperiment() {
     QJsonObject report;
     report["experiment"] = QStringLiteral("4.1 — Decoding Accuracy vs Ground Truth");
     report["model"] = m_modelName;
-    report["promptVariant"] = m_fewShotPrompt ? QStringLiteral("few-shot") : QStringLiteral("zero-shot");
+    switch (m_promptVariant) {
+        case PromptVariant::FewShot:         report["promptVariant"] = QStringLiteral("few-shot"); break;
+        case PromptVariant::EntropyAnalysis: report["promptVariant"] = QStringLiteral("entropy-analysis"); break;
+        case PromptVariant::ZeroShot:
+        default:                            report["promptVariant"] = QStringLiteral("zero-shot"); break;
+    }
     report["totalTrials"] = m_currentTrial;
     report["framesEvaluatedPerTrial"] = m_framesToEvaluate;
     report["timestamp"] = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QJsonArray signalsArr;
+    double sumDetectionRate = 0.0, sumDetectionRateOverride = 0.0;
+    int nSignals = 0;
     for (auto it = m_results.constBegin(); it != m_results.constEnd(); ++it) {
         const SignalAccum &acc = it.value();
         QJsonObject so;
@@ -520,8 +670,21 @@ void DecodingAccuracyRunner::finishExperiment() {
         so["isDiscrete"] = acc.isDiscrete;
         so["trialsSeen"] = acc.trialsSeen;
         so["trialsDetected"] = acc.trialsDetected;
-        so["detectionRate"] = acc.trialsSeen > 0
+        double detectionRate = acc.trialsSeen > 0
             ? double(acc.trialsDetected) / double(acc.trialsSeen) : 0.0;
+        so["detectionRate"] = detectionRate;
+
+        // Rownolegle metryki z hybrydowym override'em (Kierunek B) — patrz
+        // applyBitFlagOverride(). Dodatkowe, NIE zastepuja powyzszych "surowych"
+        // metryk LLM.
+        so["trialsDetectedOverride"] = acc.trialsDetectedOverride;
+        double detectionRateOverride = acc.trialsSeen > 0
+            ? double(acc.trialsDetectedOverride) / double(acc.trialsSeen) : 0.0;
+        so["detectionRateOverride"] = detectionRateOverride;
+
+        sumDetectionRate += detectionRate;
+        sumDetectionRateOverride += detectionRateOverride;
+        nSignals++;
 
         if (acc.isDiscrete) {
             int total = acc.tp + acc.tn + acc.fp + acc.fn;
@@ -540,6 +703,25 @@ void DecodingAccuracyRunner::finishExperiment() {
             so["f1"] = f1;
             so["accuracy"] = accuracy;
             so["nSamplesEvaluated"] = total;
+
+            int totalOv = acc.tpOverride + acc.tnOverride + acc.fpOverride + acc.fnOverride;
+            double precisionOv = (acc.tpOverride + acc.fpOverride) > 0
+                ? double(acc.tpOverride) / double(acc.tpOverride + acc.fpOverride) : 0.0;
+            double recallOv = (acc.tpOverride + acc.fnOverride) > 0
+                ? double(acc.tpOverride) / double(acc.tpOverride + acc.fnOverride) : 0.0;
+            double f1Ov = (precisionOv + recallOv) > 0
+                ? 2.0 * precisionOv * recallOv / (precisionOv + recallOv) : 0.0;
+            double accuracyOv = totalOv > 0
+                ? double(acc.tpOverride + acc.tnOverride) / double(totalOv) : 0.0;
+            QJsonObject cmOv;
+            cmOv["tp"] = acc.tpOverride; cmOv["tn"] = acc.tnOverride;
+            cmOv["fp"] = acc.fpOverride; cmOv["fn"] = acc.fnOverride;
+            so["confusionMatrixOverride"] = cmOv;
+            so["precisionOverride"] = precisionOv;
+            so["recallOverride"] = recallOv;
+            so["f1Override"] = f1Ov;
+            so["accuracyOverride"] = accuracyOv;
+            so["nSamplesEvaluatedOverride"] = totalOv;
         } else {
             double mse = 0.0;
             for (double se : acc.squaredErrors) mse += se;
@@ -548,11 +730,31 @@ void DecodingAccuracyRunner::finishExperiment() {
             so["mse"] = mse;
             so["rmse"] = std::sqrt(mse);
             so["nSamplesEvaluated"] = n;
+
+            double mseOv = 0.0;
+            for (double se : acc.squaredErrorsOverride) mseOv += se;
+            int nOv = static_cast<int>(acc.squaredErrorsOverride.size());
+            mseOv = nOv > 0 ? mseOv / nOv : 0.0;
+            so["mseOverride"] = mseOv;
+            so["rmseOverride"] = std::sqrt(mseOv);
+            so["nSamplesEvaluatedOverride"] = nOv;
         }
         signalsArr.append(so);
     }
     report["signals"] = signalsArr;
     report["trialLog"] = m_trialLog;
+
+    QJsonObject summary;
+    summary["avgDetectionRate"] = nSignals > 0 ? sumDetectionRate / nSignals : 0.0;
+    summary["avgDetectionRateOverride"] = nSignals > 0 ? sumDetectionRateOverride / nSignals : 0.0;
+    summary["note"] = QStringLiteral(
+        "avgDetectionRateOverride uwzglednia hybrydowy override klasyczny "
+        "(Kierunek B) - jesli LLM zaproponuje skalar dla bajtu wygladajacego "
+        "jak flagi bitowe (na podstawie obserwowanych wartosci, nie ground "
+        "truth), kod programowo wymusza dekompozycje per-bit przed ocena. "
+        "avgDetectionRate (bez sufiksu) to nadal 'surowy' wynik samego LLM, "
+        "porownywalny z wczesniejszymi raportami.");
+    report["summary"] = summary;
 
     QJsonDocument doc(report);
     QFile file(m_reportPath);
