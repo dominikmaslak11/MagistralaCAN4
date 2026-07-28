@@ -1,0 +1,95 @@
+============================================================
+EKSPERYMENT 1.2 — Rozbicie t_resp na skladowe (podsluch SPI)
+MagistralaCAN4 + esp_experiment_1_2.ino (ESP32 + MCP2515)
+============================================================
+Liczba probek (zdarzen): N=300
+
+METODOLOGIA:
+  Rozszerzenie weryfikacji z Eksperyment_1.2_Weryfikacja_AnalizatorLogiczny_20260728/
+  o 4 dodatkowe kanaly analizatora logicznego podpiete do magistrali SPI
+  miedzy ESP32 a MCP2515 (domyslne piny VSPI):
+    D0 = GPIO4  (MCP_INT_PIN, jak wczesniej)
+    D1 = GPIO13 (REACTION_PIN, jak wczesniej)
+    D2 = GPIO18 (SCLK)
+    D3 = GPIO23 (MOSI)
+    D4 = GPIO19 (MISO)
+    D5 = GPIO5  (CS, ten sam pin co CAN_CS w kodzie)
+
+  Biblioteka MCP2515 (autowp-mcp2515) uzywa zegara SPI 10MHz
+  (DEFAULT_SPI_CLOCK). Probkowanie analizatora przy 1MHz (~2.4x
+  niedopróbkowanie wzgledem 10MHz) NIE pozwala zdekodowac pojedynczych
+  bajtow SPI (do tego trzeba by min. 24-48MHz), ale W ZUPELNOSCI
+  wystarcza do zidentyfikowania GRANIC poszczegolnych transakcji SPI
+  (zbocza linii CS: niski=transakcja aktywna, wysoki=zakonczona) - co
+  jest wystarczajace do rozbicia calkowitego t_resp na skladowe czasowe.
+
+  NAPOTKANA TRUDNOSC: probki wyzsze (24MHz), potrzebne do pelnego
+  dekodowania bajtow SPI, mialy twardy limit ciaglego przechwytu w tym
+  srodowisku (~120-126tys. probek niezaleznie od zadanej liczby,
+  prawdopodobnie ograniczenie przepustowosci USB) - zbyt krotkie okno
+  czasowe (~5ms) by niezawodnie zsynchronizowac z wysylanymi ramkami
+  testowymi mimo prob z rozstawionym opoznieniem wysylki (sweep 0-210ms,
+  wszystkie nieudane). Rozwiazanie: obnizenie do 1MHz (potwierdzone jako
+  w pelni niezawodne, bez obciecia, przy oknie 2s) - koszt: brak
+  dekodowania bajtow SPI, ale zachowana pelna zdolnosc do pomiaru granic
+  transakcji (CS) z rozdzielczoscia 1us, wystarczajaca dla tego celu.
+
+WYNIK (N=300, wszystkie przechwycone zdarzenia z jednego okna 2s):
+
+  Wszystkie 300 zdarzen wykazaly IDENTYCZNA liczbe transakcji SPI: 5.
+
+  Rozbicie t_resp [us], srednia ± odchylenie standardowe:
+    INT -> pierwsza transakcja SPI:        9.90 ± 0.46 us  ( 8.8%)
+    Suma czasu aktywnych transakcji SPI:   47.38 ± 1.28 us  (42.2%)
+    Przerwy MIEDZY transakcjami SPI:       48.09 ± 1.23 us  (42.8%)
+    Ostatnia transakcja -> reakcja GPIO:    7.02 ± 0.52 us  ( 6.2%)
+    ----------------------------------------------------------------
+    RAZEM (t_resp):                      112.40 ± 1.56 us  (100%)
+
+WNIOSEK:
+  Nieoczekiwany i wart odnotowania wynik: niemal POLOWA calkowitego
+  czasu t_resp (48.09us, 42.8%) to NIE czas transferu danych po SPI,
+  tylko PRZERWY MIEDZY kolejnymi transakcjami SPI - czyli czysto
+  softwarowy narzut biblioteki MCP2515 (sprawdzanie warunkow, rozgalezienia,
+  koszt wywolan funkcji) miedzy kolejnymi operacjami odczytu rejestrow.
+  Sam transfer danych po magistrali SPI (47.38us, 42.2%) jest niemal
+  dokladnie rownowazny co do wielkosci z tym softwarowym narzutem.
+
+  To uszczegóławia (nie zmienia) wczesniejszy wniosek Eksperymentu 1.2:
+  "~99% kosztu to SPI+firmware, nie sam kontroler CAN/zegar" - teraz
+  wiemy, ze z tych ~99%, POLOWA to faktyczny transfer SPI, a POLOWA to
+  narzut sterujacy biblioteki, nie sama elektryczna transmisja danych.
+  Sugeruje to, ze optymalizacja biblioteki obslugi MCP2515 (mniej
+  oddzielnych transakcji SPI, np. odczyt calego rekordu jedna transakcja
+  zamiast pieciu) mogłaby zmniejszyc t_resp nawet bez zmiany sprzetu.
+
+Pliki: spi_breakdown_raw.csv (300 wierszy, jeden na zdarzenie, kolumny:
+t_resp_us, int_to_first_cs_us, spi_busy_us, processing_gaps_us,
+last_cs_to_reaction_us, n_spi_transactions).
+
+DYSKUSJA: CZY WARTO NAPISAC WLASNA, ZOPTYMALIZOWANA BIBLIOTEKE (5->1 TRANSAKCJA)?
+----------------------------------------------------------------------------------
+Technicznie TAK, jest to uzasadnione: MCP2515 ma sprzetowa instrukcje
+"READ RX BUFFER", ktora w JEDNEJ transakcji SPI czyta ID+DLC+dane RAMKI i
+AUTOMATYCZNIE kasuje odpowiednia flage przerwania (RXnIF w CANINTF) jako
+udokumentowany efekt uboczny (nie spekulacja - cecha chipu wprost opisana
+w datasheet MCP2515, zaprojektowana specjalnie w celu redukcji liczby
+transakcji SPI). Obecna biblioteka (autowp-mcp2515) uzywa 5 oddzielnych
+transakcji zamiast wykorzystac ta optymalizacje - realna, znana technika
+inzynierska, mozliwa do wdrozenia.
+
+Wartosc praktyczna dla TEGO projektu jest jednak NISKA: nawet przy
+optymistycznym zalozeniu redukcji t_resp z ~112us do np. ~70-80us
+(spekulacja - wymagalaby faktycznego wdrozenia i pomiaru), to wciaz
+~20-40 TYSIECY razy szybciej niz sekundowe opoznienie zapytania LLM
+podczas fazy Cold Start, ktore i tak dominuje caly system (patrz
+Eksperyment 1.1). Potwierdza to pierwotny wniosek Eksperymentu 1.2: czas
+reakcji "na goraco" NIE jest waskim gardlem systemu, wiec jego dalsza
+optymalizacja nie przesuwa realnej wydajnosci calosci.
+
+REKOMENDACJA: udokumentowac jako zwalidowana, wartosciowa obserwacje i
+testowalna hipoteze na przyszlosc (mozliwy kierunek dalszych badan, jesli
+projekt kiedykolwiek trafi w kontekst o duzo ostrzejszych wymaganiach
+czasu rzeczywistego) - ale NIE wdrazac w ramach obecnej pracy (poza
+zakresem, niska wartosc dodana wobec juz ustalonego wniosku o dominacji
+kosztu Cold Start nad Hot Execution).

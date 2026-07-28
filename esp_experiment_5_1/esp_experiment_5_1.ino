@@ -23,16 +23,31 @@
 //           zmieniaja sie w zaleznosci od stanu pracy w czasie dzialania,
 //           raportowane dla kompletnosci tabeli, nie dla porownania
 //           miedzystanowego).
-//   CPU   - PROXY: g_loopSpins zlicza kazda iteracje glownej petli loop()
-//           w oknie miedzy RESET a REPORT. Interpretacja (spins/s ->
-//           %obciazenia, wzgledem kalibracji na pustej magistrali w IDLE)
-//           odbywa sie po stronie hosta (run_experiment_5_1.py) - to
-//           swiadomie uproszczony, jawnie opisany zastepnik pelnego
-//           profilera FreeRTOS (vTaskGetRunTimeStats wymaga zmiany
-//           sdkconfig, niedostepnej wprost z poziomu szkicu Arduino) -
-//           mierzy obciazenie GLOWNEJ petli sterujacej (tam, gdzie faktycznie
-//           dzieje sie cala logika CAN w tej architekturze), nie calego
-//           systemu wielozadaniowego.
+//   CPU   - BEZPOSREDNI pomiar zajetosci: micros() przed/po kazdym bloku
+//           realnej pracy (odczyt SPI + klasyfikacja) w loop(), sumowany w
+//           oknie miedzy RESET a REPORT. cpu_busy_pct = suma_czasu_pracy /
+//           czas_okna * 100 - liczone bezposrednio na urzadzeniu, bez
+//           zalezenia od ksiegowania FreeRTOS.
+//
+//           HISTORIA PROB (2026-07-28, ta sama sesja):
+//           1) Proxy oparte na tempie iteracji glownej petli (g_loopSpins)
+//              - zbyt niska rozdzielczosc przy typowym ruchu (50Hz), brak
+//              mierzalnej roznicy IDLE/PARSING.
+//           2) `vTaskGetRunTimeStats()`/`uxTaskGetSystemState()` (FreeRTOS
+//              trace facility) - dziala bez JTAG na obecnym rdzeniu (3.1.3),
+//              ale okazalo sie NIEWIARYGODNE dla tej architektury: FreeRTOS
+//              aktualizuje liczniki czasu zadania GLOWNIE przy przelaczeniach
+//              kontekstu, a nasza petla loop() nigdy nie oddaje sterowania
+//              (ciagly polling flagi przerwania) - empirycznie zmierzono
+//              ZERO przyrostu licznika w realnym oknie RESET->REPORT mimo
+//              aktywnego przetwarzania ramek. Znalezisko, nie zalozenie -
+//              zweryfikowane bezposrednim testem z debug-printami.
+//           3) (OBECNA) Bezposredni pomiar micros() - odporny na powyzsze,
+//              bo nie zalezy od mechanizmu ksiegowania FreeRTOS w ogole.
+//
+// Rownolegle przygotowywana jest wersja z JTAG (ESP-Prog) - patrz
+// esp_experiment_5_1/JTAG_SETUP.md - dla niezaleznej, sprzetowej
+// weryfikacji (np. GPIO-toggle wokol bloku pracy + logic analyzer).
 //
 // Protokol sterujacy (CAN ID CONTROL_CAN_ID=0x7FE), ten sam wzorzec co
 // Eksperyment 2.2:
@@ -66,6 +81,8 @@ static uint8_t  g_mode = MODE_IDLE;
 static uint32_t g_frameCount = 0;
 static uint32_t g_loopSpins = 0;
 static unsigned long g_windowStartMs = 0;
+static unsigned long g_windowStartUs = 0;
+static uint32_t g_busyUs = 0; // suma czasu pracy (SPI+klasyfikacja) w oknie
 
 // Tabela klasyfikacji per-ID uzywana WYLACZNIE w trybie PARSING - realna
 // praca obliczeniowa (nie no-op), zeby stan roznil sie od IDLE czyms
@@ -100,6 +117,7 @@ void setup() {
     mcp2515.setNormalMode();
 
     g_windowStartMs = millis();
+    g_windowStartUs = micros();
 
     Serial.print("[SETUP] Eksperyment 5.1 gotowy. HeapSize=");
     Serial.print(ESP.getHeapSize());
@@ -141,12 +159,16 @@ static void classifyFrame(const can_frame &f) {
 static void resetCounters() {
     g_frameCount = 0;
     g_loopSpins = 0;
+    g_busyUs = 0;
     for (int i = 0; i < kMaxTrackedIds; ++i) g_stats[i] = IdStats{};
     g_windowStartMs = millis();
+    g_windowStartUs = micros();
 }
 
 static void printReport() {
     unsigned long elapsedMs = millis() - g_windowStartMs;
+    unsigned long elapsedUs = micros() - g_windowStartUs;
+
     Serial.print("RESULT,");
     Serial.print(g_mode);
     Serial.print(',');
@@ -164,7 +186,11 @@ static void printReport() {
     Serial.print(',');
     Serial.print(ESP.getSketchSize());
     Serial.print(',');
-    Serial.println(ESP.getFreeSketchSpace());
+    Serial.print(ESP.getFreeSketchSpace());
+    Serial.print(',');
+    Serial.print(g_busyUs);
+    Serial.print(',');
+    Serial.println(elapsedUs);
 }
 
 void loop() {
@@ -172,6 +198,8 @@ void loop() {
 
     if (!g_frameReady) return;
     g_frameReady = false;
+
+    unsigned long workStartUs = micros();
 
     while (mcp2515.readMessage(&rxMsg) == MCP2515::ERROR_OK) {
         bool extended = (rxMsg.can_id & CAN_EFF_FLAG) != 0;
@@ -194,4 +222,6 @@ void loop() {
         }
         // w IDLE: ramka tylko zliczona, zero dodatkowej pracy
     }
+
+    g_busyUs += (unsigned long)(micros() - workStartUs);
 }

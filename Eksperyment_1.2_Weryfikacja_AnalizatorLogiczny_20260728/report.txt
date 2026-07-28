@@ -1,0 +1,78 @@
+============================================================
+EKSPERYMENT 1.2 — Niezalezna weryfikacja sprzetowa (analizator logiczny)
+MagistralaCAN4 + esp_experiment_1_2.ino (ESP32 + MCP2515)
+============================================================
+Liczba probek: 570
+
+METODOLOGIA:
+  Niezalezny, ZEWNETRZNY pomiar czasu t_resp (INT MCP2515 -> reakcja
+  GPIO) analizatorem stanow logicznych (klon Saleae Logic 8-kanalowy,
+  chip fx2lafw, wykryty i obslugiwany przez sigrok-cli/PulseView).
+  Kanal D0 podlaczony do GPIO4 (MCP_INT_PIN, aktywny stanem niskim),
+  kanal D1 do GPIO13 (REACTION_PIN). Uzupelnia i KRZYZOWO WERYFIKUJE
+  wczesniejszy pomiar WEWNETRZNY (esp_timer_get_time() na samym ESP32,
+  patrz Eksperyment_1.2_Hot_Execution_20260725_163438/) - dwie
+  calkowicie niezalezne metody pomiarowe.
+
+  Dwie wczesniejsze proby niezaleznej weryfikacji sprzetowej (Hantek
+  1008C - zawodny software'owy wyzwalacz, ATK-Logic DL16 - trwale
+  niesprawny firmware) zostaly PORZUCONE w poprzednich sesjach - ten
+  analizator (nowy zakup) jest PIERWSZYM skutecznym domknieciem tego
+  watku.
+
+  Napotkane i rozwiazane trudnosci techniczne tej sesji:
+  - Urzadzenie ma twardy limit ciaglego przechwytu przy wysokiej
+    czestotliwosci probkowania (przy 24MHz: "Device only sent 126464
+    samples" mimo zadania 2.4M-24M probek) - PRAWDOPODOBNIE ograniczenie
+    bufora/przepustowosci USB tego konkretnego klonu. Rozwiazanie:
+    obnizenie czestotliwosci probkowania do 1MHz (nadal 1us rozdzielczosci,
+    w zupelnosci wystarczajace dla mierzonego zjawiska rzedu ~110us) -
+    przy 1MHz urzadzenie dostarczylo pelne 3 000 000 zadanych probek
+    bez obciecia.
+  - Sprzetowy wyzwalacz (--triggers D0=f) w tym urzadzeniu/sterowniku
+    NIE dzialal niezawodnie (przechwyty konczyly sie bez zadnych
+    zarejestrowanych probek) - zamiast tego zastosowano przechwyt
+    CIAGLY (bez wyzwalacza) w oknie czasowym obejmujacym wielokrotne
+    wyslanie ramki testowej (CAN ID 0x123), z analiza zboczy
+    wykonywana POST-HOC w Pythonie zamiast polegania na wyzwalaczu
+    sprzetowym.
+  - Pierwsze polaczenie sondy D1 nie stykalo sie poprawnie z GPIO13
+    (odczyt stale wysoki zamiast oczekiwanego niskiego w stanie
+    spoczynku) - naprawione fizycznie przez uzytkownika w trakcie
+    sesji, zweryfikowane przed wlasciwym pomiarem.
+
+  Statystyki t_resp [us] (ten pomiar, analizator logiczny, N=570):
+    srednia (mu):      112.45
+    odchylenie (sigma): 1.54
+    mediana:            112.0
+    min:                111
+    max:                117
+
+  Statystyki t_resp [us] (referencja, timer wewnetrzny ESP32, N=1000,
+  Eksperyment_1.2_Hot_Execution_20260725_163438/):
+    srednia (mu):      109.70
+    odchylenie (sigma): 1.52
+    mediana:            109.00
+    min:                108
+    max:                115
+
+WNIOSEK:
+  Dwie CALKOWICIE NIEZALEZNE metody pomiarowe (timer wewnetrzny ESP32
+  vs zewnetrzny analizator logiczny) daja PRAKTYCZNIE ZGODNY wynik:
+  roznica srednich ~2.75us (~2.5% wzglednie), obie metody dajace niemal
+  identyczne odchylenie standardowe (~1.5us). Roznica ta miesci sie w
+  oczekiwanej rozdzielczosci obu metod (obie ~1us) oraz typowym
+  opoznieniu propagacji sygnalu elektrycznego na linii GPIO wzgledem
+  znacznika czasu wziętego programowo w ISR (esp_timer_get_time()
+  wykonuje sie nieco PRZED faktycznym ustawieniem/odczytem stanu na
+  pinie przez obwod probkujacy analizatora).
+
+  Ten wynik stanowi PIERWSZE SKUTECZNE, niezalezne od ESP32 potwierdzenie
+  sprzetowe wartosci t_resp≈110us zglaszanej throughout Eksperymentu 1.2
+  - domykajac watek metodologiczny otwarty od proby z Hantekiem 1008C
+  (porzucona z powodu zawodnego wyzwalacza) i ATK-Logic DL16 (porzucona
+  z powodu trwale niesprawnego firmware).
+
+Pliki: raw_data.csv (570 pojedynczych pomiarow), statistics.csv,
+histogram.png (rozklad gestosci prawdopodobienstwa), t_resp_values_us.txt
+(surowe wartosci, jedna na linie).

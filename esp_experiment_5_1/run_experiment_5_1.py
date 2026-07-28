@@ -104,6 +104,8 @@ def wait_for_result(ser, timeout_s=1.5):
                 "heap_size": int(parts[7]),
                 "sketch_size": int(parts[8]),
                 "free_sketch_space": int(parts[9]),
+                "loop_task_busy_us": int(parts[10]),
+                "elapsed_us": int(parts[11]),
             }
     return None
 
@@ -115,7 +117,9 @@ def run_measurement(sock, ser, mode, window_s, rate_hz):
     sock.send(build_frame(CONTROL_CAN_ID, bytes([CTRL_SET_MODE, mode])))
     time.sleep(0.05)
 
-    n_sent = generate_traffic(sock, rate_hz, window_s) if window_s > 0 else 0
+    n_sent = generate_traffic(sock, rate_hz, window_s) if (window_s > 0 and rate_hz > 0) else 0
+    if window_s > 0 and rate_hz <= 0:
+        time.sleep(window_s)
     time.sleep(0.1)
 
     result = None
@@ -165,7 +169,9 @@ def main():
                 print(f"  [{i+1}/{args.n_per_state}] [UWAGA] brak odpowiedzi — pomijam")
                 continue
             spin_rate = res["loop_spins"] / (res["elapsed_ms"] / 1000.0) if res["elapsed_ms"] > 0 else 0.0
-            cpu_load_pct = max(0.0, 100.0 * (1.0 - spin_rate / baseline_spin_rate))
+            cpu_load_pct_proxy = max(0.0, 100.0 * (1.0 - spin_rate / baseline_spin_rate))
+            cpu_load_pct_real = (100.0 * res["loop_task_busy_us"] / res["elapsed_us"]
+                                  if res["elapsed_us"] > 0 else 0.0)
             used_heap = res["heap_size"] - res["free_heap"]
             row = {
                 "state": label,
@@ -175,7 +181,10 @@ def main():
                 "n_sent": res["n_sent"],
                 "loop_spins": res["loop_spins"],
                 "spin_rate_hz": round(spin_rate, 1),
-                "cpu_load_pct": round(cpu_load_pct, 2),
+                "cpu_load_pct_proxy": round(cpu_load_pct_proxy, 2),
+                "loop_task_busy_us": res["loop_task_busy_us"],
+                "elapsed_us": res["elapsed_us"],
+                "cpu_load_pct_real": round(cpu_load_pct_real, 3),
                 "free_heap_kb": round(res["free_heap"] / 1024.0, 2),
                 "min_free_heap_kb": round(res["min_free_heap"] / 1024.0, 2),
                 "used_heap_kb": round(used_heap / 1024.0, 2),
@@ -185,14 +194,16 @@ def main():
             }
             rows.append(row)
             print(f"  [{i+1}/{args.n_per_state}] frames={res['frame_count']:4d} "
-                  f"RAM_used={row['used_heap_kb']:6.1f}kB CPU~{row['cpu_load_pct']:5.1f}%")
+                  f"RAM_used={row['used_heap_kb']:6.1f}kB "
+                  f"CPU_real~{row['cpu_load_pct_real']:6.3f}% (proxy~{row['cpu_load_pct_proxy']:5.1f}%)")
 
     ser.close()
     sock.close()
 
     raw_path = out_dir / "raw_data.csv"
     fieldnames = ["state", "mode", "elapsed_ms", "frame_count", "n_sent",
-                  "loop_spins", "spin_rate_hz", "cpu_load_pct",
+                  "loop_spins", "spin_rate_hz", "cpu_load_pct_proxy",
+                  "loop_task_busy_us", "elapsed_us", "cpu_load_pct_real",
                   "free_heap_kb", "min_free_heap_kb", "used_heap_kb",
                   "heap_size_kb", "sketch_size_kb", "free_sketch_space_kb"]
     with open(raw_path, "w", newline="", encoding="utf-8") as f:
@@ -209,7 +220,8 @@ def main():
         "",
         f"Kalibracja (magistrala cicha, IDLE): {baseline_spin_rate:.1f} spins/s (=0% obciazenia referencyjnie)",
         "",
-        f"{'stan':>10} {'N':>4} {'RAM uzyte[kB]':>15} {'RAM min.wolne[kB]':>18} {'CPU[%] (proxy)':>16}",
+        f"{'stan':>10} {'N':>4} {'RAM uzyte[kB]':>15} {'RAM min.wolne[kB]':>18} "
+        f"{'CPU[%] real':>12} {'CPU[%] proxy':>13}",
     ]
     for label, _ in labels:
         pts = [r for r in rows if r["state"] == label]
@@ -218,8 +230,10 @@ def main():
         n = len(pts)
         avg_used = sum(p["used_heap_kb"] for p in pts) / n
         avg_min_free = sum(p["min_free_heap_kb"] for p in pts) / n
-        avg_cpu = sum(p["cpu_load_pct"] for p in pts) / n
-        lines.append(f"{label:>10} {n:>4} {avg_used:>15.2f} {avg_min_free:>18.2f} {avg_cpu:>16.1f}")
+        avg_cpu_real = sum(p["cpu_load_pct_real"] for p in pts) / n
+        avg_cpu_proxy = sum(p["cpu_load_pct_proxy"] for p in pts) / n
+        lines.append(f"{label:>10} {n:>4} {avg_used:>15.2f} {avg_min_free:>18.2f} "
+                      f"{avg_cpu_real:>12.3f} {avg_cpu_proxy:>13.1f}")
 
     if rows:
         lines += [
@@ -231,12 +245,17 @@ def main():
     lines += [
         "",
         "UWAGA METODOLOGICZNA:",
-        "- CPU[%] to PROXY liczony wzgledem spadku tempa iteracji glownej petli",
-        "  loop() (g_loopSpins) w stosunku do kalibracji na pustej magistrali -",
-        "  NIE jest to pelny profil FreeRTOS wszystkich zadan (wymagaloby zmiany",
-        "  sdkconfig, niedostepnej z poziomu szkicu Arduino). Mierzy obciazenie",
-        "  GLOWNEJ petli sterujacej, gdzie w tej architekturze dzieje sie cala",
-        "  logika obslugi CAN.",
+        "- CPU[%] real to bezposredni pomiar zajetosci: micros() przed/po kazdym",
+        "  bloku realnej pracy (odczyt SPI + klasyfikacja) w loop(), sumowany w",
+        "  oknie miedzy RESET a REPORT. PROBOWANO wczesniej vTaskGetRunTimeStats()/",
+        "  uxTaskGetSystemState() (FreeRTOS trace facility, dziala bez JTAG na tym",
+        "  rdzeniu) ale okazalo sie NIEWIARYGODNE dla tej architektury: FreeRTOS",
+        "  aktualizuje liczniki czasu zadania GLOWNIE przy przelaczeniach kontekstu,",
+        "  a nasza petla loop() nigdy nie oddaje sterowania (ciagly polling flagi",
+        "  przerwania) - zmierzono empirycznie ZERO przyrostu licznika mimo",
+        "  aktywnego przetwarzania ramek. Bezposredni pomiar micros() jest odporny",
+        "  na ten problem. Proxy (tempo iteracji petli) pozostawiony w kolumnie",
+        "  CPU[%] proxy wylacznie dla ciaglosci porownawczej z pierwszym przebiegiem.",
         "- Stan PARSING wykonuje realna (nie no-op) klasyfikacje per-ID: min/max/",
         "  liczba przelaczen bajtu 0, w tabeli do 8 sledzonych ID - patrz",
         "  classifyFrame() w esp_experiment_5_1.ino.",
