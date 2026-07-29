@@ -1,7 +1,7 @@
 ---
 status: SZKIC ROBOCZY — dokument żywy, aktualizowany po każdej kolejnej iteracji badań
-wersja: 0.4
-data ostatniej aktualizacji: 2026-07-28
+wersja: 0.5
+data ostatniej aktualizacji: 2026-07-29
 autorzy: [Dominik Maślak] — do uzupełnienia: afiliacja, wykładowca/promotor jako współautor
 ---
 
@@ -519,6 +519,68 @@ dalszej pracy w ramach niniejszego projektu.
 
 ---
 
+## Dodatek B — Rozszerzenie infrastruktury badawczej poza główny wątek: test zasięgu radiowego (Eksperyment 3.1) i przygotowanie profilowania JTAG (Eksperyment 5.1)
+
+Analogicznie do Dodatku A (Eksperyment 1.2), poniższe prace dotyczą odrębnych
+zagadnień infrastruktury sprzętowej projektu CAN-Edge-AI, nie głównego
+przedmiotu tej pracy (trafność LLM w dekodowaniu flag bitowych). Odnotowane tu
+dla kompletności obrazu prowadzonych równolegle prac — żadna z nich nie
+dostarcza jeszcze danych pomiarowych na moment tej wersji dokumentu.
+
+### B.1 Eksperyment 3.1 — wpływ odległości/przeszkód na opóźnienia i stratność pakietów (WiFi/BLE)
+
+**Status: przygotowanie zakończone (firmware + aplikacja pomiarowa + serwer
+odbiorczy), pomiar terenowy jeszcze NIE wykonany.**
+
+- Firmware `esp_experiment_3_1_wifi/esp_experiment_3_1_wifi.ino`: ESP32 jako
+  własny punkt dostępowy (SoftAP), prosty protokół ping-pong przez UDP
+  (`PING:<seq>` → `PONG:<seq>`), mierzący surowy zasięg radia ESP32
+  niezależnie od konkretnego routera pośredniczącego.
+- Pierwsza w tym projekcie aplikacja mobilna: `android_experiment_3_1/`
+  (Kotlin) — mierzy RTT na zegarze telefonu (nie wymaga synchronizacji
+  zegarów obu urządzeń), RSSI, oraz — po konsultacji z użytkownikiem —
+  geolokalizację GPS jako niezależną, obiektywną weryfikację zmierzonego
+  dystansu (z jawnie udokumentowanym ograniczeniem dokładności ~3–5 m,
+  typowo gorszym w scenariuszu NLOS z powodu wielodrogowości sygnału w
+  pobliżu zabudowań — akurat tam, gdzie GPS miałby najbardziej pomóc).
+  Wyniki zapisywane lokalnie do CSV jako źródło prawdy (odporne na
+  przerwanie łącza pod testem), eksport na żądanie po zakończeniu serii
+  (POST do prostego serwera domowego `server_receiver.py`, lub natywny
+  ekran "Udostępnij" Androida).
+- Przed napisaniem jakiegokolwiek kodu spisano 10 otwartych kwestii
+  metodologicznych do dyskusji z wykładowcą
+  (`Pytania_Do_Wykladowcy_Eksperyment_3.1_20260729.md`) — m.in. architektura
+  testu (SoftAP vs router pośredniczący, bliższy docelowemu wdrożeniu), role
+  fizyczne (ESP32 stacjonarne + telefon mobilny, odwrotnie niż dosłowne
+  brzmienie metodyki), zredukowany rozmiar próby względem metodyki
+  (proponowane 1000–2000 zamiast 10 000 pakietów/punkt) oraz interpretacja
+  zapisu "Liczba pomiarów do weryfikacji: 10" w metodyce (10 niezależnych
+  powtórzeń całego przebiegu, czy ogólna wskazówka liczebności próby).
+- Aplikacja Android zbudowana i skompilowana (build debug APK powiódł się);
+  pomiar terenowy oczekuje odpowiedzi wykładowcy na powyższe kwestie
+  metodologiczne przed uruchomieniem.
+
+### B.2 Eksperyment 5.1 — przygotowanie do profilowania JTAG (SystemView/esp_apptrace)
+
+**Status: szkielet projektu ESP-IDF utworzony, NIEUKOŃCZONY — w obecnym
+stanie projekt się nie skompiluje.**
+
+Jak odnotowano przy Eksperymencie 5.1 (profilowanie CPU/RAM), narzędzia trace
+FreeRTOS (`vTaskGetRunTimeStats`) okazały się niewiarygodne dla architektury
+pollującej używanej w tym firmware (zerowy przyrost licznika czasu zadania
+mimo aktywnego przetwarzania — `loopTask` nigdy nie oddaje sterowania), a
+pełny profil per-zadanie wymagałby JTAG (ESP-Prog + SystemView/esp_apptrace),
+co z kolei wymaga przejścia z czystego szkicu Arduino na natywny projekt
+ESP-IDF (`configGENERATE_RUN_TIME_STATS` w `sdkconfig` nie jest dostępne z
+poziomu samego `.ino`). Rozpoczęto tworzenie takiego szkieletu
+(`esp_experiment_5_1_jtag/`) — zawiera on obecnie niespójność do naprawienia
+w kolejnej sesji: `main/CMakeLists.txt` odwołuje się do źródła
+`esp_experiment_5_1_jtag.c`, podczas gdy faktycznie obecny plik to
+`main/main.cpp` (pusty szkielet `app_main()`). Port logiki klasyfikacji z
+`esp_experiment_5_1.ino` do tego projektu jeszcze się nie rozpoczął.
+
+---
+
 ## Dostępność danych i kodu
 
 Pełny kod źródłowy (aplikacja C++/Qt6, firmware ESP32, skrypty generatora ruchu
@@ -569,3 +631,11 @@ odniesień bibliograficznych]**
   RX BUFFER") — technicznie uzasadniona, ale niska wartość praktyczna wobec
   dominacji kosztu Cold Start (LLM) nad Hot Execution; rekomendacja:
   udokumentować jako testowalną hipotezę, nie wdrażać w ramach tej pracy.
+- **2026-07-29, wersja 0.5** — dodano Dodatek B: rozszerzenie infrastruktury
+  badawczej poza główny wątek pracy — przygotowanie (bez jeszcze wykonanego
+  pomiaru) Eksperymentu 3.1 (zasięg WiFi/BLE, pierwsza aplikacja mobilna w
+  projekcie, 10 otwartych kwestii metodologicznych spisanych do dyskusji z
+  wykładowcą) oraz nieukończony szkielet natywnego projektu ESP-IDF pod
+  przyszłe profilowanie JTAG Eksperymentu 5.1. Żadna z tych prac nie zmienia
+  wyników ani wniosków głównego wątku (sekcje 1–7) — dodane wyłącznie dla
+  kompletności obrazu równolegle prowadzonych prac.
