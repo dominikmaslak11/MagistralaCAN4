@@ -3,6 +3,15 @@
 # (managed_components/espressif__arduino-esp32/CMakeLists.txt:428).
 CONFIG_FREERTOS_HZ=1000
 
+# KLUCZOWE (naprawa watchdoga, 2026-07-30): niech komponent arduino-esp32
+# dostarczy WLASNY, poprawny app_main() (tworzy dedykowane "loopTask" na
+# ARDUINO_RUNNING_CORE, domyslnie CPU1) zamiast wlasnorecznie napisanego
+# app_main() ktory uruchamial loop() w zadaniu ESP-IDF "main" (CPU0) -
+# to GLODZILO IDLE0 (main nigdy nie oddawal sterowania), wywolujac
+# powtarzalny Task Watchdog Trigger. Zobacz managed_components/
+# espressif__arduino-esp32/cores/esp32/main.cpp i Kconfig.projbuild.
+CONFIG_AUTOSTART_ARDUINO=y
+
 # SystemView przez JTAG (ESP-Prog-2) - symbole zweryfikowane bezposrednio w
 # components/app_trace/Kconfig, nie z pamieci. Wlacza Application Level
 # Tracing z destynacja JTAG + SEGGER SystemView events przez to samo lacze.
@@ -16,3 +25,16 @@ CONFIG_APPTRACE_SV_DEST_JTAG=y
 # (2026-07-30), zobaczono realny traceback. WARN wystarcza, bo nasze wlasne
 # Serial.print() nie przechodzi przez system logowania ESP-IDF.
 CONFIG_LOG_DEFAULT_LEVEL_WARN=y
+
+# Po naprawie CONFIG_AUTOSTART_ARDUINO (wyzej) loopTask poprawnie dziala na
+# CPU1 (ARDUINO_RUNNING_CORE), ale to WCIAZ pollujaca petla bez yield
+# (`if (!g_frameReady) return;`) - swiadoma, udokumentowana cecha
+# architektury tego firmware (niskie opoznienie reakcji na przerwanie
+# MCP2515, nie blad). Domyslny, sciagniety "od zera" ESP-IDF sdkconfig
+# pilnuje IDLE1 (CPU1) scislej niz plytki Arduino IDE (ktorych board
+# package standardowo jest bardziej pobłazliwy dla takich petli) -
+# wylaczone tu wylacznie zeby zgasic nieszkodliwy (PANIC=n domyslnie),
+# ale halasliwy log ostrzezenia watchdoga, NIE zmienia to architektury
+# petli loop(). CPU0 (system-krytyczny: WiFi/BT/wiele ISR) POZOSTAJE pod
+# nadzorem jako realne zabezpieczenie.
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1=n

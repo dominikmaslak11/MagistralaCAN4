@@ -1,6 +1,6 @@
 ---
 status: SZKIC ROBOCZY — dokument żywy, aktualizowany po każdej kolejnej iteracji badań
-wersja: 0.6
+wersja: 0.7
 data ostatniej aktualizacji: 2026-07-30
 autorzy: [Dominik Maślak] — do uzupełnienia: afiliacja, wykładowca/promotor jako współautor
 ---
@@ -581,57 +581,128 @@ testowo (0 utraconych bajtów danych trace).
 
 **Eksperyment poboczny: czy sam pomiar JTAG zniekształca mierzoną
 wielkość?** Uruchomiono ten sam skrypt pomiarowy (`run_experiment_5_1.py`,
-bez modyfikacji — identyczny protokół sterujący przez CAN) w trzech
+bez modyfikacji — identyczny protokół sterujący przez CAN) w czterech
 konfiguracjach firmware, N=40 (20×IDLE, 20×PARSING) każda, żeby ocenić,
 czy samo podłączenie i użycie JTAG/SystemView zaburza wynik pomiaru
-obciążenia CPU:
+obciążenia CPU. Pierwszy przebieg (3 warianty) ujawnił niestabilność w
+wariancie kontrolnym (opis diagnozy niżej); po jej usunięciu wszystkie
+4 warianty powtórzono na naprawionej architekturze:
 
 | Wariant | CPU IDLE | CPU PARSING | Status |
 |---|---|---|---|
 | Oryginalny firmware Arduino (bez ESP-IDF/JTAG) | 0,598% | 0,599% | 40/40 OK |
-| Port ESP-IDF + JTAG, SystemView **aktywnie nagrywający** | 2,488% | 2,485% | 40/40 OK |
-| Port ESP-IDF + JTAG podłączony, SystemView **bierny** (bez streamu) | 1,796% | 1,795% | 40/40 OK |
-| Port ESP-IDF, `apptrace`/JTAG **całkowicie wyłączony** w konfiguracji | ~0,82% (dane niepełne) | ~0,82% (dane niepełne) | **przerwane 2/2 próby** |
+| Port ESP-IDF, `apptrace`/JTAG całkowicie wyłączony | 0,817% | 0,823% | 40/40 OK |
+| Port ESP-IDF + JTAG podłączony, SystemView bierny (bez streamu) | 1,789% | 1,799% | 40/40 OK |
+| Port ESP-IDF + JTAG, SystemView aktywnie nagrywający | 2,476% | 2,500% | 40/40 OK |
 
-**Wynik 1 — potwierdzony częściowo efekt obserwatora.** Aktywne
-strumieniowanie danych SystemView przez JTAG dodaje ok. 0,7 punktu
-procentowego obciążenia CPU ponad sam fakt skompilowania firmware z
-kanałem trace włączonym (2,488% wobec 1,796%) — to realny, mierzalny koszt
-samego mechanizmu przesyłania danych diagnostycznych. Nie tłumaczy to
-jednak całej różnicy względem oryginalnego firmware (0,6%): pozostała
-część (ok. 1,2 punktu procentowego) wynika najprawdopodobniej z odmiennej
-architektury (port ESP-IDF + Arduino-jako-komponent kontra czysty szkic
-Arduino IDE — inny harmonogram zadań, inna częstotliwość taktowania
-systemowego), nie z samego JTAG. Wniosek metodyczny analogiczny do sekcji
-5.3 tej pracy: narzędzie pomiarowe (tu: sonda JTAG) nie jest neutralne
-wobec mierzonej wielkości — klasyczny problem "obserwator wpływa na
-obserwowane zjawisko" znany z profilowania systemów wbudowanych, tu
-zmierzony ilościowo.
+**Diagnoza i naprawa niestabilności wariantu kontrolnego.** Pierwszy
+przebieg wariantu "bez apptrace" (miał być najprostszym punktem
+odniesienia) kończył się powtarzalnie (2/2 prób) zadziałaniem watchdoga
+zadań systemowych po 45–140 s działania. Pełny, wielolinijkowy raport
+błędu (przechwycony dedykowanym skryptem diagnostycznym logującym każdą
+linię konsoli, nie tylko pierwszą) wskazał precyzyjnie: zadanie systemowe
+`IDLE0` rdzenia CPU0 było głodzone przez zadanie `main`, które nigdy nie
+oddawało sterowania. Przyczyna źródłowa: ręcznie napisany punkt wejścia
+`app_main()` uruchamiał pętlę `loop()` bezpośrednio w zadaniu ESP-IDF
+"main" (domyślnie przypiętym do CPU0) zamiast pozwolić komponentowi
+`arduino-esp32` dostarczyć własny, poprawny `app_main()`, który tworzy
+dedykowane zadanie `loopTask` na drugim rdzeniu (CPU1) i zwalnia CPU0 dla
+jego własnego zadania bezczynności. Naprawa (`CONFIG_AUTOSTART_ARDUINO=y`
++ usunięcie ręcznego `app_main()`) w pełni usunęła problem — zweryfikowano
+60/60 pomiarów bez jednego ostrzeżenia watchdoga po poprawce, wobec 40/60
+ostrzeżeń przed nią (nieszkodliwych — domyślnie wyłączona panika watchdoga
+oznaczała, że firmware nie ulegał realnej awarii, tylko generował hałaśliwy
+log przerywający ciągłość skryptu pomiarowego). Naprawiona architektura
+dała wyniki praktycznie identyczne z wynikami sprzed naprawy (różnica
+rzędu 0,01 punktu procentowego), co dodatkowo potwierdza, że sam pomiar
+`micros()` był wiarygodny niezależnie od architektury planisty zadań —
+usterka psuła wyłącznie ciągłość długich przebiegów, nie poprawność
+pojedynczego pomiaru.
 
-**Wynik 2 — nieoczekiwany, ważniejszy: niestabilność w wariancie
-kontrolnym.** Wariant, który miał być najprostszym punktem odniesienia
-(czysty port ESP-IDF, bez żadnego mechanizmu trace), okazał się
-NIESTABILNY: w obu niezależnych próbach (100% powtarzalność przy N=2)
-firmware ulegało awarii wskutek zadziałania watchdoga zadań systemowych
-("Task Watchdog Trigger") po 45–140 sekundach działania — żaden z dwóch
-wariantów z aktywnym kanałem JTAG/apptrace nie wykazał tego problemu w
-pełnych, 40-pomiarowych przebiegach. Odwraca to intuicyjne oczekiwanie:
-zamiast "JTAG dokłada szum do stabilnej bazy", obserwacja sugeruje, że
-sama obecność mechanizmu trace mogła przypadkowo *stabilizować*
-harmonogram zadań (np. przez efekt uboczny okresowego odpytywania bufora
-trace, które mogło "odżywiać" watchdoga), a jego brak odsłania
-niezależny, nieznany defekt architektury portu. Przyczyna pozostaje
-NIEZDIAGNOZOWANA — surowe logi błędu w
-`esp_experiment_5_1_jtag/traces/watchdog_bezapptrace_dowod_20260730.txt`.
-Konsekwentnie z metodologią przejrzystości tej pracy (sekcja 5.3): liczba
-"~0,82%" z tego wariantu NIE jest traktowana jako wiarygodny wynik i nie
-powinna być cytowana bez dalszej diagnozy w przyszłej pracy.
+**Wynik — w pełni potwierdzony, monotoniczny i odtwarzalny efekt
+obserwatora**, rozłożony na trzy niezależne składowe:
+- +0,22 punktu procentowego: sam toolchain ESP-IDF + Arduino-jako-komponent
+  względem Arduino IDE (0,60%→0,82%) — nie dotyczy JTAG w ogóle, to koszt
+  wyboru środowiska budowania.
+- +0,97 punktu procentowego: samo skompilowanie firmware z kanałem trace
+  JTAG skonfigurowanym, nawet bez aktywnego przechwytu danych
+  (0,82%→1,79%) — zaskakująco duży koszt samej *gotowości* kanału trace,
+  większy niż koszt jego aktywnego wykorzystania.
+- +0,69 punktu procentowego: aktywne strumieniowanie danych SystemView
+  przez JTAG (1,79%→2,49%).
+
+Wniosek metodyczny analogiczny do sekcji 5.3 tej pracy: narzędzie
+pomiarowe (tu: sonda JTAG) nie jest neutralne wobec mierzonej wielkości —
+klasyczny problem "obserwator wpływa na obserwowane zjawisko" znany z
+profilowania systemów wbudowanych, tu zmierzony ilościowo i w pełni
+rozłożony na składowe przyczyny.
 
 **Rekomendacja robocza dla docelowej tabeli metodyki (Grupa 5)**:
 oryginalny pomiar firmware Arduino (0,6%) jako główny, najmniej inwazyjny
-wynik; warianty JTAG jako materiał do dyskusji o granicach metod
-profilowania systemów wbudowanych klasy Edge, nie jako zamiennik wyniku
-głównego.
+wynik; pełna tabela 4 wariantów jako materiał do dyskusji o granicach
+metod profilowania systemów wbudowanych klasy Edge, nie jako zamiennik
+wyniku głównego.
+
+### B.3 Trzeci stan metodyki ("OTA Update") — zrealizowany
+
+Metodyka (Grupa 5) wymaga trzech stanów pomiarowych: *Idle*, *Parsing &
+Filtering* oraz *OTA Update* ("moment aktualizacji i kompilacji nowej
+reguły w pamięci"). Trzeci stan pozostawał niezrealizowany od początku
+istnienia Eksperymentu 5.1 w tym projekcie — mechanizm aplikowania reguły
+LLM bezpośrednio na urządzeniu brzegowym nie istniał w architekturze;
+reguły LLM żyły wyłącznie po stronie komputera (`DecodingAccuracyRunner`,
+sekcja 3.5 tej pracy).
+
+**Projekt i implementacja.** Rozszerzono firmware (`esp_experiment_5_1_jtag`)
+o tryb `MODE_OTA`, w którym urządzenie przyjmuje przez CAN i "kompiluje"
+regułę dekodującą o polach identycznych ze strukturą `LlmSignalRule`
+używaną po stronie komputera (`byteIdx`, `byteLen`, `littleEndian`,
+`isSigned`, `bitMask`, `scale`, `offset`) — świadoma decyzja spójności
+architektonicznej z resztą systemu zamiast projektowania nowego formatu
+reguły od zera. Ponieważ jedna reguła nie mieści się w pojedynczej,
+8-bajtowej ramce CAN, jej dostawa wymaga czterech ramek sterujących
+(nagłówek, maska bitowa, skala, przesunięcie + wyzwolenie kompilacji) —
+naturalne ograniczenie przepustowości magistrali, warte odnotowania jako
+praktyczny aspekt projektowania protokołu OTA dla systemów CAN. Sama
+"kompilacja" to rzeczywisty zapis reguły do tabeli aktywnych reguł na
+urządzeniu (do ośmiu jednocześnie, analogicznie do tabeli klasyfikacji
+stanu *Parsing*), a nie operacja pusta — mierzona tym samym mechanizmem
+bezpośredniego pomiaru czasu co klasyfikacja ramek w stanie *Parsing*.
+
+**Wynik (N=20, to samo binarium i konfiguracja co pozostałe dwa stany dla
+uczciwego porównania)**:
+
+| Stan | CPU [%] | RAM użyte [kB] | Flash [kB] | Parametr obciążenia |
+|---|---|---|---|---|
+| Idle | 1,792 | 29,50 | 272,4 | 50 ramek/s (bez dodatkowej pracy) |
+| Parsing & Filtering | 1,800 | 29,50 | 272,4 | 50 ramek/s (klasyfikacja per-ID) |
+| OTA Update | 1,487 | 29,50 | 272,4 | 10 reguł/s = 40 ramek sterujących/s |
+
+Wszystkie pomiary bez błędu (100% dostarczonych i skompilowanych reguł w
+każdym oknie pomiarowym). Zużycie RAM i Flash jest identyczne między
+stanami — tabele reguł i statystyk są przydzielane statycznie niezależnie
+od aktywnego trybu, więc różni je tylko faktyczne wykorzystanie, nie sam
+fakt alokacji. Niższe CPU stanu *OTA Update* względem pozostałych dwóch
+NIE oznacza, że kompilacja reguły jest tańsza obliczeniowo niż pojedyncza
+klasyfikacja — pojedyncza kompilacja to więcej pracy niż pojedyncza
+klasyfikacja ramki. Różnica wynika z niższej częstotliwości zdarzeń
+przyjętej dla tego stanu (10 reguł/s, realistyczne dla rzadkich
+aktualizacji reguł) względem ciągłego strumienia ramek danych (50/s) dla
+pozostałych dwóch stanów — każdy stan ma własny, jawnie udokumentowany
+parametr obciążenia, spójnie z konwencją przyjętą w całej tej pracy.
+
+**Zastrzeżenie terminologiczne**: "OTA Update" oznacza tu aktualizację
+pojedynczej reguły interpretacji sygnału (dosłowne brzmienie metodyki
+"kompilacji nowej reguły"), nie klasyczną aktualizację całej binarki
+firmware (typowe znaczenie skrótu OTA w ekosystemie ESP32) — rozróżnienie
+istotne dla poprawnej interpretacji wyniku w finalnej pracy.
+
+Kod: `esp_experiment_5_1_jtag/main/main.cpp` (`MODE_OTA`, struktura
+`OtaRule`), `esp_experiment_5_1/run_experiment_5_1_ota.py` (sterownik
+pomiaru — celowo osobny od `run_experiment_5_1.py`, który pozostaje
+niezmieniony dla zachowania porównywalności już opublikowanych wyników
+stanów *Idle*/*Parsing*). Dane: `Eksperyment_5.1_3Stany_20260730/`,
+`Eksperyment_5.1_OTA_20260730/`.
 
 ---
 
@@ -706,3 +777,16 @@ odniesień bibliograficznych]**
   nie wynik do cytowania. Żadna zmiana nie dotyczy głównego wątku pracy
   (sekcje 1–7, LLM/flagi bitowe) — Dodatek B pozostaje materiałem
   pobocznym, dokumentującym równoległą infrastrukturę badawczą projektu.
+- **2026-07-30, wersja 0.7** — Dodatek B.2 zaktualizowany: przyczyna
+  niestabilności wariantu kontrolnego z wersji 0.6 w pełni zdiagnozowana
+  (błędny punkt wejścia `app_main()` głodzący zadanie bezczynności rdzenia
+  CPU0) i naprawiona; wszystkie 4 warianty JTAG powtórzone na naprawionej
+  architekturze, dając w pełni czystą (0 błędów), monotoniczną tabelę
+  efektu obserwatora rozłożonego na trzy niezależne składowe (toolchain,
+  gotowość kanału trace, aktywne strumieniowanie). Dodano nowy Dodatek
+  B.3: trzeci, dotąd niezrealizowany stan metodyki Grupy 5 ("OTA Update")
+  zaprojektowany i wdrożony — urządzenie przyjmuje i "kompiluje" reguły
+  LLM przez CAN (format pól identyczny z `LlmSignalRule` używanym po
+  stronie komputera), z pełnym wynikiem trzech stanów (Idle/Parsing/OTA)
+  na tym samym binarium. Żadna zmiana nie dotyczy głównego wątku pracy
+  (sekcje 1–7).

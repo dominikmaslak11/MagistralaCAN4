@@ -1,0 +1,30 @@
+==============================================================================
+EKSPERYMENT 5.1 — stan OTA Update (kompilacja nowej reguly LLM w pamieci)
+==============================================================================
+
+      stan    N   RAM uzyte[kB]  RAM min.wolne[kB]  CPU[%] real  sr. skompilowanych regul/okno
+       OTA   20           29.50             301.40        1.487                           31.0
+
+Flash (STATYCZNE): sketch=272.4kB, wolne=0.0kB
+
+UWAGA METODOLOGICZNA:
+- 'OTA Update' w tym projekcie oznacza dostarczenie i skompilowanie
+  reguly dekodujacej LLM (pola 1:1 z LlmSignalRule w
+  src/core/DecodingAccuracyRunner.h) na urzadzeniu przez CAN, NIE
+  aktualizacje calego firmware'u (klasyczne rozumienie 'OTA' w
+  kontekscie ESP32 to zazwyczaj aktualizacja binarki - tu chodzi o
+  aktualizacje POJEDYNCZEJ reguly interpretacji sygnalu, zgodnie z
+  brzmieniem metodyki 'kompilacji nowej reguly w pamieci').
+- Jedna regula NIE miesci sie w jednej ramce CAN (8 bajtow) - wymaga
+  4 ramek sterujacych (LOAD1/LOAD2/LOAD3/COMMIT) - naturalne
+  ograniczenie przepustowosci magistrali warte odnotowania.
+- 'Kompilacja' = zapis reguly do tabeli aktywnych regul na
+  urzadzeniu (do 8 regul, analogicznie do tabeli klasyfikacji w
+  PARSING) - realna praca, nie no-op; mierzona tym samym
+  mechanizmem bezposredniego micros() co PARSING.
+- Czestotliwosc 'przybywania' regul (domyslnie 10/s) to parametr
+  STRESS-TESTOWY dla uzyskania stabilnej statystyki w krotkim oknie
+  pomiarowym (3s) - NIE literalna czestotliwosc rzeczywistych
+  aktualizacji LLM w praktyce (te wystepowalyby rzadziej, rzedu
+  pojedynczych regul na Cold Start trwajacy sekundy, patrz
+  Eksperyment 1.1).

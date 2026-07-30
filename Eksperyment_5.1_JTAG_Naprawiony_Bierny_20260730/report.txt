@@ -1,0 +1,30 @@
+==============================================================================
+EKSPERYMENT 5.1 — Profilowanie pamieci i CPU (ESP32)
+==============================================================================
+
+Kalibracja (magistrala cicha, IDLE): 1843335.5 spins/s (=0% obciazenia referencyjnie)
+
+      stan    N   RAM uzyte[kB]  RAM min.wolne[kB]  CPU[%] real  CPU[%] proxy
+      IDLE   20           29.50             301.61        1.789           1.9
+   PARSING   20           29.50             301.61        1.799           1.9
+
+Flash (STATYCZNE, nie zalezy od stanu): sketch=271.8kB, wolne=0.0kB
+
+UWAGA METODOLOGICZNA:
+- CPU[%] real to bezposredni pomiar zajetosci: micros() przed/po kazdym
+  bloku realnej pracy (odczyt SPI + klasyfikacja) w loop(), sumowany w
+  oknie miedzy RESET a REPORT. PROBOWANO wczesniej vTaskGetRunTimeStats()/
+  uxTaskGetSystemState() (FreeRTOS trace facility, dziala bez JTAG na tym
+  rdzeniu) ale okazalo sie NIEWIARYGODNE dla tej architektury: FreeRTOS
+  aktualizuje liczniki czasu zadania GLOWNIE przy przelaczeniach kontekstu,
+  a nasza petla loop() nigdy nie oddaje sterowania (ciagly polling flagi
+  przerwania) - zmierzono empirycznie ZERO przyrostu licznika mimo
+  aktywnego przetwarzania ramek. Bezposredni pomiar micros() jest odporny
+  na ten problem. Proxy (tempo iteracji petli) pozostawiony w kolumnie
+  CPU[%] proxy wylacznie dla ciaglosci porownawczej z pierwszym przebiegiem.
+- Stan PARSING wykonuje realna (nie no-op) klasyfikacje per-ID: min/max/
+  liczba przelaczen bajtu 0, w tabeli do 8 sledzonych ID - patrz
+  classifyFrame() w esp_experiment_5_1.ino.
+- Trzeci stan z metodyki ("OTA Update") NIE jest realizowany - wymagalby
+  mechanizmu aplikowania reguly LLM na urzadzeniu, ktory jeszcze nie
+  istnieje w architekturze projektu (patrz raport tego eksperymentu).
