@@ -1,2 +1,5 @@
-idf_component_register(SRCS "esp_experiment_5_1_jtag.c"
-                    INCLUDE_DIRS ".")
+idf_component_register(
+    SRCS "main.cpp"
+    INCLUDE_DIRS "."
+    REQUIRES arduino-esp32 mcp2515
+)

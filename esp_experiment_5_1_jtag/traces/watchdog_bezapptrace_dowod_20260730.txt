@@ -1,0 +1,50 @@
+Dowod (surowe fragmenty logu konsoli) na powtarzalny Task Watchdog Trigger
+w wariancie BEZ apptrace (CONFIG_APPTRACE_DEST_JTAG wylaczony), 2026-07-30.
+Kontekst pelny: esp_experiment_5_1_jtag/README.md, sekcja "Porownanie 3
+wariantow".
+
+=== Przebieg 1 (Eksperyment_5.1_JTAG_BezApptrace_20260730, USUNIETY -
+przebieg nie dokonczyl sie, brak raw_data.csv) ===
+
+Ostatnie poprawne pomiary przed crashem: PARSING [15/20], potem:
+
+Traceback (most recent call last):
+  File ".../run_experiment_5_1.py", line 275, in <module>
+    main()
+  File ".../run_experiment_5_1.py", line 167, in main
+    res = run_measurement(sock, ser, mode, args.window_s, args.rate_hz)
+  File ".../run_experiment_5_1.py", line 128, in run_measurement
+    result = wait_for_result(ser, timeout_s=0.8)
+  File ".../run_experiment_5_1.py", line 105, in wait_for_result
+    "sketch_size": int(parts[8]),
+ValueError: invalid literal for int() with base 10: '\x1b[0;31mE (140741) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:\x1b[0m'
+
+=== Przebieg 2 (Eksperyment_5.1_JTAG_BezApptrace_20260730_v2, USUNIETY -
+przebieg nie dokonczyl sie, brak raw_data.csv) ===
+
+Ostatnie poprawne pomiary przed crashem: IDLE [12/20], potem:
+
+Traceback (most recent call last):
+  File ".../run_experiment_5_1.py", line 275, in <module>
+    main()
+  File ".../run_experiment_5_1.py", line 167, in main
+    res = run_measurement(sock, ser, mode, args.window_s, args.rate_hz)
+  File ".../run_experiment_5_1.py", line 128, in run_measurement
+    result = wait_for_result(ser, timeout_s=0.8)
+  File ".../run_experiment_5_1.py", line 105, in wait_for_result
+    "sketch_size": int(parts[8]),
+ValueError: invalid literal for int() with base 10: '\x1b[0;31mE (95739) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:\x1b[0m'
+
+=== Wniosek ===
+
+Powtarzalne (2/2 probek) w wariancie BEZ apptrace/JTAG, w oknie
+~45-140s dzialania (E-timestamp wzgledem bootu). ANI JEDEN z dwoch pelnych
+40-pomiarowych przebiegow Z wlaczonym APPTRACE_DEST_JTAG (aktywny lub
+nieaktywny stream) nie wykazal tego problemu. Przyczyna NIEZDIAGNOZOWANA -
+mozliwe hipotezy do zbadania w kolejnej sesji: (a) apptrace posrednio
+"karmi" watchdoga przez wlasny mechanizm okresowego pollingu, (b) inna
+konfiguracja/timing scheduler'a miedzy wariantami wplywa na to, czy
+idle task dostaje wystarczajaco czasu. Bez pelnego backtrace'u z konsoli w
+momencie zdarzenia (przechwycono tylko pierwsza linie bledu, reszta trafila
+do bufora ktory NIE zostal zapisany) - do powtorzenia z pelnym logowaniem
+serial do pliku, jesli watek bedzie kontynuowany.

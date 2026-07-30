@@ -1,0 +1,18 @@
+# arduino-esp32 (jako komponent ESP-IDF) wymaga tick FreeRTOS 1000Hz -
+# domyslny ESP-IDF to 100Hz. Bez tego CMake odmawia konfiguracji
+# (managed_components/espressif__arduino-esp32/CMakeLists.txt:428).
+CONFIG_FREERTOS_HZ=1000
+
+# SystemView przez JTAG (ESP-Prog-2) - symbole zweryfikowane bezposrednio w
+# components/app_trace/Kconfig, nie z pamieci. Wlacza Application Level
+# Tracing z destynacja JTAG + SEGGER SystemView events przez to samo lacze.
+CONFIG_APPTRACE_DEST_JTAG=y
+CONFIG_APPTRACE_SV_ENABLE=y
+CONFIG_APPTRACE_SV_DEST_JTAG=y
+
+# Domyslny poziom logow ESP-IDF (INFO) wplata logi esp_image (wywolane
+# wewnatrz ESP.getSketchSize()) W SRODEK linii "RESULT,..." na UART,
+# lamiac parser CSV w run_experiment_5_1.py - zweryfikowane empirycznie
+# (2026-07-30), zobaczono realny traceback. WARN wystarcza, bo nasze wlasne
+# Serial.print() nie przechodzi przez system logowania ESP-IDF.
+CONFIG_LOG_DEFAULT_LEVEL_WARN=y
