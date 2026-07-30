@@ -1,7 +1,7 @@
 ---
 status: SZKIC ROBOCZY — dokument żywy, aktualizowany po każdej kolejnej iteracji badań
-wersja: 0.5
-data ostatniej aktualizacji: 2026-07-29
+wersja: 0.6
+data ostatniej aktualizacji: 2026-07-30
 autorzy: [Dominik Maślak] — do uzupełnienia: afiliacja, wykładowca/promotor jako współautor
 ---
 
@@ -560,24 +560,78 @@ odbiorczy), pomiar terenowy jeszcze NIE wykonany.**
   pomiar terenowy oczekuje odpowiedzi wykładowcy na powyższe kwestie
   metodologiczne przed uruchomieniem.
 
-### B.2 Eksperyment 5.1 — przygotowanie do profilowania JTAG (SystemView/esp_apptrace)
+### B.2 Eksperyment 5.1 — profilowanie JTAG (SystemView/esp_apptrace) i efekt obserwatora w pomiarze CPU
 
-**Status: szkielet projektu ESP-IDF utworzony, NIEUKOŃCZONY — w obecnym
-stanie projekt się nie skompiluje.**
+**Status: DOKOŃCZONY — infrastruktura JTAG zweryfikowana end-to-end, pomiar
+IDLE/PARSING wykonany w 3 wariantach porównawczych.**
 
-Jak odnotowano przy Eksperymencie 5.1 (profilowanie CPU/RAM), narzędzia trace
-FreeRTOS (`vTaskGetRunTimeStats`) okazały się niewiarygodne dla architektury
-pollującej używanej w tym firmware (zerowy przyrost licznika czasu zadania
-mimo aktywnego przetwarzania — `loopTask` nigdy nie oddaje sterowania), a
-pełny profil per-zadanie wymagałby JTAG (ESP-Prog + SystemView/esp_apptrace),
-co z kolei wymaga przejścia z czystego szkicu Arduino na natywny projekt
-ESP-IDF (`configGENERATE_RUN_TIME_STATS` w `sdkconfig` nie jest dostępne z
-poziomu samego `.ino`). Rozpoczęto tworzenie takiego szkieletu
-(`esp_experiment_5_1_jtag/`) — zawiera on obecnie niespójność do naprawienia
-w kolejnej sesji: `main/CMakeLists.txt` odwołuje się do źródła
-`esp_experiment_5_1_jtag.c`, podczas gdy faktycznie obecny plik to
-`main/main.cpp` (pusty szkielet `app_main()`). Port logiki klasyfikacji z
-`esp_experiment_5_1.ino` do tego projektu jeszcze się nie rozpoczął.
+Jak odnotowano przy Eksperymencie 5.1 (profilowanie CPU/RAM), narzędzia
+trace FreeRTOS (`vTaskGetRunTimeStats`) okazały się niewiarygodne dla
+architektury pollującej używanej w tym firmware (zerowy przyrost licznika
+czasu zadania mimo aktywnego przetwarzania — `loopTask` nigdy nie oddaje
+sterowania), a pełny profil per-zadanie wymagałby JTAG (ESP-Prog +
+SystemView/esp_apptrace), co z kolei wymaga przejścia z czystego szkicu
+Arduino na natywny projekt ESP-IDF. Port firmware (`esp_experiment_5_1_jtag/`,
+logika klasyfikacji 1:1 z `esp_experiment_5_1.ino`, sterownik MCP2515
+zwendorowany — nie przepisany od zera, dla uniknięcia błędów w rejestrach
+SPI kontrolera) został dokończony i skompilowany. Fizyczne połączenie JTAG
+(ESP-Prog-2, natywny interfejs USB Espressif) zweryfikowane w pełni: oba
+rdzenie ESP32 wykrywane przez OpenOCD, przechwyt SystemView potwierdzony
+testowo (0 utraconych bajtów danych trace).
+
+**Eksperyment poboczny: czy sam pomiar JTAG zniekształca mierzoną
+wielkość?** Uruchomiono ten sam skrypt pomiarowy (`run_experiment_5_1.py`,
+bez modyfikacji — identyczny protokół sterujący przez CAN) w trzech
+konfiguracjach firmware, N=40 (20×IDLE, 20×PARSING) każda, żeby ocenić,
+czy samo podłączenie i użycie JTAG/SystemView zaburza wynik pomiaru
+obciążenia CPU:
+
+| Wariant | CPU IDLE | CPU PARSING | Status |
+|---|---|---|---|
+| Oryginalny firmware Arduino (bez ESP-IDF/JTAG) | 0,598% | 0,599% | 40/40 OK |
+| Port ESP-IDF + JTAG, SystemView **aktywnie nagrywający** | 2,488% | 2,485% | 40/40 OK |
+| Port ESP-IDF + JTAG podłączony, SystemView **bierny** (bez streamu) | 1,796% | 1,795% | 40/40 OK |
+| Port ESP-IDF, `apptrace`/JTAG **całkowicie wyłączony** w konfiguracji | ~0,82% (dane niepełne) | ~0,82% (dane niepełne) | **przerwane 2/2 próby** |
+
+**Wynik 1 — potwierdzony częściowo efekt obserwatora.** Aktywne
+strumieniowanie danych SystemView przez JTAG dodaje ok. 0,7 punktu
+procentowego obciążenia CPU ponad sam fakt skompilowania firmware z
+kanałem trace włączonym (2,488% wobec 1,796%) — to realny, mierzalny koszt
+samego mechanizmu przesyłania danych diagnostycznych. Nie tłumaczy to
+jednak całej różnicy względem oryginalnego firmware (0,6%): pozostała
+część (ok. 1,2 punktu procentowego) wynika najprawdopodobniej z odmiennej
+architektury (port ESP-IDF + Arduino-jako-komponent kontra czysty szkic
+Arduino IDE — inny harmonogram zadań, inna częstotliwość taktowania
+systemowego), nie z samego JTAG. Wniosek metodyczny analogiczny do sekcji
+5.3 tej pracy: narzędzie pomiarowe (tu: sonda JTAG) nie jest neutralne
+wobec mierzonej wielkości — klasyczny problem "obserwator wpływa na
+obserwowane zjawisko" znany z profilowania systemów wbudowanych, tu
+zmierzony ilościowo.
+
+**Wynik 2 — nieoczekiwany, ważniejszy: niestabilność w wariancie
+kontrolnym.** Wariant, który miał być najprostszym punktem odniesienia
+(czysty port ESP-IDF, bez żadnego mechanizmu trace), okazał się
+NIESTABILNY: w obu niezależnych próbach (100% powtarzalność przy N=2)
+firmware ulegało awarii wskutek zadziałania watchdoga zadań systemowych
+("Task Watchdog Trigger") po 45–140 sekundach działania — żaden z dwóch
+wariantów z aktywnym kanałem JTAG/apptrace nie wykazał tego problemu w
+pełnych, 40-pomiarowych przebiegach. Odwraca to intuicyjne oczekiwanie:
+zamiast "JTAG dokłada szum do stabilnej bazy", obserwacja sugeruje, że
+sama obecność mechanizmu trace mogła przypadkowo *stabilizować*
+harmonogram zadań (np. przez efekt uboczny okresowego odpytywania bufora
+trace, które mogło "odżywiać" watchdoga), a jego brak odsłania
+niezależny, nieznany defekt architektury portu. Przyczyna pozostaje
+NIEZDIAGNOZOWANA — surowe logi błędu w
+`esp_experiment_5_1_jtag/traces/watchdog_bezapptrace_dowod_20260730.txt`.
+Konsekwentnie z metodologią przejrzystości tej pracy (sekcja 5.3): liczba
+"~0,82%" z tego wariantu NIE jest traktowana jako wiarygodny wynik i nie
+powinna być cytowana bez dalszej diagnozy w przyszłej pracy.
+
+**Rekomendacja robocza dla docelowej tabeli metodyki (Grupa 5)**:
+oryginalny pomiar firmware Arduino (0,6%) jako główny, najmniej inwazyjny
+wynik; warianty JTAG jako materiał do dyskusji o granicach metod
+profilowania systemów wbudowanych klasy Edge, nie jako zamiennik wyniku
+głównego.
 
 ---
 
@@ -639,3 +693,16 @@ odniesień bibliograficznych]**
   przyszłe profilowanie JTAG Eksperymentu 5.1. Żadna z tych prac nie zmienia
   wyników ani wniosków głównego wątku (sekcje 1–7) — dodane wyłącznie dla
   kompletności obrazu równolegle prowadzonych prac.
+- **2026-07-30, wersja 0.6** — zaktualizowano Dodatek B.2 (Eksperyment 5.1):
+  z "przygotowanie niedokończone" na pełny wynik. Infrastruktura JTAG/
+  SystemView (ESP-Prog-2) zweryfikowana end-to-end. Nowy, dwuczęściowy
+  wynik: (1) częściowo potwierdzony efekt obserwatora — aktywne
+  strumieniowanie SystemView podnosi mierzone obciążenie CPU o ok. 0,7pp
+  ponad sam fakt włączenia kanału trace w konfiguracji; (2) nieoczekiwany,
+  ważniejszy wynik uboczny — wariant kontrolny bez mechanizmu trace okazał
+  się niestabilny (powtarzalny w 2/2 próbach watchdog crash), podczas gdy
+  oba warianty z aktywnym JTAG/apptrace przeszły pełne 40/40 pomiarów bez
+  błędu; przyczyna niezdiagnozowana, jawnie oznaczona jako otwarty problem,
+  nie wynik do cytowania. Żadna zmiana nie dotyczy głównego wątku pracy
+  (sekcje 1–7, LLM/flagi bitowe) — Dodatek B pozostaje materiałem
+  pobocznym, dokumentującym równoległą infrastrukturę badawczą projektu.
