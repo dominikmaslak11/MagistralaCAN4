@@ -1,0 +1,2 @@
+Gemini/baseline zapisany, stary proces zatrzymany. Startuje naprawiony warmstart dla 4 modeli.
+Nowy PID warmstart: 1549284

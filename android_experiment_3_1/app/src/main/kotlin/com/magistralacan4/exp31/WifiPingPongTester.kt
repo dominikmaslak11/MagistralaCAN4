@@ -1,7 +1,9 @@
 package com.magistralacan4.exp31
 
 import android.location.Location
+import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -52,6 +54,8 @@ class WifiPingPongTester(
         var lastDistFromRef: Double? = null
 
         for (seq in 0 until packetCount) {
+            if (!coroutineContext.isActive) break
+
             val sendTimeNs = System.nanoTime()
             val payload = "PING:$seq".toByteArray()
             socket.send(DatagramPacket(payload, payload.size, address, espPort))

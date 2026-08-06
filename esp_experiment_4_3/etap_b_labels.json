@@ -1,0 +1,1087 @@
+{
+  "corpus": "../esp_experiment_4_4_qdrant/corpus_diverse.json",
+  "confusion": {
+    "tp": 19,
+    "fp": 4,
+    "fn": 15,
+    "tn": 210
+  },
+  "precision": 0.8260869565217391,
+  "recall": 0.5588235294117647,
+  "f1": 0.6666666666666667,
+  "maskAccuracyGivenTruePositive": 0.15789473684210525,
+  "labels": {
+    "768": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "784": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "800": {
+      "0": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 95
+      },
+      "1": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 18
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "816": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 136
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "832": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 12
+      }
+    },
+    "848": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "864": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "880": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "896": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "912": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "928": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "944": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "960": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 6
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "976": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 12
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "992": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 36
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1008": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1024": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1040": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 12
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1056": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1072": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1088": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 12
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1104": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1120": {
+      "0": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 136
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1136": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 29
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1152": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 100
+      }
+    },
+    "1168": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1184": {
+      "0": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 125
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1200": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 13
+      }
+    },
+    "1216": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 65
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 138
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1232": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 126
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1248": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 33
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1264": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 17
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 129
+      }
+    },
+    "1280": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1296": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1312": {
+      "0": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 125
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1328": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1344": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1360": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1376": {
+      "0": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 68
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    },
+    "1392": {
+      "0": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "1": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "2": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "3": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "4": {
+        "classifier_says_bit_flags": true,
+        "classifier_mask": 27
+      },
+      "5": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "6": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      },
+      "7": {
+        "classifier_says_bit_flags": false,
+        "classifier_mask": null
+      }
+    }
+  }
+}

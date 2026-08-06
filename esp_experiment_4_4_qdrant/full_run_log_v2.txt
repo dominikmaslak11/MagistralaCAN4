@@ -1,0 +1,60 @@
+
+=== gpt / baseline (100 prob) ===
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 0 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 1 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 2 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 3 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 4 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 5 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 6 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 7 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)
+    [retry] gpt: HTTP 429, czekam 80s (proba 5/5)
+  [gpt/baseline] trial 8 BLAD (po wyczerpaniu retry): 429 Client Error: Too Many Requests for url: https://api.openai.com/v1/chat/completions
+    [retry] gpt: HTTP 429, czekam 5s (proba 1/5)
+    [retry] gpt: HTTP 429, czekam 10s (proba 2/5)
+    [retry] gpt: HTTP 429, czekam 20s (proba 3/5)
+    [retry] gpt: HTTP 429, czekam 40s (proba 4/5)

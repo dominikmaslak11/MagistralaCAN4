@@ -18,7 +18,30 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
-        <!-- Adres ESP32 (SoftAP) -->
+        <!-- Technologia -->
+        <RadioGroup
+            android:id="@+id/radioTech"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <RadioButton
+                android:id="@+id/radioTechWifi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WiFi (SoftAP)"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioTechBle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BLE"
+                android:layout_marginStart="24dp" />
+        </RadioGroup>
+
+        <!-- Adres ESP32 (SoftAP) - dotyczy tylko WiFi, dla BLE ignorowane (skan po UUID) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,7 +139,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Start testu WiFi" />
+            android:text="Start testu" />
+
+        <Button
+            android:id="@+id/btnStopTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Przerwij test" />
 
         <TextView
             android:id="@+id/textLiveStats"

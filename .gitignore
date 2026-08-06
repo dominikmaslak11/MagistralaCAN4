@@ -12,6 +12,7 @@ compile_commands.json
 .claude/
 .deepseek/
 API_Keys.txt
+routerPass.txt
 gdb.txt
 gdb_commands.txt
 github_log.txt

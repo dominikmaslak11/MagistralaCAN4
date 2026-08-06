@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Eksperyment 4.3 — Bootstrapped Fine-Tuning</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-0:      #ffffff;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f2f1ed;
+    --border:         #dedcd4;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #82807a;
+    --series-1:       #2a78d6; /* etap zrobiony / klasyfikator */
+    --series-2:       #eb6834; /* etap do zrobienia */
+    --series-3:       #1baf7a; /* dobre/sukces */
+    --good:           #1a8f4c;
+    --warn:           #b9790a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-0:      #131311;
+      --surface-1:      #1a1a19;
+      --surface-2:      #242320;
+      --border:         #3a3934;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #8f8d84;
+      --series-1:       #3987e5;
+      --series-2:       #d95926;
+      --series-3:       #199e70;
+      --good:           #4fc37f;
+      --warn:           #d9a033;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-0:      #131311;
+    --surface-1:      #1a1a19;
+    --surface-2:      #242320;
+    --border:         #3a3934;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #8f8d84;
+    --series-1:       #3987e5;
+    --series-2:       #d95926;
+    --series-3:       #199e70;
+    --good:           #4fc37f;
+    --warn:           #d9a033;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .viz-root {
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 36px 40px 60px;
+    line-height: 1.5;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+
+  header.hero { border-bottom: 3px solid var(--text-primary); padding-bottom: 18px; margin-bottom: 28px; }
+  header.hero .eyebrow {
+    font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+  }
+  header.hero h1 { font-size: 27px; margin: 0 0 8px; line-height: 1.2; }
+  header.hero .subtitle { color: var(--text-secondary); font-size: 15px; max-width: 780px; }
+  header.hero .status-tag {
+    display: inline-block; margin-top: 10px; font-family: ui-monospace, monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--warn); border: 1px solid var(--warn);
+    border-radius: 12px; padding: 2px 10px;
+  }
+
+  section { margin-bottom: 30px; }
+  h2 {
+    font-family: ui-monospace, monospace; font-size: 13px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted); border-bottom: 1px solid var(--border);
+    padding-bottom: 6px; margin: 0 0 14px;
+  }
+
+  .quote-box {
+    background: var(--surface-1); border-left: 4px solid var(--series-1); border-radius: 4px;
+    padding: 14px 18px; font-size: 14px; font-style: italic; color: var(--text-secondary);
+  }
+  .quote-box .who { font-style: normal; font-family: ui-monospace, monospace; font-size: 11px;
+    text-transform: uppercase; color: var(--series-1); margin-top: 8px; letter-spacing: 0.05em; }
+
+  .correction-box {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;
+  }
+  .correction-box .col {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px;
+  }
+  .correction-box .col h4 { margin: 0 0 8px; font-size: 13px; }
+  .correction-box .col p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+  .correction-box .col.no { border-left: 4px solid var(--text-muted); }
+  .correction-box .col.yes { border-left: 4px solid var(--series-3); }
+
+  .obstacle-box {
+    background: color-mix(in oklab, var(--warn) 10%, var(--surface-1));
+    border: 1px solid var(--warn); border-radius: 8px; padding: 16px 20px; font-size: 13.5px;
+  }
+  .obstacle-box .tag {
+    display: inline-block; font-family: ui-monospace, monospace; font-size: 11px; text-transform: uppercase;
+    color: var(--warn); border: 1px solid var(--warn); border-radius: 12px; padding: 2px 10px; margin-bottom: 10px;
+  }
+  .obstacle-box ul { margin: 8px 0 0; padding-left: 18px; color: var(--text-secondary); }
+  .obstacle-box li { margin-bottom: 4px; }
+
+  .pipeline {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .stage {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 14px; position: relative;
+  }
+  .stage.done { border-top: 4px solid var(--series-3); }
+  .stage.todo { border-top: 4px solid var(--series-2); }
+  .stage .stage-label { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; margin-bottom: 4px; }
+  .stage h4 { margin: 0 0 8px; font-size: 13.5px; }
+  .stage p { margin: 0; font-size: 12px; color: var(--text-secondary); }
+  .stage .status-pill {
+    display: inline-block; margin-top: 10px; font-family: ui-monospace, monospace; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.04em; border-radius: 10px; padding: 2px 8px;
+  }
+  .stage.done .status-pill { background: color-mix(in oklab, var(--series-3) 18%, transparent); color: var(--good); }
+  .stage.todo .status-pill { background: color-mix(in oklab, var(--series-2) 18%, transparent); color: var(--series-2); }
+
+  .criteria-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .criteria-grid .box { border-radius: 8px; padding: 14px 18px; font-size: 13.5px; }
+  .criteria-grid .success { background: color-mix(in oklab, var(--series-3) 10%, var(--surface-1)); border: 1px solid var(--series-3); }
+  .criteria-grid .failure { background: color-mix(in oklab, var(--text-muted) 10%, var(--surface-1)); border: 1px solid var(--text-muted); }
+  .criteria-grid h4 { margin: 0 0 8px; font-size: 13px; }
+  .criteria-grid p { margin: 0; color: var(--text-secondary); }
+
+  .questions-list { margin: 0; padding-left: 0; list-style: none; }
+  .questions-list li {
+    display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13.5px;
+  }
+  .questions-list li:last-child { border-bottom: none; }
+  .questions-list .qnum {
+    font-family: ui-monospace, monospace; font-weight: 700; color: var(--series-1); flex-shrink: 0; width: 20px;
+  }
+  .questions-list .qtext { color: var(--text-secondary); }
+
+  .cost-note {
+    font-size: 12.5px; color: var(--text-muted); background: var(--surface-2); border-radius: 6px;
+    padding: 10px 14px; margin-top: 14px;
+  }
+
+  footer {
+    margin-top: 40px; padding-top: 14px; border-top: 1px solid var(--border);
+    font-size: 11.5px; color: var(--text-muted); font-family: ui-monospace, monospace;
+  }
+
+  @media print {
+    .viz-root { padding: 20px 28px; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root" data-palette="#2a78d6,#eb6834,#1baf7a">
+
+  <header class="hero">
+    <div class="eyebrow">MagistralaCAN4 — Grupa 4 (Adaptowalność i skuteczność deszyfracji)</div>
+    <h1>Eksperyment 4.3 — Bootstrapped Fine-Tuning</h1>
+    <div class="subtitle">
+      Klasyczny, deterministyczny klasyfikator jako darmowy "nauczyciel" — czy model LLM
+      douczony na jego etykietach zinternalizuje regułę rozpoznawania flag bitowych SAM,
+      bez potrzeby zewnętrznej korekty w czasie działania?
+    </div>
+    <div class="status-tag">Status: PROPOZYCJA — Etap A ukończony, Etapy B/C/D niewykonane</div>
+  </header>
+
+  <section>
+    <h2>1. Geneza — sugestia wykładowcy</h2>
+    <div class="quote-box">
+      „Ewentualnie można zrobić bazę wzorców i na jej podstawie douczyć LLM. Czyli najpierw
+      LLM wynajduje wzorce. A potem douczamy inny lub ten sam LLM wyposażony w plik z listą
+      wzorców/reguł.”
+      <div class="who">— odpowiedź wykładowcy na wynik Eksperymentu 4.1 (hybrydowy override)</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Kluczowa korekta pomysłu</h2>
+    <div class="correction-box">
+      <div class="col no">
+        <h4>❌ Pierwotny pomysł</h4>
+        <p>LLM sam "wynajduje wzorce" (odkrywa regułę z przykładów) — trudne, kosztowne,
+        niepewne zadanie samo w sobie.</p>
+      </div>
+      <div class="col yes">
+        <h4>✓ Nasza propozycja</h4>
+        <p>"Nauczycielem" nie musi być LLM. W Eksperymencie 4.1 klasyczny, deterministyczny
+        klasyfikator (Kierunek B) rozpoznaje wzorzec flag bitowych ze 100% skutecznością,
+        za darmo, bez API. Użyjmy GO jako automatycznego etykieciarza — to klasyczna
+        <b>destylacja wiedzy z modelu symbolicznego do sieci neuronowej</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Prawdziwa przeszkoda: nie brak algorytmu, tylko brak różnorodności danych</h2>
+    <div class="obstacle-box">
+      <span class="tag">Ryzyko przeuczenia</span>
+      Oryginalny mini-DBC z Eksperymentu 4.1 ma tylko <b>3 CAN ID i JEDEN</b> przypadek flag
+      bitowych. Fine-tuning na tak wąskim zbiorze nauczyłby model rozpoznawać te KONKRETNE
+      3 ramki, nie ogólną zasadę "mały, nie-monotoniczny zbiór wartości = flagi bitowe".
+      <ul>
+        <li>flagi bitowe w różnych pozycjach bajtu (nie tylko bajt 0)</li>
+        <li>różna liczba flag w bajcie (2-6)</li>
+        <li>flagi rozproszone na wielu bajtach tej samej ramki</li>
+        <li>bajty mieszane (flaga + częściowy skalar w tym samym bajcie)</li>
+        <li>skalary o różnych zakresach/dynamikach zmian</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>4. Proponowany pipeline — 4 etapy</h2>
+    <div class="pipeline">
+      <div class="stage done">
+        <div class="stage-label">Etap A</div>
+        <h4>Rozbudowa generatora</h4>
+        <p>40 zróżnicowanych konfiguracji CAN ID, 5 wzorców sygnałów
+          (<span class="mono">generate_traffic_diverse.py</span>).</p>
+        <span class="status-pill">✓ Ukończone i zweryfikowane</span>
+      </div>
+      <div class="stage todo">
+        <div class="stage-label">Etap B</div>
+        <h4>Auto-etykietowanie</h4>
+        <p>Klasyfikator Kierunku B (<span class="mono">looksLikeBitFlags()</span>) etykietuje
+          korpus automatycznie, bez człowieka.</p>
+        <span class="status-pill">Niewykonane</span>
+      </div>
+      <div class="stage todo">
+        <div class="stage-label">Etap C</div>
+        <h4>Format treningowy</h4>
+        <p>Etykietowane próbki → pary (prompt, completion) w schemacie identycznym
+          z DecodingAccuracyRunner.</p>
+        <span class="status-pill">Niewykonane</span>
+      </div>
+      <div class="stage todo">
+        <div class="stage-label">Etap D</div>
+        <h4>Fine-tuning + ewaluacja</h4>
+        <p>Douczenie GPT-4.1/o4-mini lub DeepSeek, ocena tym samym harnessem co
+          Eksperyment 4.1 (N=100, zero-shot, bez override'u).</p>
+        <span class="status-pill">Niewykonane</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. Kryteria sukcesu i porażki</h2>
+    <div class="criteria-grid">
+      <div class="box success">
+        <h4>Sukces</h4>
+        <p>Douczony model osiąga na sygnałach dyskretnych detection rate zbliżony do wyniku
+        z override'em (~94%) — <b>SAMODZIELNIE</b>, bez zewnętrznej klasycznej łatki w czasie
+        działania.</p>
+      </div>
+      <div class="box failure">
+        <h4>Porażka (też wartościowa!)</h4>
+        <p>Douczony model nie generalizuje poza konfiguracje widziane podczas treningu —
+        sygnał, że korpus wciąż za wąski ALBO problem jest głębiej osadzony w sposobie
+        reprezentacji danych liczbowych przez model.</p>
+      </div>
+    </div>
+    <div class="cost-note">
+      Koszt/zakres: znacząco większy niż dotychczasowe eksperymenty tej serii — nowy,
+      nietrywialny kod (Etapy B/C), realny koszt fine-tuningu (API SFT lub własna
+      infrastruktura dla DeepSeek), oraz ewaluacja na WIELU konfiguracjach testowych
+      (nie tylko oryginalnym 3-ID mini-DBC — inaczej znów mierzymy zapamiętywanie,
+      nie generalizację). To uzasadnia status osobnego eksperymentu, nie doklejki.
+    </div>
+  </section>
+
+  <section>
+    <h2>6. Otwarte pytania do wykładowcy (przed startem Etapów B-D)</h2>
+    <ul class="questions-list">
+      <li><span class="qnum">1</span><span class="qtext">Czy akceptowalne, żeby "nauczycielem" był nasz klasyczny klasyfikator, czy wykładowcy zależało konkretnie na tym, żeby LLM SAM odkrywał wzorce?</span></li>
+      <li><span class="qnum">2</span><span class="qtext">Jaki zakres różnorodności korpusu (Etap A) uznać za wystarczający przed przejściem do faktycznego fine-tuningu?</span></li>
+      <li><span class="qnum">3</span><span class="qtext">Zaczynamy od GPT-4.1/o4-mini (łatwiejszy dostęp) czy DeepSeek (open-weight, pełna kontrola, własna infrastruktura)?</span></li>
+      <li><span class="qnum">4</span><span class="qtext">Czy warto najpierw sprawdzić tańszy wariant pośredni: setki przykładów w kontekście (long-context few-shot) zamiast pełnego fine-tuningu wag?</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    MagistralaCAN4 — Eksperyment_4.3_Propozycja_Bootstrapped_FineTuning_20260728.md, esp_experiment_4_3/README.md
+  </footer>
+
+</div>
+</body>
+</html>

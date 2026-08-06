@@ -20,6 +20,10 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+    <!-- Dlugie serie pakietow (do 10 000) nie moga zostac przerwane przez
+         Doze/oszczedzanie baterii w trakcie pojedynczego przebiegu testu. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
     <application
         android:allowBackup="false"
         android:icon="@android:mipmap/sym_def_app_icon"

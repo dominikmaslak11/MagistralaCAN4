@@ -1,0 +1,3 @@
+Wygenerowano 8 zroznicowanych konfiguracji CAN ID (ziarno=999).
+Rozklad typow konfiguracji: {'flags=5,scalars=1': 1, 'flags=6,scalars=0': 2, 'flags=0,scalars=3': 1, 'flags=5,scalars=0': 1, 'flags=4,scalars=0': 1, 'flags=3,scalars=1': 1, 'flags=0,scalars=2': 1}
+Generator Eksperymentu 4.3 (zroznicowany) wystartowal na can0, 8 CAN ID, czas trwania 600s. Ctrl+C aby zatrzymac.
