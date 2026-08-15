@@ -338,6 +338,7 @@ void DecodingAccuracyRunner::start() {
     m_results.clear();
     m_trialLog = QJsonArray{};
     m_frameHistoryByCanId.clear();
+    m_longTermByteStats.clear();
 
     m_detector->reset();
     setState(State::WaitingForColdStart);
@@ -351,6 +352,12 @@ void DecodingAccuracyRunner::start() {
 
 void DecodingAccuracyRunner::onRealFrameReceived(const CanFrame &frame) {
     if (!m_running) return;
+
+    // Ciagla akumulacja (Eksperyment 4.5, Faza 4) - KAZDA odebrana ramka,
+    // niezaleznie od stanu maszyny stanow/aktualnie badanego CAN ID, zeby
+    // dlugoterminowa pamiec faktycznie rosla przez caly czas dzialania
+    // eksperymentu (nie tylko w oknach CollectingFrames).
+    updateLongTermStats(frame);
 
     if (m_state == State::WaitingForColdStart) {
         m_detector->evaluate(frame);
@@ -414,6 +421,10 @@ void DecodingAccuracyRunner::onLlmResponse(const LlmResponse &resp) {
     m_currentRulesOverride = applyBitFlagOverride(m_currentRules, m_currentHistoryFrames);
     logEntry["overrideRuleCount"] = static_cast<int>(m_currentRulesOverride.size());
     logEntry["overrideChangedRules"] = (m_currentRulesOverride.size() != m_currentRules.size());
+
+    m_currentRulesOverrideLongTerm = applyBitFlagOverrideLongTerm(m_currentRules, m_currentCanId);
+    logEntry["overrideLongTermRuleCount"] = static_cast<int>(m_currentRulesOverrideLongTerm.size());
+    logEntry["overrideLongTermChangedRules"] = (m_currentRulesOverrideLongTerm.size() != m_currentRules.size());
 
     QJsonArray parsedArr;
     for (const auto &r : m_currentRules) {
@@ -581,6 +592,72 @@ std::vector<DecodingAccuracyRunner::LlmSignalRule> DecodingAccuracyRunner::apply
     return out;
 }
 
+// ── Hybrydowy override, zasilany DŁUGOTERMINOWĄ, ciągłą obserwacją ────────────
+// (Eksperyment 4.5, Faza 4). 1:1 rownowaznik ByteStat.update()/verdict() z
+// pi_continuous_observer.py - O(1) pamieci/czasu na klatke, wiec mozna to
+// bezpiecznie wolac dla KAZDEJ odebranej ramki (nie tylko klatek wyzwalajacych
+// cold-start jak m_frameHistoryByCanId).
+void DecodingAccuracyRunner::updateLongTermStats(const CanFrame &frame) {
+    for (int byteIdx = 0; byteIdx < 8; ++byteIdx) {
+        uint8_t v = frame.byteAt(byteIdx);
+        quint64 key = (static_cast<quint64>(frame.id) << 8) | static_cast<quint64>(byteIdx);
+        ByteStat &st = m_longTermByteStats[key];
+        for (int b = 0; b < 8; ++b) {
+            if (v & (1u << b)) st.seen1 |= static_cast<uint8_t>(1u << b);
+            else st.seen0 |= static_cast<uint8_t>(1u << b);
+        }
+        if (st.hasPrev && st.prevValue != v) {
+            st.changedPairs++;
+            if (std::abs(st.prevValue - static_cast<int>(v)) > 3) st.bigJumps++;
+        }
+        st.prevValue = v;
+        st.hasPrev = true;
+        st.nSamples++;
+    }
+}
+
+// Rownowaznik applyBitFlagOverride(), ale werdykt "czy to flagi bitowe" i
+// wykryta maska pochodza z m_longTermByteStats (caly dotychczasowy czas
+// eksperymentu dla tego CAN ID), nie z krotkiego okna przekazanych ramek.
+std::vector<DecodingAccuracyRunner::LlmSignalRule> DecodingAccuracyRunner::applyBitFlagOverrideLongTerm(
+        const std::vector<LlmSignalRule> &rules, uint32_t canId) const {
+    std::vector<LlmSignalRule> out;
+    for (const auto &r : rules) {
+        bool isPlainByteScalar = (r.byteLen == 1 && r.bitMask == 0xFFFFFFFFu);
+        if (isPlainByteScalar) {
+            quint64 key = (static_cast<quint64>(canId) << 8) | static_cast<quint64>(r.byteIdx);
+            auto it = m_longTermByteStats.constFind(key);
+            if (it != m_longTermByteStats.constEnd()) {
+                const ByteStat &st = it.value();
+                uint8_t mask = st.seen0 & st.seen1;
+                int bitCount = 0;
+                for (int b = 0; b < 8; ++b) if (mask & (1u << b)) bitCount++;
+                bool looksLikeFlags = st.nSamples >= 2 && bitCount >= 2 && bitCount <= 6
+                    && st.changedPairs > 0
+                    && (double(st.bigJumps) / double(st.changedPairs)) >= kLongTermBigJumpRatioThreshold;
+                if (looksLikeFlags) {
+                    for (int b = 0; b < 8; ++b) {
+                        if (!(mask & (1u << b))) continue;
+                        LlmSignalRule bitRule;
+                        bitRule.name = QString("%1_bit%2_override_lt").arg(r.name).arg(b);
+                        bitRule.byteIdx = r.byteIdx;
+                        bitRule.byteLen = 1;
+                        bitRule.littleEndian = true;
+                        bitRule.isSigned = false;
+                        bitRule.bitMask = (1u << b);
+                        bitRule.scale = 1.0;
+                        bitRule.offset = 0.0;
+                        out.push_back(bitRule);
+                    }
+                    continue; // oryginalny skalar zastapiony regulami per-bit
+                }
+            }
+        }
+        out.push_back(r);
+    }
+    return out;
+}
+
 void DecodingAccuracyRunner::evaluateFrameAgainstRules(const CanFrame &frame) {
     for (const auto &gt : m_currentGroundTruth) {
         SignalAccum &acc = m_results[gt.name];
@@ -620,6 +697,24 @@ void DecodingAccuracyRunner::evaluateFrameAgainstRules(const CanFrame &frame) {
                 acc.squaredErrorsOverride.push_back(err * err);
             }
         }
+
+        // Trzeci, rownolegly tor: override zasilany dlugoterminowa pamiecia —
+        // patrz applyBitFlagOverrideLongTerm() / Eksperyment 4.5, Faza 4.
+        if (const LlmSignalRule *matchedLt = findMatchingRule(gt, m_currentRulesOverrideLongTerm)) {
+            double truth = gt.decode(frame);
+            double pred = matchedLt->decode(frame);
+            if (gt.isDiscrete) {
+                int truthClass = truth >= 0.5 ? 1 : 0;
+                int predClass  = pred  >= 0.5 ? 1 : 0;
+                if (truthClass == 1 && predClass == 1) acc.tpOverrideLongTerm++;
+                else if (truthClass == 0 && predClass == 0) acc.tnOverrideLongTerm++;
+                else if (truthClass == 0 && predClass == 1) acc.fpOverrideLongTerm++;
+                else acc.fnOverrideLongTerm++;
+            } else {
+                double err = truth - pred;
+                acc.squaredErrorsOverrideLongTerm.push_back(err * err);
+            }
+        }
     }
 }
 
@@ -631,6 +726,7 @@ void DecodingAccuracyRunner::finalizeCurrentTrial() {
         acc.trialsSeen++;
         if (findMatchingRule(gt, m_currentRules) != nullptr) acc.trialsDetected++;
         if (findMatchingRule(gt, m_currentRulesOverride) != nullptr) acc.trialsDetectedOverride++;
+        if (findMatchingRule(gt, m_currentRulesOverrideLongTerm) != nullptr) acc.trialsDetectedOverrideLongTerm++;
     }
 
     m_currentTrial++;
@@ -674,7 +770,7 @@ void DecodingAccuracyRunner::finishExperiment() {
     report["timestamp"] = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QJsonArray signalsArr;
-    double sumDetectionRate = 0.0, sumDetectionRateOverride = 0.0;
+    double sumDetectionRate = 0.0, sumDetectionRateOverride = 0.0, sumDetectionRateOverrideLongTerm = 0.0;
     int nSignals = 0;
     for (auto it = m_results.constBegin(); it != m_results.constEnd(); ++it) {
         const SignalAccum &acc = it.value();
@@ -695,8 +791,16 @@ void DecodingAccuracyRunner::finishExperiment() {
             ? double(acc.trialsDetectedOverride) / double(acc.trialsSeen) : 0.0;
         so["detectionRateOverride"] = detectionRateOverride;
 
+        // Trzeci, rownolegly tor (Eksperyment 4.5, Faza 4) — patrz
+        // applyBitFlagOverrideLongTerm(). Dodatkowe, NIE zastepuje powyzszych.
+        so["trialsDetectedOverrideLongTerm"] = acc.trialsDetectedOverrideLongTerm;
+        double detectionRateOverrideLongTerm = acc.trialsSeen > 0
+            ? double(acc.trialsDetectedOverrideLongTerm) / double(acc.trialsSeen) : 0.0;
+        so["detectionRateOverrideLongTerm"] = detectionRateOverrideLongTerm;
+
         sumDetectionRate += detectionRate;
         sumDetectionRateOverride += detectionRateOverride;
+        sumDetectionRateOverrideLongTerm += detectionRateOverrideLongTerm;
         nSignals++;
 
         if (acc.isDiscrete) {
@@ -735,6 +839,25 @@ void DecodingAccuracyRunner::finishExperiment() {
             so["f1Override"] = f1Ov;
             so["accuracyOverride"] = accuracyOv;
             so["nSamplesEvaluatedOverride"] = totalOv;
+
+            int totalLt = acc.tpOverrideLongTerm + acc.tnOverrideLongTerm + acc.fpOverrideLongTerm + acc.fnOverrideLongTerm;
+            double precisionLt = (acc.tpOverrideLongTerm + acc.fpOverrideLongTerm) > 0
+                ? double(acc.tpOverrideLongTerm) / double(acc.tpOverrideLongTerm + acc.fpOverrideLongTerm) : 0.0;
+            double recallLt = (acc.tpOverrideLongTerm + acc.fnOverrideLongTerm) > 0
+                ? double(acc.tpOverrideLongTerm) / double(acc.tpOverrideLongTerm + acc.fnOverrideLongTerm) : 0.0;
+            double f1Lt = (precisionLt + recallLt) > 0
+                ? 2.0 * precisionLt * recallLt / (precisionLt + recallLt) : 0.0;
+            double accuracyLt = totalLt > 0
+                ? double(acc.tpOverrideLongTerm + acc.tnOverrideLongTerm) / double(totalLt) : 0.0;
+            QJsonObject cmLt;
+            cmLt["tp"] = acc.tpOverrideLongTerm; cmLt["tn"] = acc.tnOverrideLongTerm;
+            cmLt["fp"] = acc.fpOverrideLongTerm; cmLt["fn"] = acc.fnOverrideLongTerm;
+            so["confusionMatrixOverrideLongTerm"] = cmLt;
+            so["precisionOverrideLongTerm"] = precisionLt;
+            so["recallOverrideLongTerm"] = recallLt;
+            so["f1OverrideLongTerm"] = f1Lt;
+            so["accuracyOverrideLongTerm"] = accuracyLt;
+            so["nSamplesEvaluatedOverrideLongTerm"] = totalLt;
         } else {
             double mse = 0.0;
             for (double se : acc.squaredErrors) mse += se;
@@ -751,6 +874,14 @@ void DecodingAccuracyRunner::finishExperiment() {
             so["mseOverride"] = mseOv;
             so["rmseOverride"] = std::sqrt(mseOv);
             so["nSamplesEvaluatedOverride"] = nOv;
+
+            double mseLt = 0.0;
+            for (double se : acc.squaredErrorsOverrideLongTerm) mseLt += se;
+            int nLt = static_cast<int>(acc.squaredErrorsOverrideLongTerm.size());
+            mseLt = nLt > 0 ? mseLt / nLt : 0.0;
+            so["mseOverrideLongTerm"] = mseLt;
+            so["rmseOverrideLongTerm"] = std::sqrt(mseLt);
+            so["nSamplesEvaluatedOverrideLongTerm"] = nLt;
         }
         signalsArr.append(so);
     }
@@ -760,13 +891,20 @@ void DecodingAccuracyRunner::finishExperiment() {
     QJsonObject summary;
     summary["avgDetectionRate"] = nSignals > 0 ? sumDetectionRate / nSignals : 0.0;
     summary["avgDetectionRateOverride"] = nSignals > 0 ? sumDetectionRateOverride / nSignals : 0.0;
+    summary["avgDetectionRateOverrideLongTerm"] = nSignals > 0 ? sumDetectionRateOverrideLongTerm / nSignals : 0.0;
     summary["note"] = QStringLiteral(
         "avgDetectionRateOverride uwzglednia hybrydowy override klasyczny "
         "(Kierunek B) - jesli LLM zaproponuje skalar dla bajtu wygladajacego "
         "jak flagi bitowe (na podstawie obserwowanych wartosci, nie ground "
         "truth), kod programowo wymusza dekompozycje per-bit przed ocena. "
         "avgDetectionRate (bez sufiksu) to nadal 'surowy' wynik samego LLM, "
-        "porownywalny z wczesniejszymi raportami.");
+        "porownywalny z wczesniejszymi raportami. avgDetectionRateOverrideLongTerm "
+        "(Eksperyment 4.5, Faza 4) uzywa tego samego mechanizmu override, ale "
+        "zasilonego DLUGOTERMINOWA, ciagla statystyka per-CAN-ID/bajt (cala "
+        "historia eksperymentu, nie tylko 30-klatkowe okno proby) - patrz "
+        "Eksperyment_4.5_Faza4_Override_Ciagly_20260808.md: offline (Python) "
+        "dalo to +2.5 do +18.0pp ogolnej detekcji vs baseline, u wszystkich "
+        "4 modeli.");
     report["summary"] = summary;
 
     QJsonDocument doc(report);

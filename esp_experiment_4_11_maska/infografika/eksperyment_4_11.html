@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Eksperyment 4.11 — klasyfikacja maski bitowej</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-0:      #ffffff;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f2f1ed;
+    --border:         #dedcd4;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #82807a;
+    --series-1:       #2a78d6; /* maska seen0 & seen1 (obecna) */
+    --series-2:       #eb6834; /* warianty regulowe */
+    --series-3:       #1baf7a; /* siec per bit */
+    --good:           #1a8f4c;
+    --warn:           #b9790a;
+    --track:          #e6e4dd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-0:#131311; --surface-1:#1a1a19; --surface-2:#242320; --border:#3a3934;
+      --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8d84;
+      --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+      --good:#4fc37f; --warn:#d9a033; --track:#2c2b27;
+    }
+    :root:where(:not([data-theme="light"])) tr.win td { background: #14302a; }
+    :root:where(:not([data-theme="light"])) tr.bad td { background: #2e1a17; }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-0:#131311; --surface-1:#1a1a19; --surface-2:#242320; --border:#3a3934;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8d84;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --good:#4fc37f; --warn:#d9a033; --track:#2c2b27;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-0); }
+  .viz-root {
+    background: var(--surface-0); color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    max-width: 980px; margin: 0 auto; padding: 36px 40px 60px; line-height: 1.5;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+  header.hero { border-bottom: 3px solid var(--text-primary); padding-bottom: 18px; margin-bottom: 28px; }
+  header.hero .eyebrow {
+    font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+  }
+  header.hero h1 { font-size: 26px; margin: 0 0 8px; line-height: 1.2; }
+  header.hero .subtitle { color: var(--text-secondary); font-size: 15px; max-width: 780px; }
+
+  section { margin-bottom: 30px; }
+  h2 {
+    font-family: ui-monospace, monospace; font-size: 13px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted); border-bottom: 1px solid var(--border);
+    padding-bottom: 6px; margin: 0 0 14px;
+  }
+  p { font-size: 14.5px; color: var(--text-secondary); margin: 0 0 12px; max-width: 820px; }
+  p strong, li strong, td strong { color: var(--text-primary); }
+
+  .question-box {
+    background: var(--surface-1); border-left: 4px solid var(--series-1); border-radius: 4px;
+    padding: 16px 20px; font-size: 15px;
+  }
+  .question-box .q-label {
+    font-family: ui-monospace, monospace; font-size: 11px; text-transform: uppercase;
+    color: var(--series-1); letter-spacing: 0.06em; margin-bottom: 6px;
+  }
+  .question-box p { margin: 0; color: var(--text-primary); }
+
+  .tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tile {
+    flex: 1 1 160px; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 6px; padding: 14px 16px;
+  }
+  .tile .label {
+    font-family: ui-monospace, monospace; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 4px;
+  }
+  .tile .value { font-size: 26px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .tile .foot { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+
+  .chart { background: var(--surface-1); border: 1px solid var(--border); border-radius: 6px; padding: 18px 20px; }
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 14px; }
+  .leg { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-secondary); }
+  .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; flex: none; }
+  .s1 { background: var(--series-1); }
+  .s2 { background: var(--series-2); }
+  .s3 { background: var(--series-3); }
+
+  .metric-group { margin-bottom: 15px; }
+  .metric-group:last-child { margin-bottom: 0; }
+  .metric-title {
+    font-family: ui-monospace, monospace; font-size: 11.5px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px;
+  }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .bar-name { width: 190px; font-size: 12.5px; color: var(--text-secondary); flex: none; }
+  .track { display: block; flex: 1; background: var(--track); border-radius: 3px; height: 12px; overflow: hidden; }
+  .fill { display: block; height: 100%; border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+  .bar-val { width: 52px; text-align: right; font-size: 12.5px; font-weight: 600; flex: none; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 4px; }
+  caption { text-align: left; font-size: 12px; color: var(--text-muted); padding-bottom: 6px; }
+  th, td { padding: 6px 9px; text-align: right; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th {
+    font-family: ui-monospace, monospace; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.win td { background: #e8f6f0; font-weight: 600; }
+  tr.bad td { background: #fbeae3; }
+
+  .callout {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-left: 4px solid var(--warn); border-radius: 6px; padding: 15px 19px; margin-bottom: 12px;
+  }
+  .callout.key { border-left-color: var(--series-3); }
+  .callout h3 { font-size: 14px; margin: 0 0 6px; }
+  .callout p { font-size: 13.5px; margin: 0 0 8px; }
+  .callout p:last-child { margin-bottom: 0; }
+  code {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 3px;
+    padding: 1px 4px; font-size: 12.5px;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  }
+  ol.list, ul.list { margin: 0; padding-left: 20px; }
+  ol.list li, ul.list li { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px; }
+
+  footer {
+    border-top: 1px solid var(--border); padding-top: 12px; margin-top: 34px;
+    font-size: 11.5px; color: var(--text-muted);
+  }
+  footer p { font-size: 11.5px; color: var(--text-muted); margin: 0 0 4px; }
+
+  @page { size: A4; margin: 14mm 12mm; }
+  @media print {
+    .viz-root { max-width: none; padding: 0; }
+    section, .chart, .callout, table { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root">
+
+  <header class="hero">
+    <div class="eyebrow">Eksperyment 4.11 · 15 sierpnia 2026 · Orange Pi Zero 3 + MCP2515</div>
+    <h1>Które bity są flagami — klasyfikacja maski bitowej</h1>
+    <p class="subtitle">Wszystkie dotychczasowe eksperymenty poprawiały odpowiedź „który bajt zawiera flagi”. Ten jako pierwszy odpowiada na pytanie „które konkretnie bity” — jedyne zmierzone wąskie gardło, którego nikt wcześniej nie tknął.</p>
+  </header>
+
+  <section>
+    <div class="question-box">
+      <div class="q-label">Dlaczego obecna metoda musi zawodzić</div>
+      <p>Maska to <code>seen0 &amp; seen1</code>, czyli „każdy bit, który kiedykolwiek się zmienił”. Ta reguła <strong>z definicji</strong> nie odróżnia flagi od bitu należącego do skalara — oba się zmieniają. Żadne strojenie progu tego nie naprawi, bo progi działają na poziomie <strong>bajtu</strong>, a problem jest na poziomie <strong>bitu</strong>.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Problem był źle zrozumiany — zero, nie „słabo”</h2>
+    <p>Pomiar odniesienia ujawnił, że słabość maski nie jest równomierna. Jest <strong>idealna</strong> dla bajtów zawierających same flagi i ma <strong>dokładnie zero</strong> trafień tam, gdzie flaga dzieli bajt ze skalarem częściowym.</p>
+    <table>
+      <caption>Trafność maski <code>seen0 &amp; seen1</code> w rozbiciu na typ bajtu</caption>
+      <thead><tr><th>Typ bajtu</th><th>Udział</th><th>Trafność maski</th><th>Ocena</th></tr></thead>
+      <tbody>
+        <tr><td>same flagi</td><td class="mono">~78%</td><td class="mono">100%</td><td>trywialne</td></tr>
+        <tr class="bad"><td><strong>mieszane (flagi + skalar)</strong></td><td class="mono">~22%</td><td class="mono"><strong>0%</strong></td><td>tu leży cały problem</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">Dlatego ewaluacja raportuje oba typy <strong>osobno</strong>. Gdyby podać samą średnią, wyszłoby ~82% i wyglądałoby to na drobną niedoskonałość — zamiast na całkowitą bezradność w co piątym przypadku.</p>
+  </section>
+
+  <section>
+    <h2>Wynik na prawdziwym sprzęcie</h2>
+    <div class="tiles">
+      <div class="tile">
+        <div class="label">Maska w bajtach mieszanych</div>
+        <div class="value mono" style="color: var(--good)">0% → 100%</div>
+        <div class="foot">30 z 30 przypadków</div>
+      </div>
+      <div class="tile">
+        <div class="label">Precyzja per bit</div>
+        <div class="value mono">24,1% → 99,8%</div>
+        <div class="foot">1 błąd na ~1800 bitów</div>
+      </div>
+      <div class="tile">
+        <div class="label">Parametrów sieci</div>
+        <div class="value mono">1105</div>
+        <div class="foot">MLP 11 → 32 → 16 → 1</div>
+      </div>
+      <div class="tile">
+        <div class="label">Czas uczenia</div>
+        <div class="value mono">68 s</div>
+        <div class="foot">na Orange Pi Zero 3</div>
+      </div>
+    </div>
+
+    <div class="chart" style="margin-top:14px">
+      <div class="legend">
+        <span class="leg"><span class="sw s1"></span>maska <code>seen0 &amp; seen1</code></span>
+        <span class="leg"><span class="sw s3"></span>sieć per bit</span>
+      </div>
+      <div class="metric-group">
+        <div class="metric-title">Trafność maski — bajty MIESZANE (przypadki trudne)</div>
+        <div class="bar-row"><span class="bar-name">maska seen0 &amp; seen1</span><span class="track"><span class="fill s1" style="width: 0.5%"></span></span><span class="bar-val mono">0%</span></div>
+        <div class="bar-row"><span class="bar-name">sieć per bit</span><span class="track"><span class="fill s3" style="width: 100%"></span></span><span class="bar-val mono">100%</span></div>
+      </div>
+      <div class="metric-group">
+        <div class="metric-title">Precyzja per bit</div>
+        <div class="bar-row"><span class="bar-name">maska seen0 &amp; seen1</span><span class="track"><span class="fill s1" style="width: 24.1%"></span></span><span class="bar-val mono">24,1%</span></div>
+        <div class="bar-row"><span class="bar-name">sieć per bit</span><span class="track"><span class="fill s3" style="width: 99.8%"></span></span><span class="bar-val mono">99,8%</span></div>
+      </div>
+      <div class="metric-group">
+        <div class="metric-title">F1 per bit</div>
+        <div class="bar-row"><span class="bar-name">maska seen0 &amp; seen1</span><span class="track"><span class="fill s1" style="width: 38.8%"></span></span><span class="bar-val mono">38,8%</span></div>
+        <div class="bar-row"><span class="bar-name">sieć per bit</span><span class="track"><span class="fill s3" style="width: 99.9%"></span></span><span class="bar-val mono">99,9%</span></div>
+      </div>
+    </div>
+
+    <table style="margin-top:14px">
+      <caption>Trafność maski dokładnej · test: 6 zbiórek na MCP2515, 8528 bitów</caption>
+      <thead><tr><th>Metoda</th><th>bajty czyste</th><th>bajty MIESZANE</th><th>razem</th></tr></thead>
+      <tbody>
+        <tr><td>maska <code>seen0 &amp; seen1</code></td><td class="mono">137/137 = 100%</td><td class="mono">0/30 = 0%</td><td class="mono">137/167 = 82%</td></tr>
+        <tr class="win"><td>sieć per bit</td><td class="mono">137/137 = 100%</td><td class="mono">30/30 = 100%</td><td class="mono">167/167 = 100%</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">Walidacja na osobnych ziarnach potwierdza: bajty mieszane <strong>69/69</strong> wobec <strong>0/69</strong> odniesienia.</p>
+  </section>
+
+  <section>
+    <h2>Czy sieć jest tu naprawdę potrzebna?</h2>
+    <p>W Eksperymencie 4.7 okazało się, że zmiana jednej stałej w regule daje prawie tyle, co sieć. To pytanie zadano więc ponownie, tym samym protokołem — próg dobierany na danych uczących, oceniany na sprzęcie.</p>
+    <table>
+      <thead><tr><th>Podejście</th><th>F1 per bit</th><th>maska w bajtach mieszanych</th></tr></thead>
+      <tbody>
+        <tr><td>najlepszy pojedynczy próg (<code>carry_lift ≤ 0,5</code>)</td><td class="mono">57,8%</td><td class="mono">3/30 = 10%</td></tr>
+        <tr><td>najlepsza koniunkcja dwóch cech</td><td class="mono">81,9%</td><td class="mono">17/30 = 57%</td></tr>
+        <tr class="win"><td>sieć (11 cech)</td><td class="mono">99,9%</td><td class="mono">30/30 = 100%</td></tr>
+      </tbody>
+    </table>
+    <div class="callout key" style="margin-top:12px">
+      <h3>Odwrotnie niż w Eksperymencie 4.7 — tu żadna prosta reguła nie wystarcza</h3>
+      <p>Granica decyzyjna wymaga nieliniowego połączenia wielu cech. Najsilniejsza pojedyncza cecha osiąga AUC 0,966 — dużo, ale wciąż daleko od rozstrzygnięcia.</p>
+      <p><strong>To pierwszy przypadek w tym projekcie, w którym uczenie maszynowe jest konieczne, a nie tylko wygodne.</strong></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Co odróżnia flagę od bitu skalara</h2>
+    <p>Bity skalara są <strong>statystycznie sprzężone</strong>, flagi <strong>niezależne</strong>. Sieć korzysta z 11 cech, wszystkich liczalnych przyrostowo — O(8) na ramkę, bez zmiany charakterystyki pamięciowej demona:</p>
+    <ul class="list">
+      <li><strong>Sygnatura przeniesień</strong> — w liczniku bit <em>i</em> zmienia się głównie wtedy, gdy bity 0…<em>i</em>−1 są w stanie 1. Flaga nie wykazuje takiej zależności.</li>
+      <li><strong>Gradient częstości</strong> — w skalarze bit 0 przełącza się najczęściej, bit 7 najrzadziej. Mierzona jest ranga bitu w bajcie i monotoniczność gradientu.</li>
+      <li><strong>Współzmienność z sąsiadami</strong> — bity skalara zmieniają się razem przez przeniesienia, flagi niezależnie od otoczenia.</li>
+      <li><strong>Wypełnienie i częstość</strong> — flagi trwają w jednym stanie sekundami, bity skalara przełączają się nieporównanie częściej.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Gdzie to stawia projekt</h2>
+    <table>
+      <thead><tr><th>Pytanie</th><th>Metoda</th><th>Skuteczność</th></tr></thead>
+      <tbody>
+        <tr><td>Czy ten bajt zawiera flagi?</td><td>sieć per bajt (4.7)</td><td class="mono">Recall 100%, F1 98,6%</td></tr>
+        <tr class="win"><td><strong>Które bity są flagami?</strong></td><td>sieć per bit (4.11)</td><td class="mono"><strong>maska 100%</strong></td></tr>
+        <tr><td>Co te sygnały znaczą?</td><td>LLM (4.1)</td><td class="mono">3-24% — nadal otwarte</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">Poprawa dotyczy wyłącznie <strong>struktury</strong> sygnału. Semantyka — co dany sygnał oznacza fizycznie — pozostaje domeną LLM i nie została tknięta.</p>
+  </section>
+
+  <section>
+    <h2>Zastrzeżenia</h2>
+    <div class="callout">
+      <h3>Sto procent na trzydziestu przypadkach, na ruchu syntetycznym</h3>
+      <p><strong>1.</strong> W generatorze skalary częściowe zajmują <strong>ciągły</strong> zakres bitów, a flagi są pojedyncze — struktura jest bardzo regularna. Prawdziwe DBC bywają mniej uporządkowane. Wynik należy czytać jako „metoda działa na tak zdefiniowanym problemie”, nie jako gwarancję na magistrali pojazdu.</p>
+      <p><strong>2.</strong> Przypadków trudnych jest mało: 30 bajtów mieszanych w teście sprzętowym i 69 w walidacji. To mocna przesłanka, nie tysiące prób.</p>
+      <p><strong>3.</strong> Sieć zakłada, że bajt <strong>został już wskazany</strong> jako zawierający flagi — to drugi stopień kaskady, nie samodzielny detektor.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Protokół: uczenie ziarna 1-30 (vcan, 57 280 bitów) · walidacja ziarna 31-40 · test ziarna 100-105 na prawdziwym MCP2515. Ruch z generatora Eksperymentu 4.3.</p>
+    <p>Raport źródłowy: <code>Eksperyment_4.11_Maska_Bitowa_20260815.md</code></p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Eksperymenty 4.7-4.10 — sieć neuronowa kontra reguła ręczna</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-0:      #ffffff;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f2f1ed;
+    --border:         #dedcd4;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #82807a;
+    --series-1:       #2a78d6; /* regula, limit 6 bitow (obecna) */
+    --series-2:       #eb6834; /* regula, limit 7 bitow */
+    --series-3:       #1baf7a; /* siec neuronowa */
+    --good:           #1a8f4c;
+    --warn:           #b9790a;
+    --track:          #e6e4dd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-0:#131311; --surface-1:#1a1a19; --surface-2:#242320; --border:#3a3934;
+      --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8d84;
+      --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+      --good:#4fc37f; --warn:#d9a033; --track:#2c2b27;
+    }
+    :root:where(:not([data-theme="light"])) tr.win td { background: #14302a; }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-0:#131311; --surface-1:#1a1a19; --surface-2:#242320; --border:#3a3934;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8d84;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --good:#4fc37f; --warn:#d9a033; --track:#2c2b27;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-0); }
+  .viz-root {
+    background: var(--surface-0); color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    max-width: 980px; margin: 0 auto; padding: 36px 40px 60px; line-height: 1.5;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+  header.hero { border-bottom: 3px solid var(--text-primary); padding-bottom: 18px; margin-bottom: 28px; }
+  header.hero .eyebrow {
+    font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+  }
+  header.hero h1 { font-size: 26px; margin: 0 0 8px; line-height: 1.2; }
+  header.hero .subtitle { color: var(--text-secondary); font-size: 15px; max-width: 760px; }
+
+  section { margin-bottom: 30px; }
+  h2 {
+    font-family: ui-monospace, monospace; font-size: 13px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted); border-bottom: 1px solid var(--border);
+    padding-bottom: 6px; margin: 0 0 14px;
+  }
+  p { font-size: 14.5px; color: var(--text-secondary); margin: 0 0 12px; max-width: 800px; }
+  p strong, li strong { color: var(--text-primary); }
+
+  .question-box {
+    background: var(--surface-1); border-left: 4px solid var(--series-1); border-radius: 4px;
+    padding: 16px 20px; font-size: 15px;
+  }
+  .question-box .q-label {
+    font-family: ui-monospace, monospace; font-size: 11px; text-transform: uppercase;
+    color: var(--series-1); letter-spacing: 0.06em; margin-bottom: 6px;
+  }
+  .question-box p { margin: 0; color: var(--text-primary); }
+
+  /* --- kafelki --- */
+  .tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tile {
+    flex: 1 1 150px; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 6px; padding: 14px 16px;
+  }
+  .tile .label {
+    font-family: ui-monospace, monospace; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 4px;
+  }
+  .tile .value { font-size: 25px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .tile .foot { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+
+  /* --- wykres --- */
+  .chart { background: var(--surface-1); border: 1px solid var(--border); border-radius: 6px; padding: 18px 20px; }
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .leg { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-secondary); }
+  .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; flex: none; }
+  .s1 { background: var(--series-1); }
+  .s2 { background: var(--series-2); }
+  .s3 { background: var(--series-3); }
+
+  .metric-group { margin-bottom: 15px; }
+  .metric-group:last-child { margin-bottom: 0; }
+  .metric-title {
+    font-family: ui-monospace, monospace; font-size: 11.5px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px;
+  }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .bar-name { width: 150px; font-size: 12.5px; color: var(--text-secondary); flex: none; }
+  .track { display: block; flex: 1; background: var(--track); border-radius: 3px; height: 12px; overflow: hidden; }
+  .fill { display: block; height: 100%; border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+  .bar-val { width: 52px; text-align: right; font-size: 12.5px; font-weight: 600; flex: none; }
+
+  /* --- tabele --- */
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 4px; }
+  caption { text-align: left; font-size: 12px; color: var(--text-muted); padding-bottom: 6px; }
+  th, td { padding: 6px 9px; text-align: right; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th {
+    font-family: ui-monospace, monospace; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.win td { background: #e8f6f0; font-weight: 600; }
+
+  /* --- callouty --- */
+  .callout {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-left: 4px solid var(--warn); border-radius: 6px; padding: 15px 19px; margin-bottom: 12px;
+  }
+  .callout.retract { border-left-color: var(--series-2); }
+  .callout h3 { font-size: 14px; margin: 0 0 6px; }
+  .callout p { font-size: 13.5px; margin: 0 0 8px; }
+  .callout p:last-child { margin-bottom: 0; }
+  code {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 3px;
+    padding: 1px 4px; font-size: 12.5px;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  }
+  ol.bugs { margin: 0; padding-left: 20px; }
+  ol.bugs li { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px; }
+
+  footer {
+    border-top: 1px solid var(--border); padding-top: 12px; margin-top: 34px;
+    font-size: 11.5px; color: var(--text-muted);
+  }
+  footer p { font-size: 11.5px; color: var(--text-muted); margin: 0 0 4px; }
+
+  @page { size: A4; margin: 14mm 12mm; }
+  @media print {
+    .viz-root { max-width: none; padding: 0; }
+    section { break-inside: avoid; }
+    .chart, .callout, table { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root">
+
+  <header class="hero">
+    <div class="eyebrow">Eksperymenty 4.7-4.10 · 15 sierpnia 2026 · Orange Pi Zero 3 + MCP2515</div>
+    <h1>Sieć neuronowa kontra reguła ręczna w wykrywaniu flag bitowych</h1>
+    <p class="subtitle">Klasyfikator „Kierunku B” miał sufit konstrukcyjny na poziomie 85% wykrywalności. Sprawdzono, czy sieć o 577 parametrach — mieszcząca się na urządzeniu brzegowym — potrafi go przełamać.</p>
+  </header>
+
+  <section>
+    <div class="question-box">
+      <div class="q-label">Pytanie badawcze</div>
+      <p>Reguła odrzuca bajty zawierające 7-8 niezależnie przełączających się flag, choć ich współczynniki skokowości (0,97 / 0,84 / 0,82) przeszłyby każdy próg. Poluzowanie limitu do 8 daje 100% wykrywalności, ale precyzja spada do ~50%. <strong>Granica jest nieliniowa</strong> — czy klasyfikator uczony poradzi sobie tam, gdzie próg nie może?</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Wynik — 2936 pozycji z prawdziwego MCP2515</h2>
+    <div class="chart">
+      <div class="legend">
+        <span class="leg"><span class="sw s1"></span>reguła, limit 6 bitów (obecna)</span>
+        <span class="leg"><span class="sw s2"></span>reguła, limit 7 bitów</span>
+        <span class="leg"><span class="sw s3"></span>sieć neuronowa (577 parametrów)</span>
+      </div>
+
+      <div class="metric-group">
+        <div class="metric-title">Recall — jaki odsetek prawdziwych flag wykryto</div>
+        <div class="bar-row"><span class="bar-name">reguła, limit 6</span><span class="track"><span class="fill s1" style="width: 87.7%"></span></span><span class="bar-val mono">87,7%</span></div>
+        <div class="bar-row"><span class="bar-name">reguła, limit 7</span><span class="track"><span class="fill s2" style="width: 97.4%"></span></span><span class="bar-val mono">97,4%</span></div>
+        <div class="bar-row"><span class="bar-name">sieć neuronowa</span><span class="track"><span class="fill s3" style="width: 100%"></span></span><span class="bar-val mono">100%</span></div>
+      </div>
+
+      <div class="metric-group">
+        <div class="metric-title">Precision — jaki odsetek wskazań był trafny</div>
+        <div class="bar-row"><span class="bar-name">reguła, limit 6</span><span class="track"><span class="fill s1" style="width: 94.4%"></span></span><span class="bar-val mono">94,4%</span></div>
+        <div class="bar-row"><span class="bar-name">reguła, limit 7</span><span class="track"><span class="fill s2" style="width: 94.5%"></span></span><span class="bar-val mono">94,5%</span></div>
+        <div class="bar-row"><span class="bar-name">sieć neuronowa</span><span class="track"><span class="fill s3" style="width: 97.7%"></span></span><span class="bar-val mono">97,7%</span></div>
+      </div>
+
+      <div class="metric-group">
+        <div class="metric-title">F1 — miara łączna</div>
+        <div class="bar-row"><span class="bar-name">reguła, limit 6</span><span class="track"><span class="fill s1" style="width: 91.0%"></span></span><span class="bar-val mono">91,0%</span></div>
+        <div class="bar-row"><span class="bar-name">reguła, limit 7</span><span class="track"><span class="fill s2" style="width: 95.9%"></span></span><span class="bar-val mono">95,9%</span></div>
+        <div class="bar-row"><span class="bar-name">sieć neuronowa</span><span class="track"><span class="fill s3" style="width: 98.8%"></span></span><span class="bar-val mono">98,8%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Kluczowe liczby</h2>
+    <div class="tiles">
+      <div class="tile">
+        <div class="label">Pominięte flagi</div>
+        <div class="value mono" style="color: var(--good)">0</div>
+        <div class="foot">z 424 · reguła pomija 52</div>
+      </div>
+      <div class="tile">
+        <div class="label">Parametrów sieci</div>
+        <div class="value mono">577</div>
+        <div class="foot">MLP 10 → 24 → 12 → 1</div>
+      </div>
+      <div class="tile">
+        <div class="label">Czas uczenia</div>
+        <div class="value mono">21,8 s</div>
+        <div class="foot">na Orange Pi Zero 3</div>
+      </div>
+      <div class="tile">
+        <div class="label">Zysk F1</div>
+        <div class="value mono">+7,8 pp</div>
+        <div class="foot">wobec obecnej reguły</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Pełne zestawienie</h2>
+    <table>
+      <caption>24 zbiórki na sprzęcie, ziarna 100-105, cztery prędkości magistrali. 2936 pozycji, 424 z flagami.</caption>
+      <thead>
+        <tr><th>Metoda</th><th>TP</th><th>FP</th><th>FN</th><th>Recall</th><th>Precision</th><th>F1</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>reguła, limit 6 bitów (obecna)</td><td class="mono">372</td><td class="mono">22</td><td class="mono">52</td><td class="mono">87,7%</td><td class="mono">94,4%</td><td class="mono">91,0%</td></tr>
+        <tr><td>reguła, limit 7 bitów</td><td class="mono">413</td><td class="mono">24</td><td class="mono">11</td><td class="mono">97,4%</td><td class="mono">94,5%</td><td class="mono">95,9%</td></tr>
+        <tr class="win"><td>sieć neuronowa (577 par.)</td><td class="mono">424</td><td class="mono">10</td><td class="mono">0</td><td class="mono">100%</td><td class="mono">97,7%</td><td class="mono">98,8%</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">Sieć poprawia <strong>obie osie naraz</strong> — to nie jest kompromis „więcej wykryć kosztem fałszywych alarmów”. Wykrywa wszystkie flagi i jednocześnie myli się rzadziej niż którykolwiek wariant reguły.</p>
+  </section>
+
+  <section>
+    <h2>Czego eksperyment NIE wykazał</h2>
+    <div class="callout">
+      <h3>Zaplanowana manipulacja nie zadziałała</h3>
+      <p>Eksperyment 4.8 miał być <strong>testem odporności poza punktem strojenia</strong>: zmiana prędkości magistrali (125 → 1000 kbit/s) miała wyprowadzić regułę poza warunki, w których ją nastrojono. Liczby odebranych ramek okazały się jednak praktycznie identyczne na wszystkich prędkościach.</p>
+      <p>Przyczyna: generator wysyła ramki w <strong>stałych odstępach czasowych</strong>, niezależnie od prędkości magistrali, a przy 20 konfiguracjach nawet 125 kbit/s ma zapas przepustowości. Reżim próbkowania — a to on decyduje o statystykach klasyfikatora — pozostał niezmieniony.</p>
+      <p><strong>Hipotezy o odporności nie przetestowano.</strong> Właściwą zmienną jest obciążenie magistrali (liczba CAN ID, okresy ramek), nie prędkość transmisji. Eksperyment dał natomiast to, czego brakowało wcześniej: moc statystyczną.</p>
+    </div>
+    <table>
+      <caption>Wyniki w rozbiciu na prędkości — płaskie, zgodnie z powyższym</caption>
+      <thead><tr><th>Bitrate</th><th>reguła-6 F1</th><th>reguła-7 F1</th><th>sieć F1</th></tr></thead>
+      <tbody>
+        <tr><td>125 kbit/s</td><td class="mono">91,7%</td><td class="mono">95,8%</td><td class="mono">98,6%</td></tr>
+        <tr><td>250 kbit/s</td><td class="mono">91,2%</td><td class="mono">96,3%</td><td class="mono">99,1%</td></tr>
+        <tr><td>500 kbit/s</td><td class="mono">90,6%</td><td class="mono">96,3%</td><td class="mono">99,1%</td></tr>
+        <tr><td>1000 kbit/s</td><td class="mono">90,3%</td><td class="mono">95,4%</td><td class="mono">98,6%</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Eksperyment 4.9 — potwierdzenie na drugim zbiorze</h2>
+    <p>Test powtórzono z poprawioną zmienną: <strong>obciążenie magistrali</strong> (5, 10, 40, 60 CAN ID) zamiast prędkości. Manipulacja zadziałała — natężenie ruchu wzrosło ~20×. Sieć uczono przy 30 CAN ID, więc 5 i 60 leżą poza punktem uczenia.</p>
+    <table>
+      <caption>F1 w zależności od obciążenia · 2742 pozycje, 426 flag, prawdziwy MCP2515</caption>
+      <thead><tr><th>Metoda</th><th>5 ID</th><th>10 ID</th><th>40 ID</th><th>60 ID</th><th>Łącznie</th><th>Rozstęp</th></tr></thead>
+      <tbody>
+        <tr><td>reguła, limit 6</td><td class="mono">89,5%</td><td class="mono">92,3%</td><td class="mono">90,6%</td><td class="mono">92,0%</td><td class="mono">91,4%</td><td class="mono">2,8 pp</td></tr>
+        <tr><td>reguła, limit 7</td><td class="mono">97,6%</td><td class="mono">97,1%</td><td class="mono">96,6%</td><td class="mono">96,0%</td><td class="mono">96,4%</td><td class="mono">1,6 pp</td></tr>
+        <tr class="win"><td>sieć neuronowa</td><td class="mono">97,6%</td><td class="mono">100%</td><td class="mono">98,7%</td><td class="mono">98,0%</td><td class="mono">98,4%</td><td class="mono">2,4 pp</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px"><strong>Przewaga sieci potwierdzona niezależnie</strong> na drugim, w pełni świeżym zbiorze: +2,0 pp F1 wobec najlepszego wariantu ręcznego, +7,0 pp wobec obecnego. Pominięta 1 flaga na 426.</p>
+    <div class="callout retract">
+      <h3>Hipoteza o większej odporności sieci — odrzucona</h3>
+      <p>Zakładano, że reguła nastrojona w jednym punkcie pracy będzie degradować się poza nim szybciej niż sieć. <strong>Dane tego nie potwierdzają</strong>: wszystkie trzy metody są bardzo stabilne przy 20-krotnej zmianie natężenia ruchu, a najstabilniejsza okazała się <em>reguła</em> z limitem 7 (rozstęp 1,6 pp wobec 2,4 pp sieci).</p>
+      <p>Przewaga sieci bierze się więc <strong>wyłącznie z lepszej klasyfikacji</strong>, nie z odporności — i tego uzasadnienia nie należy rozszerzać na argumenty, których pomiar nie potwierdza.</p>
+    </div>
+    <div class="callout">
+      <h3>Dlaczego dwie próby testu odporności z rzędu nie zadziałały</h3>
+      <p>Mediana próbek na bajt pozostała w przedziale ~1000-2000 na wszystkich poziomach obciążenia, mimo 20-krotnej zmiany łącznego ruchu. Przyczyna jest strukturalna: w generatorze <strong>każdy CAN ID nadaje z własnym, stałym okresem</strong>. Dodanie węzłów zwiększa ruch łączny, ale nie zmienia reżimu próbkowania pojedynczego bajtu — a to on decyduje o statystykach klasyfikatora. Tak samo było z prędkością magistrali.</p>
+      <p><strong>Statystyki per-bajt są niewrażliwe na parametry poziomu magistrali.</strong> Realny test odporności wymaga skalowania samych okresów ramek (generator tego nie udostępnia) albo ruchu z prawdziwego pojazdu.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Wdrożenie w demonie obserwacyjnym</h2>
+    <p>Sieć wdrożono do demona jako <strong>drugi klasyfikator działający równolegle</strong> z regułą. Trzy decyzje projektowe:</p>
+    <ol class="bugs">
+      <li><strong>Zero PyTorcha w demonie.</strong> Wagi w JSON (12,4 KB), inferencja to kilkanaście linii czystego Pythona. Wdrożenie nie dokłada ani jednej zależności — zamiast 1,3 GB instalacji i kilku sekund importu przy starcie. Równoważność zweryfikowana: <strong>maksymalna różnica logitu 2,66·10⁻⁶, zero rozbieżnych decyzji</strong>.</li>
+      <li><strong>Pamięć nadal ograniczona.</strong> Histogram wartości to tablica o stałej długości 256 (~1 KB na bajt), nie rosnąca struktura — kluczowa własność oryginału zachowana.</li>
+      <li><strong>Reguła pozostaje domyślna.</strong> Sieć jest dodatkiem; werdykt zawiera oba rozstrzygnięcia, więc można je porównywać na żywo bez dwóch demonów na jednej magistrali.</li>
+    </ol>
+    <table>
+      <caption>Zmierzony narzut · 44 171 ramek w 60 s, 320 pozycji, Orange Pi Zero 3</caption>
+      <thead><tr><th>Operacja</th><th>Koszt</th><th>Częstotliwość</th></tr></thead>
+      <tbody>
+        <tr><td>akumulacja stanu</td><td class="mono">152,7 µs/ramkę</td><td>każda ramka (11,2% czasu)</td></tr>
+        <tr><td>policzenie 10 cech</td><td class="mono">34,8 µs/pozycję</td><td>raz na snapshot</td></tr>
+        <tr><td>inferencja sieci</td><td class="mono">282,4 µs/pozycję</td><td>raz na snapshot</td></tr>
+        <tr class="win"><td>razem werdykt</td><td class="mono">317,3 µs/pozycję</td><td>raz na snapshot</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">Pełny snapshot 320 pozycji kosztuje ~0,1 s i wykonuje się raz na 30-60 s — <strong>narzut pomijalny</strong>.</p>
+  </section>
+
+  <section>
+    <h2>Eksperyment 4.10 — test odporności, który wreszcie zadziałał</h2>
+    <p>Po dwóch nieudanych próbach ustalono właściwą zmienną: <strong>skalowanie okresów nadawania</strong>. Generator rozszerzono o parametr <code>--period-scale</code> (domyślnie 1,0 — ground truth pozostaje bit-w-bit identyczny, co zweryfikowano). Tym razem manipulacja zadziałała: mediana próbek na bajt zmieniła się od <strong>7481</strong> do <strong>498</strong> — zakres <strong>15×</strong>, przy zerze zgubionych ramek.</p>
+    <table>
+      <caption>F1 w zależności od skali okresów · 1944 pozycje poza punktem uczenia, prawdziwy MCP2515</caption>
+      <thead><tr><th>Metoda</th><th>0,25×</th><th>0,5×</th><th>1,0×*</th><th>2×</th><th>4×</th><th>Rozstęp</th></tr></thead>
+      <tbody>
+        <tr><td>reguła, limit 6</td><td class="mono">89,6%</td><td class="mono">90,4%</td><td class="mono">91,4%</td><td class="mono">88,9%</td><td class="mono">88,9%</td><td class="mono">2,5 pp</td></tr>
+        <tr><td>reguła, limit 7</td><td class="mono">95,8%</td><td class="mono">95,8%</td><td class="mono">96,4%</td><td class="mono">95,2%</td><td class="mono">95,8%</td><td class="mono">1,2 pp</td></tr>
+        <tr class="win"><td>sieć neuronowa</td><td class="mono">98,6%</td><td class="mono">97,9%</td><td class="mono">98,4%</td><td class="mono">98,6%</td><td class="mono">99,3%</td><td class="mono">1,4 pp</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">* punkt uczenia sieci i strojenia reguły. Sieć utrzymuje <strong>100% wykrywalności na każdej skali</strong>.</p>
+
+    <div class="callout retract">
+      <h3>Hipoteza o odporności — odrzucona rozstrzygająco</h3>
+      <p>Wcześniejsze odrzucenia były <em>nierozstrzygające</em>, bo manipulacje nie zmieniały statystyk. Tutaj zmieniły je 15-krotnie — i mimo to wszystkie trzy metody pozostały bardzo stabilne (rozstępy 1,2-2,5 pp), a <strong>najstabilniejsza znów okazała się reguła</strong>.</p>
+      <p><strong>Przewaga sieci wynika wyłącznie z jakości klasyfikacji</strong>, nie z odporności — i tak należy ją przedstawiać.</p>
+    </div>
+
+    <table>
+      <caption>Bilans trzech prób testu odporności</caption>
+      <thead><tr><th>Eksperyment</th><th>Zmienna</th><th>Zmieniła statystyki?</th><th>Wynik</th></tr></thead>
+      <tbody>
+        <tr><td>4.8</td><td>prędkość magistrali (125-1000 kbit/s)</td><td>nie</td><td>nierozstrzygający</td></tr>
+        <tr><td>4.9</td><td>liczba CAN ID (5-60)</td><td>nie</td><td>nierozstrzygający</td></tr>
+        <tr class="win"><td>4.10</td><td>skala okresów ramek (0,25-4×)</td><td>tak, 15×</td><td>rozstrzygający</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">Dwie pierwsze próby były pomyłką projektową: manipulowały parametrami <strong>poziomu magistrali</strong>, podczas gdy statystyki per-bajt zależą od <strong>stosunku częstotliwości próbkowania do dynamiki sygnału</strong>.</p>
+  </section>
+
+  <section>
+    <h2>Sprostowanie wcześniejszego wniosku</h2>
+    <div class="callout retract">
+      <h3>„Jednolinijkowa zmiana parametru bije sieć neuronową” — wniosek obalony</h3>
+      <p>Na wcześniejszym teście obejmującym <strong>132 pozycje</strong> reguła z limitem 7 wypadła lepiej niż sieć (F1 95,0% wobec 93,0%) i taki wniosek zapisano. Różnica opierała się jednak na <strong>dwóch pozycjach</strong> — czyli na szumie.</p>
+      <p>Przy próbie 22× większej kierunek jest odwrotny i jednoznaczny: 98,8% wobec 95,9%. Wniosek metodologiczny na przyszłość: przy 20 pozytywach w zbiorze testowym <strong>różnice rzędu kilku punktów procentowych nie są interpretowalne</strong>.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dwie pułapki wykonawcze warte zapamiętania</h2>
+    <ol class="bugs">
+      <li><strong>Dane uczące z trybu <code>--dump-json</code> mają inny rozkład niż żywa magistrala.</strong> Ta sama reguła daje na nich 42,6% wykrywalności zamiast 85%. Symulacja skokowa czasu (50 ms/próbkę) i zbyt mało próbek zmieniają statystyki przełączeń. Sieć nauczona na takich danych wyglądałaby dobrze na walidacji i rozsypała się przy wdrożeniu. Rozwiązanie: dane z wirtualnych magistral <code>vcan</code> z realnym taktowaniem — rozkład zgodny co do 0,1 pp.</li>
+      <li><strong>Kolektor uruchomiony przez <code>nohup … &amp;</code> po SSH kończy się natychmiast</strong> (proces nie żyje po 4 s mimo zadanych 20) i zapisuje <em>poprawnie wyglądający</em> plik z zerem ramek. Ten sam kolektor na pierwszym planie odbiera komplet danych. Błąd był groźny, bo nie wyglądał na błąd — wychwyciło go dopiero to, że wszystkie cztery prędkości dały identyczne zero, co fizycznie nie miało sensu.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Wnioski i rekomendacje</h2>
+    <p><strong>1. Sieć przełamuje sufit konstrukcyjny reguły</strong> — 100% wykrywalności przy ~97% precyzji, modelem o 577 parametrach uczonym w 21,8 s na urządzeniu brzegowym. Przewaga potwierdzona na <strong>trzech niezależnych zbiorach sprzętowych</strong> (~7600 pozycji) i utrzymuje się na każdym testowanym punkcie pracy.</p>
+    <p><strong>1b. Metoda nie wymaga strojenia pod punkt pracy.</strong> Trzy manipulacje — prędkość magistrali (8×), liczba węzłów (12×), gęstość próbkowania (15×) — zmieniły F1 wszystkich metod o najwyżej 2,5 pp. Raz nastrojony klasyfikator działa w szerokim zakresie warunków bez rekalibracji.</p>
+    <p><strong>2. Jeśli sieć jest niepożądana</strong>, sama zmiana limitu bitów z 6 na 7 daje ~+5 pp F1 przy zerowym koszcie obliczeniowym — jedna linia w trzech plikach. <strong>Potwierdzone na dwóch niezależnych korpusach</strong> (+5,0 pp i +4,9 pp, rozbieżność 0,1 pp).</p>
+    <p><strong>3. Mocniejszy sprzęt nie jest potrzebny</strong> — ani do uczenia, ani do inferencji. Gdyby kiedykolwiek był, wąskim gardłem byłby VRAM karty graficznej (fine-tuning LLM albo model lokalny), a nie liczba rdzeni CPU ani RAM.</p>
+  </section>
+
+  <footer>
+    <p><strong>Zastrzeżenie:</strong> cały ruch jest syntetyczny, z generatora Eksperymentu 4.3. Test na innych ziarnach ogranicza ryzyko zapamiętywania, ale inne ziarno to wciąż ten sam generator. Wynik jest mocną przesłanką, <strong>nie dowodem</strong> na prawdziwej magistrali samochodowej.</p>
+    <p>Protokół: uczenie ziarna 1-24 (vcan, 4300 pozycji) · walidacja ziarna 25-30 (wyłącznie do wyboru epoki) · test ziarna 100-105 na prawdziwym MCP2515. Raport źródłowy: <code>Eksperyment_4.7-4.10_Siec_Neuronowa_vs_Regula_20260815.md</code></p>
+  </footer>
+
+</div>
+</body>
+</html>

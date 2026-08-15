@@ -32,8 +32,18 @@ def independent_bit_mask(byte_series: list[int]) -> int:
     return seen0 & seen1
 
 
-def looks_like_bit_flags(byte_series: list[int]) -> bool:
-    """1:1 port DecodingAccuracyRunner::looksLikeBitFlags (C++, v2 heurystyka)."""
+def looks_like_bit_flags(byte_series: list[int], big_jump_ratio_threshold: float = 0.5) -> bool:
+    """1:1 port DecodingAccuracyRunner::looksLikeBitFlags (C++, v2 heurystyka).
+
+    Domyslny prog (0.5) jest CELOWO niezmieniony wzgledem oryginalu C++ i
+    wynikow juz opublikowanych w Eksperyment_4.3_Raport (odtwarzalnosc).
+    Eksperyment 4.5 (strojenie na danych z godzinnego przebiegu, seed=999)
+    wykazal: recall=85% (nie 60%) przy progu <=0.46, precyzja niezmienna
+    (100%, 0 FP) na calym zakresie 0.0-1.0 - urwisko lezy dokladnie miedzy
+    0.46 a 0.47. Do uzytku "produkcyjnego" (pi_continuous_observer.py) przyjeto
+    prog=0.3 (margines bezpieczenstwa od urwiska). Tutaj pozostawiono 0.5 jako
+    parametr z domyslna, historyczna wartoscia - podaj inna wartosc jawnie,
+    zeby uzyc postrojonej wersji."""
     if len(byte_series) < 2:
         return False
     mask = independent_bit_mask(byte_series)
@@ -51,7 +61,7 @@ def looks_like_bit_flags(byte_series: list[int]) -> bool:
             big_jumps += 1
     if changed_pairs == 0:
         return False
-    return (big_jumps / changed_pairs) >= 0.5
+    return (big_jumps / changed_pairs) >= big_jump_ratio_threshold
 
 
 def true_structure_by_can_id(ground_truth):
@@ -78,6 +88,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", default="../esp_experiment_4_4_qdrant/corpus_diverse.json")
     ap.add_argument("--out", default="etap_b_labels.json")
+    ap.add_argument("--threshold", type=float, default=0.5,
+                     help="prog big_jumps/changed_pairs (domyslnie 0.5, historyczny/odtwarzalny; "
+                          "Eksperyment 4.5 sugeruje <=0.3-0.46 dla wyzszego recall bez utraty precyzji)")
     args = ap.parse_args()
 
     with open(args.corpus) as f:
@@ -98,7 +111,7 @@ def main():
         labels[can_id] = {}
         for byte_idx in range(dlc):
             series = [frame[byte_idx] for frame in samples if byte_idx < len(frame)]
-            is_flags = looks_like_bit_flags(series)
+            is_flags = looks_like_bit_flags(series, args.threshold)
             mask = independent_bit_mask(series) if is_flags else None
             labels[can_id][byte_idx] = {
                 "classifier_says_bit_flags": is_flags,

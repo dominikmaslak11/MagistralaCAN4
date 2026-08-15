@@ -1,0 +1,2360 @@
+{
+  "model": "gpt",
+  "condition": "baseline",
+  "summary": {
+    "overallDetectionRatePct": 36.612021857923494,
+    "nErrors": 0,
+    "nTrialsTotal": 100,
+    "perSignal": {
+      "scalar_0": 100.0,
+      "flag_0_bit0": 0.0,
+      "flag_0_bit2": 0.0,
+      "flag_0_bit5": 9.090909090909092,
+      "flag_0_bit6": 9.090909090909092,
+      "flag_0_bit7": 0.0,
+      "scalar_2_0": 60.0,
+      "scalar_2_1": 60.0,
+      "scalar_2_2": 30.0,
+      "scalar_7_0": 80.0,
+      "scalar_7_1": 30.0,
+      "flag_11_bit0": 30.0,
+      "flag_11_bit2": 0.0,
+      "flag_11_bit3": 10.0,
+      "flag_11_bit7": 20.0,
+      "mixedsub_12": 10.0,
+      "mixedflag_12_bit0": 0.0,
+      "mixedflag_12_bit1": 10.0,
+      "mixedflag_12_bit2": 0.0,
+      "scalar_15_0": 100.0,
+      "scalar_15_1": 100.0,
+      "scalar_15_2": 90.0,
+      "scalar_17_0": 90.0,
+      "scalar_17_1": 20.0,
+      "flag_4_0_bit2": 25.0,
+      "flag_4_0_bit7": 25.0,
+      "flag_4_1_bit2": 25.0,
+      "flag_4_1_bit5": 50.0,
+      "scalar_8": 50.0,
+      "flag_8_bit0": 0.0,
+      "flag_8_bit5": 0.0,
+      "scalar_13_0": 100.0,
+      "scalar_13_1": 100.0,
+      "flag_3_bit0": 50.0,
+      "flag_3_bit2": 0.0,
+      "flag_3_bit3": 0.0,
+      "flag_3_bit4": 0.0,
+      "flag_3_bit7": 50.0,
+      "mixedsub_5": 100.0,
+      "mixedflag_5_bit0": 0.0,
+      "mixedflag_5_bit1": 0.0,
+      "mixedflag_5_bit2": 0.0,
+      "flag_6_bit0": 50.0,
+      "flag_6_bit1": 100.0,
+      "flag_6_bit2": 50.0,
+      "flag_6_bit3": 0.0,
+      "flag_6_bit4": 50.0,
+      "flag_6_bit5": 50.0,
+      "flag_10_0_bit2": 0.0,
+      "flag_10_0_bit3": 0.0,
+      "flag_10_0_bit5": 50.0,
+      "flag_10_1_bit1": 0.0,
+      "flag_10_1_bit2": 0.0,
+      "flag_10_1_bit4": 50.0,
+      "flag_14_0_bit2": 0.0,
+      "flag_14_0_bit4": 50.0,
+      "flag_14_0_bit5": 0.0,
+      "flag_14_0_bit6": 50.0,
+      "flag_14_1_bit0": 0.0,
+      "flag_14_1_bit5": 0.0,
+      "flag_14_1_bit6": 50.0,
+      "scalar_18": 100.0,
+      "flag_18_bit0": 50.0,
+      "flag_18_bit7": 50.0,
+      "scalar_19": 100.0,
+      "flag_19_bit0": 50.0,
+      "flag_19_bit7": 50.0,
+      "flag_1_0_bit0": 100.0,
+      "flag_1_0_bit3": 100.0,
+      "flag_1_0_bit5": 100.0,
+      "flag_1_0_bit7": 100.0,
+      "flag_1_1_bit0": 0.0,
+      "flag_1_1_bit3": 0.0,
+      "mixedsub_9": 100.0,
+      "mixedflag_9_bit0": 0.0,
+      "mixedflag_9_bit1": 0.0,
+      "mixedflag_9_bit2": 0.0,
+      "flag_16_0_bit0": 100.0,
+      "flag_16_0_bit1": 0.0,
+      "flag_16_0_bit3": 100.0,
+      "flag_16_0_bit4": 100.0,
+      "flag_16_1_bit0": 0.0,
+      "flag_16_1_bit6": 100.0
+    }
+  },
+  "trialLog": [
+    {
+      "trialIdx": 0,
+      "canId": 768,
+      "latencyS": 9.037433862686157,
+      "rawText": "{\n  \"interpretation\": \"Engine rotational speed message with a 16-bit little-endian RPM value; remaining bytes appear constant or unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 1,
+      "canId": 800,
+      "latencyS": 23.37709069252014,
+      "rawText": "{\n  \"interpretation\": \"Message containing a rapidly varying 16-bit integrity or rolling-code field, a slowly varying 8-bit measurement, and an 8-bit operating-state value; bytes 4-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"rolling_code\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"slow_measurement\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"operating_state_value\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.74\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 2,
+      "canId": 880,
+      "latencyS": 33.61777448654175,
+      "rawText": "{\n  \"interpretation\": \"Likely drivetrain status containing engine speed and accelerator or throttle position; bytes 3-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"throttle_position_pct\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3921568627,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 3,
+      "canId": 944,
+      "latencyS": 5.144146919250488,
+      "rawText": "{\"interpretation\":\"Periodic status message with one observed constant raw status/code byte; semantics cannot be determined from static samples.\",\"signals\":[{\"name\":\"status_code\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.2}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 4,
+      "canId": 960,
+      "latencyS": 5.759606838226318,
+      "rawText": "{\n  \"interpretation\": \"Periodic status message containing a discrete state flag in byte 2; the flag transitions from on (0x6A) to off (0x2A).\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.96\n}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 5,
+      "canId": 1008,
+      "latencyS": 24.38763737678528,
+      "rawText": "{\n  \"interpretation\": \"Three-axis accelerometer sample encoded as signed little-endian 16-bit values, with bytes 6-7 unused padding; acceleration is estimated in g.\",\n  \"signals\": [\n    {\n      \"name\": \"accel_x_g\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.00390625,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"accel_y_g\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.00390625,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"accel_z_g\",\n      \"byteIdx\": 4,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.00390625,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.76\n}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 6,
+      "canId": 1040,
+      "latencyS": 13.555613040924072,
+      "rawText": "{\n  \"interpretation\": \"Periodic message containing an 8-bit rolling code or checksum in byte 0; byte 1 is a constant status value and bytes 2-7 appear unused.\",\n  \"signals\": [\n    {\n      \"name\": \"rolling_code\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_raw\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.56\n}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 7,
+      "canId": 768,
+      "latencyS": 6.987973928451538,
+      "rawText": "{\"interpretation\":\"Engine rotational speed message; bytes 0-1 encode engine RPM, while the remaining bytes appear constant or reserved in this sample.\",\"signals\":[{\"name\":\"engine_speed_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.9}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 8,
+      "canId": 800,
+      "latencyS": 39.3532075881958,
+      "rawText": "{\n  \"interpretation\": \"Engine-speed-like measurement with a rapidly changing rolling code or integrity field\",\n  \"signals\": [\n    {\n      \"name\": \"rolling_code\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_speed_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 9,
+      "canId": 880,
+      "latencyS": 48.832359313964844,
+      "rawText": "{\n  \"interpretation\": \"Two independent unsigned 8-bit analog channels in bytes 1 and 2; byte 0 is likely a checksum or integrity byte, and bytes 3-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"slow_analog_level\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"dynamic_analog_level\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 10,
+      "canId": 944,
+      "latencyS": 6.317879915237427,
+      "rawText": "{\n  \"interpretation\": \"Constant status payload; byte 2 is fixed at 0x09, but no individual signals or decoding semantics can be confidently identified without state changes.\",\n  \"signals\": [],\n  \"confidence\": 0.18\n}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 11,
+      "canId": 960,
+      "latencyS": 9.855535507202148,
+      "rawText": "{\n  \"interpretation\": \"Periodic status message with an active one-byte state or command code at byte 2; all other observed bytes are constant zero.\",\n  \"signals\": [\n    {\n      \"name\": \"state_code\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 12,
+      "canId": 1008,
+      "latencyS": 23.059371948242188,
+      "rawText": "{\n  \"interpretation\": \"Three-channel signed sensor vector, likely motion or inertial measurements, encoded as little-endian 16-bit raw values; bytes 6-7 are constant and not identifiable.\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_axis_x_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_axis_y_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_axis_z_raw\",\n      \"byteIdx\": 4,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.94\n}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 13,
+      "canId": 1040,
+      "latencyS": 13.655425786972046,
+      "rawText": "{\"interpretation\":\"Engine rotational speed message with a 16-bit little-endian RPM value; remaining bytes are unused or constant.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.125,\"offset\":0.0}],\"confidence\":0.88}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 14,
+      "canId": 832,
+      "latencyS": 4.939138412475586,
+      "rawText": "{\n  \"interpretation\": \"Periodic status message with one continuously asserted, unidentified discrete flag\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_bit5\",\n      \"byteIdx\": 6,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.3\n}",
+      "perSignal": {
+        "flag_4_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_1_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_1_bit5": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 15,
+      "canId": 896,
+      "latencyS": 4.1204516887664795,
+      "rawText": "{\"interpretation\":\"Unknown periodic status/heartbeat message; payload is constant, so no individual signals can be distinguished from this capture.\",\"signals\":[],\"confidence\":0.12}",
+      "perSignal": {
+        "scalar_8": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "flag_8_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_8_bit5": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 16,
+      "canId": 976,
+      "latencyS": 38.53381872177124,
+      "rawText": "{\"interpretation\":\"Two independent little-endian 16-bit position-like measurements occupy bytes 0-3; bytes 4-7 are unused or reserved.\",\"signals\":[{\"name\":\"position_channel_1\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.01,\"offset\":0.0},{\"name\":\"position_channel_2\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.01,\"offset\":0.0}],\"confidence\":0.65}",
+      "perSignal": {
+        "scalar_13_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_13_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 17,
+      "canId": 768,
+      "latencyS": 9.85623812675476,
+      "rawText": "{\n  \"interpretation\": \"Steering-angle measurement with a binary status flag\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag\",\n      \"byteIdx\": 7,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 18,
+      "canId": 800,
+      "latencyS": 27.88214659690857,
+      "rawText": "{\"interpretation\":\"Engine-state message with a varying checksum, engine speed near 1400 RPM, and a likely coolant temperature of 58 C.\",\"signals\":[{\"name\":\"checksum\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"engine_rpm\",\"byteIdx\":1,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0},{\"name\":\"coolant_temperature\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":-40.0}],\"confidence\":0.68}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 19,
+      "canId": 880,
+      "latencyS": 29.57333254814148,
+      "rawText": "{\n  \"interpretation\": \"Engine-speed message with a varying checksum byte, a big-endian 16-bit RPM value, and five unused zero bytes\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 20,
+      "canId": 944,
+      "latencyS": 6.3467724323272705,
+      "rawText": "{\n  \"interpretation\": \"Status bitfield in byte 2 containing an always-asserted base state and a toggling discrete state.\",\n  \"signals\": [\n    {\n      \"name\": \"base_state\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"toggle_state\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x08\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 21,
+      "canId": 960,
+      "latencyS": 5.327892303466797,
+      "rawText": "{\"interpretation\":\"Constant payload; no signal semantics or boundaries can be inferred from the available frames.\",\"signals\":[],\"confidence\":0.02}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 22,
+      "canId": 1008,
+      "latencyS": 31.329244375228882,
+      "rawText": "{\n  \"interpretation\": \"Three aligned 16-bit signed sensor channels, likely raw axes from a motion or position sensor; bytes 6-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_axis_x_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_axis_y_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"sensor_axis_z_raw\",\n      \"byteIdx\": 4,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.74\n}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 23,
+      "canId": 1040,
+      "latencyS": 14.351438760757446,
+      "rawText": "{\n  \"interpretation\": \"Heartbeat or freshness message containing an opaque rapidly changing token in byte 0; byte 1 is a constant 0x7F marker and bytes 2-7 are padding.\",\n  \"signals\": [\n    {\n      \"name\": \"rolling_token\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 24,
+      "canId": 768,
+      "latencyS": 12.714283227920532,
+      "rawText": "{\n  \"interpretation\": \"Likely a signed steering-angle or similar bidirectional position measurement updated at approximately 50 Hz; bytes 2-6 are zero and byte 7 is a constant status value in the observed frames.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 25,
+      "canId": 800,
+      "latencyS": 29.907851457595825,
+      "rawText": "{\n  \"interpretation\": \"Message carrying a rapidly changing opaque 16-bit value, likely a checksum, authentication tag, or pseudorandom rolling code; bytes 2-3 are invariant and bytes 4-7 are padding.\",\n  \"signals\": [\n    {\n      \"name\": \"rolling_auth_tag\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.68\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 26,
+      "canId": 880,
+      "latencyS": 54.4022114276886,
+      "rawText": "{\n  \"interpretation\": \"Big-endian 16-bit continuous sensor value, plausibly rotational speed, with a varying checksum byte and zero padding.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"rotational_speed\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 27,
+      "canId": 944,
+      "latencyS": 5.577755451202393,
+      "rawText": "{\n  \"interpretation\": \"Periodic status message with one continuously asserted unknown flag; no changing measurements are observable.\",\n  \"signals\": [\n    {\n      \"name\": \"unknown_status_flag\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.25\n}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 28,
+      "canId": 960,
+      "latencyS": 7.216242790222168,
+      "rawText": "{\n  \"interpretation\": \"Status/flag message with a discrete state in byte 2; the observed bit is inactive in the trigger frame.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_bit1\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 29,
+      "canId": 1008,
+      "latencyS": 37.92636775970459,
+      "rawText": "{\"interpretation\":\"Three little-endian signed 16-bit sensor channels, likely three inertial or motion-related axes; bytes 6-7 are constant padding.\",\"signals\":[{\"name\":\"sensor_axis_1_raw\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"sensor_axis_2_raw\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"sensor_axis_3_raw\",\"byteIdx\":4,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.82}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 30,
+      "canId": 1040,
+      "latencyS": 19.481996059417725,
+      "rawText": "{\"interpretation\":\"One unsigned 16-bit little-endian analog measurement in bytes 0-1; bytes 2-7 are constant padding.\",\"signals\":[{\"name\":\"analog_measurement\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.01,\"offset\":0.0}],\"confidence\":0.72}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 31,
+      "canId": 816,
+      "latencyS": 6.578953504562378,
+      "rawText": "{\n  \"interpretation\": \"Discrete status message; byte 3 bit 0 changes from active to inactive while the remaining observed bits stay constant.\",\n  \"signals\": [\n    {\n      \"name\": \"status_bit0\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "flag_3_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_3_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_3_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_3_bit4": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_3_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 32,
+      "canId": 848,
+      "latencyS": 40.131630182266235,
+      "rawText": "{\n  \"interpretation\": \"Message carries a single one-byte quantized analog value at byte 5; its physical meaning cannot be determined confidently from these frames alone.\",\n  \"signals\": [\n    {\n      \"name\": \"analog_value_raw\",\n      \"byteIdx\": 5,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+      "perSignal": {
+        "mixedsub_5": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "mixedflag_5_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_5_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_5_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 33,
+      "canId": 864,
+      "latencyS": 9.230595350265503,
+      "rawText": "{\"interpretation\":\"Status bitfield with two independently changing binary states in byte 1; bit 4 remains set but cannot yet be identified as a distinct signal.\",\"signals\":[{\"name\":\"status_flag_0\",\"byteIdx\":1,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":\"0x01\",\"scale\":1.0,\"offset\":0.0},{\"name\":\"status_flag_1\",\"byteIdx\":1,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":\"0x02\",\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.78}",
+      "perSignal": {
+        "flag_6_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_6_bit1": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_6_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_6_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_6_bit4": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_6_bit5": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 34,
+      "canId": 928,
+      "latencyS": 7.911739826202393,
+      "rawText": "{\n  \"interpretation\": \"Status bitfield containing at least two independently changing discrete states; exact functions are unknown.\",\n  \"signals\": [\n    {\n      \"name\": \"state_flag_1\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"state_flag_2\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+      "perSignal": {
+        "flag_10_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_0_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_0_bit5": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_10_1_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_1_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_1_bit4": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 35,
+      "canId": 992,
+      "latencyS": 10.561288356781006,
+      "rawText": "{\n  \"interpretation\": \"Discrete vehicle-status bitfield containing at least three independently changing boolean states; exact functions are unknown.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_b1_bit4\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_b1_bit6\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_b2_bit6\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.9\n}",
+      "perSignal": {
+        "flag_14_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_0_bit4": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_14_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_0_bit6": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_14_1_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_1_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_1_bit6": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 36,
+      "canId": 1056,
+      "latencyS": 9.033262014389038,
+      "rawText": "{\n  \"interpretation\": \"Signed position or angle signal crossing zero; remaining bytes appear constant or unused.\",\n  \"signals\": [\n    {\n      \"name\": \"signed_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+      "perSignal": {
+        "scalar_18": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_18_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_18_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 37,
+      "canId": 1072,
+      "latencyS": 29.85929822921753,
+      "rawText": "{\n  \"interpretation\": \"Signed steering-position-like measurement with two independent status flags; only the first three bytes are active.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit_0\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit_7\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+      "perSignal": {
+        "scalar_19": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_19_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_19_bit7": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 38,
+      "canId": 832,
+      "latencyS": 4.114537477493286,
+      "rawText": "{\"interpretation\":\"Unknown periodic status message; payload is constant, so no signals can be confidently distinguished.\",\"signals\":[],\"confidence\":0.08}",
+      "perSignal": {
+        "flag_4_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_1_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_1_bit5": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 39,
+      "canId": 896,
+      "latencyS": 6.468146800994873,
+      "rawText": "{\n  \"interpretation\": \"Likely steering-angle message containing a signed little-endian angle measurement; remaining bytes are constant or unused in the observed frames.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+      "perSignal": {
+        "scalar_8": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_8_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_8_bit5": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 40,
+      "canId": 976,
+      "latencyS": 15.679470300674438,
+      "rawText": "{\n  \"interpretation\": \"Two varying unsigned 16-bit raw measurement channels followed by four constant padding bytes\",\n  \"signals\": [\n    {\n      \"name\": \"measurement_1_raw\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"measurement_2_raw\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_13_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_13_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 41,
+      "canId": 768,
+      "latencyS": 7.807469367980957,
+      "rawText": "{\n  \"interpretation\": \"Likely steering wheel angle message with a signed 16-bit angle value; remaining bytes are static or unidentified.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 42,
+      "canId": 800,
+      "latencyS": 22.361960887908936,
+      "rawText": "{\n  \"interpretation\": \"Engine-speed message with a varying checksum byte and an unidentified status/code byte\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.84\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 43,
+      "canId": 880,
+      "latencyS": 32.79402136802673,
+      "rawText": "{\n  \"interpretation\": \"Engine-speed message with an 8-bit checksum and a big-endian 16-bit RPM value; remaining bytes are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_speed_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.68\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 44,
+      "canId": 944,
+      "latencyS": 6.588216066360474,
+      "rawText": "{\"interpretation\":\"Periodic status message containing a discrete on/off state; the trigger frame shows the state off.\",\"signals\":[{\"name\":\"status_flag\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":\"0x01\",\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.72}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 45,
+      "canId": 960,
+      "latencyS": 3.4922680854797363,
+      "rawText": "{\"interpretation\":\"Static heartbeat/status message; no changing or independently distinguishable signals are observable from the provided frames.\",\"signals\":[],\"confidence\":0.12}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 46,
+      "canId": 1008,
+      "latencyS": 28.074575901031494,
+      "rawText": "{\n  \"interpretation\": \"Likely steering sensor data containing a signed steering angle and signed angular-rate channel; byte 4 appears checksum-like and bytes 5-7 are padding.\",\n  \"signals\": [\n    {\n      \"name\": \"steering_angle\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"steering_rate\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 47,
+      "canId": 1040,
+      "latencyS": 13.523314714431763,
+      "rawText": "{\n  \"interpretation\": \"Engine rotational speed, with a little-endian 16-bit raw value in bytes 0-1; remaining bytes are constant.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.125,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.68\n}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 48,
+      "canId": 768,
+      "latencyS": 7.714337348937988,
+      "rawText": "{\n  \"interpretation\": \"Engine rotational speed message with a 16-bit little-endian RPM value; remaining bytes are constant or unused in the observed frames.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.92\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 49,
+      "canId": 800,
+      "latencyS": 49.06099987030029,
+      "rawText": "{\n  \"interpretation\": \"Likely a 16-bit rolling integrity or freshness field followed by a slowly varying 16-bit analog measurement; bytes 4-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"rolling_code\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"analog_measurement\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.46\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 50,
+      "canId": 880,
+      "latencyS": 43.83918309211731,
+      "rawText": "{\n  \"interpretation\": \"Likely a high-range engine-speed measurement in bytes 0-1; byte 2 appears checksum-like or otherwise non-physical, with bytes 3-7 unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 51,
+      "canId": 944,
+      "latencyS": 3.298940896987915,
+      "rawText": "{\"interpretation\":\"Constant all-zero payload; no distinct signals can be inferred from the available frames.\",\"signals\":[],\"confidence\":0.99}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 52,
+      "canId": 960,
+      "latencyS": 4.73186993598938,
+      "rawText": "{\n  \"interpretation\": \"Periodic static status frame; no individual signals can be confidently decoded without payload variation.\",\n  \"signals\": [],\n  \"confidence\": 0.12\n}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 53,
+      "canId": 1008,
+      "latencyS": 22.134626150131226,
+      "rawText": "{\n  \"interpretation\": \"Three signed 16-bit little-endian sensor channels, likely tri-axis inertial acceleration measurements in 0.01-unit increments.\",\n  \"signals\": [\n    {\n      \"name\": \"accel_x\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"accel_y\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"accel_z\",\n      \"byteIdx\": 4,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.68\n}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 54,
+      "canId": 1040,
+      "latencyS": 13.741564273834229,
+      "rawText": "{\n  \"interpretation\": \"Engine rotational speed encoded as a 16-bit little-endian value; remaining bytes are unused or constant.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 55,
+      "canId": 768,
+      "latencyS": 7.380276679992676,
+      "rawText": "{\"interpretation\":\"Engine rotational speed message with a 16-bit little-endian RPM value; remaining bytes appear constant or unused.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.94}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 56,
+      "canId": 800,
+      "latencyS": 40.55928039550781,
+      "rawText": "{\n  \"interpretation\": \"Likely engine or shaft rotational speed; bytes 1-2 form the usable integer portion, while byte 0 may contain additional fractional precision.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 57,
+      "canId": 880,
+      "latencyS": 52.852463245391846,
+      "rawText": "{\"interpretation\":\"Likely engine-speed message with a changing checksum/counter in byte 0; bytes 1-2 form a big-endian RPM value and bytes 3-7 are unused.\",\"signals\":[{\"name\":\"engine_speed_rpm\",\"byteIdx\":1,\"byteLen\":2,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0}],\"confidence\":0.56}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 58,
+      "canId": 944,
+      "latencyS": 2.320213556289673,
+      "rawText": "{\n  \"interpretation\": \"Periodic inactive or placeholder message; all payload bytes remain zero, so no distinct signals or decoding rules can be identified.\",\n  \"signals\": [],\n  \"confidence\": 0.99\n}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 59,
+      "canId": 960,
+      "latencyS": 2.9793550968170166,
+      "rawText": "{\n  \"interpretation\": \"Constant periodic status frame; no distinct signals can be confidently decoded without observed value changes.\",\n  \"signals\": [],\n  \"confidence\": 0.1\n}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 60,
+      "canId": 1008,
+      "latencyS": 10.551701307296753,
+      "rawText": "{\n  \"interpretation\": \"Three telemetry channels: a slowly varying signed 16-bit value, a rapidly varying signed 16-bit value, and an unsigned 8-bit value.\",\n  \"signals\": [\n    {\n      \"name\": \"slow_signed_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"fast_signed_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"unsigned_value\",\n      \"byteIdx\": 4,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.9\n}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 61,
+      "canId": 1040,
+      "latencyS": 13.936676263809204,
+      "rawText": "{\"interpretation\":\"Message carrying an 8-bit command or state value in byte 1, protected by a varying checksum in byte 0; bytes 2-7 are unused.\",\"signals\":[{\"name\":\"checksum\",\"byteIdx\":0,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"command_value\",\"byteIdx\":1,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.72}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 62,
+      "canId": 832,
+      "latencyS": 4.9370362758636475,
+      "rawText": "{\n  \"interpretation\": \"Status/command bitfield; byte 6 bit 2 transitions from off to on while the other observed bits remain unchanged.\",\n  \"signals\": [\n    {\n      \"name\": \"status_bit_2\",\n      \"byteIdx\": 6,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x04\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.76\n}",
+      "perSignal": {
+        "flag_4_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_1_bit2": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_4_1_bit5": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 63,
+      "canId": 896,
+      "latencyS": 6.99824857711792,
+      "rawText": "{\n  \"interpretation\": \"Likely engine-speed message with a 16-bit big-endian RPM value; remaining bytes are inactive or unknown.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.32\n}",
+      "perSignal": {
+        "scalar_8": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "flag_8_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_8_bit5": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 64,
+      "canId": 976,
+      "latencyS": 12.292585611343384,
+      "rawText": "{\"interpretation\":\"Two independent unsigned 16-bit measurement channels in bytes 0-3; bytes 4-7 are constant padding.\",\"signals\":[{\"name\":\"measurement_1\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"measurement_2\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.88}",
+      "perSignal": {
+        "scalar_13_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_13_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 65,
+      "canId": 768,
+      "latencyS": 16.60731601715088,
+      "rawText": "{\n  \"interpretation\": \"Engine status message containing engine RPM and coolant temperature\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"coolant_temperature_c\",\n      \"byteIdx\": 7,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.91\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 66,
+      "canId": 800,
+      "latencyS": 39.94758915901184,
+      "rawText": "{\n  \"interpretation\": \"Engine-speed message with a separate operating-mode/status code; byte 0 is likely a checksum or integrity byte and bytes 4-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_code\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 67,
+      "canId": 880,
+      "latencyS": 32.41812086105347,
+      "rawText": "{\n  \"interpretation\": \"Likely an engine-speed message with a 16-bit little-endian RPM value in bytes 0-1; byte 2 appears checksum-like or otherwise not confidently decodable, and bytes 3-7 are unused.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.46\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 68,
+      "canId": 944,
+      "latencyS": 4.749569416046143,
+      "rawText": "{\n  \"interpretation\": \"Discrete status message with one observed on/off flag; the trigger frame has the flag asserted.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.98\n}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 69,
+      "canId": 960,
+      "latencyS": 3.721414804458618,
+      "rawText": "{\"interpretation\":\"Periodic static message; no signals can be confidently distinguished because all observed payloads are identical.\",\"signals\":[],\"confidence\":0.05}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 70,
+      "canId": 1008,
+      "latencyS": 22.590092658996582,
+      "rawText": "{\n  \"interpretation\": \"Three little-endian signed 16-bit motion-sensor axes, likely angular-rate or acceleration channels; trigger decodes to approximately -2.00, 8.08, and 3.63 units.\",\n  \"signals\": [\n    {\n      \"name\": \"motion_axis_x\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"motion_axis_y\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"motion_axis_z\",\n      \"byteIdx\": 4,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": true,\n      \"bitMask\": null,\n      \"scale\": 0.01,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 71,
+      "canId": 1040,
+      "latencyS": 12.26129150390625,
+      "rawText": "{\"interpretation\":\"Engine speed message with a 16-bit little-endian RPM value; remaining bytes are unused or reserved.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.88}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 72,
+      "canId": 768,
+      "latencyS": 8.69351863861084,
+      "rawText": "{\"interpretation\":\"Engine speed message with a little-endian 16-bit RPM value; remaining bytes appear static or reserved.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.88}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 73,
+      "canId": 800,
+      "latencyS": 21.949198961257935,
+      "rawText": "{\n  \"interpretation\": \"Engine speed message; bytes 1-2 encode RPM, while byte 0 likely contains a checksum and byte 3 is a constant status/reserved value.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.91\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 74,
+      "canId": 880,
+      "latencyS": 26.657421112060547,
+      "rawText": "{\n  \"interpretation\": \"Engine-speed-like 16-bit measurement with a changing integrity/checksum byte and unused zero padding.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.67\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 75,
+      "canId": 944,
+      "latencyS": 7.398057460784912,
+      "rawText": "{\n  \"interpretation\": \"Periodic constant status message; byte 2 bit 7 is asserted, but its function cannot be determined without state changes.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_bit7\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.2\n}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 76,
+      "canId": 960,
+      "latencyS": 5.140802383422852,
+      "rawText": "{\n  \"interpretation\": \"Static message with byte 2 fixed at 0x70; no distinct signal or decoding rule can be inferred without value changes.\",\n  \"signals\": [],\n  \"confidence\": 0.12\n}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 77,
+      "canId": 1008,
+      "latencyS": 16.40069270133972,
+      "rawText": "{\"interpretation\":\"Likely three little-endian signed 16-bit raw sensor channels, possibly IMU/accelerometer axes; bytes 6-7 are constant padding.\",\"signals\":[{\"name\":\"sensor_axis_x_raw\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"sensor_axis_y_raw\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"sensor_axis_z_raw\",\"byteIdx\":4,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.78}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 78,
+      "canId": 1040,
+      "latencyS": 23.569316387176514,
+      "rawText": "{\"interpretation\":\"Likely engine-speed message carrying a single 16-bit RPM measurement; remaining bytes are unused or reserved.\",\"signals\":[{\"name\":\"engine_speed_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.25,\"offset\":0.0}],\"confidence\":0.61}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 79,
+      "canId": 784,
+      "latencyS": 6.985279560089111,
+      "rawText": "{\n  \"interpretation\": \"Status message containing multiple independent discrete states in byte 2; byte 5 is constant at 0x09 and cannot be confidently decoded.\",\n  \"signals\": [\n    {\n      \"name\": \"status_bit_0\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit_3\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x08\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit_5\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_bit_7\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.82\n}",
+      "perSignal": {
+        "flag_1_0_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_1_0_bit3": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_1_0_bit5": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_1_0_bit7": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_1_1_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_1_1_bit3": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 80,
+      "canId": 912,
+      "latencyS": 18.86291813850403,
+      "rawText": "{\n  \"interpretation\": \"Single unsigned proximity or range measurement, likely expressed in centimeters; all other payload bytes are constant zero.\",\n  \"signals\": [\n    {\n      \"name\": \"range_cm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.58\n}",
+      "perSignal": {
+        "mixedsub_9": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "mixedflag_9_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_9_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_9_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 81,
+      "canId": 1024,
+      "latencyS": 8.423591136932373,
+      "rawText": "{\n  \"interpretation\": \"Discrete status message containing at least four independently changing boolean flags in bytes 5 and 6.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_0\",\n      \"byteIdx\": 5,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_3\",\n      \"byteIdx\": 5,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x08\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_4\",\n      \"byteIdx\": 5,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_6\",\n      \"byteIdx\": 6,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+      "perSignal": {
+        "flag_16_0_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_16_0_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_16_0_bit3": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_16_0_bit4": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_16_1_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_16_1_bit6": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 82,
+      "canId": 816,
+      "latencyS": 6.982889890670776,
+      "rawText": "{\n  \"interpretation\": \"Periodic status message containing a discrete state flag in byte 3; the observed transition from 0x10 to 0x90 sets bit 7.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_bit7\",\n      \"byteIdx\": 3,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+      "perSignal": {
+        "flag_3_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_3_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_3_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_3_bit4": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_3_bit7": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 83,
+      "canId": 848,
+      "latencyS": 25.213943243026733,
+      "rawText": "{\n  \"interpretation\": \"Message carries one varying 8-bit control or position value in byte 5; all other bytes remain constant.\",\n  \"signals\": [\n    {\n      \"name\": \"control_position_raw\",\n      \"byteIdx\": 5,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.62\n}",
+      "perSignal": {
+        "mixedsub_5": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "mixedflag_5_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_5_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_5_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 84,
+      "canId": 864,
+      "latencyS": 10.058874607086182,
+      "rawText": "{\n  \"interpretation\": \"Discrete status bitfield in byte 1 with four observed boolean flags; physical meanings are unknown.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_2\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x04\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_4\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_5\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.88\n}",
+      "perSignal": {
+        "flag_6_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_6_bit1": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_6_bit2": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_6_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_6_bit4": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_6_bit5": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 85,
+      "canId": 928,
+      "latencyS": 4.9385693073272705,
+      "rawText": "{\n  \"interpretation\": \"Static status or configuration message; no individual signals can be distinguished confidently because the payload does not vary.\",\n  \"signals\": [],\n  \"confidence\": 0.12\n}",
+      "perSignal": {
+        "flag_10_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_0_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_1_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_1_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_10_1_bit4": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 86,
+      "canId": 992,
+      "latencyS": 4.32413911819458,
+      "rawText": "{\"interpretation\":\"Constant periodic heartbeat/status message; no individual signal or physical scaling can be determined from the invariant payload.\",\"signals\":[],\"confidence\":0.15}",
+      "perSignal": {
+        "flag_14_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_0_bit4": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_1_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_1_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_14_1_bit6": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 87,
+      "canId": 1056,
+      "latencyS": 19.685745000839233,
+      "rawText": "{\n  \"interpretation\": \"One varying 8-bit measurement accompanied by two independently changing status flags; remaining bytes are constant zero.\",\n  \"signals\": [\n    {\n      \"name\": \"measurement_level\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_0\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_7\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.72\n}",
+      "perSignal": {
+        "scalar_18": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_18_bit0": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_18_bit7": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 88,
+      "canId": 1072,
+      "latencyS": 18.57973051071167,
+      "rawText": "{\n  \"interpretation\": \"Message carrying a fixed header/status byte and one varying 8-bit analog measurement, plausibly a normalized control or pedal position.\",\n  \"signals\": [\n    {\n      \"name\": \"control_position\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.3921568627,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+      "perSignal": {
+        "scalar_19": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_19_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_19_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 89,
+      "canId": 832,
+      "latencyS": 10.350364208221436,
+      "rawText": "{\n  \"interpretation\": \"Discrete status message containing three independently changing boolean flags\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_byte0_bit2\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x04\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_byte0_bit7\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_byte6_bit5\",\n      \"byteIdx\": 6,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.78\n}",
+      "perSignal": {
+        "flag_4_0_bit2": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_4_0_bit7": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_4_1_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_4_1_bit5": {
+          "detected": true,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 90,
+      "canId": 896,
+      "latencyS": 7.188184499740601,
+      "rawText": "{\"interpretation\":\"Likely steering-angle message containing a signed little-endian angle value; remaining bytes are constant or unused in the sample.\",\"signals\":[{\"name\":\"steering_angle\",\"byteIdx\":1,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0}],\"confidence\":0.78}",
+      "perSignal": {
+        "scalar_8": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_8_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_8_bit5": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 91,
+      "canId": 976,
+      "latencyS": 30.951407194137573,
+      "rawText": "{\"interpretation\":\"Two little-endian 16-bit measurement channels followed by four unused zero bytes; the second channel appears signed because it crosses zero through 0xFFFF.\",\"signals\":[{\"name\":\"measurement_1\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"signed_measurement_2\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.66}",
+      "perSignal": {
+        "scalar_13_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_13_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 92,
+      "canId": 768,
+      "latencyS": 12.92732310295105,
+      "rawText": "{\n  \"interpretation\": \"Engine rotational speed with a binary operating-status flag\",\n  \"signals\": [\n    {\n      \"name\": \"engine_speed\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"operating_status\",\n      \"byteIdx\": 7,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.76\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": true,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 93,
+      "canId": 800,
+      "latencyS": 20.7113196849823,
+      "rawText": "{\n  \"interpretation\": \"Engine-speed message containing a little-endian RPM value and a likely checksum byte.\",\n  \"signals\": [\n    {\n      \"name\": \"payload_checksum\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 1,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.25,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.9\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 94,
+      "canId": 880,
+      "latencyS": 19.48155975341797,
+      "rawText": "{\"interpretation\":\"Engine operating data containing engine speed and a rapidly varying normalized engine load or torque signal; remaining bytes are unused.\",\"signals\":[{\"name\":\"engine_speed_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":0.1,\"offset\":0.0},{\"name\":\"engine_load_percent\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":0.3921568627,\"offset\":0.0}],\"confidence\":0.72}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 95,
+      "canId": 944,
+      "latencyS": 3.505927562713623,
+      "rawText": "{\n  \"interpretation\": \"Constant periodic status or heartbeat message; no signal semantics can be confidently determined from the invariant payload.\",\n  \"signals\": [],\n  \"confidence\": 0.1\n}",
+      "perSignal": {
+        "flag_11_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit3": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_11_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 96,
+      "canId": 960,
+      "latencyS": 13.336477041244507,
+      "rawText": "{\n  \"interpretation\": \"Periodic status-bit message; byte 2 contains three active discrete flags, with bit 5 changing independently in the observed frames.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_bit4\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x10\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit5\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_bit6\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.64\n}",
+      "perSignal": {
+        "mixedsub_12": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "mixedflag_12_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit1": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "mixedflag_12_bit2": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 97,
+      "canId": 1008,
+      "latencyS": 18.65368366241455,
+      "rawText": "{\"interpretation\":\"Three-axis accelerometer sample with signed little-endian components; final two bytes appear unused or reserved.\",\"signals\":[{\"name\":\"accel_x_g\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.001,\"offset\":0.0},{\"name\":\"accel_y_g\",\"byteIdx\":2,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.001,\"offset\":0.0},{\"name\":\"accel_z_g\",\"byteIdx\":4,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":true,\"bitMask\":null,\"scale\":0.001,\"offset\":0.0}],\"confidence\":0.72}",
+      "perSignal": {
+        "scalar_15_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_15_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 98,
+      "canId": 1040,
+      "latencyS": 19.49130392074585,
+      "rawText": "{\n  \"interpretation\": \"Status message with a rapidly varying checksum-like byte at byte 0 and four observable status flags in byte 1; remaining bytes are unused or reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"status_flag_1\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x02\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_5\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x20\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_6\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x40\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"status_flag_7\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x80\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.42\n}",
+      "perSignal": {
+        "scalar_17_0": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_17_1": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 99,
+      "canId": 768,
+      "latencyS": 7.601837873458862,
+      "rawText": "{\n  \"interpretation\": \"Engine rotational speed, with bytes 0-1 forming a little-endian RPM value; remaining bytes are constant in the observed sample.\",\n  \"signals\": [\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.86\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    }
+  ]
+}

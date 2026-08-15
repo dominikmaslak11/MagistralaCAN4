@@ -116,6 +116,34 @@ private:
         int trialsDetectedOverride = 0;
         std::vector<double> squaredErrorsOverride;
         int tpOverride = 0, tnOverride = 0, fpOverride = 0, fnOverride = 0;
+
+        // Trzeci, RÓWNOLEGŁY tor: override zasilany DŁUGOTERMINOWĄ pamięcią
+        // (m_longTermByteStats, patrz niżej) zamiast krótkiego, 30-klatkowego
+        // okna użytego przez applyBitFlagOverride()/trialsDetectedOverride
+        // powyżej. Patrz Eksperyment_4.5_Faza4_Override_Ciagly_20260808.md —
+        // ten sam mechanizm, zasilony ciągłą obserwacją zamiast jednorazowego
+        // okna, dał +2.5 do +18.0pp ogólnej detekcji i +1.3 do +32.4pp na
+        // flagach bitowych (offline, Python) u wszystkich 4 modeli. Ponownie:
+        // dodatkowy zestaw liczników, nie zastępuje żadnego z powyższych.
+        int trialsDetectedOverrideLongTerm = 0;
+        std::vector<double> squaredErrorsOverrideLongTerm;
+        int tpOverrideLongTerm = 0, tnOverrideLongTerm = 0, fpOverrideLongTerm = 0, fnOverrideLongTerm = 0;
+    };
+
+    // Ciągle akumulowane statystyki per (CAN ID, byteIdx) — 1:1 rownowaznik
+    // ByteStat z pi_continuous_observer.py (Eksperyment 4.5, Faza 1). W
+    // odroznieniu od m_frameHistoryByCanId (bufor max. 30 KLATEK WYZWALAJACYCH
+    // cold-start, resetowany logicznie co rundeq round-robin), to liczy
+    // WSZYSTKIE odebrane ramki (kazdy bajt kazdej ramki), przez caly czas
+    // trwania eksperymentu (od start() do finishExperiment()) - O(1)
+    // pamieci/czasu na klatke, bez przechowywania surowych ramek.
+    struct ByteStat {
+        uint8_t seen0 = 0, seen1 = 0;
+        int     prevValue = -1;
+        bool    hasPrev = false;
+        int     changedPairs = 0;
+        int     bigJumps = 0;
+        int     nSamples = 0;
     };
 
     void setState(State s);
@@ -145,6 +173,18 @@ private:
     [[nodiscard]] static bool looksLikeBitFlags(const std::vector<CanFrame> &frames, int byteIdx);
     [[nodiscard]] static std::vector<LlmSignalRule> applyBitFlagOverride(
         const std::vector<LlmSignalRule> &rules, const std::vector<CanFrame> &frames);
+
+    // ── Hybrydowy override, zasilany DŁUGOTERMINOWĄ, ciągłą obserwacją ─────────
+    // (Eksperyment 4.5, Faza 4 — patrz Eksperyment_4.5_Faza4_Override_Ciagly_20260808.md).
+    // Prog 0.3 (nie 0.5) - patrz Eksperyment_4.5_Strojenie_Progu_Klasyfikatora_20260808.md:
+    // przy oknie 30-klatkowym prog 0.5 byl dobrze umotywowany, ale przy
+    // duzej, ciaglej probce (setki tysiecy klatek) prog <=0.46 daje
+    // wyzszy recall (85% vs 60%) bez utraty precyzji (nadal 100%).
+    static constexpr double kLongTermBigJumpRatioThreshold = 0.3;
+
+    void updateLongTermStats(const CanFrame &frame);
+    [[nodiscard]] std::vector<LlmSignalRule> applyBitFlagOverrideLongTerm(
+        const std::vector<LlmSignalRule> &rules, uint32_t canId) const;
 
     ColdStartDetector *m_detector = nullptr;
     LlmQueryClient    *m_llmClient = nullptr;
@@ -176,8 +216,14 @@ private:
     QHash<uint32_t, std::deque<CanFrame>> m_frameHistoryByCanId;
     static constexpr int kMaxHistory = 30;
 
+    // Klucz = (uint64_t(canId) << 8) | byteIdx (byteIdx miesci sie w 0-7).
+    // Akumulowane od start() do finishExperiment(), NIE resetowane per-proba/
+    // per-CAN-ID-cykl — patrz updateLongTermStats()/applyBitFlagOverrideLongTerm().
+    QHash<quint64, ByteStat> m_longTermByteStats;
+
     std::vector<LlmSignalRule>      m_currentRules;
     std::vector<LlmSignalRule>      m_currentRulesOverride; // patrz applyBitFlagOverride()
+    std::vector<LlmSignalRule>      m_currentRulesOverrideLongTerm; // patrz applyBitFlagOverrideLongTerm()
     std::vector<CanFrame>           m_currentHistoryFrames; // te same ramki, ktore widzial LLM w recentFrames
     std::vector<GroundTruthSignal>  m_currentGroundTruth;
     int m_framesCollected = 0;

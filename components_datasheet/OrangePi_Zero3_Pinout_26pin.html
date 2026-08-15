@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Orange Pi Zero 3 — złącze 26-pin i podłączenie MCP2515</title>
+<style>
+  :root {
+    --ground: #F2F4F3;
+    --surface: #FBFCFB;
+    --surface-2: #E9EDEB;
+    --edge: #CBD3D0;
+    --edge-soft: #DDE3E1;
+    --ink: #181D1F;
+    --ink-2: #47545A;
+    --ink-3: #6E7C82;
+    --accent: #C2701A;
+    --accent-soft: #F0DCC4;
+    --r-5v: #B03A2B;
+    --r-33v: #C2621F;
+    --r-gnd: #55666F;
+    --r-spi: #C2701A;
+    --r-int: #6B4FB0;
+    --r-bus: #2F7D74;
+    --r-gpio: #8A959A;
+    --hl: #FDF3E4;
+    --shadow: 0 1px 2px rgba(24,29,31,.06), 0 4px 14px rgba(24,29,31,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101416;
+      --surface: #171C1F;
+      --surface-2: #1F262A;
+      --edge: #333E43;
+      --edge-soft: #262F33;
+      --ink: #EDF1F0;
+      --ink-2: #AAB8BD;
+      --ink-3: #7D8B91;
+      --accent: #E9A45C;
+      --accent-soft: #3B2C17;
+      --r-5v: #E0685A;
+      --r-33v: #E29055;
+      --r-gnd: #8496A0;
+      --r-spi: #E9A45C;
+      --r-int: #A98FE0;
+      --r-bus: #57B3A6;
+      --r-gpio: #7E8C93;
+      --hl: #241B0E;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #101416;
+    --surface: #171C1F;
+    --surface-2: #1F262A;
+    --edge: #333E43;
+    --edge-soft: #262F33;
+    --ink: #EDF1F0;
+    --ink-2: #AAB8BD;
+    --ink-3: #7D8B91;
+    --accent: #E9A45C;
+    --accent-soft: #3B2C17;
+    --r-5v: #E0685A;
+    --r-33v: #E29055;
+    --r-gnd: #8496A0;
+    --r-spi: #E9A45C;
+    --r-int: #A98FE0;
+    --r-bus: #57B3A6;
+    --r-gpio: #7E8C93;
+    --hl: #241B0E;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .wrap {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2rem) 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  header { display: flex; flex-direction: column; gap: .6rem; }
+  .eyebrow {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.55rem, 4.4vw, 2.3rem);
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+    font-weight: 620;
+  }
+  .lede { margin: 0; color: var(--ink-2); max-width: 54ch; font-size: 1.02rem; }
+  .provenance {
+    margin: .4rem 0 0;
+    font-size: .82rem;
+    color: var(--ink-3);
+    max-width: 62ch;
+    border-left: 2px solid var(--edge);
+    padding-left: .75rem;
+  }
+
+  h2 {
+    margin: 0 0 .2rem;
+    font-size: 1.06rem;
+    font-weight: 620;
+    letter-spacing: -.01em;
+  }
+  section { display: flex; flex-direction: column; gap: 1rem; }
+  .section-note { margin: 0; color: var(--ink-2); font-size: .93rem; max-width: 62ch; }
+
+  /* ---- quick answer ---- */
+  .answer {
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+  }
+  .answer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: .6rem;
+  }
+  .ans-cell {
+    border: 1px solid var(--edge-soft);
+    border-radius: 8px;
+    padding: .6rem .7rem;
+    background: var(--surface-2);
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+  }
+  .ans-pin {
+    font-size: .68rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .ans-name { font-size: 1.02rem; font-weight: 600; }
+  .ans-role { font-size: .8rem; color: var(--ink-2); }
+
+  /* ---- connector ---- */
+  .conn-scroll { overflow-x: auto; padding-bottom: .3rem; }
+  .conn {
+    min-width: 40rem;
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: .18rem;
+  }
+  .conn-head {
+    display: grid;
+    grid-template-columns: 1fr 2.6rem 2.6rem 1fr;
+    gap: .5rem;
+    font-size: .68rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-bottom: .45rem;
+    margin-bottom: .3rem;
+    border-bottom: 1px solid var(--edge-soft);
+  }
+  .conn-head .l { text-align: right; }
+  .conn-head .c { text-align: center; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 2.6rem 2.6rem 1fr;
+    gap: .5rem;
+    align-items: stretch;
+  }
+  .cell {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .34rem .5rem;
+    border-radius: 6px;
+    min-height: 2.1rem;
+  }
+  .cell.left { flex-direction: row-reverse; text-align: right; }
+  .cell.used { background: var(--hl); outline: 1px solid var(--accent-soft); }
+
+  .dot {
+    display: inline-block;
+    width: .5rem;
+    height: .5rem;
+    border-radius: 50%;
+    flex: none;
+  }
+  .d-5v { background: var(--r-5v); }
+  .d-33v { background: var(--r-33v); }
+  .d-gnd { background: var(--r-gnd); }
+  .d-spi { background: var(--r-spi); }
+  .d-int { background: var(--r-int); }
+  .d-bus { background: var(--r-bus); }
+  .d-gpio { background: var(--r-gpio); }
+  .t-5v { color: var(--r-5v); }
+  .t-33v { color: var(--r-33v); }
+  .t-gnd { color: var(--r-gnd); }
+  .t-spi { color: var(--r-spi); }
+  .t-int { color: var(--r-int); }
+  .t-bus { color: var(--r-bus); }
+  .t-gpio { color: var(--r-gpio); }
+  .cell-text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+  .gpio { font-size: .9rem; font-weight: 600; }
+  .fn { font-size: .74rem; color: var(--ink-2); white-space: nowrap; }
+  .fn.strong { font-weight: 600; }
+
+  .num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--ink-3);
+    background: var(--surface-2);
+    border: 1px solid var(--edge-soft);
+    border-radius: 5px;
+    min-height: 2.1rem;
+  }
+  .num.used {
+    color: var(--ground);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .num.int-used { background: var(--r-int); border-color: var(--r-int); color: #fff; }
+
+  /* ---- legend ---- */
+  .legend { display: flex; flex-wrap: wrap; gap: .5rem .9rem; }
+  .leg {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .8rem;
+    color: var(--ink-2);
+  }
+
+  /* ---- callout ---- */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 1rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+    box-shadow: var(--shadow);
+  }
+  .callout.warn { border-left-color: var(--r-int); }
+  .callout h3 {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 640;
+    letter-spacing: -.005em;
+  }
+  .callout p { margin: 0; font-size: .92rem; color: var(--ink-2); }
+  .callout code {
+    background: var(--surface-2);
+    border: 1px solid var(--edge-soft);
+    border-radius: 4px;
+    padding: .08em .35em;
+    font-size: .88em;
+    color: var(--ink);
+  }
+
+  footer {
+    border-top: 1px solid var(--edge-soft);
+    padding-top: 1rem;
+    font-size: .8rem;
+    color: var(--ink-3);
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+  }
+  @page { size: A4; margin: 14mm 12mm; }
+  @media print { .wrap { max-width: none; padding: 0; } section, .conn, .callout { break-inside: avoid; } .conn { min-width: 0; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow mono">Magistrala CAN · węzeł porównawczy</div>
+    <h1>Orange Pi Zero 3 — złącze 26-pin i podłączenie MCP2515</h1>
+    <p class="lede">Które nóżki obsługują SPI, gdzie trafia przerwanie z kontrolera CAN i czym to złącze różni się od Raspberry Pi.</p>
+    <p class="provenance">Dane potwierdzone z dwóch niezależnych źródeł: oficjalny <em>OrangePi Zero3 H618 User Manual v1.1</em> (str. 123) oraz device tree działającej płytki (<span class="mono">sun50i-h618-orangepi-zero3.dtb</span>, kernel 6.18.43). Publikowane w sieci tabele bywają sprzeczne — ta była weryfikowana krzyżowo.</p>
+  </header>
+
+  <section>
+    <h2>Pięć pinów, które wykorzysta HAT</h2>
+    <div class="answer">
+      <div class="answer-grid">
+        <div class="ans-cell">
+          <span class="ans-pin mono">Pin 19</span>
+          <span class="ans-name mono">PH7</span>
+          <span class="ans-role">SPI1_MOSI</span>
+        </div>
+        <div class="ans-cell">
+          <span class="ans-pin mono">Pin 21</span>
+          <span class="ans-name mono">PH8</span>
+          <span class="ans-role">SPI1_MISO</span>
+        </div>
+        <div class="ans-cell">
+          <span class="ans-pin mono">Pin 23</span>
+          <span class="ans-name mono">PH6</span>
+          <span class="ans-role">SPI1_CLK</span>
+        </div>
+        <div class="ans-cell">
+          <span class="ans-pin mono">Pin 24</span>
+          <span class="ans-name mono">PH9</span>
+          <span class="ans-role">SPI1_CS — uwaga: CS<strong>1</strong></span>
+        </div>
+        <div class="ans-cell">
+          <span class="ans-pin mono">Pin 22</span>
+          <span class="ans-name mono">PC7</span>
+          <span class="ans-role">INT — linia 71</span>
+        </div>
+      </div>
+      <p class="section-note">Do tego zasilanie: <strong>5V</strong> (pin 2 lub 4), <strong>3.3V</strong> (pin 1 lub 17) i <strong>GND</strong> (m.in. pin 6, 9, 20, 25).</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Całe złącze</h2>
+    <p class="section-note">Numeracja fizyczna: nieparzyste w lewej kolumnie, parzyste w prawej — pin 1 przy krawędzi płytki. Podświetlone to te, których dotyka kontroler CAN.</p>
+
+    <div class="legend">
+      <span class="leg"><span class="dot d-5v"></span>5V</span>
+      <span class="leg"><span class="dot d-33v"></span>3.3V</span>
+      <span class="leg"><span class="dot d-gnd"></span>GND</span>
+      <span class="leg"><span class="dot d-spi"></span>SPI1</span>
+      <span class="leg"><span class="dot d-int"></span>przerwanie (INT)</span>
+      <span class="leg"><span class="dot d-bus"></span>I2C / UART</span>
+      <span class="leg"><span class="dot d-gpio"></span>zwykłe GPIO</span>
+    </div>
+
+    <div class="conn-scroll">
+      <div class="conn">
+        <div class="conn-head mono">
+          <div class="l">GPIO / funkcja</div>
+          <div class="c">nr</div>
+          <div class="c">nr</div>
+          <div>GPIO / funkcja</div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-33v"></span><span class="cell-text"><span class="gpio mono">3.3V</span><span class="fn">zasilanie</span></span></div>
+          <div class="num mono">1</div><div class="num mono">2</div>
+          <div class="cell"><span class="dot d-5v"></span><span class="cell-text"><span class="gpio mono">5V</span><span class="fn">zasilanie</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-bus"></span><span class="cell-text"><span class="gpio mono">PH5</span><span class="fn">TWI3-SDA · 229</span></span></div>
+          <div class="num mono">3</div><div class="num mono">4</div>
+          <div class="cell"><span class="dot d-5v"></span><span class="cell-text"><span class="gpio mono">5V</span><span class="fn">zasilanie</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-bus"></span><span class="cell-text"><span class="gpio mono">PH4</span><span class="fn">TWI3-SCK · 228</span></span></div>
+          <div class="num mono">5</div><div class="num mono">6</div>
+          <div class="cell"><span class="dot d-gnd"></span><span class="cell-text"><span class="gpio mono">GND</span><span class="fn">masa</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC9</span><span class="fn">GPIO · 73</span></span></div>
+          <div class="num mono">7</div><div class="num mono">8</div>
+          <div class="cell"><span class="dot d-bus"></span><span class="cell-text"><span class="gpio mono">PH2</span><span class="fn">UART5_TX · 226</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-gnd"></span><span class="cell-text"><span class="gpio mono">GND</span><span class="fn">masa</span></span></div>
+          <div class="num mono">9</div><div class="num mono">10</div>
+          <div class="cell"><span class="dot d-bus"></span><span class="cell-text"><span class="gpio mono">PH3</span><span class="fn">UART5_RX · 227</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC6</span><span class="fn">GPIO · 70</span></span></div>
+          <div class="num mono">11</div><div class="num mono">12</div>
+          <div class="cell"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC11</span><span class="fn">GPIO · 75</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC5</span><span class="fn">GPIO · 69</span></span></div>
+          <div class="num mono">13</div><div class="num mono">14</div>
+          <div class="cell"><span class="dot d-gnd"></span><span class="cell-text"><span class="gpio mono">GND</span><span class="fn">masa</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC8</span><span class="fn">GPIO · 72</span></span></div>
+          <div class="num mono">15</div><div class="num mono">16</div>
+          <div class="cell"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC15</span><span class="fn">GPIO · 79</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-33v"></span><span class="cell-text"><span class="gpio mono">3.3V</span><span class="fn">zasilanie</span></span></div>
+          <div class="num mono">17</div><div class="num mono">18</div>
+          <div class="cell"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC14</span><span class="fn">GPIO · 78</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left used"><span class="dot d-spi"></span><span class="cell-text"><span class="gpio mono">PH7</span><span class="fn strong t-spi">SPI1_MOSI · 231</span></span></div>
+          <div class="num mono used">19</div><div class="num mono">20</div>
+          <div class="cell"><span class="dot d-gnd"></span><span class="cell-text"><span class="gpio mono">GND</span><span class="fn">masa</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left used"><span class="dot d-spi"></span><span class="cell-text"><span class="gpio mono">PH8</span><span class="fn strong t-spi">SPI1_MISO · 232</span></span></div>
+          <div class="num mono used">21</div><div class="num mono int-used">22</div>
+          <div class="cell used"><span class="dot d-int"></span><span class="cell-text"><span class="gpio mono">PC7</span><span class="fn strong t-int">INT kontrolera · 71</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left used"><span class="dot d-spi"></span><span class="cell-text"><span class="gpio mono">PH6</span><span class="fn strong t-spi">SPI1_CLK · 230</span></span></div>
+          <div class="num mono used">23</div><div class="num mono used">24</div>
+          <div class="cell used"><span class="dot d-spi"></span><span class="cell-text"><span class="gpio mono">PH9</span><span class="fn strong t-spi">SPI1_CS (CS1) · 233</span></span></div>
+        </div>
+
+        <div class="row">
+          <div class="cell left"><span class="dot d-gnd"></span><span class="cell-text"><span class="gpio mono">GND</span><span class="fn">masa</span></span></div>
+          <div class="num mono">25</div><div class="num mono">26</div>
+          <div class="cell"><span class="dot d-gpio"></span><span class="cell-text"><span class="gpio mono">PC10</span><span class="fn">GPIO · 74</span></span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-note">Liczba po nazwie to numer linii w <span class="mono">gpiochip1</span> (bank × 32 + nr: PC = 64, PH = 224). Przyda się przy <span class="mono">gpioinfo</span> i w overlayu.</p>
+  </section>
+
+  <section>
+    <h2>Trzy rzeczy, które trzeba wiedzieć przed podłączeniem</h2>
+
+    <div class="callout warn">
+      <h3>INT jest obowiązkowy, nie opcjonalny</h3>
+      <p>Sterownik <code>mcp251x</code> nie ma trybu odpytywania — działa wyłącznie na przerwaniach. Bez linii INT na pinie 22 device tree się nie zwaliduje, a sterownik nie odbierze ani jednej ramki. Przy ciągłym nasłuchu magistrali to element krytyczny, nie dodatek.</p>
+    </div>
+
+    <div class="callout">
+      <h3>Na złączu jest CS1, nie CS0</h3>
+      <p>Płytka ma dwa wyprowadzenia chip-select dla SPI1: <code>PH5</code> jako CS0 i <code>PH9</code> jako CS1. Ale <code>PH5</code> nie trafia na pin 24 — siedzi na pinie 3 jako linia I2C. Na złącze wychodzi tylko <code>PH9</code>, czyli <strong>CS1</strong>. W overlayu kontroler musi więc być zadeklarowany jako <code>reg = &lt;1&gt;</code>, a urządzenie pojawi się jako <code>spidev1.1</code>. Wpisanie tu <code>reg = &lt;0&gt;</code> to najczęstszy powód, dla którego „wszystko wygląda dobrze, a CAN nie wstaje".</p>
+    </div>
+
+    <div class="callout">
+      <h3>SPI0 jest zajęty przez pamięć flash</h3>
+      <p>Kontroler <code>spi@5010000</code> jest włączony, ale obsługuje wbudowaną kość <code>jedec,spi-nor</code> i nie ma go na złączu. Złącze to <code>spi@5011000</code> (SPI1), domyślnie wyłączony — nasz overlay musi go włączyć. To odwrotnie niż na Raspberry Pi, gdzie HAT-y siedzą na SPI0.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Weryfikacja krzyżowa: OrangePi Zero3 H618 User Manual v1.1, str. 123 · device tree płytki, kernel 6.18.43-current-sunxi64.</span>
+    <span>Uwaga mechaniczna do sprawdzenia na sucho: HAT-y Waveshare mają listwę 40-pinową, a to złącze ma 26 pinów — HAT będzie wystawał poza płytkę. Elektrycznie nie szkodzi (MCP2515 używa wyłącznie pinów z zakresu 1–26), ale warto potwierdzić, że nic nie zwiera się o obudowę czy porty.</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

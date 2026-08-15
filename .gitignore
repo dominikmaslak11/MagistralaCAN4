@@ -13,6 +13,7 @@ compile_commands.json
 .deepseek/
 API_Keys.txt
 routerPass.txt
+piCredentials.txt
 gdb.txt
 gdb_commands.txt
 github_log.txt

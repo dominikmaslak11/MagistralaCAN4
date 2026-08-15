@@ -1,0 +1,74 @@
+{
+  "model": "gpt",
+  "condition": "baseline",
+  "summary": {
+    "overallDetectionRatePct": 33.333333333333336,
+    "nErrors": 0,
+    "nTrialsTotal": 2,
+    "perSignal": {
+      "scalar_0": 100.0,
+      "flag_0_bit0": 0.0,
+      "flag_0_bit2": 0.0,
+      "flag_0_bit5": 0.0,
+      "flag_0_bit6": 0.0,
+      "flag_0_bit7": 0.0,
+      "scalar_2_0": 100.0,
+      "scalar_2_1": 0.0,
+      "scalar_2_2": 100.0
+    }
+  },
+  "trialLog": [
+    {
+      "trialIdx": 0,
+      "canId": 768,
+      "latencyS": 10.799382448196411,
+      "rawText": "{\"interpretation\":\"Engine-speed message with a little-endian 16-bit RPM value; remaining bytes are constant or inactive in the observed frames.\",\"signals\":[{\"name\":\"engine_rpm\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":true,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.88}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 1,
+      "canId": 800,
+      "latencyS": 36.06502389907837,
+      "rawText": "{\"interpretation\":\"Status message containing a volatile 16-bit authenticator/check value, a near-20-degree temperature measurement, and a byte-wide command or demand value; bytes 4-7 are padding.\",\"signals\":[{\"name\":\"auth_check_value\",\"byteIdx\":0,\"byteLen\":2,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"temperature_c\",\"byteIdx\":2,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0},{\"name\":\"command_percent\",\"byteIdx\":3,\"byteLen\":1,\"littleEndian\":false,\"isSigned\":false,\"bitMask\":null,\"scale\":1.0,\"offset\":0.0}],\"confidence\":0.51}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": false,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    }
+  ]
+}

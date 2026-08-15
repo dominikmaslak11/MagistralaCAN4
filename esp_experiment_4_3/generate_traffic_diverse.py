@@ -389,6 +389,13 @@ def main():
     ap.add_argument("--seed", type=int, default=42, help="ziarno losowosci konfiguracji (reprodukowalnosc)")
     ap.add_argument("--dump-json", default=None,
                      help="tryb symulacji offline (bez sprzetu) - zapisuje ground truth + probki ramek do JSON")
+    ap.add_argument("--period-scale", type=float, default=1.0,
+                     help="mnoznik okresow nadawania (1.0 = bez zmian). Skaluje "
+                          "CZESTOTLIWOSC PROBKOWANIA wzgledem dynamiki sygnalow, "
+                          "wiec realnie zmienia statystyki per-bajt (changed_pairs/"
+                          "big_jumps) -- w odroznieniu od predkosci magistrali czy "
+                          "liczby CAN ID, ktore ich nie zmieniaja (Eksperymenty 4.8/4.9). "
+                          "NIE wplywa na definicje sygnalow ani ground truth.")
     ap.add_argument("--dump-samples-per-id", type=int, default=40,
                      help="w trybie --dump-json: ile probek ramek na CAN ID zapisac (do budowy korpusu)")
     args = ap.parse_args()
@@ -396,6 +403,14 @@ def main():
     configs = make_diverse_configs(seed=args.seed, n_configs=args.n_configs)
     print(f"Wygenerowano {len(configs)} zroznicowanych konfiguracji CAN ID "
           f"(ziarno={args.seed}).")
+    if args.period_scale != 1.0:
+        # Skalujemy WYLACZNIE okresy nadawania -- definicje sygnalow i ground
+        # truth pozostaja identyczne dla danego ziarna.
+        for cfg in configs:
+            cfg.period_s *= args.period_scale
+        print(f"Okresy nadawania przeskalowane x{args.period_scale} "
+              f"(zakres: {min(c.period_s for c in configs):.4f}-"
+              f"{max(c.period_s for c in configs):.4f} s).")
     pattern_counts = {}
     for cfg in configs:
         n_flags = len(cfg.flags)

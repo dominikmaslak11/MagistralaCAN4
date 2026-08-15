@@ -1,0 +1,27 @@
+{
+  "embed_dim": 384,
+  "test_a_within_corpus": {
+    "handcrafted": {
+      "n": 152,
+      "kind_accuracy_3way": 0.8947368421052632,
+      "discrete_accuracy_2way": 0.9144736842105263
+    },
+    "neural": {
+      "n": 152,
+      "kind_accuracy_3way": 0.9868421052631579,
+      "discrete_accuracy_2way": 1.0
+    }
+  },
+  "test_b_cross_corpus": {
+    "handcrafted": {
+      "n": 83,
+      "kind_accuracy_3way": 0.927710843373494,
+      "discrete_accuracy_2way": 0.9397590361445783
+    },
+    "neural": {
+      "n": 83,
+      "kind_accuracy_3way": 1.0,
+      "discrete_accuracy_2way": 1.0
+    }
+  }
+}

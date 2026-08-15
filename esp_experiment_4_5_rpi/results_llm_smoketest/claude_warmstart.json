@@ -1,0 +1,74 @@
+{
+  "model": "claude",
+  "condition": "warmstart",
+  "summary": {
+    "overallDetectionRatePct": 33.333333333333336,
+    "nErrors": 0,
+    "nTrialsTotal": 2,
+    "perSignal": {
+      "scalar_0": 100.0,
+      "flag_0_bit0": 0.0,
+      "flag_0_bit2": 0.0,
+      "flag_0_bit5": 0.0,
+      "flag_0_bit6": 0.0,
+      "flag_0_bit7": 0.0,
+      "scalar_2_0": 100.0,
+      "scalar_2_1": 100.0,
+      "scalar_2_2": 0.0
+    }
+  },
+  "trialLog": [
+    {
+      "trialIdx": 0,
+      "canId": 768,
+      "latencyS": 19.54261875152588,
+      "rawText": "{\n  \"interpretation\": \"CAN ID 0x300 carries a single fluctuating 16-bit sensor value (little-endian, bytes 0-1) that varies frame-to-frame (likely an analog sensor reading such as pedal position, pressure, or raw ADC counts), while the remaining bytes (2-6) stay at zero and byte 7 stays constant at 0x41 (likely a status/version byte or padding).\",\n  \"signals\": [\n    {\n      \"name\": \"sensor_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.65\n}",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 1,
+      "canId": 800,
+      "latencyS": 18.962462186813354,
+      "rawText": "{\n  \"interpretation\": \"Likely a wheel-speed / sensor status message: two fast-changing 8-bit counters (possibly raw pulse counts from two wheel-speed or optical sensors) plus a slowly increasing 16-bit accumulator (e.g., distance or time counter) in the upper two bytes; remaining bytes are unused/padding.\",\n  \"signals\": [\n    {\n      \"name\": \"pulse_counter_a\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"pulse_counter_b\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"accumulator_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    }
+  ]
+}

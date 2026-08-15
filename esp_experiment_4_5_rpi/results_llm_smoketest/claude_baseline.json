@@ -1,0 +1,92 @@
+{
+  "model": "claude",
+  "condition": "baseline",
+  "summary": {
+    "overallDetectionRatePct": 45.45454545454545,
+    "nErrors": 0,
+    "nTrialsTotal": 3,
+    "perSignal": {
+      "scalar_0": 100.0,
+      "flag_0_bit0": 0.0,
+      "flag_0_bit2": 0.0,
+      "flag_0_bit5": 0.0,
+      "flag_0_bit6": 0.0,
+      "flag_0_bit7": 0.0,
+      "scalar_2_0": 100.0,
+      "scalar_2_1": 100.0,
+      "scalar_2_2": 0.0,
+      "scalar_7_0": 100.0,
+      "scalar_7_1": 100.0
+    }
+  },
+  "trialLog": [
+    {
+      "trialIdx": 0,
+      "canId": 768,
+      "latencyS": 4.380990743637085,
+      "rawText": "```json\n{\n  \"interpretation\": \"Message with a rapidly varying 16-bit value (likely a counter, angle, or sensor reading) in bytes 0-1 and a static byte at index 6 that may encode fixed flags/state\",\n  \"signals\": [\n    {\n      \"name\": \"primary_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"static_flag_byte\",\n      \"byteIdx\": 6,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": \"0x01\",\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.55\n}\n```",
+      "perSignal": {
+        "scalar_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "flag_0_bit0": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit2": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit5": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit6": {
+          "detected": false,
+          "is_discrete": true
+        },
+        "flag_0_bit7": {
+          "detected": false,
+          "is_discrete": true
+        }
+      }
+    },
+    {
+      "trialIdx": 1,
+      "canId": 800,
+      "latencyS": 31.37663769721985,
+      "rawText": "{\n  \"interpretation\": \"Likely a sensor status message (e.g. engine speed or similar rotational sensor) where the first two bytes carry a rolling counter/checksum pair and the third/fourth bytes encode the primary 16-bit sensor value; the remaining bytes are unused/reserved.\",\n  \"signals\": [\n    {\n      \"name\": \"checksum_byte\",\n      \"byteIdx\": 0,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"rolling_counter\",\n      \"byteIdx\": 1,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"engine_rpm\",\n      \"byteIdx\": 2,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": 0.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+      "perSignal": {
+        "scalar_2_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_1": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_2_2": {
+          "detected": false,
+          "is_discrete": false
+        }
+      }
+    },
+    {
+      "trialIdx": 2,
+      "canId": 880,
+      "latencyS": 24.157060146331787,
+      "rawText": "{\n  \"interpretation\": \"Powertrain/dynamic sensor message (ID 0x370) carrying two continuously varying analog-type readings; bytes 3-7 are unused/reserved (always 0x00) in the observed traffic.\",\n  \"signals\": [\n    {\n      \"name\": \"primary_value\",\n      \"byteIdx\": 0,\n      \"byteLen\": 2,\n      \"littleEndian\": true,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 0.1,\n      \"offset\": 0.0\n    },\n    {\n      \"name\": \"secondary_value\",\n      \"byteIdx\": 2,\n      \"byteLen\": 1,\n      \"littleEndian\": false,\n      \"isSigned\": false,\n      \"bitMask\": null,\n      \"scale\": 1.0,\n      \"offset\": -40.0\n    }\n  ],\n  \"confidence\": 0.45\n}",
+      "perSignal": {
+        "scalar_7_0": {
+          "detected": true,
+          "is_discrete": false
+        },
+        "scalar_7_1": {
+          "detected": true,
+          "is_discrete": false
+        }
+      }
+    }
+  ]
+}
