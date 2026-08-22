@@ -1,0 +1,11 @@
+sygnal,typ,wykrywalnosc_%,wykrywalnosc_override_%,F1,F1_override,dokladnosc,dokladnosc_override,n_probek
+Handbrake,dyskretny (flaga bitowa),3.0,90.9,1,1,1,1,10
+SteeringAngle,ciagly (skalar),100,100,,,,,330
+Headlights,dyskretny (flaga bitowa),3.0,93.9,1,1,1,1,10
+CoolantTemp,ciagly (skalar),97.1,97.1,,,,,330
+LeftIndicator,dyskretny (flaga bitowa),3.0,97.0,1,1,1,1,10
+Throttle,ciagly (skalar),97.1,97.1,,,,,330
+RPM,ciagly (skalar),100,100,,,,,340
+DriverDoor,dyskretny (flaga bitowa),0,97.0,0,1,0,1,0
+VehicleSpeed,ciagly (skalar),97.0,97.0,,,,,320
+RightIndicator,dyskretny (flaga bitowa),0,97.0,0,1,0,1,0

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>CAN-Edge-AI — tło do wideorozmowy</title>
+<style>
+  :root {
+    --bg:        #0f1418;
+    --bg-2:      #151c21;
+    --panel:     #1a232a;
+    --edge:      #2a363f;
+    --ink:       #f2f5f7;
+    --ink-2:     #9fb0bc;
+    --ink-3:     #6b7d8a;
+    --blue:      #4a97e8;
+    --orange:    #f07a45;
+    --green:     #2fc48d;
+    --amber:     #e0a53c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; }
+  body {
+    background: linear-gradient(150deg, var(--bg) 0%, var(--bg-2) 55%, #101a20 100%);
+    color: var(--ink);
+    font-family: "DejaVu Sans", "Liberation Sans", system-ui, sans-serif;
+    display: flex; flex-direction: column;
+  }
+  .mono { font-family: "DejaVu Sans Mono", "Liberation Mono", monospace; font-variant-numeric: tabular-nums; }
+
+  /* ---- pasek tytulowy ---- */
+  header {
+    padding: 30px 60px 22px;
+    border-bottom: 2px solid var(--edge);
+    display: flex; align-items: baseline; gap: 26px;
+  }
+  header h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+  header .sub { font-size: 21px; color: var(--ink-2); }
+  header .badge {
+    margin-left: auto; font-size: 17px; color: var(--ink-3);
+    border: 1px solid var(--edge); border-radius: 20px; padding: 6px 18px;
+  }
+
+  /* ---- glowny uklad: lewa kolumna | srodek pusty | prawa kolumna ---- */
+  .body { flex: 1; display: grid; grid-template-columns: 560px 1fr 560px; gap: 0; padding: 26px 60px 0; }
+  .col { display: flex; flex-direction: column; gap: 15px; }
+  .center { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 34px; }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--edge);
+    border-radius: 12px; padding: 17px 22px;
+    border-left: 4px solid var(--c, var(--blue));
+  }
+  .card .n {
+    font-size: 14px; letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 5px;
+  }
+  .card .t { font-size: 22px; font-weight: 600; margin-bottom: 8px; line-height: 1.25; }
+  .card .v { font-size: 31px; font-weight: 700; color: var(--c, var(--blue)); line-height: 1.1; }
+  .card .d { font-size: 17px; color: var(--ink-2); margin-top: 6px; line-height: 1.4; }
+
+  /* ---- pasek kluczowych liczb na dole srodka ---- */
+  .keys { display: flex; gap: 44px; align-items: flex-end; }
+  .key { text-align: center; }
+  .key .kv { font-size: 34px; font-weight: 700; line-height: 1; }
+  .key .kl { font-size: 15px; color: var(--ink-3); margin-top: 7px; letter-spacing: 0.4px; }
+
+  footer {
+    padding: 16px 60px 22px; border-top: 1px solid var(--edge);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 16px; color: var(--ink-3);
+  }
+  .warn { color: var(--amber); }
+</style>
+</head>
+<body>
+
+  <header>
+    <h1>CAN-Edge-AI</h1>
+    <div class="sub">Dekodowanie sygnałów magistrali CAN z użyciem modeli językowych</div>
+    <div class="badge mono">lipiec – sierpień 2026</div>
+  </header>
+
+  <div class="body">
+
+    <!-- LEWA KOLUMNA -->
+    <div class="col">
+      <div class="card" style="--c: var(--blue)">
+        <div class="n mono">Grupa 1 · czasy reakcji</div>
+        <div class="t">Wnioskowanie LLM dominuje wszystko</div>
+        <div class="v mono">5 s &nbsp;kontra&nbsp; 110 µs</div>
+        <div class="d">Poznanie reguły kontra jej stosowanie. Zweryfikowane dwiema niezależnymi metodami pomiaru.</div>
+      </div>
+
+      <div class="card" style="--c: var(--green)">
+        <div class="n mono">Grupa 2 · przepustowość</div>
+        <div class="t">Mikrokontroler nie jest wąskim gardłem</div>
+        <div class="v mono">0,00 % strat</div>
+        <div class="d">100–5000 ramek/s, dwie prędkości magistrali. Ani jednej zgubionej ramki.</div>
+      </div>
+
+      <div class="card" style="--c: var(--amber)">
+        <div class="n mono">Grupa 5 · zasoby</div>
+        <div class="t">Efekt obserwatora w pomiarze CPU</div>
+        <div class="v mono">0,6 % → 2,5 %</div>
+        <div class="d">Samo przygotowanie kanału pomiarowego kosztuje więcej niż mierzona praca.</div>
+      </div>
+    </div>
+
+    <!-- SRODEK: celowo pusty - tu bedzie sylwetka rozmowcy -->
+    <div class="center"></div>
+
+    <!-- PRAWA KOLUMNA -->
+    <div class="col">
+      <div class="card" style="--c: var(--orange)">
+        <div class="n mono">Grupa 4 · trzon projektu</div>
+        <div class="t">Modele językowe nie widzą flag bitowych</div>
+        <div class="v mono">0,0 % × 4 próby</div>
+        <div class="d">Cztery niezależne interwencje promptowe — przykłady, wymuszona analiza, naprawa kontekstu — bez żadnej zmiany.</div>
+      </div>
+
+      <div class="card" style="--c: var(--green)">
+        <div class="n mono">Rozwiązanie</div>
+        <div class="t">Hybryda: klasyfikator nadpisuje LLM</div>
+        <div class="v mono">50 % → 96,7 %</div>
+        <div class="d">Flagi bitowe: F1 z 0 do 1,000. Żaden sygnał ciągły nie uległ pogorszeniu.</div>
+      </div>
+
+      <div class="card" style="--c: var(--blue)">
+        <div class="n mono">Sierpień · rozwinięcie</div>
+        <div class="t">Sieć neuronowa na urządzeniu brzegowym</div>
+        <div class="v mono">26,8 % → 96,5 %</div>
+        <div class="d">Precyzja wskazania bitów. Wynik 100 % obalony własnym testem — po korekcie 59 %.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div>Cały ruch CAN jest <span class="warn">syntetyczny</span> — walidacja na prawdziwym pojeździe pozostaje zadaniem otwartym</div>
+    <div class="mono">ESP32 + MCP2515 · Orange Pi Zero 3 · PEAK PCAN-USB</div>
+  </footer>
+
+</body>
+</html>

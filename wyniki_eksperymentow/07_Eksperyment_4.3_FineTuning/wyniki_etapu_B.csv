@@ -1,0 +1,3 @@
+korpus,Precision_%,Recall_%,F1_%,trafnosc_maski_%,uwaga
+waski mini-DBC (Eksp. 4.1),,~97-100,,nie mierzona,"3 CAN ID, 1 przypadek flag"
+szeroki korpus (Etap A),82.6,55.9,66.7,15.8,"40 CAN ID, 248 pozycji bajtowych"

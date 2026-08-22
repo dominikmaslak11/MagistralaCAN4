@@ -1,9 +1,9 @@
-# Eksperyment 4.11 — klasyfikacja maski bitowej: które bity są flagami
+# Eksperymenty 4.11 i 4.12 — klasyfikacja maski bitowej: które bity są flagami
 
 Data: 2026-08-15
 Autorzy: Dominik Maślak (prowadzenie), Claude (asystent, implementacja i analiza)
 Platforma: Orange Pi Zero 3 + MCP2515, magistrala wspólna z PEAK PCAN-USB
-Status: **ZAKOŃCZONY**
+Status: **ZAKOŃCZONY** — z istotną korektą wyniku po weryfikacji (sekcja 5b)
 
 ---
 
@@ -66,7 +66,12 @@ Protokół: uczenie ziarna 1-30 (vcan), walidacja 31-40 (vcan), **test ziarna
 
 ---
 
-## 4. Wynik
+## 4. Wynik na korpusie z CIĄGŁYMI zakresami bitów
+
+> **Uwaga:** liczby w tej sekcji dotyczą korpusu, w którym bity skalara
+> tworzą ciągły zakres, a flagi siedzą na najniższych bitach. Weryfikacja
+> w sekcji 5b wykazała, że **wynik 100 % jest w znacznej mierze artefaktem
+> tej regularności**. Nie cytować bez sekcji 5b.
 
 Sieć: MLP **11 → 32 → 16 → 1**, 1105 parametrów, uczenie **68 s** na płytce.
 
@@ -122,13 +127,83 @@ oznacza fizycznie — pozostaje domeną LLM i nie została tknięta.
 
 ---
 
+## 5b. Eksperyment 4.12 — WERYFIKACJA: czy sieć nauczyła się prawdziwej zasady?
+
+Data: 2026-08-17
+
+Zastrzeżenie nr 1 z sekcji 6 zostało sprawdzone empirycznie — i **wypadło
+niepomyślnie dla wyniku z sekcji 4**.
+
+### 5b.1. Co dokładnie sprawdzano
+
+W korpusie użytym w 4.11 bajty mieszane miały **deterministyczną strukturę**:
+flagi zawsze na bitach 0…n−1, a skalar częściowy jako **ciągły** zakres tuż nad
+nimi. Sieć mogła nauczyć się reguły „najniższe bity to flagi" i osiągnąć 100 %
+bez uchwycenia prawdziwej zasady o sprzężeniu statystycznym.
+
+Generator rozszerzono o `--scatter-partial-bits`: pozycje flag **losowe**, bity
+skalara **rozproszone i przeplecione** z flagami. Przykłady z korpusu:
+
+| Bajt | Flagi | Bity skalara | Ciągły? |
+|---|---|---|---|
+| 5 | 1, 6 | 0, 2, 4, 5 | nie |
+| 0 | 2, 5 | 0, 3, 6, 7 | nie |
+| 0 | 0, 1, 6 | 2, 4, 5, 7 | nie |
+
+Test na **prawdziwym MCP2515**, 6 zbiórek, 8432 bity, 577 flag.
+
+### 5b.2. Wynik
+
+| Metoda | Recall | Precision | F1 | maska: bajty czyste | **maska: bajty MIESZANE** |
+|---|---|---|---|---|---|
+| odniesienie `seen0 & seen1` | 100 % | 26,8 % | 42,3 % | 147/147 = 100 % | **0/37 = 0 %** |
+| **model z 4.11** (uczony na ciągłych) | 97,2 % | 92,4 % | 94,8 % | 147/147 = 100 % | **5/37 = 14 %** |
+| **model uczony na rozproszonych** | 100 % | 96,5 % | 98,2 % | 147/147 = 100 % | **22/37 = 59 %** |
+
+Odniesienie z 4.11 na tym samym sprzęcie, bity ciągłe: **30/30 = 100 %**.
+
+### 5b.3. Wnioski — trzy, wszystkie istotne
+
+**1. Model z 4.11 NIE generalizuje.** Trafność maski w bajtach mieszanych spada
+ze **100 % do 14 %**, gdy usunąć regularność generatora. Sieć nauczyła się
+w znacznej mierze układu pozycji, a nie zasady. **Wynik 100 % z sekcji 4 był
+istotnie zawyżony przez konstrukcję korpusu.**
+
+**2. Zadanie jest trudniejsze, niż się wydawało, ale metoda działa.** Model
+uczony na danych reprezentatywnych osiąga **59 %** wobec **0 %** odniesienia.
+To wciąż duża poprawa — ale daleko od „rozwiązane".
+
+**3. Klasyfikacja per bit pozostaje mocna niezależnie od tego.** F1 per bit
+wynosi 98,2 % wobec 42,3 % odniesienia. Sieć bardzo dobrze odróżnia pojedyncze
+bity; trudność leży w **trafieniu całej maski naraz** — wystarczy jeden błędny
+bit z ośmiu, żeby maska nie zgadzała się z prawdziwą.
+
+### 5b.4. Co z tego wynika dla dalszej pracy
+
+- **Rekomendacja z 4.11 wymaga korekty**: sieć per bit warto wdrożyć, ale
+  wartością nie jest „100 % maski", tylko **redukcja fałszywych bitów w masce**
+  (Precision 26,8 % → 96,5 %).
+- **Uczenie musi używać korpusu z rozproszonymi bitami** — model uczony na
+  regularnym korpusie jest w tym zadaniu bezużyteczny.
+- Otwarte: czy 59 % da się podnieść większym korpusem, dłuższą obserwacją,
+  czy raczej brakuje cech opisujących sprzężenie **par** bitów wprost.
+
+### 5b.5. Uwaga metodologiczna
+
+Ten eksperyment jest przykładem, dlaczego zastrzeżenia zapisane przy wyniku
+trzeba **sprawdzać, a nie tylko odnotowywać**. Zastrzeżenie „generator daje
+ciągłe zakresy bitów, sieć mogła nauczyć się tej regularności" zostało zapisane
+w sekcji 6 przy publikacji wyniku 4.11 jako ryzyko teoretyczne. Sprawdzenie
+zajęło jedno popołudnie i **obaliło główną liczbę tamtego eksperymentu**.
+
+---
+
 ## 6. Zastrzeżenia
 
-1. **Cały ruch jest syntetyczny.** W generatorze skalary częściowe zajmują
-   **ciągły** zakres bitów (`bit_lo`…`bit_hi`), a flagi są pojedyncze — struktura
-   jest bardzo regularna. Prawdziwe DBC bywają mniej uporządkowane. Wynik 100 %
-   należy czytać jako „metoda działa na tak zdefiniowanym problemie", nie jako
-   gwarancję na magistrali pojazdu.
+1. **Cały ruch jest syntetyczny.** ~~W generatorze skalary częściowe zajmują
+   ciągły zakres bitów…~~ **SPRAWDZONE — zastrzeżenie się potwierdziło**, patrz
+   sekcja 5b: po usunięciu tej regularności trafność maski spada ze 100 % do 14 %
+   (model z 4.11) lub 59 % (model uczony na danych reprezentatywnych).
 2. **Mało przypadków trudnych**: 30 bajtów mieszanych w teście sprzętowym i 69
    w walidacji. 100 % na 30 przypadkach to mocna przesłanka, nie tysiące prób.
 3. Sieć zakłada, że bajt **został już wskazany** jako zawierający flagi

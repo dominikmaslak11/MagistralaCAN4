@@ -1,0 +1,5 @@
+model,baseline_%,warmstart_%,zmiana_pp,ocena
+Claude Sonnet 5,43.0,42.8,-0.3,bez zmian
+GPT-5.6-sol,33.2,32.2,-1.0,pogorszenie
+DeepSeek-v4-pro,29.6,32.1,2.4,poprawa
+Gemini-3.6-flash,41.5,37.2,-4.3,pogorszenie

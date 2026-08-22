@@ -98,17 +98,28 @@ class PartialScalarSignal:
     scale: float = 1.0
     offset: float = 0.0
     dynamics: str = "randwalk_slow"
+    # Lista bitow zajmowanych przez skalar, gdy NIE tworza ciaglego zakresu
+    # (--scatter-partial-bits). None = zakres ciagly bit_lo..bit_hi jak dotad.
+    scattered_bits: tuple = None
+
+    @property
+    def bit_list(self) -> list:
+        """Bity zajmowane przez skalar, od najmlodszego. Dla zakresu ciaglego
+        rownowazne bit_lo..bit_hi."""
+        if self.scattered_bits:
+            return sorted(self.scattered_bits)
+        return list(range(self.bit_lo, self.bit_hi + 1))
 
     @property
     def bit_mask(self) -> int:
         mask = 0
-        for b in range(self.bit_lo, self.bit_hi + 1):
+        for b in self.bit_list:
             mask |= (1 << b)
         return mask
 
     @property
     def max_raw(self) -> int:
-        return (1 << (self.bit_hi - self.bit_lo + 1)) - 1
+        return (1 << len(self.bit_list)) - 1
 
 
 @dataclass
@@ -157,7 +168,8 @@ def _make_bitflag_group(byte_idx, n_flags, name_prefix, rng):
     return flags, set(bit_positions)
 
 
-def make_diverse_configs(seed: int = 42, n_configs: int = 30) -> list:
+def make_diverse_configs(seed: int = 42, n_configs: int = 30,
+                         scatter_partial: bool = False) -> list:
     """Generuje N zroznicowanych konfiguracji CAN ID. Deterministyczne przy
     ustalonym ziarnie (reprodukowalnosc korpusu)."""
     rng = random.Random(seed)
@@ -226,7 +238,14 @@ def make_diverse_configs(seed: int = 42, n_configs: int = 30) -> list:
             # 4-bitowy, bit 6-7 nieuzywane/rezerwa)
             byte_idx = rng.randint(0, dlc - 1)
             n_flag_bits = rng.randint(2, 3)
-            flag_bits = list(range(n_flag_bits))
+            if scatter_partial:
+                # Pozycje flag LOSOWE w calym bajcie (zamiast zawsze 0..n-1).
+                # Usuwa deterministyczna regularnosc "najnizsze bity to flagi",
+                # ktora klasyfikator moglby wykorzystac zamiast prawdziwej
+                # zasady o sprzezeniu statystycznym bitow skalara.
+                flag_bits = sorted(rng.sample(range(8), n_flag_bits))
+            else:
+                flag_bits = list(range(n_flag_bits))
             grp = []
             for bit in flag_bits:
                 grp.append(BitFlagSignal(
@@ -235,15 +254,26 @@ def make_diverse_configs(seed: int = 42, n_configs: int = 30) -> list:
                     initial=rng.randint(0, 1),
                 ))
             flags.extend(grp)
-            remaining_bits = 8 - n_flag_bits
-            sub_width = rng.randint(3, min(5, remaining_bits))
-            bit_lo = n_flag_bits
-            bit_hi = bit_lo + sub_width - 1
-            partial_scalars.append(PartialScalarSignal(
-                name=f"mixedsub_{i}", byte_idx=byte_idx, bit_lo=bit_lo, bit_hi=bit_hi,
-                scale=rng.choice([1.0, 2.0, 0.5]), offset=0.0,
-                dynamics=rng.choice(["randwalk_slow", "step_rare"]),
-            ))
+            free_bits = [b for b in range(8) if b not in flag_bits]
+            sub_width = rng.randint(3, min(5, len(free_bits)))
+            if scatter_partial:
+                # Bity skalara ROZPROSZONE po wolnych pozycjach, nie ciagle.
+                scattered = tuple(sorted(rng.sample(free_bits, sub_width)))
+                partial_scalars.append(PartialScalarSignal(
+                    name=f"mixedsub_{i}", byte_idx=byte_idx,
+                    bit_lo=min(scattered), bit_hi=max(scattered),
+                    scale=rng.choice([1.0, 2.0, 0.5]), offset=0.0,
+                    dynamics=rng.choice(["randwalk_slow", "step_rare"]),
+                    scattered_bits=scattered,
+                ))
+            else:
+                bit_lo = n_flag_bits
+                bit_hi = bit_lo + sub_width - 1
+                partial_scalars.append(PartialScalarSignal(
+                    name=f"mixedsub_{i}", byte_idx=byte_idx, bit_lo=bit_lo, bit_hi=bit_hi,
+                    scale=rng.choice([1.0, 2.0, 0.5]), offset=0.0,
+                    dynamics=rng.choice(["randwalk_slow", "step_rare"]),
+                ))
             used_bytes.add(byte_idx)
 
         else:  # scalars_plus_flags
@@ -347,7 +377,13 @@ class DiverseSim:
         for ps in cfg.partial_scalars:
             phys = self.state[(cfg.can_id, ps.name)]
             raw = int(round((phys - ps.offset) / ps.scale)) & ps.max_raw
-            data[ps.byte_idx] |= (raw << ps.bit_lo) & ps.bit_mask
+            if ps.scattered_bits:
+                # kolejne bity wartosci trafiaja na kolejne bity maski
+                for i, b in enumerate(ps.bit_list):
+                    if (raw >> i) & 1:
+                        data[ps.byte_idx] |= (1 << b)
+            else:
+                data[ps.byte_idx] |= (raw << ps.bit_lo) & ps.bit_mask
         for f in cfg.flags:
             bit_val = self.flag_state[(cfg.can_id, f.name)]
             if bit_val:
@@ -389,6 +425,12 @@ def main():
     ap.add_argument("--seed", type=int, default=42, help="ziarno losowosci konfiguracji (reprodukowalnosc)")
     ap.add_argument("--dump-json", default=None,
                      help="tryb symulacji offline (bez sprzetu) - zapisuje ground truth + probki ramek do JSON")
+    ap.add_argument("--scatter-partial-bits", action="store_true",
+                     help="W bajtach MIESZANYCH: losowe pozycje flag i ROZPROSZONE "
+                          "(nieciagle) bity skalara czesciowego. Domyslnie flagi "
+                          "siedza na bitach 0..n-1, a skalar tworzy ciagly zakres "
+                          "tuz nad nimi - regularnosc, ktora klasyfikator moze "
+                          "wykorzystac zamiast prawdziwej zasady (Eksperyment 4.12).")
     ap.add_argument("--period-scale", type=float, default=1.0,
                      help="mnoznik okresow nadawania (1.0 = bez zmian). Skaluje "
                           "CZESTOTLIWOSC PROBKOWANIA wzgledem dynamiki sygnalow, "
@@ -400,7 +442,8 @@ def main():
                      help="w trybie --dump-json: ile probek ramek na CAN ID zapisac (do budowy korpusu)")
     args = ap.parse_args()
 
-    configs = make_diverse_configs(seed=args.seed, n_configs=args.n_configs)
+    configs = make_diverse_configs(seed=args.seed, n_configs=args.n_configs,
+                                   scatter_partial=args.scatter_partial_bits)
     print(f"Wygenerowano {len(configs)} zroznicowanych konfiguracji CAN ID "
           f"(ziarno={args.seed}).")
     if args.period_scale != 1.0:

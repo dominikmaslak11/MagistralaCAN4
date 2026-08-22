@@ -1,0 +1,5 @@
+test,metoda,n,trafnosc_3way_%,trafnosc_2way_%
+A: w obrebie korpusu,cechy reczne (7-wym.),152,89.5,91.4
+A: w obrebie korpusu,embedding neuronowy (384-wym.),152,98.7,100.0
+B: miedzy korpusami,cechy reczne (7-wym.),83,92.8,94.0
+B: miedzy korpusami,embedding neuronowy (384-wym.),83,100.0,100.0

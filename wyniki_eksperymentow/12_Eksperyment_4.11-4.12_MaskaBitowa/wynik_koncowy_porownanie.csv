@@ -1,0 +1,6 @@
+korpus,metoda,Recall_%,Precision_%,F1_%,maska_czyste,maska_MIESZANE,uwaga
+bity ciagle,maska seen0 & seen1,100.0,24.1,38.8,137/137 = 100%,0/30 = 0%,odniesienie
+bity ciagle,siec per bit,100.0,99.8,99.9,137/137 = 100%,30/30 = 100%,WYNIK ZAWYZONY - patrz 4.12
+bity rozproszone,maska seen0 & seen1,100.0,26.8,42.3,147/147 = 100%,0/37 = 0%,odniesienie
+bity rozproszone,siec uczona na ciaglych,97.2,92.4,94.8,147/147 = 100%,5/37 = 14%,NIE generalizuje
+bity rozproszone,siec uczona na rozproszonych,100.0,96.5,98.2,147/147 = 100%,22/37 = 59%,WYNIK KONCOWY

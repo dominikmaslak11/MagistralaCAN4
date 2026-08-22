@@ -1,0 +1,2 @@
+metoda,Recall_%,Precision_%,F1_%,maska_czyste,maska_mieszane,n_bitow
+maska seen0 & seen1 (odniesienie),100.0,24.0,38.7,244/244,0/71,15856

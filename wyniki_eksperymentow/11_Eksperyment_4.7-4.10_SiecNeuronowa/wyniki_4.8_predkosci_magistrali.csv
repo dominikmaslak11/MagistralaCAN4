@@ -1,0 +1,5 @@
+metoda,TP,FP,FN,Recall_%,Precision_%,F1_%,n_pozycji
+"regula, limit 6 bitow (obecna)",372,22,52,87.7,94.4,91.0,2936
+"regula, limit 7 bitow",413,24,11,97.4,94.5,95.9,2936
+"regula, limit 8 bitow",424,468,0,100.0,47.5,64.4,2936
+siec neuronowa (577 par.),-,-,-,100.0,97.7,98.8,2936

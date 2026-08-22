@@ -1,0 +1,5 @@
+konfiguracja,zuzycie_CPU_%,przyrost_pp,opis
+firmware Arduino (wyjsciowy),0.6,,wartosc odniesienia - pomiar najmniej inwazyjny
+port na ESP-IDF,0.82,0.22,"koszt zmiany srodowiska, nie dotyczy JTAG"
+gotowosc kanalu trace,1.79,0.97,"sam kanal wlaczony, ale NIE zbiera danych"
+aktywne sledzenie JTAG,2.49,0.7,pelny pomiar SystemView

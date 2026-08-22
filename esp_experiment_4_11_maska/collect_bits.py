@@ -52,15 +52,17 @@ FEATURE_NAMES = [
 ]
 
 
-def ground_truth_bits(seed, n_configs):
+def ground_truth_bits(seed, n_configs, scatter=False):
     """Etykieta per (can_id, bajt, bit): 1 = niezalezna flaga bitowa.
     Bity skalarow (pelnych i czesciowych) oraz nieuzywane -> 0."""
     with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as tf:
         tmp = tf.name
-    subprocess.run([sys.executable, GENERATOR, "--seed", str(seed),
-                    "--n-configs", str(n_configs), "--dump-json", tmp,
-                    "--dump-samples-per-id", "2"],
-                   check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    cmd = [sys.executable, GENERATOR, "--seed", str(seed),
+           "--n-configs", str(n_configs), "--dump-json", tmp,
+           "--dump-samples-per-id", "2"]
+    if scatter:
+        cmd.append("--scatter-partial-bits")
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     corpus = json.load(open(tmp))
     os.unlink(tmp)
 
@@ -179,11 +181,14 @@ def main():
     ap.add_argument("--iface", required=True)
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--n-configs", type=int, default=20)
+    ap.add_argument("--scatter", action="store_true",
+                    help="ground truth dla korpusu z ROZPROSZONYMI bitami skalara "
+                         "(--scatter-partial-bits w generatorze) -- Eksperyment 4.12")
     ap.add_argument("--duration", type=float, default=100.0)
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
-    flags, scalar_bits, dlc_of = ground_truth_bits(args.seed, args.n_configs)
+    flags, scalar_bits, dlc_of = ground_truth_bits(args.seed, args.n_configs, args.scatter)
 
     sock = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
     sock.bind((args.iface,))

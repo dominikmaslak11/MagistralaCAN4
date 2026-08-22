@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Sprawozdanie — Eksperymenty 4.5-4.12</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-0:      #ffffff;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f2f1ed;
+    --border:         #dedcd4;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #82807a;
+    --series-1:       #2a78d6;
+    --series-2:       #eb6834;
+    --series-3:       #1baf7a;
+    --good:           #1a8f4c;
+    --warn:           #b9790a;
+    --track:          #e6e4dd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-0:#131311; --surface-1:#1a1a19; --surface-2:#242320; --border:#3a3934;
+      --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8d84;
+      --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+      --good:#4fc37f; --warn:#d9a033; --track:#2c2b27;
+    }
+    :root:where(:not([data-theme="light"])) tr.win td { background: #14302a; }
+    :root:where(:not([data-theme="light"])) tr.bad td { background: #2e1a17; }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-0:#131311; --surface-1:#1a1a19; --surface-2:#242320; --border:#3a3934;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8d84;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --good:#4fc37f; --warn:#d9a033; --track:#2c2b27;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-0); }
+  .viz-root {
+    background: var(--surface-0); color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    max-width: 980px; margin: 0 auto; padding: 30px 40px 50px; line-height: 1.45;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+  header.hero { border-bottom: 3px solid var(--text-primary); padding-bottom: 14px; margin-bottom: 22px; }
+  header.hero .eyebrow {
+    font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;
+  }
+  header.hero h1 { font-size: 24px; margin: 0 0 7px; line-height: 1.15; }
+  header.hero .subtitle { color: var(--text-secondary); font-size: 14.5px; max-width: 800px; }
+
+  section { margin-bottom: 24px; }
+  h2 {
+    font-family: ui-monospace, monospace; font-size: 12.5px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted); border-bottom: 1px solid var(--border);
+    padding-bottom: 5px; margin: 0 0 12px;
+  }
+  p { font-size: 14px; color: var(--text-secondary); margin: 0 0 10px; max-width: 830px; }
+  p strong, li strong, td strong { color: var(--text-primary); }
+
+  .anchor {
+    background: var(--surface-1); border-left: 4px solid var(--series-1); border-radius: 4px;
+    padding: 14px 18px;
+  }
+  .anchor .q-label {
+    font-family: ui-monospace, monospace; font-size: 10.5px; text-transform: uppercase;
+    color: var(--series-1); letter-spacing: 0.06em; margin-bottom: 5px;
+  }
+  .anchor p { margin: 0; color: var(--text-primary); font-size: 14.5px; }
+
+  .arc { display: flex; gap: 10px; flex-wrap: wrap; }
+  .arc-step {
+    flex: 1 1 210px; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 6px; padding: 12px 14px;
+  }
+  .arc-step .n {
+    font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;
+  }
+  .arc-step .t { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .arc-step .d { font-size: 12.5px; color: var(--text-secondary); }
+
+  .tiles { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tile {
+    flex: 1 1 150px; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 6px; padding: 12px 14px;
+  }
+  .tile .label {
+    font-family: ui-monospace, monospace; font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 3px;
+  }
+  .tile .value { font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .tile .foot { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; margin-top: 4px; }
+  caption { text-align: left; font-size: 11.5px; color: var(--text-muted); padding-bottom: 5px; }
+  th, td { padding: 5px 8px; text-align: right; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th {
+    font-family: ui-monospace, monospace; font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.win td { background: #e8f6f0; font-weight: 600; }
+  tr.bad td { background: #fbeae3; }
+
+  .callout {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-left: 4px solid var(--warn); border-radius: 6px; padding: 13px 17px; margin-bottom: 10px;
+  }
+  .callout.honest { border-left-color: var(--series-2); }
+  .callout h3 { font-size: 13.5px; margin: 0 0 5px; }
+  .callout p { font-size: 13px; margin: 0 0 7px; }
+  .callout p:last-child { margin-bottom: 0; }
+  code {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 3px;
+    padding: 1px 4px; font-size: 12px;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  }
+  ul.list, ol.list { margin: 0; padding-left: 19px; }
+  ul.list li, ol.list li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+
+  .two-col { display: flex; gap: 14px; flex-wrap: wrap; }
+  .two-col > * { flex: 1 1 380px; }
+
+  footer {
+    border-top: 1px solid var(--border); padding-top: 10px; margin-top: 26px;
+    font-size: 11px; color: var(--text-muted);
+  }
+  footer p { font-size: 11px; color: var(--text-muted); margin: 0 0 3px; }
+
+  @page { size: A4; margin: 12mm 11mm; }
+  @media print {
+    .viz-root { max-width: none; padding: 0; }
+    section, .callout, table, .arc { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root">
+
+  <header class="hero">
+    <div class="eyebrow">Sprawozdanie ustne · Eksperymenty 4.5-4.12 · 6-17 sierpnia 2026</div>
+    <h1>Klasyfikator flag bitowych — obie zdiagnozowane przyczyny naprawione</h1>
+    <p class="subtitle">Odpowiedź na pytanie zostawione otwarte 6 sierpnia: czy naprawiać klasyfikator przed fine-tuningiem, czy uczyć na danych z ~44% błędnych etykiet. W trakcie prac <strong>obalono własny wcześniejszy wynik</strong> — patrz sekcja o weryfikacji.</p>
+  </header>
+
+  <section>
+    <div class="anchor">
+      <div class="q-label">Punkt wyjścia — zgłoszenie z 6 sierpnia</div>
+      <p>Klasyfikator na szerszym korpusie: <strong>Recall 55,9%</strong>, <strong>trafność maski 15,8%</strong>. Zdiagnozowano dwie przyczyny: <strong>(a)</strong> za krótkie okno obserwacji, <strong>(b)</strong> bajty mieszane — flaga i skalar częściowy w tym samym bajcie. <strong>Obie zostały naprawione</strong> — pierwsza w pełni, druga częściowo (patrz weryfikacja).</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Przyczyna (a) — za krótkie okno obserwacji</h2>
+    <div class="arc">
+      <div class="arc-step">
+        <div class="n">6 sierpnia</div>
+        <div class="t mono">Recall 55,9%</div>
+        <div class="d">obserwacja epizodyczna, pojedyncze uruchomienie</div>
+      </div>
+      <div class="arc-step">
+        <div class="n">Eksperyment 4.5 / 4.6</div>
+        <div class="t mono">Recall 85,0%</div>
+        <div class="d">ciągła obserwacja + strojenie progu, Precision 100%</div>
+      </div>
+      <div class="arc-step">
+        <div class="n">Eksperymenty 4.7-4.10</div>
+        <div class="t mono">Recall 100%</div>
+        <div class="d">klasyfikator uczony, Precision 97,3%</div>
+      </div>
+    </div>
+    <p style="margin-top:10px"><strong>Zastrzeżenie:</strong> to nie są te same korpusy, więc nie jest to czysty ciąg jednej metryki. Wspólne jest to, że każdy kolejny krok mierzono na trudniejszych, nie łatwiejszych danych.</p>
+  </section>
+
+  <section>
+    <h2>Przyczyna (b) — bajty mieszane · najmocniejszy wynik sesji</h2>
+    <p>Problem był <strong>źle rozumiany</strong>. Maska <code>seen0 &amp; seen1</code> nie jest „ogólnie kiepska” — jest idealna dla bajtów z samymi flagami i ma <strong>dokładnie zero</strong> trafień tam, gdzie flaga dzieli bajt ze skalarem.</p>
+    <table>
+      <caption>Trafność maski dokładnej · test na prawdziwym MCP2515, 8528 bitów</caption>
+      <thead><tr><th>Metoda</th><th>bajty czyste (~78%)</th><th>bajty MIESZANE (~22%)</th><th>razem</th></tr></thead>
+      <tbody>
+        <tr class="bad"><td>maska <code>seen0 &amp; seen1</code></td><td class="mono">137/137 = 100%</td><td class="mono"><strong>0/30 = 0%</strong></td><td class="mono">82%</td></tr>
+        <tr class="win"><td>sieć per bit <em>(korpus ciągły)</em></td><td class="mono">137/137 = 100%</td><td class="mono"><strong>30/30 = 100%</strong></td><td class="mono">100%</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:9px"><strong>Uwaga: ten wynik został skorygowany</strong> — patrz następna sekcja. Gdyby raportować samą średnią, wyszłoby 82% i wyglądałoby to na drobną niedoskonałość — zamiast na całkowitą bezradność w co piątym przypadku. <strong>Dlatego ewaluacja rozbija oba typy osobno.</strong></p>
+  </section>
+
+  <section>
+    <h2>Weryfikacja własnego wyniku — i jego korekta</h2>
+    <p>Wynik 100% wymagał sprawdzenia: czy sieć nauczyła się <strong>prawdziwej zasady</strong>, czy <strong>regularności generatora</strong>? W korpusie flagi siedziały zawsze na najniższych bitach, a skalar tworzył ciągły zakres nad nimi. Bity rozproszono i powtórzono pomiar na tym samym sprzęcie.</p>
+    <table>
+      <caption>Trafność maski w bajtach mieszanych · test na prawdziwym MCP2515, 8432 bity</caption>
+      <thead><tr><th>Wariant testu</th><th>Model</th><th>Maska mieszane</th></tr></thead>
+      <tbody>
+        <tr><td>bity ciągłe (pierwotny korpus)</td><td>uczony na ciągłych</td><td class="mono">30/30 = 100%</td></tr>
+        <tr class="bad"><td><strong>bity rozproszone</strong></td><td>ten sam model</td><td class="mono"><strong>5/37 = 14%</strong></td></tr>
+        <tr class="win"><td><strong>bity rozproszone</strong></td><td>uczony na reprezentatywnych</td><td class="mono"><strong>22/37 = 59%</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="callout honest" style="margin-top:11px">
+      <h3>Model nie generalizował — wynik 100% był zawyżony</h3>
+      <p>Sieć nauczyła się w znacznej mierze <strong>układu pozycji bitów</strong>, a nie zasady o sprzężeniu statystycznym. Po usunięciu regularności generatora trafność maski spada ze 100% do 14%. Po przeuczeniu na danych reprezentatywnych: 59% — wciąż dużo wobec zera, ale <strong>to nie jest problem rozwiązany</strong>.</p>
+      <p>Zastrzeżenie o ciągłych zakresach bitów było zapisane pod wynikiem 4.11 jako ryzyko teoretyczne. <strong>Sprawdzenie zajęło jedno popołudnie i obaliło główną liczbę tamtego eksperymentu.</strong></p>
+    </div>
+    <table style="margin-top:11px">
+      <caption>Uczciwy bilans na trudniejszym, rozproszonym korpusie</caption>
+      <thead><tr><th>Metryka</th><th>maska seen0 &amp; seen1</th><th>sieć per bit</th></tr></thead>
+      <tbody>
+        <tr><td>Precyzja per bit</td><td class="mono">26,8%</td><td class="mono">96,5%</td></tr>
+        <tr><td>F1 per bit</td><td class="mono">42,3%</td><td class="mono">98,2%</td></tr>
+        <tr class="win"><td>Maska w bajtach mieszanych</td><td class="mono">0%</td><td class="mono">59%</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Dlaczego sieć, a nie prosta reguła</h2>
+    <div class="two-col">
+      <table>
+        <caption>Ten sam protokół: próg dobierany na uczących, oceniany na sprzęcie</caption>
+        <thead><tr><th>Podejście</th><th>F1</th><th>maska mieszane</th></tr></thead>
+        <tbody>
+          <tr><td>najlepszy pojedynczy próg</td><td class="mono">57,8%</td><td class="mono">10%</td></tr>
+          <tr><td>najlepsza para cech</td><td class="mono">81,9%</td><td class="mono">57%</td></tr>
+          <tr class="win"><td>sieć (11 cech, 1105 par.)</td><td class="mono">99,9%</td><td class="mono">100%</td></tr>
+        </tbody>
+      </table>
+      <div class="callout" style="border-left-color: var(--series-3)">
+        <h3>Kontrapunkt: gdzie sieć NIE była potrzebna</h3>
+        <p>W Eksperymencie 4.7 ta sama analiza wskazała <strong>regułę</strong>: zmiana jednej stałej (limit bitów 6 → 7) dała +5 pp F1 przy zerowym koszcie obliczeniowym — prawie tyle co sieć.</p>
+        <p><strong>To różnica między „użyłem ML” a „sprawdziłem, kiedy ML jest potrzebny”.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Co się nie udało — zgłoszone samodzielnie</h2>
+    <div class="two-col">
+      <div>
+        <table>
+          <caption>Trzy próby testu odporności — hipoteza ODRZUCONA</caption>
+          <thead><tr><th>Próba</th><th>Zmienna</th><th>Zmieniła statystyki?</th></tr></thead>
+          <tbody>
+            <tr><td>4.8</td><td>prędkość magistrali</td><td class="mono">nie — błąd projektowy</td></tr>
+            <tr><td>4.9</td><td>liczba CAN ID</td><td class="mono">nie — błąd projektowy</td></tr>
+            <tr class="win"><td>4.10</td><td>skala okresów ramek</td><td class="mono">tak, 15×</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:8px">Dwie pierwsze manipulowały parametrami <strong>poziomu magistrali</strong>; statystyki per-bajt zależą od <strong>stosunku próbkowania do dynamiki sygnału</strong>. Przy działającej manipulacji: wszystkie metody stabilne (rozstępy 1,2-2,5 pp), <strong>najstabilniejsza okazała się reguła</strong>.</p>
+      </div>
+      <div class="callout honest">
+        <h3>Wycofany wniosek</h3>
+        <p>Na teście obejmującym 132 pozycje wyszło, że reguła bije sieć — i tak to zapisano. Przy próbie <strong>22× większej</strong> kierunek się odwrócił. Różnica opierała się na <strong>dwóch pozycjach</strong>, czyli na szumie.</p>
+        <p>Wniosek metodologiczny: przy 20 pozytywach w zbiorze testowym różnice rzędu kilku punktów procentowych <strong>nie są interpretowalne</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Wątek platformy — wynik uboczny, ale mocny</h2>
+    <p>Eksperyment 4.5 powtórzono na <strong>drugiej, niezależnej platformie</strong> (Orange Pi Zero 3: inny procesor, architektura, system i magistrala SPI). Wynik <strong>identyczny co do liczby</strong>: Recall 85,0%, Precision 100%.</p>
+    <div class="tiles">
+      <div class="tile">
+        <div class="label">Wniosek</div>
+        <div class="value" style="font-size:15px; line-height:1.3">Własność METODY,<br>nie płytki</div>
+        <div class="foot">dwie platformy, ten sam wynik</div>
+      </div>
+      <div class="tile">
+        <div class="label">Parametrów sieci</div>
+        <div class="value mono">1105</div>
+        <div class="foot">wdrożenie bez PyTorcha</div>
+      </div>
+      <div class="tile">
+        <div class="label">Uczenie na płytce</div>
+        <div class="value mono">68 s</div>
+        <div class="foot">inferencja 282 µs</div>
+      </div>
+      <div class="tile">
+        <div class="label">Danych ze sprzętu</div>
+        <div class="value mono">57 280</div>
+        <div class="foot">bitów, 3 niezależne zbiory</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Największe ograniczenie — podane wprost</h2>
+    <div class="callout">
+      <h3>Cały ruch jest syntetyczny</h3>
+      <p>Test na innych ziarnach ogranicza ryzyko zapamiętywania, ale inne ziarno to wciąż ten sam generator. <strong>Wyniki są mocną przesłanką, nie dowodem</strong> na prawdziwej magistrali.</p>
+      <p>Zastrzeżenie o ciągłych zakresach bitów <strong>zostało sprawdzone i potwierdziło się</strong> (Eksperyment 4.12) — co podnosi wiarygodność pozostałych zastrzeżeń, bo pokazuje, że nie są kurtuazyjne.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Decyzje do podjęcia</h2>
+    <ol class="list">
+      <li><strong>Etap D (fine-tuning) jest odblokowany</strong> — klasyfikator-nauczyciel nie jest już wąskim gardłem. Ruszać, czy najpierw walidacja na prawdziwej maszynie?</li>
+      <li><strong>Sieć jako domyślny klasyfikator</strong>, czy reguła z poprawioną stałą (+5 pp, zero kosztu) i sieć jako opcja?</li>
+      <li><strong>Druga platforma sprzętowa</strong> w zakresie pracy, czy rozmywa tezę o mikrokontrolerze?</li>
+      <li><strong>Walidacja na maszynie rolniczej</strong> — osobny eksperyment w tej pracy, czy materiał na kolejną?</li>
+    </ol>
+  </section>
+
+  <footer>
+    <p>Zakres pomiarów: ~7600 pozycji bajtowych i 57 280 bitów z prawdziwego kontrolera MCP2515, w trzech niezależnych zbiorach. Protokół: uczenie i walidacja na wirtualnych magistralach SocketCAN, test wyłącznie na sprzęcie.</p>
+    <p>Źródła: <code>Eksperyment_4.6_…</code>, <code>Eksperyment_4.7-4.10_…</code>, <code>Eksperyment_4.11_Maska_Bitowa_20260815.md</code> · repozytorium GitHub, commit <code>5b9e2ff</code></p>
+  </footer>
+
+</div>
+</body>
+</html>

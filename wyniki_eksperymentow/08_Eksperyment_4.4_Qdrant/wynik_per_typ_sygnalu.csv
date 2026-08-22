@@ -1,0 +1,4 @@
+typ_sygnalu,n,baseline_%,warmstart_%,zmiana_pp,zrodlo
+scalar,24,70.3,73.3,3.0,Eksperyment_4.4_Raport_Koncowy_20260806.md
+bit_flag,116,17.1,13.5,-3.5,Eksperyment_4.4_Raport_Koncowy_20260806.md
+partial_scalar,4,87.5,100.0,12.5,Eksperyment_4.4_Raport_Koncowy_20260806.md

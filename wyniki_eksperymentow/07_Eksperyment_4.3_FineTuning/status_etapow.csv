@@ -1,0 +1,5 @@
+etap,zakres,status,uwaga
+A,rozbudowa generatora ruchu,zrobiony,"wiele mini-DBC, bajty mieszane"
+B,automatyczne etykietowanie klasyfikatorem,zrobiony,ujawnil slabosc klasyfikatora
+C,format danych treningowych,zrobiony,
+D,wlasciwy fine-tuning,WSTRZYMANY,~44% przykladow z flagami bylo blednie oznaczonych

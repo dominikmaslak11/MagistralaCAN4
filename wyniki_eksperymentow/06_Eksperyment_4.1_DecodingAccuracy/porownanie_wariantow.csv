@@ -1,0 +1,9 @@
+wariant,model,prob_N,wykrywalnosc_srednia_%,wykrywalnosc_flagi_bitowe_%,wykrywalnosc_sygnaly_ciagle_%,wykrywalnosc_z_override_%,katalog_zrodlowy
+1. baseline zero-shot,Claude Sonnet 5,100,47.9,0,95.9,,Eksperyment_4.1_DecodingAccuracy_Claude_v2_20260727_125414
+1. baseline zero-shot,GPT-5.6-sol,100,67.9,35.8,100,,Eksperyment_4.1_DecodingAccuracy_GPT_v2_20260727_131847
+1. baseline zero-shot,DeepSeek-v4-pro,100,41.5,6.7,76.4,,Eksperyment_4.1_DecodingAccuracy_DeepSeek_v2_20260727_143005
+1. baseline zero-shot,Gemini-3.6-flash,100,50.9,3.0,98.8,,Eksperyment_4.1_DecodingAccuracy_Gemini_v2_20260727_160932
+2. few-shot,Claude Sonnet 5,100,46.2,0,92.4,,Eksperyment_4.1_DecodingAccuracy_Claude_FewShot_20260727_174954
+3. entropy-analysis,Claude Sonnet 5,100,46.7,0,93.5,,Eksperyment_4.1_DecodingAccuracy_Claude_Entropy_20260727_182543
+4. naprawa kontekstu,Claude Sonnet 5,100,47.4,0,94.7,,Eksperyment_4.1_DecodingAccuracy_Claude_ContextFix_20260727_191700
+5. OVERRIDE (koncowy),Claude Sonnet 5,100,50.0,1.8,98.2,96.7,Eksperyment_4.1_DecodingAccuracy_Claude_OverrideV2_20260728_131600
